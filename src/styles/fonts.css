@@ -1,0 +1,86 @@
+/* Thinkube Font Configuration */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Slab:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Font families */
+  --sl-font: 'Roboto Slab', ui-serif, serif;
+  --sl-font-system: 'Roboto Slab', ui-serif, serif;
+  --sl-font-system-mono: 'JetBrains Mono', 'Noto Sans Mono', ui-monospace, monospace;
+}
+
+/* Headings use Poppins */
+h1, h2, h3, h4, h5, h6,
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+.sl-markdown-content h3,
+.sl-markdown-content h4,
+.sl-markdown-content h5,
+.sl-markdown-content h6,
+.site-title,
+.sl-link-button,
+nav[aria-label="Main"] a,
+.pagination-links a {
+  font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Body text uses Roboto Slab */
+body,
+p,
+li,
+td,
+.sl-markdown-content {
+  font-family: 'Roboto Slab', ui-serif, serif;
+}
+
+/* Code uses JetBrains Mono */
+code,
+pre,
+.expressive-code,
+.sl-markdown-content code,
+.sl-markdown-content pre {
+  font-family: 'JetBrains Mono', 'Noto Sans Mono', ui-monospace, monospace !important;
+}
+
+/* Adjust font weights for better readability */
+body {
+  font-weight: 400;
+}
+
+h1 {
+  font-weight: 700;
+}
+
+h2 {
+  font-weight: 600;
+}
+
+h3, h4, h5, h6 {
+  font-weight: 500;
+}
+
+.site-title {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Improve readability */
+.sl-markdown-content {
+  line-height: 1.7;
+}
+
+.sl-markdown-content p {
+  margin-bottom: 1.25rem;
+}
+
+/* Code block font size */
+pre code {
+  font-size: 0.875rem;
+}
+
+/* Inline code */
+:not(pre) > code {
+  font-size: 0.9em;
+  font-weight: 500;
+}

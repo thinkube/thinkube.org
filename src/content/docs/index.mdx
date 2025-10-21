@@ -1,0 +1,94 @@
+---
+title: Welcome to Thinkube
+description: Simplifying Kubernetes deployment without the complexity
+template: splash
+hero:
+  tagline: Deploy applications to Kubernetes without needing to understand Kubernetes. Built for developers, powered by simplicity.
+  image:
+    file: ../../assets/logo.svg
+    alt: Thinkube Logo
+  actions:
+    - text: Installing Thinkube
+      link: /installation/overview/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/thinkube/thinkube
+      icon: external
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Why Thinkube?
+
+<CardGrid stagger>
+	<Card title="No Kubernetes Knowledge Required" icon="rocket">
+		Deploy complex applications using simple YAML descriptors. Thinkube handles all the Kubernetes complexity for you.
+	</Card>
+	<Card title="Developer Experience First" icon="setting">
+		Integrated code-server, hot reloading, and Git workflows make development as easy as working locally.
+	</Card>
+	<Card title="Production Ready" icon="approve-check">
+		Automatic TLS certificates, monitoring, logging, and backups mean your apps are production-ready from day one.
+	</Card>
+	<Card title="AI Native Platform" icon="sparkles">
+		Pre-configured with GPU support, Jupyter notebooks, and ML frameworks for AI and machine learning workloads.
+	</Card>
+</CardGrid>
+
+## Key Features
+
+### 🚀 Simple Deployment
+Define your application in a simple `thinkube.yaml` file:
+```yaml
+name: my-app
+type: webapp
+image: myapp:latest
+domain: app.example.com
+```
+
+### 🔒 Security Built-in
+- Automatic TLS certificates
+- Network policies by default
+- Secret management with Vault
+- RBAC and OAuth2/OIDC support
+
+### 📊 Complete Observability
+- Prometheus metrics
+- Grafana dashboards
+- Centralized logging
+- Distributed tracing
+
+### 🔄 GitOps Workflow
+- Git as single source of truth
+- Automatic deployments on commit
+- Easy rollbacks
+- Environment promotion
+
+## Quick Links
+
+<CardGrid>
+	<Card title="Installation" icon="download">
+		Get Thinkube running on your infrastructure in minutes.
+		[Install Now →](/installation/)
+	</Card>
+	<Card title="Components" icon="puzzle">
+		Browse pre-configured services and databases.
+		[View Components →](/components/)
+	</Card>
+	<Card title="Learn" icon="open-book">
+		Interactive tutorials and learning paths.
+		[Start Learning →](/learn/overview/)
+	</Card>
+	<Card title="Architecture" icon="seti:todo">
+		Understand how Thinkube works under the hood.
+		[Read More →](/architecture/)
+	</Card>
+</CardGrid>
+
+## Join the Community
+
+- 💬 [GitHub Discussions](https://github.com/thinkube/thinkube/discussions)
+- 🐛 [Report Issues](https://github.com/thinkube/thinkube/issues)
+- 📖 [Contributing Guide](https://github.com/thinkube/thinkube/blob/main/CONTRIBUTING.md)
+- ⭐ [Star us on GitHub](https://github.com/thinkube/thinkube)
