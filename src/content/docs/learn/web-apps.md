@@ -1,104 +1,88 @@
 ---
 title: Web Applications
-description: Build and deploy modern web applications with Thinkube
+description: Build and deploy web applications on Thinkube
 ---
 
-Learn how to build and deploy modern web applications with integrated CI/CD, databases, and monitoring.
+Deploy web applications from templates - just pick a template, name your app, and Thinkube handles the rest.
 
-## Overview
+## How It Works
 
-This learning path covers everything you need to deploy production-ready web applications on Thinkube.
+1. **Pick a template** - Choose from available templates (e.g., Vue + FastAPI)
+2. **Provide basic info** - App name, domain
+3. **Deploy** - Thinkube creates your project and starts the CI/CD pipeline
+4. **Customize** - Modify the generated code for your needs
 
-## What You'll Build
+That's it. No Kubernetes knowledge required.
 
-By the end of this path, you'll have:
-- A full-stack web application deployed on Thinkube
-- PostgreSQL database with automatic backups
-- Redis for caching and sessions
-- Automatic TLS certificates
-- CI/CD pipeline with GitHub Actions
-- Monitoring and logging
+## Deploying Your First App
 
-## Prerequisites
+### From Thinkube Control
 
-- Basic understanding of web development
-- Familiarity with Git
-- A GitHub account
+1. Open `https://control.example.com`
+2. Click **Deploy Application**
+3. Select a template (e.g., `tkt-webapp-vue-fastapi`)
+4. Enter:
+   - **App name**: `my-project`
+   - **Domain**: `example.com`
+5. Click **Deploy**
 
-## Module 1: Deploy Your First App
+Thinkube automatically:
+- Creates your project with all files
+- Pushes to Gitea (your self-hosted Git)
+- Builds container images via Argo Workflows
+- Deploys via ArgoCD
 
-Start with a simple static website to understand the basics.
+**Time: 2-10 minutes** for the initial build.
 
-### Steps:
-1. Create a `thinkube.yaml` file
-2. Configure your domain
-3. Deploy using the CLI
-4. Access your application
+### Accessing Your App
 
-## Module 2: Add a Database
+Once deployed:
+- **Your app**: `https://my-project.example.com`
+- **Your code**: `https://gitea.example.com/thinkube-deployments/my-project`
 
-Learn how to connect PostgreSQL to your application.
+## Available Templates
 
-### Topics:
-- Deploy PostgreSQL
-- Configure connection strings
-- Set up automatic backups
-- Implement migrations
+| Template | Description |
+|----------|-------------|
+| `tkt-webapp-vue-fastapi` | Vue.js frontend + FastAPI backend + PostgreSQL |
+| `tkt-vllm-gradio` | LLM inference with Gradio UI (GPU) |
+| `tkt-stable-diffusion` | Image generation with Stable Diffusion (GPU) |
+| `tkt-text-embeddings` | Text embeddings service (GPU) |
 
-## Module 3: Implement Caching
+## Modifying Your App
 
-Speed up your application with Redis.
+After deployment, your code lives in Gitea. To make changes:
 
-### Topics:
-- Deploy Redis
-- Configure session storage
-- Implement caching strategies
-- Monitor cache performance
+### Option 1: Code Server (Browser-based)
 
-## Module 4: Set Up CI/CD
+1. Open `https://code.example.com`
+2. Navigate to your project in `/home/thinkube/shared-code/my-project`
+3. Edit files
+4. Commit and push - automatic rebuild and deploy
 
-Automate deployments with GitHub Actions.
+### Option 2: Clone Locally
 
-### Topics:
-- Configure GitHub repository
-- Set up deployment workflows
-- Implement testing pipelines
-- Configure staging environments
+```bash
+git clone https://gitea.example.com/thinkube-deployments/my-project.git
+cd my-project
 
-## Module 5: Production Best Practices
+# Make your changes
+# ...
 
-Prepare your application for production traffic.
-
-### Topics:
-- Configure health checks
-- Set up monitoring
-- Implement logging
-- Configure auto-scaling
-
-## Example Application
-
-Here's a complete example of deploying a Vue.js + FastAPI application:
-
-```yaml
-# thinkube.yaml
-name: my-webapp
-type: webapp
-image: myapp:latest
-domain: app.example.com
-env:
-  - DATABASE_URL: postgresql://db:5432/myapp
-  - REDIS_URL: redis://cache:6379
-resources:
-  memory: 1Gi
-  cpu: 1000m
-services:
-  - postgresql
-  - redis
+# Push to trigger rebuild
+git push
 ```
+
+Every push triggers the CI/CD pipeline automatically.
+
+## Monitoring
+
+- **Build progress**: `https://argo.example.com` (Argo Workflows)
+- **Deployment status**: `https://argocd.example.com` (ArgoCD)
+- **CI/CD pipeline**: Thinkube Control UI
 
 ## Next Steps
 
-After completing this path, explore:
-- [AI & Machine Learning](/learn/ai-ml/)
-- [DevOps Platform](/learn/devops/)
-- [Advanced Topics](/learn/advanced/)
+- [AI & Machine Learning](/learn/ai-ml/) - Deploy GPU-powered AI apps
+- [GitOps & Automation](/learn/devops/) - Understand the automation
+- [Components](/components/) - See all available services

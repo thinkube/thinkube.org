@@ -257,4 +257,4 @@ With both Cloudflare and GitHub tokens configured:
 
 - [GitHub Token Security](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure)
 - [GitHub Packages Documentation](https://docs.github.com/en/packages)
-- [Understanding Thinkube's GitOps Flow](../architecture/gitops)
+- [Understanding Thinkube's GitOps Flow](/learn/devops/)

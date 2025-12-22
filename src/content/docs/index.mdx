@@ -1,15 +1,15 @@
 ---
 title: Welcome to Thinkube
-description: Simplifying Kubernetes deployment without the complexity
+description: Self-hosted AI development platform
 template: splash
 hero:
-  tagline: Deploy applications to Kubernetes without needing to understand Kubernetes. Built for developers, powered by simplicity.
+  tagline: Build AI agents and applications on your own hardware. Claude-powered development tools, local LLMs, and complete infrastructure - pre-configured and working together.
   image:
     file: ../../assets/logo.svg
     alt: Thinkube Logo
   actions:
-    - text: Installing Thinkube
-      link: /installation/overview/
+    - text: Get Started
+      link: /intro/
       icon: right-arrow
       variant: primary
     - text: View on GitHub
@@ -17,78 +17,81 @@ hero:
       icon: external
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import FeatureCard from '../../components/FeatureCard.astro';
+import LinkCard from '../../components/LinkCard.astro';
+import CardGrid from '../../components/CardGrid.astro';
 
-## Why Thinkube?
+## The Problem
 
-<CardGrid stagger>
-	<Card title="No Kubernetes Knowledge Required" icon="rocket">
-		Deploy complex applications using simple YAML descriptors. Thinkube handles all the Kubernetes complexity for you.
-	</Card>
-	<Card title="Developer Experience First" icon="setting">
-		Integrated code-server, hot reloading, and Git workflows make development as easy as working locally.
-	</Card>
-	<Card title="Production Ready" icon="approve-check">
-		Automatic TLS certificates, monitoring, logging, and backups mean your apps are production-ready from day one.
-	</Card>
-	<Card title="AI Native Platform" icon="sparkles">
-		Pre-configured with GPU support, Jupyter notebooks, and ML frameworks for AI and machine learning workloads.
-	</Card>
+Building AI applications requires LLMs, vector databases, experiment tracking, observability, and deployment pipelines. Setting this up yourself means weeks of configuration, integration headaches, and ongoing maintenance. Cloud APIs mean costs that scale with usage and data leaving your network.
+
+## The Solution
+
+Thinkube provides a complete AI development environment that installs in hours. One installer sets up everything - from local LLM inference to GitOps deployment - configured to work together out of the box.
+
+<CardGrid columns={2}>
+	<FeatureCard title="Claude-Powered Development" icon="sparkles">
+		Thinky in JupyterLab writes, executes, and iterates on your code until it works. Claude Code in VS Code for full agentic coding.
+	</FeatureCard>
+	<FeatureCard title="Built for AI Agents" icon="cpu">
+		Local LLMs, vector databases for memory, MCP servers for tools, and LLM observability. Everything agents need to run autonomously.
+	</FeatureCard>
+	<FeatureCard title="Complete Platform" icon="layers">
+		Not just tools - an integrated environment where every component works with every other. SSO, shared storage, unified monitoring.
+	</FeatureCard>
+	<FeatureCard title="Simpler Than Helm" icon="rocket">
+		Deploy with 15 lines of YAML instead of 200+. No Kubernetes expertise needed - describe what you want, not how to deploy it.
+	</FeatureCard>
 </CardGrid>
 
-## Key Features
+## Development Tools
 
-### 🚀 Simple Deployment
-Define your application in a simple `thinkube.yaml` file:
-```yaml
-name: my-app
-type: webapp
-image: myapp:latest
-domain: app.example.com
-```
+### Thinky - AI Assistant in JupyterLab
+Chat with Claude in a sidebar while working on notebooks. Thinky can read, write, and execute your cells - and iterate until they work. When code fails, Thinky sees the error, fixes it, and re-runs automatically. An autonomous coding assistant embedded in your notebook environment.
 
-### 🔒 Security Built-in
-- Automatic TLS certificates
-- Network policies by default
-- Secret management with Vault
-- RBAC and OAuth2/OIDC support
+### Code Server with Claude Code
+VS Code in the browser with Claude Code CLI pre-installed. Full agentic coding for all your projects, accessible from anywhere.
 
-### 📊 Complete Observability
-- Prometheus metrics
-- Grafana dashboards
-- Centralized logging
-- Distributed tracing
+### Thinkube Control
+Central dashboard for your entire platform. Monitor all services with health checks and real-time GPU metrics. Deploy applications from templates with one click - just pick a template, give it a name, and watch it deploy. Manage your container registry, AI models in MLflow, secrets, and optional components. Evolving into an MCP server for LLM-based platform management.
 
-### 🔄 GitOps Workflow
-- Git as single source of truth
-- Automatic deployments on commit
-- Easy rollbacks
-- Environment promotion
+## What's Included
+
+### AI & Agents
+- **LLM Inference**: Ollama, vLLM, TensorRT-LLM, LiteLLM
+- **Vector Databases**: Qdrant, Weaviate, Chroma
+- **Observability**: Langfuse for LLM monitoring
+- **ML Platform**: JupyterHub + Thinky, MLflow
+
+### Development
+- **Code Editor**: Code Server + Claude Code
+- **Git Server**: Gitea with CI/CD integration
+- **Container Registry**: Harbor
+
+### Infrastructure
+- **Databases**: PostgreSQL, Valkey (Redis), ClickHouse
+- **CI/CD**: Argo Workflows, ArgoCD
+- **Monitoring**: Prometheus, Perses
 
 ## Quick Links
 
-<CardGrid>
-	<Card title="Installation" icon="download">
-		Get Thinkube running on your infrastructure in minutes.
-		[Install Now →](/installation/)
-	</Card>
-	<Card title="Components" icon="puzzle">
-		Browse pre-configured services and databases.
-		[View Components →](/components/)
-	</Card>
-	<Card title="Learn" icon="open-book">
-		Interactive tutorials and learning paths.
-		[Start Learning →](/learn/overview/)
-	</Card>
-	<Card title="Architecture" icon="seti:todo">
-		Understand how Thinkube works under the hood.
-		[Read More →](/architecture/)
-	</Card>
+<CardGrid columns={2}>
+	<LinkCard title="Introduction" icon="book" href="/intro/">
+		The problem Thinkube solves and what makes it unique.
+	</LinkCard>
+	<LinkCard title="Installation" icon="download" href="/installation/overview/">
+		Set up Thinkube on your hardware.
+	</LinkCard>
+	<LinkCard title="Learning Paths" icon="rocket" href="/learn/overview/">
+		Tutorials for agents, AI apps, and web development.
+	</LinkCard>
+	<LinkCard title="Components" icon="puzzle" href="/components/">
+		Explore all available services.
+	</LinkCard>
 </CardGrid>
 
-## Join the Community
+## Community
 
-- 💬 [GitHub Discussions](https://github.com/thinkube/thinkube/discussions)
-- 🐛 [Report Issues](https://github.com/thinkube/thinkube/issues)
-- 📖 [Contributing Guide](https://github.com/thinkube/thinkube/blob/main/CONTRIBUTING.md)
-- ⭐ [Star us on GitHub](https://github.com/thinkube/thinkube)
+- [GitHub Discussions](https://github.com/thinkube/thinkube/discussions)
+- [Report Issues](https://github.com/thinkube/thinkube/issues)
+- [Contributing Guide](https://github.com/thinkube/thinkube/blob/main/CONTRIBUTING.md)

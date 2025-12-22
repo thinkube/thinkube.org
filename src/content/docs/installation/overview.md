@@ -1,23 +1,25 @@
 ---
-title: Installing Thinkube
-description: Complete guide to installing Thinkube with visual walkthrough
+title: Running the Installer
+description: Complete guide to running the Thinkube installer with visual walkthrough
 ---
 
-## Prerequisites
+## Before You Begin
 
-### Phase 1: Node Preparation
+Complete these steps **before** running the installer:
 
-Before running the Thinkube installer, prepare your Ubuntu nodes using the node-setup script:
+1. **Set up tokens** - Create accounts and tokens for:
+   - [ZeroTier](./zerotier-token) - Overlay network
+   - [Cloudflare](./cloudflare-token) - SSL certificates
+   - [GitHub](./github-token) - GitOps and container registry
+   - [Hugging Face](./huggingface-token) - AI model downloads
 
-```bash
-curl -sSL https://raw.githubusercontent.com/thinkube/node-setup/main/bootstrap.sh | sudo bash
-```
+2. **Prepare your nodes** - Run [Node Setup](./node-setup) on each Ubuntu 24.04 machine:
+   ```bash
+   curl -sSL https://raw.githubusercontent.com/thinkube/tk-node-setup/main/bootstrap.sh | sudo bash
+   ```
+   This configures networking, ZeroTier overlay, and SSH access.
 
-This script prepares your nodes for remote installation by configuring networking and SSH access. See [Node Setup Documentation](./node-setup) for details.
-
-### Phase 2: Thinkube Installation
-
-Once nodes are prepared, run the Thinkube installer desktop application.
+3. **Run the installer** - Download and run the Thinkube installer desktop application (this page).
 
 ## Installation Walkthrough
 
@@ -112,7 +114,7 @@ Selected servers show green "Selected" badges. Click **Continue with X Servers**
 
 ### Step 6: SSH Connectivity Check
 
-**IMPORTANT**: Before proceeding, you must test SSL connectivity. This is a mandatory step to verify all systems are accessible before starting the MicroK8s configuration. The installer will prompt you to test connectivity to each node.
+**IMPORTANT**: Before proceeding, you must test SSH connectivity. This is a mandatory step to verify all systems are accessible before starting the Kubernetes configuration. The installer will prompt you to test connectivity to each node.
 
 ### Step 7: SSH Setup
 
@@ -244,7 +246,7 @@ Click **Start Deployment** to begin installation.
 
 The deployment runs in phases:
 1. **Initial Setup** - Environment and network configuration
-2. **Kubernetes** - MicroK8s installation and cluster setup
+2. **Kubernetes** - k8s-snap installation and cluster setup
 
 A popup shows real-time Ansible playbook output. You can expand it to see detailed task execution.
 

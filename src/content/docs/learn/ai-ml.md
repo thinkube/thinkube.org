@@ -1,101 +1,111 @@
 ---
 title: AI & Machine Learning
-description: Deploy AI and ML workloads on Thinkube
+description: Run AI/ML workloads on Thinkube
 ---
 
-Create AI-powered applications with GPU support, notebooks, and ML frameworks on Thinkube.
+Run LLMs, train models, and experiment with AI - all on your own hardware with no API costs.
 
-## Overview
+## What Thinkube Provides
 
-This learning path covers deploying and managing AI/ML workloads, from development notebooks to production inference services.
+- **JupyterHub** - Multi-user notebook environment
+- **MLflow** - Experiment tracking and model registry
+- **GPU Support** - NVIDIA GPU Operator for GPU workloads
+- **LiteLLM** - Gateway to route requests to local LLMs
+- **Vector Databases** - Qdrant, Weaviate, Chroma (optional)
 
-## What You'll Build
+## Running Local LLMs
 
-- JupyterHub for collaborative notebooks
-- MLflow for experiment tracking
-- Model serving endpoints
-- GPU-accelerated training pipelines
-- LLM applications with vector databases
+Deploy LLM inference from templates - no cloud APIs needed.
 
-## Prerequisites
+### Deploy an LLM Service
 
-- Basic Python knowledge
-- Understanding of machine learning concepts
-- Familiarity with Jupyter notebooks
+1. Open Thinkube Control
+2. Deploy the `tkt-vllm-gradio` template
+3. Provide app name and domain
+4. Wait for deployment (models download on first run)
 
-## Module 1: JupyterHub Setup
+Access your LLM at `https://my-llm.example.com`
 
-Deploy a multi-user notebook environment.
+### Available AI Templates
 
-### Topics:
-- Install JupyterHub
-- Configure user authentication
-- Set up persistent storage
-- Install ML libraries
+| Template | Description | GPU Memory |
+|----------|-------------|------------|
+| `tkt-vllm-gradio` | LLM inference with Gradio UI | ~20GB |
+| `tkt-stable-diffusion` | Image generation | ~20GB |
+| `tkt-text-embeddings` | Text embeddings service | ~8GB |
+| `tkt-tensorrt-llm-harmony` | TensorRT-LLM optimized inference | Varies |
 
-## Module 2: MLflow Integration
+## JupyterHub
 
-Track experiments and manage models.
+Access notebooks at `https://jupyter.example.com` with Keycloak SSO.
 
-### Topics:
-- Deploy MLflow server
-- Configure experiment tracking
-- Set up model registry
-- Implement CI/CD for models
+### Features
+- Persistent storage for notebooks
+- Pre-installed ML libraries
+- GPU access for training
+- MLflow integration for experiment tracking
 
-## Module 3: GPU Configuration
+### Example Workflow
 
-Enable GPU support for training.
+1. Open JupyterHub
+2. Create a notebook
+3. Train your model
+4. Log experiments to MLflow
+5. Register models in MLflow Model Registry
 
-### Topics:
-- Configure GPU nodes
-- Install CUDA drivers
-- Set up resource allocation
-- Monitor GPU usage
+## MLflow
 
-## Module 4: Vector Databases
+Track experiments and manage models at `https://mlflow.example.com`.
 
-Deploy vector databases for LLM applications.
+### Capabilities
+- **Experiment Tracking** - Log parameters, metrics, artifacts
+- **Model Registry** - Version and stage models
+- **Model Serving** - Deploy models as endpoints
 
-### Topics:
-- Install Weaviate or Qdrant
-- Configure embeddings
-- Implement semantic search
-- Build RAG applications
+Models are stored in SeaweedFS/JuiceFS and can be mounted by inference services.
 
-## Module 5: Model Serving
+## Vector Databases (Optional)
 
-Deploy models for production inference.
+For RAG applications and semantic search:
 
-### Topics:
-- Set up inference endpoints
-- Configure auto-scaling
-- Implement A/B testing
-- Monitor model performance
+| Service | Use Case |
+|---------|----------|
+| Qdrant | Vector similarity search |
+| Weaviate | Vector search with filtering |
+| Chroma | Lightweight embedding database |
 
-## Example Configuration
+Enable via optional component installation.
 
-Deploy a complete ML platform:
+## GPU Configuration
+
+Thinkube uses the NVIDIA GPU Operator for automatic GPU management.
+
+### GPU in Templates
+
+Templates request GPU resources in `thinkube.yaml`:
 
 ```yaml
-# thinkube.yaml
-name: ml-platform
-type: ml-workspace
-components:
-  - jupyterhub
-  - mlflow
-  - weaviate
-gpu:
-  enabled: true
-  count: 2
-  type: nvidia-t4
-storage:
-  notebooks: 100Gi
-  models: 500Gi
+spec:
+  containers:
+    - name: inference
+      gpu:
+        count: 1
+        memory: "20Gi"
 ```
+
+The platform handles GPU scheduling and resource allocation.
+
+## LiteLLM Gateway
+
+Route LLM requests through a unified API at `https://litellm.example.com`.
+
+### Benefits
+- Single API for multiple model backends
+- OpenAI-compatible endpoint
+- Usage tracking via Langfuse (optional)
 
 ## Next Steps
 
-- [Data Analytics](/learn/data-analytics/)
-- [DevOps for ML](/learn/mlops/)
-- [Advanced GPU Topics](/learn/gpu-advanced/)
+- [Web Applications](/learn/web-apps/) - Deploy web frontends for your AI services
+- [GitOps & Automation](/learn/devops/) - Understand the deployment flow
+- [Components](/components/) - See all available AI/ML components

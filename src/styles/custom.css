@@ -1,29 +1,46 @@
 /* Thinkube Custom Theme for Starlight */
+/* Matching thinkube-control and thinkube-installer styling */
 
 :root {
-  /* Thinkube Brand Colors */
-  --th-primary: #006680;
-  --th-accent: #00a9d4;
-  
-  /* Override Starlight accent colors with Thinkube colors */
-  --sl-color-accent: #006680;  /* Thinkube primary */
+  /* Thinkube Brand Colors (converted from OKLCH) */
+  --th-primary: #1a6b7c;           /* oklch(38% 0.15 220) - teal primary */
+  --th-primary-light: #008ca8;     /* oklch(60% 0.13 220) - lighter teal */
+  --th-accent: #c4a35a;            /* oklch(65% 0.10 75) - amber accent */
+  --th-background: #fdfcfa;        /* oklch(99% 0.005 75) - warm off-white */
+
+  /* Override Starlight accent colors */
+  --sl-color-accent: var(--th-primary);
   --sl-color-accent-low: #e6f4f7;
-  --sl-color-accent-high: #003f55;
+  --sl-color-accent-high: #0d4a57;
+
+  /* Sharp corners like thinkube apps */
+  --sl-border-radius-sm: 0;
+  --sl-border-radius-md: 0;
+  --sl-border-radius-lg: 0;
+
+  /* Background */
+  --sl-color-bg: var(--th-background);
 }
 
-/* Light Theme specific */
+/* Light Theme */
 :root[data-theme="light"] {
-  --sl-color-accent-high: #003f55;  /* Darker for text */
-  --sl-color-accent: #006680;  /* Thinkube primary */
-  --sl-color-accent-low: #e6f4f7;  /* Light teal for backgrounds */
+  --sl-color-accent-high: #0d4a57;
+  --sl-color-accent: var(--th-primary);
+  --sl-color-accent-low: #e6f4f7;
+  --sl-color-bg: var(--th-background);
 }
 
-/* Dark Theme - use lighter teal for better contrast */
+/* Dark Theme - matches thinkube-control dark mode */
 :root[data-theme="dark"] {
   --sl-color-accent-low: #1a4d5c;
-  --sl-color-accent: #008ca8;  /* Lighter teal for dark backgrounds */
-  --sl-color-accent-high: #008ca8;  /* Same lighter teal */
-  --sl-color-text-accent: #008ca8;  /* Links use lighter teal */
+  --sl-color-accent: var(--th-primary-light);
+  --sl-color-accent-high: var(--th-primary-light);
+  --sl-color-text-accent: var(--th-primary-light);
+  --sl-color-bg: #1f3a42;          /* oklch(24% 0.06 220) */
+  --sl-color-bg-nav: #243f48;
+  --sl-color-bg-sidebar: #1f3a42;
+  --sl-color-hairline: #3d5a64;
+  --sl-color-hairline-light: #2d4a54;
 }
 
 /* Headings with theme color */
@@ -37,12 +54,7 @@ h1, h2, h3, h4, h5, h6 {
 :root[data-theme="dark"] h4,
 :root[data-theme="dark"] h5,
 :root[data-theme="dark"] h6 {
-  color: #008ca8;  /* Lighter teal in dark mode */
-}
-
-/* Fix navigation hover in light mode */
-:root[data-theme="light"] nav[aria-label="Main"] a:hover {
-  color: var(--th-primary);
+  color: var(--th-primary-light);
 }
 
 /* Site title */
@@ -52,31 +64,89 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 :root[data-theme="dark"] .site-title {
-  color: #008ca8 !important;  /* Lighter teal in dark mode */
+  color: var(--th-primary-light) !important;
 }
 
-/* Selected menu item with consistent Thinkube colors */
+/* Selected menu item */
 nav[aria-label="Main"] a[aria-current="page"] {
   background-color: var(--th-primary) !important;
   color: white !important;
 }
 
-/* Buttons */
-:root[data-theme="light"] a[href][class*="link-button"],
-:root[data-theme="light"] .sl-link-button {
-  background-color: #006680 !important;
-  color: white !important;
+:root[data-theme="dark"] nav[aria-label="Main"] a[aria-current="page"] {
+  background-color: var(--th-primary-light) !important;
 }
 
-:root[data-theme="dark"] a[href][class*="link-button"],
-:root[data-theme="dark"] .sl-link-button {
-  background-color: #008ca8 !important;
+/* Primary buttons */
+:root[data-theme="light"] a[href][class*="primary"],
+:root[data-theme="light"] .sl-link-button.primary {
+  background-color: var(--th-primary) !important;
   color: white !important;
+  border-radius: 0 !important;
+}
+
+:root[data-theme="dark"] a[href][class*="primary"],
+:root[data-theme="dark"] .sl-link-button.primary {
+  background-color: var(--th-primary-light) !important;
+  color: white !important;
+  border-radius: 0 !important;
+}
+
+/* All buttons sharp corners */
+.sl-link-button,
+a[href][class*="link-button"] {
+  border-radius: 0 !important;
 }
 
 a[href][class*="link-button"]:hover,
 .sl-link-button:hover {
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
-/* Let Starlight handle link colors through accent variables */
+/* Cards - sharp corners */
+.card {
+  border-radius: 0 !important;
+}
+
+/* Sidebar items */
+nav.sidebar a {
+  border-radius: 0 !important;
+}
+
+/* Code blocks - sharp corners */
+.expressive-code pre {
+  border-radius: 0 !important;
+}
+
+/* Tables */
+table {
+  border-radius: 0 !important;
+}
+
+th, td {
+  border-radius: 0 !important;
+}
+
+/* Input fields */
+input, select, textarea {
+  border-radius: 0 !important;
+}
+
+/* Hero section styling */
+.hero {
+  background: linear-gradient(135deg, var(--th-background) 0%, #e6f4f7 100%);
+}
+
+:root[data-theme="dark"] .hero {
+  background: linear-gradient(135deg, var(--sl-color-bg) 0%, #1a4d5c 100%);
+}
+
+/* Accent color for special highlights */
+.sl-markdown-content strong {
+  color: inherit;
+}
+
+/* Fix navigation hover */
+:root[data-theme="light"] nav[aria-label="Main"] a:hover {
+  color: var(--th-primary);
+}

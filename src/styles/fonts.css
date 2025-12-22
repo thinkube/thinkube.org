@@ -1,16 +1,28 @@
 /* Thinkube Font Configuration */
+/* Matching thinkube-control and thinkube-installer fonts */
 
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Slab:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Import fonts - same as thinkube apps */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Font families */
-  --sl-font: 'Roboto Slab', ui-serif, serif;
-  --sl-font-system: 'Roboto Slab', ui-serif, serif;
-  --sl-font-system-mono: 'JetBrains Mono', 'Noto Sans Mono', ui-monospace, monospace;
+  /* Font families - matching thinkube-control */
+  --sl-font: 'Poppins', system-ui, -apple-system, sans-serif;
+  --sl-font-system: 'Poppins', system-ui, -apple-system, sans-serif;
+  --sl-font-system-mono: 'Noto Sans Mono', ui-monospace, monospace;
 }
 
-/* Headings use Poppins */
+/* All text uses Poppins */
+body,
+p,
+li,
+td,
+th,
+label,
+.sl-markdown-content {
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+}
+
+/* Headings - Poppins with proper weights */
 h1, h2, h3, h4, h5, h6,
 .sl-markdown-content h1,
 .sl-markdown-content h2,
@@ -22,28 +34,19 @@ h1, h2, h3, h4, h5, h6,
 .sl-link-button,
 nav[aria-label="Main"] a,
 .pagination-links a {
-  font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif !important;
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif !important;
 }
 
-/* Body text uses Roboto Slab */
-body,
-p,
-li,
-td,
-.sl-markdown-content {
-  font-family: 'Roboto Slab', ui-serif, serif;
-}
-
-/* Code uses JetBrains Mono */
+/* Code uses Noto Sans Mono */
 code,
 pre,
 .expressive-code,
 .sl-markdown-content code,
 .sl-markdown-content pre {
-  font-family: 'JetBrains Mono', 'Noto Sans Mono', ui-monospace, monospace !important;
+  font-family: 'Noto Sans Mono', ui-monospace, monospace !important;
 }
 
-/* Adjust font weights for better readability */
+/* Font weights */
 body {
   font-weight: 400;
 }
@@ -62,10 +65,20 @@ h3, h4, h5, h6 {
 
 .site-title {
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
-/* Improve readability */
+/* Navigation and UI elements - medium weight like thinkube apps */
+nav,
+button,
+[role="button"],
+label,
+.badge {
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+  font-weight: 500;
+}
+
+/* Readability */
 .sl-markdown-content {
   line-height: 1.7;
 }

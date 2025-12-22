@@ -1,0 +1,114 @@
+---
+/**
+ * Link Card component with Lucide icons
+ * Used for navigation cards with links
+ */
+import {
+  Rocket,
+  Download,
+  Puzzle,
+  BookOpen,
+  Layers,
+  Server,
+  ArrowRight
+} from 'lucide-astro';
+
+interface Props {
+  title: string;
+  icon: string;
+  href: string;
+}
+
+const { title, icon, href } = Astro.props;
+
+// Map icon names to Lucide components
+const iconMap: Record<string, any> = {
+  download: Download,
+  puzzle: Puzzle,
+  book: BookOpen,
+  layers: Layers,
+  server: Server,
+  rocket: Rocket,
+};
+
+const IconComponent = iconMap[icon] || Rocket;
+---
+
+<a href={href} class="link-card">
+  <div class="icon-wrapper">
+    <IconComponent size={20} />
+  </div>
+  <div class="content">
+    <h3>{title}</h3>
+    <slot />
+  </div>
+  <div class="arrow">
+    <ArrowRight size={16} />
+  </div>
+</a>
+
+<style>
+  .link-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: var(--sl-color-bg-nav);
+    border: 1px solid var(--sl-color-hairline);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .link-card:hover {
+    border-color: var(--sl-color-accent);
+    background: var(--sl-color-accent-low);
+  }
+
+  .icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-accent);
+  }
+
+  .content {
+    flex: 1;
+  }
+
+  .content h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+
+  .content :global(p) {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-2);
+    line-height: 1.4;
+  }
+
+  .arrow {
+    color: var(--sl-color-accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .link-card:hover .arrow {
+    opacity: 1;
+  }
+
+  :root[data-theme="light"] .content h3 {
+    color: #1a1a1a;
+  }
+
+  :root[data-theme="light"] .content :global(p) {
+    color: #4a4a4a;
+  }
+</style>

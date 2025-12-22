@@ -5,91 +5,88 @@ sidebar_label: Overview
 sidebar_position: 1
 ---
 
-Thinkube provides a comprehensive set of pre-configured components for building modern applications.
+Thinkube provides pre-configured components organized into core (always installed) and optional services.
 
 ## Core Components
 
 ### Infrastructure
-- **MicroK8s**: Lightweight Kubernetes distribution
+- **Kubernetes (k8s-snap)**: Canonical's production-grade Kubernetes
 - **Ingress Controller**: NGINX-based traffic routing
-- **Cert Manager**: Automatic TLS certificate management
-- **CoreDNS**: Internal DNS resolution
+- **ACME Certificates**: Automatic TLS via Let's Encrypt
+- **CoreDNS**: Internal and external DNS resolution
 
 ### Development Tools
 - **Code Server**: Web-based VS Code IDE
 - **Gitea**: Self-hosted Git service
 - **ArgoCD**: GitOps continuous deployment
 - **Harbor**: Container registry
-
-### Databases
-- **PostgreSQL**: Relational database with high availability
-- **Redis**: In-memory data store
-- **MongoDB**: Document database
-- **Elasticsearch**: Search and analytics engine
-
-### Monitoring & Logging
-- **Prometheus**: Metrics collection
-- **Grafana**: Visualization dashboards
-- **Loki**: Log aggregation
-- **Jaeger**: Distributed tracing
-
-## AI/ML Components
-
-### Notebooks & IDEs
-- **JupyterHub**: Multi-user notebook server
-- **RStudio**: Statistical computing environment
-- **Zeppelin**: Data analytics notebook
-
-### ML Platforms
-- **MLflow**: ML lifecycle management
-- **Kubeflow**: Machine learning workflows
-- **Ray**: Distributed AI computing
-
-### Vector Databases
-- **Weaviate**: Vector search engine
-- **Qdrant**: Neural search engine
-- **Milvus**: Vector similarity search
-
-## Application Services
-
-### Message Queues
-- **RabbitMQ**: Message broker
-- **Kafka**: Event streaming platform
-- **NATS**: Cloud-native messaging
+- **Argo Workflows**: Workflow orchestration
 
 ### Storage
-- **MinIO**: S3-compatible object storage
-- **Longhorn**: Distributed block storage
-- **NFS**: Network file system
+- **SeaweedFS**: S3-compatible distributed object storage
+- **JuiceFS**: POSIX-compatible distributed filesystem
+- **PostgreSQL**: Relational database with high availability
 
-### Security
-- **Keycloak**: Identity and access management
-- **Vault**: Secrets management
-- **Falco**: Runtime security
+### Platform Services
+- **Keycloak**: Identity and access management (SSO/OAuth2)
+- **Thinkube Control**: Central management UI
+- **JupyterHub**: Multi-user notebook server
+- **MLflow**: ML experiment tracking and model registry
+- **DevPi**: Python package server
 
-## Quick Deploy
+### GPU Support
+- **NVIDIA GPU Operator**: Automatic GPU driver and runtime management
 
-Each component can be deployed with a simple command:
+## Optional Components
+
+### AI/ML Services
+- **LiteLLM**: LLM gateway for routing to local models
+- **Ollama**: Local LLM inference server
+- **Langfuse**: LLM observability and prompt management
+- **Argilla**: Data labeling for NLP
+- **CVAT**: Computer vision annotation tool
+
+### Vector Databases
+- **Qdrant**: Vector similarity search
+- **Weaviate**: Vector search engine
+- **Chroma**: Embedding database
+
+### Data Services
+- **ClickHouse**: Column-oriented analytics database
+- **OpenSearch**: Search and analytics engine
+- **Valkey**: In-memory data store (Redis-compatible)
+- **NATS**: Cloud-native messaging
+
+### Monitoring
+- **Prometheus**: Metrics collection
+- **Perses**: Dashboard visualization (Grafana alternative)
+
+### Utilities
+- **PgAdmin**: PostgreSQL administration
+- **Knative**: Serverless workloads
+
+## Deployment
+
+Core components are installed automatically during Thinkube setup. Optional components can be enabled via the Thinkube Control UI or Ansible playbooks:
 
 ```bash
-# Deploy PostgreSQL
-thinkube deploy postgresql
-
-# Deploy with custom configuration
-thinkube deploy postgresql --values custom-values.yaml
+# Via Ansible (from /tmp/thinkube-installer)
+ANSIBLE_BECOME_PASSWORD='password' ~/.venv/bin/ansible-playbook \
+  -i inventory/inventory.yaml \
+  ansible/40_thinkube/optional/SERVICE_NAME/00_install.yaml
 ```
 
-## Component Templates
+## Component Features
 
-All components come with:
+All components include:
 - Pre-configured best practices
-- Automatic TLS encryption
-- Monitoring integration
-- Backup strategies
-- High availability options
+- Automatic TLS encryption via ACME
+- Keycloak SSO integration
+- Prometheus metrics export
+- Persistent storage on JuiceFS/SeaweedFS
 
 ## Next Steps
 
-- [Deploy Your First Component](/docs/tutorials/deploy-component)
-- [Custom Configuration](/docs/guides/configuration)
-- [Component Integration](/docs/guides/integration)
+- [Architecture Overview](/architecture/) - Understand how components integrate
+- [Installation Guide](/installation/overview/) - Deploy Thinkube
+- [Learning Paths](/learn/overview/) - Tutorials for common use cases

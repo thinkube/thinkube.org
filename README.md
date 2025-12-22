@@ -1,49 +1,72 @@
-# Starlight Starter Kit: Basics
+# Thinkube.org
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+> **Warning**: This project is under active development and not yet ready for production use.
+
+---
+
+Official documentation website for the Thinkube platform, built with Astro and Starlight.
+
+## Overview
+
+This repository contains the source for [thinkube.org](https://thinkube.org), providing:
+- Getting started guides
+- Platform documentation
+- Tutorials and examples
+- Architecture documentation
+
+## Development
+
+### Prerequisites
+
+- Node.js 18+
+
+### Commands
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server (localhost:4321)
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## Project Structure
 
 ```
-npm create astro@latest -- --template starlight
+src/
+├── assets/          # Images, logos, static assets
+├── content/
+│   └── docs/        # Documentation content (Markdown/MDX)
+│       ├── index.mdx
+│       ├── installation/
+│       ├── learn/
+│       ├── components/
+│       └── architecture/
+├── styles/          # Custom CSS
+└── content.config.ts
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Built With
 
-## 🚀 Project Structure
+- [Astro](https://astro.build/) - Static site generator
+- [Starlight](https://starlight.astro.build/) - Documentation theme
 
-Inside of your Astro + Starlight project, you'll see the following folders and files:
+## Contributing
 
-```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   └── docs/
-│   └── content.config.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
-```
+For now, contributions are limited to reporting issues and feedback. Code contributions via pull requests are planned for a future version.
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+- **Issues & Feedback**: https://github.com/thinkube/thinkube/issues
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+## License
 
-Static assets, like favicons, can be placed in the `public/` directory.
+Apache License 2.0 - See [LICENSE](LICENSE)
 
-## 🧞 Commands
+## Copyright
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+Copyright 2025 Alejandro Martínez Corriá

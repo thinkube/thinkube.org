@@ -1,120 +1,87 @@
 ---
-title: DevOps Platform
-description: Create a complete DevOps environment with Thinkube
+title: GitOps & Automation
+description: Understand how Thinkube automates deployments
 ---
 
-Set up a comprehensive DevOps platform with GitOps, CI/CD, monitoring, and security tools.
+Learn how Thinkube's GitOps architecture automatically builds and deploys your applications.
 
-## Overview
+## The Automation Stack
 
-This learning path guides you through building a complete DevOps environment for your team using Thinkube's integrated tools.
+Thinkube uses an Argo-based toolchain:
 
-## What You'll Build
+| Component | Role |
+|-----------|------|
+| **Gitea** | Self-hosted Git repositories |
+| **Argo Workflows** | CI/CD pipeline orchestration |
+| **Kaniko** | Container image building (no Docker daemon) |
+| **Harbor** | Container image registry |
+| **ArgoCD** | GitOps deployment to Kubernetes |
 
-- GitOps workflow with ArgoCD
-- CI/CD pipelines with Tekton
-- Monitoring stack with Prometheus & Grafana
-- Log aggregation with Loki
-- Secret management with Vault
+## How It Works
 
-## Prerequisites
+When you push code to Gitea, the automation chain triggers:
 
-- Understanding of Git workflows
-- Basic knowledge of CI/CD concepts
-- Familiarity with YAML
-
-## Module 1: GitOps Foundation
-
-Implement GitOps with ArgoCD.
-
-### Topics:
-- Install ArgoCD
-- Configure application sync
-- Set up environments
-- Implement rollback strategies
-
-## Module 2: CI/CD Pipelines
-
-Build automated pipelines.
-
-### Topics:
-- Deploy Tekton
-- Create build pipelines
-- Implement testing stages
-- Configure deployment triggers
-
-## Module 3: Monitoring Stack
-
-Set up comprehensive monitoring.
-
-### Topics:
-- Deploy Prometheus
-- Configure Grafana dashboards
-- Set up alerting rules
-- Implement SLOs
-
-## Module 4: Log Management
-
-Centralize and analyze logs.
-
-### Topics:
-- Install Loki
-- Configure log aggregation
-- Set up log queries
-- Create log-based alerts
-
-## Module 5: Security & Compliance
-
-Implement security best practices.
-
-### Topics:
-- Deploy Vault for secrets
-- Configure RBAC
-- Implement policy as code
-- Set up security scanning
-
-## Example Setup
-
-Complete DevOps platform configuration:
-
-```yaml
-# thinkube.yaml
-name: devops-platform
-type: platform
-components:
-  - argocd
-  - tekton
-  - prometheus
-  - grafana
-  - loki
-  - vault
-integrations:
-  github:
-    enabled: true
-    webhooks: true
-  slack:
-    enabled: true
-    channels:
-      - alerts
-      - deployments
+```
+Git Push → Argo Workflow → Kaniko Build → Harbor → ArgoCD → Running App
 ```
 
-## Best Practices
+### Step by Step
 
-### GitOps Workflow
-1. All changes through Git
-2. Automated sync and rollback
-3. Environment promotion
-4. Audit trail
+1. **Git Push** - You push to `gitea.example.com/thinkube-deployments/my-app`
+2. **Webhook Fires** - Gitea notifies Argo Workflows
+3. **Tests Run** - If enabled, tests execute in containers
+4. **Kaniko Builds** - Container images are built in-cluster (no Docker needed)
+5. **Harbor Stores** - Images push to `registry.example.com/thinkube/my-app`
+6. **Git Updated** - Webhook adapter updates the deployment manifest in Git
+7. **ArgoCD Syncs** - Detects the Git change and deploys new images
 
-### Monitoring Strategy
-1. Golden signals (latency, traffic, errors, saturation)
-2. Custom business metrics
-3. Proactive alerting
-4. Capacity planning
+**Total time: 2-20 minutes** depending on build complexity.
+
+## Viewing Your Pipelines
+
+### Argo Workflows
+
+Access `https://argo.example.com` to see:
+- Running and completed workflows
+- Build logs for each step
+- Test results
+
+### ArgoCD
+
+Access `https://argocd.example.com` to see:
+- Application sync status
+- Deployed resources
+- Sync history
+
+### Thinkube Control
+
+The CI/CD dashboard shows the complete pipeline with all stages in one view.
+
+## The GitOps Model
+
+All deployments are driven by Git:
+
+- **Gitea** stores your application code and Kubernetes manifests
+- **ArgoCD** watches Git and applies changes to the cluster
+- **No manual kubectl** - everything flows through Git
+
+### Benefits
+
+- **Audit trail** - Every change is a Git commit
+- **Rollback** - Revert to any previous commit
+- **Reproducible** - Git is the source of truth
+
+## Monitoring (Optional)
+
+Enable optional monitoring components:
+
+| Component | Purpose |
+|-----------|---------|
+| **Prometheus** | Metrics collection |
+| **Perses** | Dashboard visualization |
 
 ## Next Steps
 
-- [Advanced Security](/learn/security/)
-- [Multi-cluster Management](/learn/multi-cluster/)
-- [Disaster Recovery](/learn/disaster-recovery/)
+- [Web Applications](/learn/web-apps/) - Deploy your first app
+- [AI & Machine Learning](/learn/ai-ml/) - GPU workloads
+- [Components](/components/) - All available services

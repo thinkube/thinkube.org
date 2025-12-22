@@ -32,7 +32,7 @@ graph TB
     end
     
     subgraph "Kubernetes Layer"
-        K8s[MicroK8s]
+        K8s[Kubernetes]
         Ingress[Ingress Controller]
         CertMgr[Cert Manager]
     end
@@ -57,8 +57,8 @@ graph TB
 ## Component Layers
 
 ### 1. Infrastructure Layer
-The foundation built on MicroK8s:
-- Lightweight Kubernetes distribution
+The foundation built on Canonical k8s-snap:
+- Production-grade Kubernetes distribution
 - Single-node or multi-node clusters
 - Automatic updates and patches
 - Built-in addons (DNS, storage, registry)
@@ -128,22 +128,22 @@ resources:
 ### Secret Management
 - Encrypted at rest
 - Automatic rotation
-- Vault integration
+- Kubernetes secrets
 - Environment isolation
 
 ## Storage Architecture
 
 ### Persistent Storage
-- Local path provisioner
-- NFS support
-- Distributed storage (Longhorn)
-- Backup automation
+- JuiceFS distributed filesystem
+- POSIX-compatible mounts
+- Backed by SeaweedFS
+- Automatic data replication
 
 ### Object Storage
-- MinIO S3-compatible storage
-- Multi-tenancy support
-- Versioning and lifecycle
-- Cross-region replication
+- SeaweedFS S3-compatible storage
+- High-performance blob storage
+- Erasure coding support
+- Integrated with MLflow for model storage
 
 ## Networking
 
@@ -163,7 +163,7 @@ resources:
 
 ### Metrics
 - Prometheus for metrics collection
-- Grafana for visualization
+- Perses for visualization
 - Pre-built dashboards
 - Alert management
 
@@ -209,7 +209,6 @@ resources:
 
 ## Next Steps
 
-- [Installation Architecture](/docs/architecture/installation)
-- [Security Deep Dive](/docs/architecture/security)
-- [Networking Details](/docs/architecture/networking)
-- [Storage Options](/docs/architecture/storage)
+- [Installation Guide](/installation/overview/) - Deploy Thinkube
+- [Components](/components/) - Available services
+- [Learning Paths](/learn/overview/) - Tutorials and guides
