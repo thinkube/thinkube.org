@@ -21,6 +21,9 @@ interface Props {
 
 const { title, icon, href } = Astro.props;
 
+// Prepend base URL for internal links
+const fullHref = href.startsWith('/') ? `${import.meta.env.BASE_URL}${href.slice(1)}` : href;
+
 // Map icon names to Lucide components
 const iconMap: Record<string, any> = {
   download: Download,
@@ -34,7 +37,7 @@ const iconMap: Record<string, any> = {
 const IconComponent = iconMap[icon] || Rocket;
 ---
 
-<a href={href} class="link-card">
+<a href={fullHref} class="link-card">
   <div class="icon-wrapper">
     <IconComponent size={20} />
   </div>
