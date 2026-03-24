@@ -6,30 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is the official documentation site for Thinkube, a home-based development platform built on Kubernetes. The site is built using **Astro** with the **Starlight** documentation theme.
 
-**Key Platform Concept**: Thinkube simplifies Kubernetes deployment by allowing users to deploy applications using simple YAML descriptors (thinkube.yaml) without requiring Kubernetes expertise. It includes integrated development tools, AI/ML components, and GitOps workflows.
-
 ## Development Commands
 
-All commands run from the root directory:
-
 ```bash
-# Install dependencies
-npm install
-
-# Start development server (localhost:4321)
-npm run dev
-# Alternative
-npm start
-
-# Build for production (outputs to ./dist/)
-npm run build
-
-# Preview production build
-npm run preview
-
-# Run Astro CLI commands
-npm run astro [command]
-npm run astro -- --help
+npm install              # Install dependencies
+npm run dev              # Start dev server (localhost:4321)
+npm run build            # Build for production (outputs to ./dist/)
+npm run preview          # Preview production build
 ```
 
 ## Architecture
@@ -53,7 +36,7 @@ src/
 
 ### Content Organization
 
-Documentation is organized in `src/content/docs/` with the following sections:
+Documentation is organized in `src/content/docs/`:
 
 - **Getting Started**: Introduction and installation guides
 - **Learn**: Tutorials covering web apps, AI/ML, and DevOps workflows
@@ -69,17 +52,11 @@ The Starlight configuration in `astro.config.mjs` defines:
 - Social links (GitHub)
 - Localization (English as root locale)
 
-### Content Schema
-
-Uses Starlight's built-in content loader and schema (`@astrojs/starlight/loaders` and `@astrojs/starlight/schema`). All documentation files must be `.md` or `.mdx` in `src/content/docs/`.
-
 ### Routing
 
 Files in `src/content/docs/` are automatically exposed as routes based on filename:
-- `src/content/docs/intro.md` → `/intro/`
-- `src/content/docs/installation/overview.md` → `/installation/overview/`
-
-The homepage uses `index.mdx` with the `template: splash` layout for a landing page design.
+- `src/content/docs/intro.md` -> `/intro/`
+- `src/content/docs/installation/overview.md` -> `/installation/overview/`
 
 ## Key Conventions
 
@@ -93,27 +70,6 @@ description: Page description
 ---
 ```
 
-Architecture/component pages may include additional fields:
-```yaml
----
-id: unique-id
-title: Page Title
-sidebar_label: Label
-sidebar_position: 1
----
-```
-
-Splash pages (homepage):
-```yaml
----
-title: Welcome
-template: splash
-hero:
-  tagline: ...
-  actions: [...]
----
-```
-
 ### Components
 
 Uses Starlight's built-in components:
@@ -124,24 +80,12 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 ### Assets
 
 - SVG logo at `src/assets/logo.svg`
-- Reference assets in markdown with relative paths or from `/` for public directory
 - Custom fonts and CSS in `src/styles/`
 
 ## Content Guidelines
-
-When working on documentation:
 
 1. **File placement**: Add new docs to appropriate subdirectory in `src/content/docs/`
 2. **Sidebar updates**: Manual sections require updates in `astro.config.mjs`; `components/` and `architecture/` use autogenerate
 3. **Links**: Use root-relative paths (`/installation/overview/`) for internal links
 4. **Code blocks**: Standard markdown code fencing with language identifiers
 5. **Diagrams**: Mermaid diagrams are supported in markdown
-6. **Platform concepts**: Reference `thinkube.yaml` descriptors, GitOps workflow, and Kubernetes abstraction layer when relevant
-
-## Theme Customization
-
-Custom styling is applied via:
-- `src/styles/custom.css` - General theme overrides
-- `src/styles/fonts.css` - Custom font definitions
-
-Both are imported in the Starlight config.
