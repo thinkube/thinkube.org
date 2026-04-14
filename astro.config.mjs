@@ -57,7 +57,7 @@ export default defineConfig({
 					items: [
 						{ label: 'Creating Templates', slug: 'thinkube-control/creating-templates' },
 						{ label: 'Manifest Spec', slug: 'thinkube-control/spec-manifest' },
-						{ label: 'Variables Spec', slug: 'thinkube-control/spec-variables' },
+						{ label: 'Environment Variables', slug: 'thinkube-control/spec-variables' },
 						{ label: 'thinkube.yaml Spec', slug: 'thinkube-control/spec-thinkube-yaml' },
 					],
 				},

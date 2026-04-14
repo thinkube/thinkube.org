@@ -7,29 +7,39 @@ The `thinkube.yaml` file is a static descriptor that tells Thinkube Control what
 
 ## Core Principles
 
-1. **Static Descriptor** - Not a template with conditionals
-2. **Cloud Agnostic** - Works on-premise and cloud
-3. **Simple** - No Kubernetes knowledge required
-4. **Flexible** - Supports 1 to N containers
+1. **Static Descriptor** — No templates, no conditionals, no variable substitutions
+2. **Portable Applications** — No cloud-specific or Kubernetes-specific syntax, so applications can be deployed to other environments via future bridge adapters
+3. **Simple** — No Kubernetes knowledge required
+4. **Flexible** — Supports 1 to N containers
+5. **Two Workload Types** — Always-on apps and scale-to-zero Knative services
 
 ## Schema
 
 ```yaml
 apiVersion: thinkube.io/v1
 kind: ThinkubeDeployment
-metadata:
-  name: string              # Application name
 
 spec:
+  deployment:               # Deployment type and scaling (optional)
+    type: string            # "app" (default) or "knative"
+    minScale: number        # Knative: minimum pods (default: 0)
+    maxScale: number        # Knative: maximum pods (default: 5)
+    containerConcurrency: number  # Knative: max concurrent requests per pod (default: 0 = unlimited)
+    timeoutSeconds: number  # Knative: request timeout in seconds (default: 300)
+
   containers:               # List of containers
     - name: string          # Container identifier
       build: string         # Build context path
       port: number          # Container port (optional)
       size: string          # Resource size (optional)
+      health: string        # Health endpoint path (required for containers with ports)
       schedule: string      # Cron expression (optional)
+      mounts:               # Storage mounts (optional)
+        - string            # Format: "storage-name:/mount/path"
       gpu:                  # GPU requirements (optional)
         count: number
         memory: string
+      capabilities: [string] # Special capabilities (optional)
       test:                 # Test configuration (optional)
         enabled: boolean
         command: string
@@ -37,14 +47,52 @@ spec:
       migrations:           # Migration configuration (optional)
         tool: string
         auto: boolean
-      capabilities: [string] # Special capabilities (optional)
 
   routes:                   # HTTP routing (optional)
     - path: string
       to: string
 
   services: [string]        # Platform services (optional)
+
+  dependencies:             # External service dependencies (optional)
+    - name: string          # Dependency identifier
+      type: string          # Template type or service class
+      env: string           # Environment variable to inject with resolved URL
+
+  env:                      # Configurable environment variables (optional)
+    - name: string          # Variable name
+      description: string   # Help text shown in deployment UI
+      default: string       # Default value (optional)
 ```
+
+**Note:** There is no `metadata.name` field. The application name is provided by the user at deploy time through the Thinkube Control UI. The platform injects it as the `APP_NAME` environment variable.
+
+## Deployment Type
+
+Controls how the application is deployed. Optional section; defaults to `type: app`.
+
+### type
+
+- `"app"` (default): Always-on Kubernetes Deployment + Service + HTTPRoute. The application runs continuously.
+- `"knative"`: Knative Service with scale-to-zero capability. The application scales down to zero pods when idle and scales up on demand.
+
+Apps are for services that must always be running (model servers, UIs, databases). Knative is for stateless processing services that can scale to zero when idle.
+
+### minScale (Knative only)
+
+Minimum number of pods. Default: `0` (scale to zero when idle). Set to `1` for services that need to be always available but still benefit from Knative auto-scaling.
+
+### maxScale (Knative only)
+
+Maximum number of pods. Default: `5`. Caps resource usage under load.
+
+### containerConcurrency (Knative only)
+
+Maximum concurrent requests per pod. Default: `0` (unlimited). Set to `1` for CPU-heavy processing (one request at a time per pod). Knative's activator queues excess requests when all pods are at capacity.
+
+### timeoutSeconds (Knative only)
+
+Maximum time in seconds a request can run before being terminated. Default: `300` (5 minutes). Increase for long-running operations (e.g., `600` for document processing, `1800` for heavy batch jobs).
 
 ## Container Fields
 
@@ -66,6 +114,18 @@ TCP port the container listens on. Optional for workers/jobs.
 
 Range: 1-65535
 
+### health
+
+Health check endpoint path. Required for all containers that expose a port.
+
+Standard value: `/health`
+
+### mounts
+
+Storage volume mounts. Format: `"storage-name:/mount/path"`. Storage must be declared in the `services` section.
+
+Example: `"uploads:/data/uploads"`
+
 ### size
 
 Resource allocation hint.
@@ -82,7 +142,6 @@ Resource allocation hint.
 Cron expression for scheduled containers. Container will not have persistent pods.
 
 Example: `"0 * * * *"` (hourly), `"0 2 * * *"` (daily at 2am)
-
 
 ### gpu
 
@@ -123,10 +182,6 @@ test:
   image: "custom/runner:1"   # Optional image override
 ```
 
-Default test images:
-- Python: `registry.{domain}/library/python-base:3.11-slim`
-- Node.js: `registry.{domain}/library/node-base:18-alpine`
-
 ### migrations
 
 Database migration configuration for Python/FastAPI backends using Alembic.
@@ -136,11 +191,6 @@ migrations:
   tool: alembic    # Currently only alembic is supported
   auto: true       # Generate migrations on deploy (default: true)
 ```
-
-When configured, Thinkube will:
-1. Set up database connection for migration generation
-2. Run `alembic revision --autogenerate` during deployment
-3. Commit generated migrations to the repository
 
 ### capabilities
 
@@ -174,13 +224,41 @@ Platform services the application requires. Environment variables are auto-injec
 | `cache` | `CACHE_URL`, `REDIS_URL` |
 | `queue` | `QUEUE_URL` |
 
-## Substitutions
+## Dependencies
 
-Only these substitutions are allowed in thinkube.yaml:
+External service dependencies — other deployed templates or platform services that this application needs. At deploy time, Thinkube Control resolves each dependency to a running service URL and injects it as the declared environment variable. If a dependency isn't deployed, deployment fails with a clear error.
 
-| Variable | Usage |
-|----------|-------|
-| `{{ project_name }}` | In metadata.name only |
+```yaml
+dependencies:
+  - name: embeddings
+    type: text-embeddings
+    env: EMBEDDINGS_URL
+  - name: ollama
+    type: ollama
+    env: OLLAMA_URL
+```
+
+| Field | Description |
+|-------|-------------|
+| `name` | Human-readable identifier, used in UI and error messages |
+| `type` | Template type or service class to match against deployed services |
+| `env` | Environment variable name to inject with the resolved URL |
+
+## Environment Variables
+
+Configurable environment variables surfaced in the Thinkube Control deployment UI. Users can override defaults at deploy time. Injected into all containers in the deployment.
+
+```yaml
+env:
+  - name: GREETING
+    description: "Greeting message returned by the service"
+    default: "Hello from Knative!"
+  - name: BATCH_SIZE
+    description: "Number of items to process per batch"
+    default: "8"
+```
+
+If no default is provided, the variable is required at deploy time. Dependency-wired env vars (from the `dependencies` section) take precedence over same-name entries here.
 
 ## Examples
 
@@ -189,14 +267,13 @@ Only these substitutions are allowed in thinkube.yaml:
 ```yaml
 apiVersion: thinkube.io/v1
 kind: ThinkubeDeployment
-metadata:
-  name: "{{ project_name }}"
 
 spec:
   containers:
     - name: app
       build: .
       port: 3000
+      health: /health
 ```
 
 ### Web Application with Database
@@ -204,8 +281,6 @@ spec:
 ```yaml
 apiVersion: thinkube.io/v1
 kind: ThinkubeDeployment
-metadata:
-  name: "{{ project_name }}"
 
 spec:
   containers:
@@ -213,6 +288,7 @@ spec:
       build: ./backend
       port: 8000
       size: medium
+      health: /health
       test:
         enabled: true
         command: "pytest --cov=app"
@@ -223,6 +299,7 @@ spec:
     - name: frontend
       build: ./frontend
       port: 80
+      health: /health
 
   routes:
     - path: /api
@@ -234,13 +311,45 @@ spec:
     - database
 ```
 
+### Knative Scale-to-Zero Service
+
+```yaml
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+
+spec:
+  deployment:
+    type: knative
+    minScale: 0
+    maxScale: 3
+    containerConcurrency: 5
+    timeoutSeconds: 30
+
+  containers:
+    - name: demo
+      build: .
+      port: 8080
+      size: small
+      health: /health
+
+  env:
+    - name: GREETING
+      description: "Greeting message returned by the service"
+      default: "Hello from Knative!"
+    - name: SIMULATE_WORK_MS
+      description: "Milliseconds of simulated processing per request"
+      default: "100"
+
+  routes:
+    - path: /
+      to: demo
+```
+
 ### ML/AI Application with GPU
 
 ```yaml
 apiVersion: thinkube.io/v1
 kind: ThinkubeDeployment
-metadata:
-  name: "{{ project_name }}"
 
 spec:
   containers:
@@ -248,11 +357,10 @@ spec:
       build: .
       port: 7860
       size: xlarge
+      health: /health
       gpu:
         count: 1
         memory: "20Gi"
-      test:
-        enabled: false
 
   routes:
     - path: /
@@ -264,8 +372,6 @@ spec:
 ```yaml
 apiVersion: thinkube.io/v1
 kind: ThinkubeDeployment
-metadata:
-  name: "{{ project_name }}"
 
 spec:
   containers:
@@ -273,10 +379,12 @@ spec:
       build: ./api
       port: 8000
       size: medium
+      health: /health
 
     - name: webapp
       build: ./webapp
       port: 3000
+      health: /health
 
     - name: worker
       build: ./worker
@@ -300,9 +408,18 @@ spec:
 
 ## Platform Behavior
 
+### Deployment Types
+
+- `type: app` (default): Creates Kubernetes Deployment + Service + HTTPRoute. The application runs continuously.
+- `type: knative`: Creates a Knative Service with DomainMapping. The application scales to zero when idle and scales up on demand. Knative's activator queues requests when pods are scaling up.
+
 ### Health Checks
 
-All containers with ports must expose `/health` endpoint.
+All containers with ports must expose a `/health` endpoint.
+
+### Dependency Resolution
+
+When dependencies are declared, Thinkube Control looks up deployed services matching the `type`, resolves the internal cluster URL, and injects it as the declared environment variable. Deployment fails with a clear error if a dependency is not found.
 
 ### TLS Certificates
 
@@ -315,15 +432,16 @@ When tests are configured:
 - Failed tests prevent deployment
 - Test results reported to Thinkube Control
 
-## What is NOT Supported
+## What is NOT in thinkube.yaml
 
-- Conditional logic (`{% if %}` statements)
-- Complex Kubernetes configurations
-- Cloud-specific settings
-- Deployment strategies
+These are intentionally excluded from the descriptor:
+
+- Application name (provided at deploy time, injected as `APP_NAME` env var)
+- Variable substitutions or template syntax (`{{ }}`, `{% %}`)
+- Kubernetes-specific configurations (resource limits, node selectors, etc.)
+- Deployment strategies (rolling update, blue-green, etc.)
 - Service mesh configurations
-- Raw environment variables (use Dockerfile ENV)
-- Command overrides (use Dockerfile CMD)
+- Command overrides (use Dockerfile `CMD`)
 - Multi-region deployments
 
-These are handled by Dockerfiles, Thinkube Control, or future Cloud Bridge.
+These concerns are handled by Dockerfiles (for container-level configuration) and Thinkube Control (for deployment orchestration).

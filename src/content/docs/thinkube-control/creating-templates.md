@@ -3,7 +3,7 @@ title: Creating Templates
 description: Build your own Thinkube application templates
 ---
 
-This guide walks you through creating a Thinkube template. Templates are GitHub repositories that define deployable applications.
+Templates are GitHub repositories containing plain, runnable application code. No special templating syntax — your code reads configuration from environment variables, and the platform injects everything at build and deploy time.
 
 ## Philosophy
 
@@ -16,21 +16,23 @@ This guide walks you through creating a Thinkube template. Templates are GitHub 
 
 ## Template Structure
 
-A template repository contains:
+A template repository contains plain files:
 
 ```
 my-template/
 ├── manifest.yaml          # Template metadata and parameters
 ├── thinkube.yaml          # Deployment descriptor
 ├── backend/
-│   ├── Dockerfile
-│   ├── main.py.jinja      # Source files with Jinja2 templates
+│   ├── Dockerfile         # Plain Dockerfile (uses ARG for registry)
+│   ├── main.py            # Plain Python (reads env vars)
 │   └── ...
 ├── frontend/
 │   ├── Dockerfile
 │   └── ...
-└── README.md.jinja
+└── README.md
 ```
+
+There are no `.jinja` files. The template IS runnable code.
 
 ## Step 1: Create manifest.yaml
 
@@ -50,39 +52,7 @@ parameters: []  # Start with zero - add only if essential
 
 ### Adding Parameters (Only When Necessary)
 
-Only add parameters that fundamentally change the template structure:
-
-```yaml
-parameters:
-  - name: enable_websockets
-    type: bool
-    description: Include WebSocket support?
-    default: false
-```
-
-**When to add a parameter:**
-- Changes fundamental architecture
-- Affects 5+ files when toggled
-- Adds/removes major dependencies
-- Security boundary decision
-
-**When NOT to add a parameter:**
-- Version selections (be opinionated)
-- Runtime configuration (use environment variables)
-- Style preferences (users can change after)
-
-### Parameter Types
-
-| Type | Use Case | Example |
-|------|----------|---------|
-| `bool` | Yes/No decisions | `enable_auth: true` |
-| `str` | Text input (rarely needed) | `api_prefix: "/api/v1"` |
-| `int` | Numbers (rarely needed) | `worker_count: 4` |
-| `choice` | Selection from options | `auth_provider: "keycloak"` |
-
-### Dynamic Model Selection
-
-For AI templates, use dynamic choices from the model catalog:
+Parameters are collected in the deployment UI and injected as environment variables at runtime. Only add parameters that fundamentally change the template:
 
 ```yaml
 parameters:
@@ -95,6 +65,21 @@ parameters:
       is_downloaded: true
 ```
 
+Your code reads the parameter as an env var:
+```python
+MODEL_ID = os.environ.get("MODEL_ID", "default-model")
+```
+
+**When to add a parameter:**
+- Changes fundamental architecture
+- Affects 5+ files when toggled
+- Adds/removes major dependencies
+
+**When NOT to add a parameter:**
+- Version selections (be opinionated)
+- Runtime configuration (use `env:` in thinkube.yaml)
+- Style preferences (users can change after)
+
 ### Secrets
 
 Declare required API keys and credentials:
@@ -104,27 +89,19 @@ secrets:
   - name: HF_TOKEN
     description: Hugging Face token for gated models
     required: true
-
-  - name: SLACK_WEBHOOK
-    description: Optional Slack notifications
-    required: false
 ```
 
-Secrets are:
-- Encrypted at rest
-- Managed in Thinkube Control UI
-- Injected as environment variables
-- Never exposed in logs or Git
+Secrets are encrypted at rest, managed in Thinkube Control UI, and injected as environment variables.
 
 ## Step 2: Create thinkube.yaml
 
-The deployment descriptor tells Thinkube Control what containers to build and how to deploy them.
+The deployment descriptor tells Thinkube Control what containers to build and how to deploy them. It is a static file — no variable substitutions.
+
+### Always-On Application (default)
 
 ```yaml
 apiVersion: thinkube.io/v1
 kind: ThinkubeDeployment
-metadata:
-  name: "{{ project_name }}"
 
 spec:
   containers:
@@ -132,6 +109,7 @@ spec:
       build: ./backend
       port: 8000
       size: medium
+      health: /health
       migrations:
         tool: alembic
         auto: true
@@ -139,6 +117,7 @@ spec:
     - name: frontend
       build: ./frontend
       port: 80
+      health: /health
 
   routes:
     - path: /api
@@ -150,6 +129,41 @@ spec:
     - database
 ```
 
+### Knative Scale-to-Zero Service
+
+For stateless processing services that should scale to zero when idle:
+
+```yaml
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+
+spec:
+  deployment:
+    type: knative
+    minScale: 0
+    maxScale: 3
+    containerConcurrency: 5
+    timeoutSeconds: 30
+
+  containers:
+    - name: api
+      build: .
+      port: 8080
+      size: small
+      health: /health
+
+  env:
+    - name: GREETING
+      description: "Greeting message returned by the service"
+      default: "Hello from Knative!"
+
+  routes:
+    - path: /
+      to: api
+```
+
+Use `type: app` (the default) for services that must always be running. Use `type: knative` for stateless processing that benefits from scale-to-zero.
+
 ### Container Options
 
 | Field | Description | Example |
@@ -157,8 +171,10 @@ spec:
 | `name` | Container identifier | `backend`, `worker` |
 | `build` | Build context path | `./backend`, `.` |
 | `port` | Container port | `8000` |
+| `health` | Health endpoint path (required for containers with ports) | `/health` |
 | `size` | Resource size | `small`, `medium`, `large`, `xlarge` |
 | `schedule` | Cron expression (for jobs) | `"0 * * * *"` |
+| `mounts` | Storage volume mounts | `"uploads:/data/uploads"` |
 
 ### GPU Configuration
 
@@ -170,41 +186,36 @@ containers:
     build: .
     port: 7860
     size: xlarge
+    health: /health
     gpu:
       count: 1
       memory: "20Gi"
 ```
 
 GPU containers automatically get:
-- **`/mlflow-models` mount** - All models from MLflow Model Registry
-- **MLflow credentials** - `MLFLOW_AUTH_USERNAME`, `MLFLOW_AUTH_PASSWORD`, etc.
+- **`/mlflow-models` mount** — All models from MLflow Model Registry
+- **MLflow credentials** — `MLFLOW_AUTH_USERNAME`, `MLFLOW_AUTH_PASSWORD`, etc.
 
-Your container can load models from `/mlflow-models/<model-name>/<version>/`.
+### Dependencies
 
-### Testing
-
-Configure tests that run before builds:
+Declare dependencies on other deployed services. Thinkube Control resolves each one to a running cluster URL and injects it as the declared environment variable. Deployment fails if a dependency is not found.
 
 ```yaml
-containers:
-  - name: backend
-    build: ./backend
-    port: 8000
-    test:
-      enabled: true
-      command: "pytest -v"
+dependencies:
+  - name: embeddings
+    type: text-embeddings
+    env: EMBEDDINGS_URL
 ```
 
-### Database Migrations
+### Environment Variables
 
-For Python/FastAPI backends using Alembic:
+Declare configurable environment variables that are surfaced in the deployment UI:
 
 ```yaml
-containers:
-  - name: backend
-    migrations:
-      tool: alembic  # Currently only alembic is supported
-      auto: true     # Generate on deploy
+env:
+  - name: BATCH_SIZE
+    description: "Number of items to process per batch"
+    default: "8"
 ```
 
 ### Platform Services
@@ -215,68 +226,51 @@ containers:
 | `cache` | `CACHE_URL`, `REDIS_URL` |
 | `queue` | `QUEUE_URL` |
 
-## Step 3: Use Template Variables
+### Testing
 
-Files ending in `.jinja` are processed with Copier. Use these variables:
+```yaml
+containers:
+  - name: backend
+    build: ./backend
+    port: 8000
+    health: /health
+    test:
+      enabled: true
+      command: "pytest -v"
+```
 
-### Standard Parameters (Always Available)
+### Database Migrations
 
-| Variable | Description |
-|----------|-------------|
-| `{{ project_name }}` | Application name (lowercase-hyphenated) |
-| `{{ project_description }}` | Brief description |
-| `{{ author_name }}` | Developer name |
-| `{{ author_email }}` | Developer email |
+```yaml
+containers:
+  - name: backend
+    migrations:
+      tool: alembic
+      auto: true
+```
 
-### Domain Variables
+## Step 3: Write Your Code
 
-| Variable | Description |
-|----------|-------------|
-| `{{ domain_name }}` | Platform domain |
-| `{{ container_registry }}` | Harbor registry URL |
-| `{{ admin_username }}` | Platform admin username |
+Your code is plain — no template syntax. Read all configuration from environment variables.
 
-### Example Usage
+### Python
 
-**Python file (server.py.jinja):**
 ```python
-APP_NAME = "{{ project_name }}"
-DOMAIN = "{{ domain_name }}"
+import os
+
+APP_NAME = os.environ.get("APP_NAME", "")
+DOMAIN = os.environ.get("DOMAIN_NAME", "")
+MODEL_ID = os.environ.get("MODEL_ID", "default-model")
+BATCH_SIZE = int(os.environ.get("BATCH_SIZE", "8"))
 ```
 
-**Dockerfile (Dockerfile.jinja):**
-```dockerfile
-FROM {{ container_registry }}/library/python:3.12-slim
-LABEL maintainer="{{ author_name }} <{{ author_email }}>"
-```
+### Dockerfiles
 
-**Config file (config.yaml.jinja):**
-```yaml
-app:
-  name: {{ project_name }}
-  host: {{ project_name }}.{{ domain_name }}
-```
-
-### Important: thinkube.yaml is Static
-
-Only `{{ project_name }}` is allowed in thinkube.yaml:
-
-```yaml
-metadata:
-  name: "{{ project_name }}"  # OK
-
-spec:
-  containers:
-    - image: {{ registry }}/...  # NOT ALLOWED
-```
-
-## Step 4: Create Dockerfiles
-
-Each container needs a Dockerfile. Use the platform registry for base images:
+Use `ARG CONTAINER_REGISTRY` for base images. The platform provides the value at build time:
 
 ```dockerfile
-# Dockerfile.jinja
-FROM {{ container_registry }}/library/python:3.12-slim
+ARG CONTAINER_REGISTRY
+FROM ${CONTAINER_REGISTRY}/library/python-base:3.12-slim
 
 WORKDIR /app
 COPY requirements.txt .
@@ -297,12 +291,32 @@ def health():
     return {"status": "healthy"}
 ```
 
-## Step 5: Test Your Template
+## Step 4: Push and Deploy
 
 1. Push to a GitHub repository
 2. In Thinkube Control, go to Templates
 3. Enter your repository URL
 4. Deploy and verify
+
+## Development Workflow
+
+The natural way to build templates:
+
+1. **Start from a template** — Deploy an existing template via Thinkube Control
+2. **Develop your app** — Edit code in code-server, push to Gitea, iterate fast
+3. **Publish as template** — When ready, click "Publish as Template" in the UI
+
+Since there's no template syntax in your code, the app you developed IS the template. Publishing just pushes it to your GitHub org and registers it in your template catalog.
+
+## From App to Template
+
+Because templates are plain code, converting a deployed app into a reusable template is trivial:
+
+1. Your app already has `manifest.yaml` and `thinkube.yaml` (they came with the original template)
+2. Your code already reads env vars (it had to, for the platform to work)
+3. Your Dockerfiles already use `ARG CONTAINER_REGISTRY` (the build system requires it)
+
+There's nothing to "extract" or "generalize." The code is already template-ready.
 
 ## Best Practices
 
@@ -312,17 +326,17 @@ def health():
 - Be opinionated about technology choices
 - Use clear, descriptive template names
 - Include working example code
-- Document what the template provides
+- Read all configuration from environment variables
 
 ### Don't
 
+- Add template syntax (`{{ }}`) to your code
 - Create "configurable everything" templates
 - Add parameters for runtime configuration
-- Use conditionals in thinkube.yaml
 - Hardcode domain-specific values
 
 ## Reference
 
-- [Template Manifest Spec](/thinkube-control/spec-manifest/) - Full manifest.yaml specification
-- [Template Variables Spec](/thinkube-control/spec-variables/) - All available variables
-- [thinkube.yaml Spec](/thinkube-control/spec-thinkube-yaml/) - Deployment descriptor specification
+- [Template Manifest Spec](/thinkube-control/spec-manifest/) — Full manifest.yaml specification
+- [Platform Environment Variables](/thinkube-control/spec-variables/) — All available variables
+- [thinkube.yaml Spec](/thinkube-control/spec-thinkube-yaml/) — Deployment descriptor specification

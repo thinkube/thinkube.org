@@ -1,162 +1,145 @@
 ---
-title: Template Variables Spec
-description: Variables available in Thinkube templates
+title: Platform Environment Variables
+description: Environment variables available to deployed applications
 ---
 
-This reference documents all variables available to templates during Copier processing.
+Thinkube injects environment variables into every deployed application. Your code reads these at runtime — no template processing or variable substitution is involved.
 
-## Variable Categories
+## Platform Variables
 
-### Standard Parameters
-
-Provided for every template deployment:
+Automatically injected into every container. Always available.
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `project_name` | Application name (lowercase-hyphenated) | `my-app` |
-| `project_description` | Brief description | `My awesome application` |
-| `author_name` | Developer/deployer name | `John Doe` |
-| `author_email` | Developer/deployer email | `john@example.com` |
+| `APP_NAME` | Application name (from deploy time) | `my-app` |
+| `APP_TITLE` | Human-readable title | `My App` |
+| `DOMAIN_NAME` | Platform domain | `thinkube.com` |
+| `APP_URL` | Full application URL | `https://my-app.thinkube.com` |
+| `FRONTEND_URL` | Same as APP_URL | `https://my-app.thinkube.com` |
+| `API_BASE_URL` | API base URL | `https://my-app.thinkube.com/api` |
+| `CONTAINER_REGISTRY` | Harbor registry URL | `registry.thinkube.com` |
 
-### Domain Variables
+### Authentication Variables
 
-Installation-specific values from the platform:
+| Variable | Description |
+|----------|-------------|
+| `KEYCLOAK_URL` | Keycloak base URL |
+| `KEYCLOAK_REALM` | Keycloak realm (`thinkube`) |
+| `KEYCLOAK_CLIENT_ID` | OAuth2 client ID for this app |
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `domain_name` | Platform domain | `thinkube.com` |
-| `container_registry` | Harbor registry URL | `registry.thinkube.com` |
-| `admin_username` | Platform admin username | `tkadmin` |
-
-### Template-Specific Parameters
-
-Additional parameters defined in `manifest.yaml` become available as variables.
-
-## Usage Examples
-
-### Python Code (.py.jinja)
+### Usage in Code
 
 ```python
-# server.py.jinja
-APP_NAME = "{{ project_name }}"
-APP_DESCRIPTION = "{{ project_description }}"
-DOMAIN = "{{ domain_name }}"
-AUTHOR = "{{ author_name }} <{{ author_email }}>"
+import os
+
+APP_NAME = os.environ.get("APP_NAME", "")
+DOMAIN = os.environ.get("DOMAIN_NAME", "")
+REGISTRY = os.environ.get("CONTAINER_REGISTRY", "")
 ```
 
-### Dockerfiles (.Dockerfile.jinja)
+## Build Arguments
+
+Injected at build time via Docker `ARG`. Available in Dockerfiles only.
+
+| Build Arg | Description | Example |
+|-----------|-------------|---------|
+| `CONTAINER_REGISTRY` | Harbor registry URL | `registry.thinkube.com` |
+
+### Usage in Dockerfiles
 
 ```dockerfile
-# Dockerfile.jinja
-FROM {{ container_registry }}/library/python:3.12-slim
-LABEL maintainer="{{ author_name }} <{{ author_email }}>"
-LABEL description="{{ project_description }}"
+ARG CONTAINER_REGISTRY
+FROM ${CONTAINER_REGISTRY}/library/python-base:3.12-slim
 ```
 
-### YAML Files (.yaml.jinja)
+The platform passes `--build-arg CONTAINER_REGISTRY=...` to every Kaniko build automatically.
+
+## Service Variables
+
+Injected when the corresponding service is declared in `thinkube.yaml`:
 
 ```yaml
-# config.yaml.jinja
-app:
-  name: {{ project_name }}
-  host: {{ project_name }}.{{ domain_name }}
-  registry: {{ container_registry }}
+services:
+  - database
+  - cache
 ```
 
-### Markdown (.md.jinja)
-
-```markdown
-# {{ project_name }}
-
-{{ project_description }}
-
-## Author
-{{ author_name }} ({{ author_email }})
-
-## Access
-https://{{ project_name }}.{{ domain_name }}
-```
-
-## Important Rules
-
-### Only .jinja Files Are Processed
-
-Files without the `.jinja` extension are copied as-is without variable substitution.
-
-| File | Processed? |
-|------|------------|
-| `main.py.jinja` | Yes - becomes `main.py` |
-| `main.py` | No - copied unchanged |
-| `Dockerfile.jinja` | Yes - becomes `Dockerfile` |
-| `Dockerfile` | No - copied unchanged |
-
-### thinkube.yaml is Static
-
-The deployment descriptor does **not** support Jinja2 templates except for one substitution:
-
-| Allowed | Not Allowed |
-|---------|-------------|
-| `{{ project_name }}` in metadata.name | Any other variable |
-
-```yaml
-# thinkube.yaml - CORRECT
-metadata:
-  name: "{{ project_name }}"  # OK
-
-# thinkube.yaml - WRONG
-spec:
-  containers:
-    - image: {{ container_registry }}/...  # NOT ALLOWED
-```
-
-### Variable Names Are Case-Sensitive
-
-Use exact names as documented:
-
-| Correct | Incorrect |
+| Service | Variables |
 |---------|-----------|
-| `{{ container_registry }}` | `{{ harbor_registry }}` |
-| `{{ domain_name }}` | `{{ domain }}` |
-| `{{ project_name }}` | `{{ projectName }}` |
+| `database` | `DATABASE_URL`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DATABASE` |
+| `cache` | `CACHE_URL`, `REDIS_URL` |
+| `queue` | `QUEUE_URL` |
 
-### No Custom Variables
+## Dependency Variables
 
-Only the documented variables are available. You cannot define your own variables outside of manifest.yaml parameters.
+Injected when dependencies are declared in `thinkube.yaml`. The platform resolves each dependency to a running service URL:
 
-## Common Mistakes
+```yaml
+dependencies:
+  - name: embeddings
+    type: text-embeddings
+    env: EMBEDDINGS_URL
+```
 
-### Wrong Variable Names
+The `env` field becomes the variable name. Deployment fails if the dependency is not found.
+
+## User-Configurable Variables
+
+Declared in `thinkube.yaml` under `env:`. These are surfaced in the deployment UI where users can override defaults:
+
+```yaml
+env:
+  - name: BATCH_SIZE
+    description: "Items per batch"
+    default: "8"
+```
+
+### Usage in Code
 
 ```python
-# WRONG
-registry = "{{ harbor_registry }}"
-domain = "{{ domain }}"
-
-# CORRECT
-registry = "{{ container_registry }}"
-domain = "{{ domain_name }}"
+BATCH_SIZE = int(os.environ.get("BATCH_SIZE", "8"))
 ```
 
-### Variables in thinkube.yaml
+## Manifest Parameter Variables
 
-```yaml
-# WRONG - thinkube.yaml doesn't support these
-spec:
-  containers:
-    - name: backend
-      image: {{ container_registry }}/{{ project_name }}/backend
+Parameters declared in `manifest.yaml` (e.g., `model_id`) are injected as uppercase environment variables at deploy time:
 
-# CORRECT - Use Dockerfile.jinja instead
-# In Dockerfile.jinja:
-FROM {{ container_registry }}/library/python:3.12-slim
+| Manifest Parameter | Environment Variable |
+|-------------------|---------------------|
+| `model_id` | `MODEL_ID` |
+| `enable_websockets` | `ENABLE_WEBSOCKETS` |
+
+### Usage in Code
+
+```python
+MODEL_ID = os.environ.get("MODEL_ID", "default-model")
 ```
 
-### Missing .jinja Extension
+## GPU / MLflow Variables
 
-```
-# WRONG - File won't be processed
-config.yaml          # Variables like {{ domain_name }} stay as literal text
+Automatically injected when a container has `gpu` configuration:
 
-# CORRECT - File will be processed
-config.yaml.jinja    # Variables are substituted, output is config.yaml
-```
+| Variable | Description |
+|----------|-------------|
+| `MLFLOW_AUTH_USERNAME` | MLflow API username |
+| `MLFLOW_AUTH_PASSWORD` | MLflow API password |
+| `MLFLOW_KEYCLOAK_TOKEN_URL` | Keycloak token endpoint |
+| `MLFLOW_KEYCLOAK_CLIENT_ID` | MLflow OAuth client ID |
+| `MLFLOW_CLIENT_SECRET` | MLflow OAuth client secret |
+| `SEAWEEDFS_PASSWORD` | S3 storage access key |
+
+GPU containers also get `/mlflow-models` mounted with all models from MLflow Model Registry.
+
+## Summary
+
+All configuration flows through environment variables. There is no template processing or variable substitution in your application code:
+
+| Source | When Injected | Example |
+|--------|--------------|---------|
+| Platform variables | Always | `APP_NAME`, `DOMAIN_NAME` |
+| Build args | At build time | `CONTAINER_REGISTRY` in Dockerfiles |
+| Service variables | When service declared | `DATABASE_URL` |
+| Dependency variables | When dependency declared | `EMBEDDINGS_URL` |
+| User-configurable | When env declared | `BATCH_SIZE` |
+| Manifest parameters | When parameter provided | `MODEL_ID` |
+| GPU/MLflow | When gpu configured | `MLFLOW_AUTH_USERNAME` |

@@ -22,16 +22,19 @@ secrets: []             # Required secrets for the application
 
 ## Standard Parameters
 
-These are automatically available in every template (do not define in manifest.yaml):
+These are collected at deploy time and injected as environment variables into every container (do not define in manifest.yaml):
 
-| Parameter | Description |
-|-----------|-------------|
-| `project_name` | Application name (lowercase-hyphenated) |
-| `project_description` | Brief description |
-| `author_name` | Developer name |
-| `author_email` | Developer email |
+| Deploy-time Input | Environment Variable | Description |
+|-------------------|---------------------|-------------|
+| App name | `APP_NAME` | Application name (lowercase-hyphenated) |
+| App name | `APP_TITLE` | Human-readable title (auto-generated) |
+| (platform config) | `DOMAIN_NAME` | Platform domain |
+| (platform config) | `CONTAINER_REGISTRY` | Harbor registry URL |
+| (platform config) | `APP_URL` | Full application URL |
 
 ## Parameter Types
+
+Parameters defined here are collected in the deployment UI and injected as **uppercase environment variables** at runtime. For example, a parameter named `model_id` becomes the `MODEL_ID` env var.
 
 ### bool
 
