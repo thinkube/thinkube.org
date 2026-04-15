@@ -130,6 +130,7 @@ Open your browser, go to `jupyter.yourdomain.com`, and you're in your notebook e
 
 ## Next steps
 
-1. **[Install Thinkube](/installation/overview/)** — Get it running on your machine
-2. **[Learning Paths](/learn/overview/)** — Tutorials for AI, web apps, and DevOps
-3. **[Explore Components](/components/)** — Deep dive into every service
+1. **[Your First Deploy](/learn/your-first-deploy/)** — Deploy, edit, push, and see it live in 15 minutes
+2. **[Install Thinkube](/installation/overview/)** — Get it running on your machine
+3. **[Playbooks](/learn/overview/)** — Step-by-step guides for web apps, AI, and ML
+4. **[Explore Components](/components/)** — Deep dive into every service

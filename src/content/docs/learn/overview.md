@@ -1,75 +1,36 @@
 ---
-title: Learning Overview
-description: Choose your learning path based on what you want to build
+title: Playbooks
+description: Step-by-step guides for building on Thinkube
 ---
 
-Choose your learning path based on what you want to build with Thinkube.
+Each playbook walks you through a specific task from start to finish. Prerequisites, steps, expected results — everything you need to follow along.
 
-## Learning Paths
+## Start here
 
-### 🌐 Web Applications
-Build and deploy web applications with automatic HTTPS and GitOps.
-
-**Perfect for:**
-- Full-stack application development
-- API backends and microservices
-- Self-hosted tools and services
-- Rapid prototyping
-
-[Start Web Apps Path →](/learn/web-apps/)
+### [Your First Deploy](/learn/your-first-deploy/)
+Deploy a service, edit the code, push a change, and watch it go live. The complete Thinkube development cycle in 15 minutes. **Do this one first** — it shows how everything fits together.
 
 ---
 
-### 🤖 AI & Machine Learning
-Experiment with AI/ML on your own hardware with GPU support.
+## Build something
 
-**Perfect for:**
-- Learning machine learning hands-on
-- Running local LLMs (no API costs)
-- Fine-tuning models on your data
-- Building RAG applications
+### [Web Applications](/learn/web-apps/)
+Deploy a full-stack web app with a Vue.js frontend, FastAPI backend, and PostgreSQL database. Push code, it deploys.
 
-[Start AI/ML Path →](/learn/ai-ml/)
+### [AI & Machine Learning](/learn/ai-ml/)
+Run local LLMs, train models in JupyterHub, track experiments with MLflow. GPU-accelerated, no cloud costs.
 
 ---
 
-### 🔧 GitOps & Automation
-Understand the automated deployment and monitoring infrastructure.
+## Understand the platform
 
-**Perfect for:**
-- Understanding GitOps workflows
-- CI/CD pipeline architecture
-- Infrastructure monitoring
-- Container orchestration concepts
-
-[Start DevOps Path →](/learn/devops/)
+### [GitOps & Automation](/learn/devops/)
+How the CI/CD pipeline works under the hood — Gitea, Argo Workflows, ArgoCD, and Harbor working together.
 
 ---
 
-## What Makes Thinkube Different
+## What you don't need
 
-### Full Control
-Everything runs on your own infrastructure. No cloud dependencies, no API costs, no vendor lock-in.
-
-### Production-Grade Stack
-Real Kubernetes, GitOps, and AI/ML infrastructure - simplified for individual developers and small teams.
-
-### Complete Privacy
-Self-hosted Git, container registry, LLMs, and storage. Your code and data stay on your hardware.
-
-## Prerequisites
-
-### What You Need
-- Basic command line familiarity
-- Understanding of Git basics
-- A Thinkube installation
-
-### What You Don't Need
-- Kubernetes expertise (Thinkube handles it)
-- Cloud provider accounts
-- DevOps background
-
-## Get Help
-
-- 💬 [GitHub Discussions](https://github.com/thinkube/thinkube/discussions)
-- 🐛 [Report Issues](https://github.com/thinkube/thinkube/issues)
+- **Kubernetes expertise** — Thinkube handles all the orchestration
+- **Cloud accounts** — everything runs on your hardware
+- **DevOps background** — the playbooks assume you know Git basics and a terminal

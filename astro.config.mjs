@@ -33,9 +33,10 @@ export default defineConfig({
 					],
 				},
 				{
-					label: 'Learn',
+					label: 'Playbooks',
 					items: [
 						{ label: 'Overview', slug: 'learn/overview' },
+						{ label: 'Your First Deploy', slug: 'learn/your-first-deploy' },
 						{ label: 'Web Applications', slug: 'learn/web-apps' },
 						{ label: 'AI & Machine Learning', slug: 'learn/ai-ml' },
 						{ label: 'GitOps & Automation', slug: 'learn/devops' },
