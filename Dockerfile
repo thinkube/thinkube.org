@@ -12,6 +12,8 @@ COPY . .
 
 # Override base path for cluster deployment (GitHub Pages uses /thinkube.org/)
 ENV ASTRO_BASE=/
+# node-base image sets NODE_ENV=development; override for production build
+ENV NODE_ENV=production
 
 RUN sed -i "s|base: '/thinkube.org/'|base: '/'|" astro.config.mjs && \
     npm run build
