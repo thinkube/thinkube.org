@@ -68,9 +68,9 @@ Thinkube now:
 2. Pushes it to Gitea (your self-hosted Git server)
 3. Triggers an Argo Workflow that builds the container image with Kaniko
 4. Pushes the image to your Harbor registry
-5. Creates a Knative service via ArgoCD
+5. Harbor fires a webhook that triggers ArgoCD to sync the Knative service
 
-You can watch the build progress in the **Deployments** section of Thinkube Control. The first build takes 2–5 minutes.
+The initial build takes 2–5 minutes. You'll see the deploy progress in the Thinkube Control dialog. Once it finishes, the service is live.
 
 ### Step 3. Open your service
 
@@ -145,9 +145,9 @@ git push
 
 That push to Gitea triggers the CI/CD pipeline automatically. You don't need to do anything else.
 
-### Step 7. Watch it rebuild
+### Step 7. Wait for the rebuild
 
-Go back to Thinkube Control → **Deployments**. You'll see a new build workflow running. Wait for it to complete (1–3 minutes for subsequent builds — faster than the first).
+The push triggered the CI/CD pipeline. The build runs in the background — typically 1–3 minutes for subsequent builds (faster than the first). Give it a couple of minutes.
 
 ### Step 8. See your change live
 
@@ -178,7 +178,7 @@ You pushed to Gitea
     → Argo Workflow starts
       → Kaniko builds your Docker image
         → Image pushed to Harbor registry
-          → ArgoCD detects the new image
+          → Harbor webhook triggers ArgoCD sync
             → Knative service updated
               → Your change is live
 ```
@@ -191,7 +191,7 @@ You didn't configure any of this. The template deployment set it all up automati
 
 ### Build fails
 
-Check the build logs in Thinkube Control → Deployments → click on the failed build. Common causes:
+Check the Argo Workflows UI at `https://argo.yourdomain.com` to see build logs. Common causes:
 
 - **Syntax error in code**: Fix the error, commit, and push again
 - **Dockerfile issue**: Make sure you haven't accidentally modified the Dockerfile in a way that breaks the build
@@ -210,7 +210,7 @@ Check that the service exists and has a `READY` status of `True`.
 
 Verify the push triggered a build:
 
-1. Check Thinkube Control → Deployments for a new build
+1. Check Argo Workflows at `https://argo.yourdomain.com` for a new workflow
 2. If no build appeared, check that you pushed to the correct remote (`git remote -v` should show your Gitea URL)
 
 ---
