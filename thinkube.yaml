@@ -1,0 +1,17 @@
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+
+spec:
+  deployment:
+    type: app
+
+  containers:
+    - name: docs
+      build: .
+      port: 8080
+      size: small
+      health: /
+
+  routes:
+    - path: /
+      to: docs
