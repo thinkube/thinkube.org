@@ -31,6 +31,12 @@ RUN printf 'server {\n\
         try_files $uri $uri/ $uri.html /index.html;\n\
     }\n\
 \n\
+    # Pagefind WASM search index\n\
+    location ~* \\.pagefind$ {\n\
+        types { application/wasm pagefind; }\n\
+        default_type application/wasm;\n\
+    }\n\
+\n\
     # Cache static assets\n\
     location ~* \\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {\n\
         expires 1y;\n\
