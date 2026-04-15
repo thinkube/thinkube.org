@@ -1,50 +1,63 @@
 ---
 title: Introduction
-description: What is Thinkube and who is it for
+description: What is Thinkube and why does it exist
 ---
 
-# What is Thinkube?
+# Your own AI cloud
 
-Thinkube is a self-hosted platform for AI development. It provides everything you need to build AI applications and agents on your own hardware - local LLMs, vector databases, development tools, and deployment pipelines - all pre-configured and working together.
+Thinkube is a self-hosted platform that turns a single GPU machine into a complete AI development environment. Local LLMs, vector databases, experiment tracking, CI/CD, monitoring — all pre-configured and integrated. Install it, and start building.
 
-## The Problem
+## The real cost of "just set it up yourself"
 
-Building AI applications requires a complex stack: LLMs for inference, vector databases for RAG, experiment tracking for ML, observability for debugging, CI/CD for deployment. Setting this up yourself means:
+You buy a GPU machine. You want to run LLMs on it. Simple, right?
 
-- **Weeks of configuration** - Kubernetes, GPU drivers, networking, storage, authentication
-- **Integration headaches** - Making dozens of components work together
-- **Ongoing maintenance** - Updates, security patches, troubleshooting
-- **Cloud lock-in** - API costs that scale with usage, rate limits, data leaving your network
+First you need Kubernetes — because you'll want to run more than one thing. That means `kubeadm` or `k3s`, CNI plugins, storage drivers, GPU operators. Then you need a container registry, because you're building custom images. And a Git server for your code. And CI/CD to build and deploy automatically. And an ingress controller for HTTPS. And certificates. And DNS. And authentication — you don't want your services open to the internet.
 
-## The Solution
+You haven't written a line of application code yet.
 
-Thinkube provides a complete, integrated AI development environment that installs in hours, not weeks. One installer sets up everything - from Kubernetes to LLM inference to GitOps deployment - configured to work together out of the box.
+Now add the AI stack. Ollama for quick inference. vLLM for production serving. A vector database for RAG. MLflow for experiment tracking. Langfuse for LLM observability. JupyterHub for notebooks. Each one needs configuration, storage, networking, and integration with everything else.
 
-## What Makes Thinkube Unique
+**This takes weeks. Thinkube takes hours.**
 
-### Claude-Powered Development Tools
+## What you get
 
-Thinkube integrates Claude directly into your development environment:
+After installation, you have a fully working platform at `*.yourdomain.com`:
 
-- **Thinky** - An AI assistant in JupyterLab. Chat with Claude in a sidebar while working on notebooks. Thinky can read, write, and execute your notebook cells - and iterate until they work. When code fails, Thinky sees the error, fixes it, and re-runs automatically. Changes appear in your notebook in real-time.
+- **`jupyter.yourdomain.com`** — JupyterHub with Thinky, your Claude-powered AI assistant that can read, write, and execute notebook cells autonomously
+- **`code.yourdomain.com`** — VS Code in the browser with Claude Code CLI pre-installed
+- **`control.yourdomain.com`** — Dashboard to monitor services, deploy apps, manage models, and configure your platform
+- **`ollama.yourdomain.com`** — LLM inference API, ready to load models
+- **`mlflow.yourdomain.com`** — Experiment tracking and model registry
+- **`gitea.yourdomain.com`** — Your own Git server with CI/CD webhooks
+- **`registry.yourdomain.com`** — Private container registry (Harbor)
 
-- **Code Server with Claude Code** - VS Code in the browser with Claude Code CLI pre-installed. Full agentic coding capabilities for your projects.
+Plus PostgreSQL, Valkey (Redis), ClickHouse, Qdrant, and more — all accessible from your code with connection strings injected automatically.
 
-- **Thinkube Control** - Central dashboard for your entire platform. Monitor all services with health checks and GPU metrics. Deploy applications from templates with one click. Manage your container registry, AI models, secrets, and optional components. Evolving into an MCP server for LLM-based platform management.
+Everything is behind SSO (Keycloak). One login, all services.
 
-### Complete Platform, Not Just Tools
+## Thinky — your AI pair programmer
 
-Thinkube isn't another Kubernetes distribution or ML framework. It's an opinionated, integrated platform where every component is configured to work with every other component. SSO across all services, shared storage, unified observability.
+The centerpiece of the development experience. Thinky is a Claude-powered agent that lives in your JupyterLab sidebar, built with the Claude Agent SDK.
 
-### Built for AI Agents
+It doesn't just answer questions. It **acts**:
 
-The platform is designed for building and running AI agents. Local LLMs via Ollama/vLLM, vector databases for memory, MCP servers for tool integration, and the infrastructure agents need to operate autonomously.
+1. You say: "Load the sales data and find anomalies"
+2. Thinky writes a cell with pandas code
+3. Executes it
+4. Reads the output — maybe there's an import error
+5. Fixes the import, re-runs
+6. Writes a second cell with visualization code
+7. Executes that too
+8. Explains what it found
 
-### Deploy Without Kubernetes Expertise
+All of this happens in your notebook, in real time. You see each cell appear, execute, and update. It's not generating code for you to copy-paste — it's working alongside you in the same notebook, with the same kernel, the same data.
 
-Thinkube replaces complex Kubernetes manifests with a simple deployment descriptor. Compare deploying a web app with database:
+You bring your own Claude Pro or Max subscription. Your API key stays on your machine. No proxy, no middleman.
 
-**thinkube.yaml** (what you write):
+## Deploy without Kubernetes expertise
+
+You don't need to understand Kubernetes to deploy on Thinkube. You write a `thinkube.yaml`:
+
 ```yaml
 spec:
   containers:
@@ -63,67 +76,45 @@ spec:
     - database
 ```
 
-**Kubernetes + Helm** (what you'd otherwise need):
-- Deployment, Service, Ingress for each container
-- PersistentVolumeClaims for storage
-- Secrets and ConfigMaps
-- TLS certificate configuration
-- Database StatefulSet or operator
-- ~200+ lines of YAML across multiple files
+That's it. Thinkube handles:
+- Building container images (Kaniko)
+- Pushing to your private registry (Harbor)
+- Deploying via GitOps (ArgoCD)
+- TLS certificates for `myapp.yourdomain.com`
+- Database provisioning and connection strings
+- Health checks and monitoring
+- Automatic redeployment on git push
 
-Thinkube handles all the complexity. You describe what you want, not how to deploy it. The platform automatically:
-- Builds container images with Kaniko
-- Pushes to Harbor registry
-- Deploys via ArgoCD GitOps
-- Configures SSL certificates
-- Injects database connection strings
-- Sets up health checks and monitoring
+The equivalent Kubernetes setup would be 200+ lines of YAML across Deployments, Services, Ingress, PVCs, Secrets, ConfigMaps, and a database operator. You don't need to know any of that.
 
-### Accessible from Anywhere
+## Run your own LLMs
 
-ZeroTier overlay network gives you secure access to your entire platform from any location - your laptop at a coffee shop connects to your home servers as if you were on the local network.
+Deploy models on your GPUs with no API costs:
 
-## Who is it for?
+| Engine | Best for | How |
+|--------|----------|-----|
+| **Ollama** | Quick experiments, chat | One-click deploy from dashboard |
+| **vLLM** | Production inference, OpenAI-compatible API | Template deployment |
+| **TensorRT-LLM** | Maximum throughput on NVIDIA GPUs | Template deployment |
+| **LiteLLM** | Unified API gateway across all engines | Pre-installed |
 
-**AI Engineers** building:
-- AI agents and autonomous systems
-- RAG applications with local LLMs
-- Fine-tuned models for specific domains
-- LLM-powered products and services
+Load a model, and every service on the platform can use it — your notebooks, your agents, your applications. LiteLLM provides a single OpenAI-compatible endpoint that routes to whichever engine is serving which model.
 
-**Developers** who want:
-- Local AI infrastructure without cloud costs
-- Claude-assisted development in notebooks and VS Code
-- GitOps deployment without Kubernetes expertise
-- A complete development environment accessible anywhere
+## Access from anywhere
 
-## What can you do with it?
+Thinkube uses ZeroTier to create a secure overlay network. Your laptop — at home, at work, at a coffee shop — connects directly to your server. No port forwarding, no VPN configuration, no exposing services to the public internet.
 
-### Develop with AI Assistance
+Open your browser, go to `jupyter.yourdomain.com`, and you're in your notebook environment with full GPU access. It feels like the machine is sitting under your desk, no matter where you are.
 
-Work in JupyterLab with Thinky - ask Claude to write code, and it writes, executes, and iterates until it works. When code fails, Thinky sees the error, fixes it, and re-runs automatically. Or use Claude Code in the browser-based VS Code for full agentic coding.
+## Who builds with Thinkube
 
-### Build AI Agents
+**AI engineers** who want to run experiments on their own GPUs without cloud costs. Fine-tune models, build RAG pipelines, deploy agents — with full control over the stack.
 
-Run Claude, local LLMs, or hybrid setups. Connect agents to tools via MCP servers. Store agent memory in vector databases. Monitor agent behavior with LLM observability.
+**Developers** who want Claude-assisted development in a complete environment. Push code, it deploys. Ask Thinky, it writes and runs. No setup, no maintenance.
 
-### Run Local LLMs
+**Researchers** who need reproducible ML environments with experiment tracking, model registries, and GPU-accelerated notebooks — without depending on institutional IT.
 
-Deploy Ollama, vLLM, or TensorRT-LLM. Run Llama, Mistral, Qwen, and other models on your GPUs. Use LiteLLM as a unified API gateway with cost tracking and load balancing.
-
-### Build RAG Applications
-
-Vector databases (Qdrant, Weaviate, Chroma) and embedding services ready to use. Connect to your local LLMs or external APIs.
-
-### Train and Fine-tune Models
-
-JupyterHub with GPU support, MLflow for experiment tracking, pre-built images with PyTorch and CUDA.
-
-### Deploy Web Applications
-
-Push code to Git, select a template, and your application deploys automatically with SSL certificates and monitoring.
-
-## What's included?
+## What's included
 
 | Category | Components |
 |----------|------------|
@@ -134,9 +125,11 @@ Push code to Git, select a template, and your application deploys automatically 
 | **Databases** | PostgreSQL, Valkey (Redis), ClickHouse |
 | **CI/CD** | Gitea, Argo Workflows, ArgoCD, Harbor |
 | **Monitoring** | Prometheus, Perses |
+| **Storage** | JuiceFS (shared filesystem), SeaweedFS (object storage) |
+| **Security** | Keycloak SSO, Envoy Gateway, ZeroTier |
 
-## Next Steps
+## Next steps
 
-1. [Install Thinkube](/installation/overview/) - Set up your platform
-2. [Learning Paths](/learn/overview/) - Tutorials for different use cases
-3. [Explore Components](/components/) - See all available services
+1. **[Install Thinkube](/installation/overview/)** — Get it running on your machine
+2. **[Learning Paths](/learn/overview/)** — Tutorials for AI, web apps, and DevOps
+3. **[Explore Components](/components/)** — Deep dive into every service

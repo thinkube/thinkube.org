@@ -1,9 +1,9 @@
 ---
 title: Welcome to Thinkube
-description: Self-hosted AI development platform
+description: Your own AI cloud. On your own hardware. Under your control.
 template: splash
 hero:
-  tagline: Build AI agents and applications on your own hardware. Claude-powered development tools, local LLMs, and complete infrastructure - pre-configured and working together.
+  tagline: Stop renting AI. Build on your own hardware with Claude, local LLMs, and a complete development platform that installs in hours.
   image:
     file: ../../assets/logo.svg
     alt: Thinkube Logo
@@ -21,77 +21,71 @@ import FeatureCard from '../../components/FeatureCard.astro';
 import LinkCard from '../../components/LinkCard.astro';
 import CardGrid from '../../components/CardGrid.astro';
 
-## The Problem
+## You know the drill
 
-Building AI applications requires LLMs, vector databases, experiment tracking, observability, and deployment pipelines. Setting this up yourself means weeks of configuration, integration headaches, and ongoing maintenance. Cloud APIs mean costs that scale with usage and data leaving your network.
+You want to build an AI agent. So you need an LLM. Which means you need inference infrastructure. And a vector database for memory. And an experiment tracker. And somewhere to store models. And CI/CD to deploy it. And monitoring to know when it breaks.
 
-## The Solution
+Three weeks later you're debugging Helm charts instead of writing code.
 
-Thinkube provides a complete AI development environment that installs in hours. One installer sets up everything - from local LLM inference to GitOps deployment - configured to work together out of the box.
+Or you pay per token, hit rate limits at the worst moment, and watch your data flow through someone else's servers.
+
+**There's a third option.**
+
+## One machine. Everything you need.
+
+Thinkube turns a single GPU machine into a complete AI development platform. Not a collection of tools you wire together — an integrated environment where everything is pre-configured, authenticated, and talking to each other from the moment you install it.
 
 <CardGrid columns={2}>
-	<FeatureCard title="Claude-Powered Development" icon="sparkles">
-		Thinky in JupyterLab writes, executes, and iterates on your code until it works. Claude Code in VS Code for full agentic coding.
+	<FeatureCard title="Claude writes your code" icon="sparkles">
+		Thinky lives in your JupyterLab sidebar. Ask it to analyze data, fix bugs, or build a pipeline — it reads your cells, writes code, executes it, reads the error, fixes it, and runs again. You watch.
 	</FeatureCard>
-	<FeatureCard title="Built for AI Agents" icon="cpu">
-		Local LLMs, vector databases for memory, MCP servers for tools, and LLM observability. Everything agents need to run autonomously.
+	<FeatureCard title="Your LLMs, your GPUs" icon="cpu">
+		Run Llama, Mistral, Qwen, or any open model. Ollama for quick experiments, vLLM for production throughput, TensorRT-LLM when you need every millisecond. No API bills. No rate limits. No data leaving your network.
 	</FeatureCard>
-	<FeatureCard title="Complete Platform" icon="layers">
-		Not just tools - an integrated environment where every component works with every other. SSO, shared storage, unified monitoring.
+	<FeatureCard title="Deploy in 15 lines" icon="rocket">
+		Describe what you want in a simple YAML file. Thinkube handles container builds, registry, TLS certificates, DNS, GitOps deployment, health checks, and monitoring. You never touch a Kubernetes manifest.
 	</FeatureCard>
-	<FeatureCard title="Simpler Than Helm" icon="rocket">
-		Deploy with 15 lines of YAML instead of 200+. No Kubernetes expertise needed - describe what you want, not how to deploy it.
+	<FeatureCard title="Access from anywhere" icon="globe">
+		ZeroTier gives you a secure overlay network. Your laptop at a coffee shop connects to your home server like you're sitting next to it. JupyterLab, VS Code, dashboards — all in the browser.
 	</FeatureCard>
 </CardGrid>
 
-## Development Tools
+## What a day looks like
 
-### Thinky - AI Assistant in JupyterLab
-Chat with Claude in a sidebar while working on notebooks. Thinky can read, write, and execute your cells - and iterate until they work. When code fails, Thinky sees the error, fixes it, and re-runs automatically. An autonomous coding assistant embedded in your notebook environment.
+**Morning.** Open JupyterLab in your browser. Tell Thinky: "Load yesterday's experiment from MLflow and try a different embedding model." It writes the code, runs it, compares the results, and shows you the graphs. You drink your coffee.
 
-### Code Server with Claude Code
-VS Code in the browser with Claude Code CLI pre-installed. Full agentic coding for all your projects, accessible from anywhere.
+**Afternoon.** Switch to Code Server. Claude Code helps you build a FastAPI backend. Push to Git. The CI/CD pipeline builds your container, pushes to your private registry, and deploys it with a TLS certificate. Your app is live at `myapp.yourdomain.com` before you finish lunch.
 
-### Thinkube Control
-Central dashboard for your entire platform. Monitor all services with health checks and real-time GPU metrics. Deploy applications from templates with one click - just pick a template, give it a name, and watch it deploy. Manage your container registry, AI models in MLflow, secrets, and optional components. Evolving into an MCP server for LLM-based platform management.
+**Evening.** Deploy a new Llama model through the dashboard. One click. It downloads, loads onto your GPU, and joins your LiteLLM gateway. Your agents can use it immediately.
 
-## What's Included
+No cloud bills. No cold starts. No permission requests. It's your machine.
 
-### AI & Agents
-- **LLM Inference**: Ollama, vLLM, TensorRT-LLM, LiteLLM
-- **Vector Databases**: Qdrant, Weaviate, Chroma
-- **Observability**: Langfuse for LLM monitoring
-- **ML Platform**: JupyterHub + Thinky, MLflow
+## What's inside
 
-### Development
-- **Code Editor**: Code Server + Claude Code
-- **Git Server**: Gitea with CI/CD integration
-- **Container Registry**: Harbor
+| | |
+|---|---|
+| **AI Development** | JupyterHub + Thinky, Code Server + Claude Code, Thinkube Control dashboard |
+| **LLM Inference** | Ollama, vLLM, TensorRT-LLM, LiteLLM gateway |
+| **Vector Databases** | Qdrant, Weaviate, Chroma |
+| **ML Platform** | MLflow experiment tracking + model registry, Langfuse LLM observability |
+| **Infrastructure** | PostgreSQL, Valkey, ClickHouse, Harbor container registry |
+| **Automation** | Gitea, Argo Workflows, ArgoCD, Prometheus + Perses |
 
-### Infrastructure
-- **Databases**: PostgreSQL, Valkey (Redis), ClickHouse
-- **CI/CD**: Argo Workflows, ArgoCD
-- **Monitoring**: Prometheus, Perses
+Everything has SSO through Keycloak. Everything stores data on shared JuiceFS storage. Everything is monitored. You install once and it works.
 
-## Quick Links
+## Get started
 
 <CardGrid columns={2}>
-	<LinkCard title="Introduction" icon="book" href="/intro/">
-		The problem Thinkube solves and what makes it unique.
+	<LinkCard title="What is Thinkube?" icon="book" href="/intro/">
+		The full story — what it does, who it's for, and how it works.
 	</LinkCard>
-	<LinkCard title="Installation" icon="download" href="/installation/overview/">
-		Set up Thinkube on your hardware.
+	<LinkCard title="Install" icon="download" href="/installation/overview/">
+		Get Thinkube running on your hardware.
 	</LinkCard>
-	<LinkCard title="Learning Paths" icon="rocket" href="/learn/overview/">
-		Tutorials for agents, AI apps, and web development.
+	<LinkCard title="Learn" icon="rocket" href="/learn/overview/">
+		Tutorials for AI agents, web apps, and ML workflows.
 	</LinkCard>
 	<LinkCard title="Components" icon="puzzle" href="/components/">
-		Explore all available services.
+		Deep dive into every service.
 	</LinkCard>
 </CardGrid>
-
-## Community
-
-- [GitHub Discussions](https://github.com/thinkube/thinkube/discussions)
-- [Report Issues](https://github.com/thinkube/thinkube/issues)
-- [Contributing Guide](https://github.com/thinkube/thinkube/blob/main/CONTRIBUTING.md)
