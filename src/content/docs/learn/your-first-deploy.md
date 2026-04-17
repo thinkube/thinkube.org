@@ -47,21 +47,48 @@ We'll use the **Knative Demo** template — a minimal Python service that scales
 
 ### Step 1. Open Thinkube Control
 
-Go to `https://control.yourdomain.com` and log in. You'll see the dashboard with your platform services.
+Go to `https://control.yourdomain.com`. You'll be redirected to the Keycloak login page.
 
-Click **Templates** in the sidebar.
+![Login page](./screenshots/login-page.png)
 
-### Step 2. Deploy the Knative Demo
+Log in with your Thinkube credentials. After authentication, you'll see the dashboard with system metrics and your favorite services.
 
-Find **Knative Demo — Scale-to-Zero Test Service** in the template list and click **Deploy**.
+![Dashboard](./screenshots/dashboard.png)
+
+### Step 2. Navigate to Templates
+
+In the left sidebar, expand **Deployment & Infrastructure** and click **Templates**.
+
+You'll see three sections:
+- **Deploy from GitHub** — for deploying any template by URL
+- **Your Apps** — apps you've already deployed
+- **Available Templates** — pre-configured templates ready to deploy
+
+### Step 3. Deploy the Knative Demo
+
+Find **Knative Demo** in the Available Templates section and click **Deploy**.
+
+The deploy form appears at the top of the page:
+
+![Deploy form](./screenshots/deploy-form.png)
 
 Fill in the form:
 
 | Field | Value | Notes |
 |-------|-------|-------|
-| **App name** | `hello` | This becomes your subdomain: `hello.yourdomain.com` |
+| **Project Name** | `hello` | This becomes your subdomain: `hello.yourdomain.com` |
 
-Click **Deploy**.
+The form validates your project name in real time — you'll see a green "Name is available" message when it's valid.
+
+![Deploy form filled](./screenshots/deploy-form-filled.png)
+
+Click **Deploy Template**.
+
+### Step 4. Watch the deployment
+
+A dialog shows the deployment progress in real time. You can see each phase as it completes:
+
+![Deploying](./screenshots/deploying.png)
 
 Thinkube now:
 1. Copies the template code to your local workspace
@@ -70,11 +97,15 @@ Thinkube now:
 4. Pushes the image to your Harbor registry
 5. Harbor fires a webhook that triggers ArgoCD to sync the Knative service
 
-The initial build takes 2–5 minutes. You'll see the deploy progress in the Thinkube Control dialog. Once it finishes, the service is live.
+The initial deployment takes about 1 minute. Once it finishes, you'll see a success message:
 
-### Step 3. Open your service
+![Deploy complete](./screenshots/deploy-complete.png)
 
-Once the build succeeds and the deployment is active, open:
+Click **Continue** to return to the templates page.
+
+### Step 5. Open your service
+
+Once the build completes (typically 1–3 minutes after deployment), open:
 
 ```
 https://hello.yourdomain.com
@@ -82,41 +113,42 @@ https://hello.yourdomain.com
 
 You'll see a JSON response:
 
+![Service running](./screenshots/service-running.png)
+
 ```json
 {
   "message": "Hello from Knative!",
   "app": "hello",
   "request_number": 1,
   "simulated_work_ms": 100,
-  "hostname": "hello-demo-00001-deployment-..."
+  "hostname": "hello-00001-deployment-..."
 }
 ```
 
 That's your service running on the platform. Because it's a Knative service, it scales to zero after 30 seconds of inactivity — and wakes up on the next request.
 
-### Step 4. Open the code in Code Server
+### Step 6. Open the code in Code Server
 
 Go to `https://code.yourdomain.com`. This is VS Code running in your browser.
 
-Open the folder:
+In the file explorer, navigate to **Apps > hello** and open `server.py`:
 
-```
-/home/thinkube/apps/hello
-```
+![Code Server with server.py](./screenshots/code-server-serverpy.png)
 
 You'll see the project files:
 
 ```
 hello/
+├── .git-hooks/
+├── k8s/
 ├── Dockerfile
-├── manifest.yaml
 ├── server.py
-└── thinkube.yaml
+├── thinkube.yaml
+├── manifest.yaml
+└── DEVELOPMENT.md
 ```
 
-Open `server.py`. This is the entire application — a simple Python HTTP server.
-
-### Step 5. Make a change
+### Step 7. Make a change
 
 Find the `GREETING` default value near the top of `server.py`:
 
@@ -132,7 +164,9 @@ GREETING = os.environ.get("GREETING", "Hello from Thinkube! My first deploy.")
 
 Save the file.
 
-### Step 6. Commit and push
+![Code change](./screenshots/code-change.png)
+
+### Step 8. Commit and push
 
 Open the terminal in Code Server (`` Ctrl+` ``) and run:
 
@@ -145,11 +179,11 @@ git push
 
 That push to Gitea triggers the CI/CD pipeline automatically. You don't need to do anything else.
 
-### Step 7. Wait for the rebuild
+### Step 9. Wait for the rebuild
 
 The push triggered the CI/CD pipeline. The build runs in the background — typically 1–3 minutes for subsequent builds (faster than the first). Give it a couple of minutes.
 
-### Step 8. See your change live
+### Step 10. See your change live
 
 Refresh `https://hello.yourdomain.com`:
 
