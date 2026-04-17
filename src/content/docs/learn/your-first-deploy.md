@@ -119,8 +119,11 @@ You'll see a JSON response:
 {
   "message": "Hello from Knative!",
   "app": "hello",
+  "description": "",
+  "author": "",
   "request_number": 1,
   "simulated_work_ms": 100,
+  "pod_start_time": "2026-04-17T...",
   "hostname": "hello-00001-deployment-..."
 }
 ```
@@ -131,11 +134,11 @@ That's your service running on the platform. Because it's a Knative service, it 
 
 Go to `https://code.yourdomain.com`. This is VS Code running in your browser.
 
-In the file explorer, navigate to **Apps > hello** and open `server.py`:
+In the file explorer, navigate to **Apps > hello** and open `thinkube.yaml`:
 
-![Code Server with server.py](./screenshots/code-server-serverpy.png)
+![Code Server with thinkube.yaml](./screenshots/code-server-thinkube-yaml.png)
 
-You'll see the project files:
+This is the deployment descriptor — it defines how the service runs, what containers to build, and what environment variables to set. You'll see the project files:
 
 ```
 hello/
@@ -150,21 +153,25 @@ hello/
 
 ### Step 7. Make a change
 
-Find the `GREETING` default value near the top of `server.py`:
+Find the `GREETING` environment variable in `thinkube.yaml`:
 
-```python
-GREETING = os.environ.get("GREETING", "Hello from Knative!")
+```yaml
+env:
+  - name: GREETING
+    description: "Greeting message returned by the service"
+    default: "Hello from Knative!"
 ```
 
-Change it to something else:
+Change the default value to something else:
 
-```python
-GREETING = os.environ.get("GREETING", "Hello from Thinkube! My first deploy.")
+```yaml
+env:
+  - name: GREETING
+    description: "Greeting message returned by the service"
+    default: "Hello from Thinkube! My first deploy."
 ```
 
 Save the file.
-
-![Code change](./screenshots/code-change.png)
 
 ### Step 8. Commit and push
 
@@ -172,12 +179,14 @@ Open the terminal in Code Server (`` Ctrl+` ``) and run:
 
 ```bash
 cd /home/thinkube/apps/hello
-git add server.py
+git add thinkube.yaml
 git commit -m "Update greeting message"
 git push
 ```
 
-That push to Gitea triggers the CI/CD pipeline automatically. You don't need to do anything else.
+When you commit, a pre-commit hook detects the `thinkube.yaml` change and automatically regenerates the Kubernetes manifests in `k8s/`. Those updated manifests are staged and included in your commit.
+
+The push to Gitea triggers the CI/CD pipeline automatically. You don't need to do anything else.
 
 ### Step 9. Wait for the rebuild
 
@@ -187,12 +196,18 @@ The push triggered the CI/CD pipeline. The build runs in the background — typi
 
 Refresh `https://hello.yourdomain.com`:
 
+![Service updated](./screenshots/service-updated.png)
+
 ```json
 {
   "message": "Hello from Thinkube! My first deploy.",
   "app": "hello",
+  "description": "",
+  "author": "",
   "request_number": 1,
-  ...
+  "simulated_work_ms": 100,
+  "pod_start_time": "2026-04-17T...",
+  "hostname": "hello-00005-deployment-..."
 }
 ```
 
@@ -207,14 +222,17 @@ Every application on Thinkube works this way. Templates give you a starting poin
 Here's what the platform did behind the scenes:
 
 ```
-You pushed to Gitea
-  → Gitea webhook fires
-    → Argo Workflow starts
-      → Kaniko builds your Docker image
-        → Image pushed to Harbor registry
-          → Harbor webhook triggers ArgoCD sync
-            → Knative service updated
-              → Your change is live
+You edited thinkube.yaml
+  → git commit triggers pre-commit hook
+    → K8s manifests regenerated automatically
+      → git push sends everything to Gitea
+        → Gitea webhook fires
+          → Argo Workflow starts
+            → Kaniko builds your Docker image
+              → Image pushed to Harbor registry
+                → Harbor webhook triggers ArgoCD sync
+                  → Knative service updated
+                    → Your change is live
 ```
 
 You didn't configure any of this. The template deployment set it all up automatically.
