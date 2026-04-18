@@ -16,6 +16,7 @@
     "@astrojs/starlight": "^0.38.3",
     "@lucide/astro": "^1.8.0",
     "astro": "^6.0.5",
+    "remark-d2": "^0.2.3",
     "sharp": "^0.34.5"
   }
 }

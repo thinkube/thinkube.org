@@ -1,11 +1,15 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import remarkD2 from 'remark-d2';
 
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://thinkube.org',
 	base: '/thinkube.org/',
+	markdown: {
+		remarkPlugins: [remarkD2],
+	},
 	integrations: [
 		starlight({
 			title: 'Thinkube',

@@ -10,17 +10,10 @@ Thinkube supports mixed-architecture clusters with ARM64 and AMD64 nodes. Every 
 
 **Images are only built for architectures that have physical nodes in the cluster.** A single-node ARM64 installation builds ARM64 images only. When an AMD64 worker joins, Thinkube automatically rebuilds all images as multi-arch manifest lists, with each architecture built on its native hardware.
 
-```mermaid
-graph LR
-    subgraph "ARM64 Node"
-        BA[Build arm64 image]
-    end
-    subgraph "AMD64 Node"
-        BB[Build amd64 image]
-    end
-    BA --> ML[Manifest List]
-    BB --> ML
-    ML --> HR[Harbor Registry]
+```d2
+ARM64 Node.Build arm64 image -> Manifest List
+AMD64 Node.Build amd64 image -> Manifest List
+Manifest List -> Harbor Registry
 ```
 
 ## How It Works
@@ -71,13 +64,12 @@ Template applications are built in-cluster using Kaniko. For multi-arch clusters
 - **crane** creates manifest lists from per-arch images — lightweight and runs without a container runtime
 - **Kaniko** is pinned to a specific version from the Harbor mirror for reproducible builds
 
-```mermaid
-graph TD
-    T[Tests] --> BA[Build arm64]
-    T --> BB[Build amd64]
-    BA --> M[Create Manifest]
-    BB --> M
-    M --> P[Push to Harbor]
+```d2
+Tests -> Build arm64
+Tests -> Build amd64
+Build arm64 -> Create Manifest
+Build amd64 -> Create Manifest
+Create Manifest -> Push to Harbor
 ```
 
 ## Architecture-Specific Images

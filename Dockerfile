@@ -5,6 +5,10 @@ FROM ${CONTAINER_REGISTRY}/library/node-base:22-alpine AS build
 
 WORKDIR /app
 
+# Install D2 for diagram rendering at build time
+RUN apk add --no-cache curl && \
+    curl -fsSL https://d2lang.com/install.sh | sh
+
 COPY package.json package-lock.json ./
 RUN npm ci
 
