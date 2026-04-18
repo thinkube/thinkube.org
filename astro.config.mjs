@@ -8,7 +8,7 @@ export default defineConfig({
 	site: 'https://thinkube.org',
 	base: '/thinkube.org/',
 	markdown: {
-		remarkPlugins: [remarkD2],
+		remarkPlugins: [[remarkD2, { compilePath: 'public/d2', linkPath: '/d2' }]],
 	},
 	integrations: [
 		starlight({
