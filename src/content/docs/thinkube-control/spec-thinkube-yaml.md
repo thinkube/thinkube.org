@@ -78,6 +78,23 @@ Controls how the application is deployed. Optional section; defaults to `type: a
 
 Apps are for services that must always be running (model servers, UIs, databases). Knative is for stateless processing services that can scale to zero when idle.
 
+#### Knative Portability Constraints
+
+Knative services are designed to be portable to cloud serverless platforms (e.g., AWS Lambda). To guarantee this portability, the following constraints are enforced when `type: knative`:
+
+| Constraint | Reason |
+|-----------|--------|
+| Single container only | Serverless functions run one process |
+| No `gpu` | Serverless platforms have no GPU support |
+| No `mounts` | No persistent filesystem in serverless |
+| No `storage` service | No POSIX mounts in serverless (database, cache, queue are allowed — they map to managed cloud services) |
+| No `migrations` | No startup hooks in serverless |
+| No `schedule` | Serverless uses event triggers, not cron |
+| No `capabilities` | `large-uploads` exceeds serverless payload limits |
+| `timeoutSeconds` ≤ 900 | Serverless platforms cap request duration at 15 minutes |
+
+Applications that need GPU, persistent storage, multiple containers, or other advanced features must use `type: app`.
+
 ### minScale (Knative only)
 
 Minimum number of pods. Default: `0` (scale to zero when idle). Set to `1` for services that need to be always available but still benefit from Knative auto-scaling.
