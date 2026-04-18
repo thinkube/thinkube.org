@@ -20,7 +20,8 @@ ENV ASTRO_BASE=/
 ENV NODE_ENV=production
 
 RUN sed -i "s|base: '/thinkube.org/'|base: '/'|" astro.config.mjs && \
-    npm run build
+    npm run build && \
+    cp -r public/d2 dist/d2 2>/dev/null || true
 
 # Serve stage
 FROM ${CONTAINER_REGISTRY}/library/nginx:stable-alpine
