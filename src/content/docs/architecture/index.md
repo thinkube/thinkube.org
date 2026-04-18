@@ -17,41 +17,39 @@ Thinkube is built on three core principles:
 
 ## System Architecture
 
-```mermaid
-graph TB
-    subgraph "User Layer"
-        UI[Web Interface]
-        CLI[CLI Tools]
-        API[REST API]
-    end
-    
-    subgraph "Control Plane"
-        TC[Thinkube Control]
-        Gitea[Gitea]
-        ArgoCD[ArgoCD]
-    end
-    
-    subgraph "Kubernetes Layer"
-        K8s[Kubernetes]
-        Ingress[Ingress Controller]
-        CertMgr[Cert Manager]
-    end
-    
-    subgraph "Application Layer"
-        Apps[User Applications]
-        DBs[Databases]
-        Services[Services]
-    end
-    
-    UI --> TC
-    CLI --> API
-    API --> TC
-    TC --> Gitea
-    TC --> ArgoCD
-    ArgoCD --> K8s
-    K8s --> Apps
-    K8s --> DBs
-    K8s --> Services
+```d2
+User Layer: {
+  UI: Web Interface
+  CLI: CLI Tools
+  API: REST API
+}
+
+Control Plane: {
+  TC: Thinkube Control
+  Gitea: Gitea
+  ArgoCD: ArgoCD
+}
+
+Kubernetes Layer: {
+  K8s: Kubernetes
+  Ingress: Ingress Controller
+}
+
+Application Layer: {
+  Apps: User Applications
+  DBs: Databases
+  Services: Services
+}
+
+User Layer.UI -> Control Plane.TC
+User Layer.CLI -> User Layer.API
+User Layer.API -> Control Plane.TC
+Control Plane.TC -> Control Plane.Gitea
+Control Plane.TC -> Control Plane.ArgoCD
+Control Plane.ArgoCD -> Kubernetes Layer.K8s
+Kubernetes Layer.K8s -> Application Layer.Apps
+Kubernetes Layer.K8s -> Application Layer.DBs
+Kubernetes Layer.K8s -> Application Layer.Services
 ```
 
 ## Component Layers
