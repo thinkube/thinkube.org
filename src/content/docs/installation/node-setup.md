@@ -12,6 +12,17 @@ Before running the script, have ready:
 - Ubuntu 24.04 LTS installed on each node
 - Internet connectivity
 
+### Expand Disk Storage
+
+Ubuntu Server's installer creates a logical volume (LV) that uses only ~100 GB of the disk by default, regardless of actual disk size. Before proceeding, expand it to use all available space:
+
+```bash
+sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
+```
+
+Verify with `df -h /` — it should now show the full disk size.
+
 ## Run the Bootstrap Script
 
 On each node that will be part of your cluster:
