@@ -96,6 +96,24 @@ Cilium auto-detects network interfaces and attaches eBPF programs (`cil_from_net
 
 This is a known issue ([cilium/cilium#44982](https://github.com/cilium/cilium/issues/44982)) affecting overlay VPN interfaces (WireGuard, ZeroTier). The fix is to explicitly set `devices` to include only physical and cluster interfaces, excluding `zt*`.
 
+### ZeroTier Peer Path Isolation
+
+ZeroTier automatically discovers the best UDP path between peers by probing all local network interfaces. On Kubernetes nodes, this can include virtual interfaces created by Cilium (`cilium_host`, `cilium_net`), container bridges (`cni-podman0`), and pod veth pairs — leading to peer paths routed through the CNI network (e.g., `10.1.x.x`) instead of the physical LAN.
+
+When Cilium's networking is briefly disrupted (during node joins, DaemonSet rollouts, or CNI reconfiguration), these virtual peer paths break, causing ZeroTier connectivity loss and SSH failures for Ansible playbooks that target overlay IPs.
+
+Thinkube prevents this by configuring `/var/lib/zerotier-one/local.conf` on every node:
+
+```json
+{
+  "settings": {
+    "interfacePrefixBlacklist": ["cilium", "cni", "lxc", "veth"]
+  }
+}
+```
+
+This forces ZeroTier to discover peers only via physical interfaces (LAN or WAN), keeping the overlay network stable regardless of Kubernetes networking state. The configuration is applied automatically during node setup and the add-node flow.
+
 ### Why WireGuard Is Not Enabled
 
 Cilium supports transparent WireGuard encryption for pod-to-pod traffic between nodes. Thinkube does **not** enable this because:
