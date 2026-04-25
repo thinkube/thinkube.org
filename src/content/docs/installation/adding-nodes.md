@@ -1,0 +1,151 @@
+---
+title: Adding Nodes
+description: Expand your cluster by adding worker nodes after initial installation
+---
+
+After the initial installation you can add worker nodes to your Thinkube cluster — including nodes of a different CPU architecture. The process uses the Thinkube Control UI for cluster operations and a terminal command for container image builds.
+
+## Prerequisites
+
+- A running Thinkube cluster
+- Each new node prepared with the [bootstrap script](./node-setup)
+- SSH access from the cluster to each new node
+- The new node on the same ZeroTier network (if using overlay mode)
+
+## Overview
+
+Adding a node is a two-phase process:
+
+| Phase | Where | What happens |
+|-------|-------|-------------|
+| **1. Join** | Thinkube Control UI | Scan, detect hardware, join cluster, configure GPU/DNS |
+| **2. Images** | Code-server terminal | Mirror and build container images, uncordon nodes |
+
+Phase 1 runs in the browser and completes in a few minutes. Phase 2 runs in a terminal because image builds can take a long time (especially on first run) and benefit from direct retry if something fails.
+
+## Phase 1: Join Nodes via the UI
+
+### Step 1: Open Add Node Wizard
+
+Navigate to **Thinkube Control → Nodes** and click **Add Nodes**. Enter the network CIDR to scan (e.g., `192.168.1.0/24`) and click **Scan**.
+
+### Step 2: Select and Detect Hardware
+
+The wizard discovers reachable nodes and shows their hostname, IP, and status. Select the nodes you want to add and click **Detect Hardware**. Thinkube will SSH into each node to identify:
+
+- CPU architecture (ARM64 or AMD64)
+- GPU model and count
+- Disk configuration
+
+### Step 3: Confirm and Join
+
+Review the hardware summary and click **Add Nodes**. The UI streams progress as Thinkube:
+
+1. Distributes SSH keys for inter-node communication
+2. Updates the Ansible inventory
+3. Joins each node to the Kubernetes cluster
+4. Cordons the new nodes (prevents scheduling)
+5. Configures DNS resolution for internal domains
+6. Deploys the GPU operator (if GPUs detected)
+7. Configures GPU time-slicing profiles
+
+When complete, the UI shows the nodes as **joined and cordoned** with a command to run in the terminal.
+
+## Phase 2: Build Images from Terminal
+
+Open a terminal in code-server and run the command shown in the UI:
+
+```bash
+tk_images rebuild --uncordon vilanova1,vilanova2
+```
+
+Replace `vilanova1,vilanova2` with your actual node hostnames.
+
+This runs three playbooks in sequence:
+
+1. **Mirror public images** — pulls images from Docker Hub, GCR, Quay.io and pushes them to your Harbor registry with per-architecture support
+2. **Build base images** — builds platform images (Python, Node.js, CI tools, AI inference) natively on each architecture's node
+3. **Build Jupyter image** — builds the JupyterLab image with GPU support
+
+After all three succeed, it updates the build token and uncordons the nodes.
+
+### Handling Failures
+
+If a step fails, you see the error immediately in the terminal. Fix the issue and retry just the failed step:
+
+```bash
+tk_images mirror        # Retry only the public image mirroring
+tk_images build-base    # Retry only the base image builds
+tk_images build-jupyter # Retry only the Jupyter image build
+```
+
+Already-built images are skipped automatically — the playbooks check Harbor for existing per-architecture tags before building. A retry only rebuilds what's missing.
+
+Once everything succeeds, uncordon the nodes manually if you didn't use `--uncordon`:
+
+```bash
+tk_images uncordon vilanova1,vilanova2
+```
+
+### Checking Status
+
+To see the current state of your build and cluster:
+
+```bash
+tk_images status
+```
+
+This shows:
+- **Build token** — which architectures have completed image builds
+- **Cordoned nodes** — nodes that are joined but not yet accepting workloads
+- **Cluster architectures** — all nodes and their CPU architecture
+
+## What Happens During Image Builds
+
+### First Node of a New Architecture
+
+When you add an AMD64 node to an ARM64 cluster (or vice versa), every container image needs a second architecture variant. The build playbook:
+
+1. Checks Harbor for each image's per-arch tag (e.g., `python-base:3.12-slim-amd64`)
+2. Skips images that already exist for that architecture
+3. Builds missing images **natively** on a node of the matching architecture — no QEMU emulation
+4. Creates multi-arch manifest lists combining both architectures
+5. Pushes the manifest to Harbor so `podman pull` or `containerd` automatically selects the right architecture
+
+### Subsequent Nodes of the Same Architecture
+
+If you add a second AMD64 node after the first one, no image rebuild is needed — the images already exist for both architectures. The UI detects this and uncordons the node immediately without requiring `tk_images`.
+
+## Removing Nodes
+
+To remove a worker node, use the Thinkube Control UI: navigate to **Nodes**, select the node, and click **Remove**. This drains workloads, removes the node from Kubernetes, and cleans up the inventory.
+
+## Troubleshooting
+
+### Node stuck in cordoned state
+
+If `tk_images` failed and the node is still cordoned:
+
+```bash
+tk_images status          # Check what's cordoned
+tk_images build-base      # Retry the failed step
+tk_images uncordon node1  # Uncordon when ready
+```
+
+### DNS resolution fails on new node
+
+The add-node flow configures DNS automatically. If a new node can't resolve `registry.cmxela.com` or other internal domains, the DNS step may have failed. Re-run the add-node wizard or configure DNS manually with:
+
+```bash
+tk_ansible ansible/40_thinkube/core/infrastructure/coredns/15_configure_node_dns.yaml --limit node1
+```
+
+### Image build fails with "exec format error"
+
+This means a base image was only mirrored for one architecture. Run `tk_images mirror` to re-mirror all public images for both architectures, then retry the build.
+
+## Next Steps
+
+- [Multi-Architecture Support](/architecture/multi-architecture/) — How native per-arch builds work
+- [Container Registry](/thinkube-control/registry/) — Manage images in Harbor
+- [Your First Deploy](/learn/your-first-deploy/) — Deploy an application on your expanded cluster

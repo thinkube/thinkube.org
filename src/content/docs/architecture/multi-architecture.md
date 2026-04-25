@@ -28,16 +28,17 @@ When the cluster has only one architecture (the common case for initial setup):
 
 ### Adding a Second Architecture
 
-When a worker node of a different architecture joins:
+When a worker node of a different architecture joins, image builds happen in two phases:
 
 1. **Node joins the cluster** via the Thinkube Control UI
 2. **New node is cordoned** to prevent scheduling broken pods
 3. **Build platforms are updated** in the Ansible inventory
-4. **Base images are rebuilt** natively on both architectures using `delegate_to`
-5. **Public images are re-mirrored** with per-platform filtering
-6. **Node is uncordoned** once all images are ready
+4. **User runs `tk_images rebuild`** from a code-server terminal to mirror and build images
+5. **Base images are rebuilt** natively on both architectures using `delegate_to`
+6. **Public images are re-mirrored** with per-platform filtering
+7. **Node is uncordoned** after successful builds
 
-The entire process is streamed live in the UI — no manual intervention required.
+Image builds run in the terminal rather than the UI because they can take a long time and benefit from direct retry. See [Adding Nodes](/installation/adding-nodes/) for the full procedure.
 
 ## Native Per-Node Builds
 

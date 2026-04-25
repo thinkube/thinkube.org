@@ -34,6 +34,7 @@ export default defineConfig({
 						{ label: 'Hugging Face Token', slug: 'installation/huggingface-token' },
 						{ label: 'Node Setup', slug: 'installation/node-setup' },
 						{ label: 'Running the Installer', slug: 'installation/overview' },
+						{ label: 'Adding Nodes', slug: 'installation/adding-nodes' },
 					],
 				},
 				{
