@@ -8,16 +8,12 @@ description: Complete guide to running the Thinkube installer with visual walkth
 Complete these steps **before** running the installer:
 
 1. **Set up tokens** - Create accounts and tokens for:
-   - [ZeroTier](./zerotier-token) - Overlay network
+   - [Overlay network](./overlay-network) - ZeroTier or Tailscale (your choice)
    - [Cloudflare](./cloudflare-token) - SSL certificates
    - [GitHub](./github-token) - GitOps and container registry
    - [Hugging Face](./huggingface-token) - AI model downloads
 
-2. **Prepare your nodes** - Run [Node Setup](./node-setup) on each Ubuntu 24.04 machine:
-   ```bash
-   curl -sSL https://raw.githubusercontent.com/thinkube/tk-node-setup/main/bootstrap.sh | sudo bash
-   ```
-   This configures networking, ZeroTier overlay, and SSH access.
+2. **Prepare your nodes** - Ensure each machine meets the [prerequisites](./node-setup) (Ubuntu 24.04, SSH, internet access). No manual bootstrap script is needed — the installer handles overlay network setup automatically.
 
 3. **Run the installer** - Download and run the Thinkube installer desktop application (this page).
 
@@ -67,34 +63,37 @@ Enter your sudo password for the current user. This allows the installer to:
 
 The installer will NOT store your password.
 
-### Step 4: Server Discovery - Network Mode
+### Step 4: Overlay Provider Selection
 
 ![Server Discovery](./images/04-server-discovery.png)
 
-Choose how to discover your servers:
+Choose your overlay network provider:
 
-- **Overlay Network (ZeroTier)** - **RECOMMENDED**: The best choice for homelab setups
-- **Local Network** - Basic option for local-only access
+- **ZeroTier** — Software-defined networking with a virtual L2 Ethernet overlay. Uses static IPs from the network's CIDR. Free for up to 25 nodes.
+- **Tailscale** — WireGuard-based mesh VPN. Auto-assigns IPs from the `100.x.x.x` range. Free for up to 100 devices.
 
-### Why ZeroTier Overlay is Recommended
+Both providers create a secure encrypted network that makes your homelab accessible from anywhere without port forwarding.
 
-ZeroTier creates a secure virtual network that makes your homelab accessible from anywhere in the world, as if you were on your local network. This is ideal for:
+### Why an Overlay Network
+
+An overlay network makes your cluster location-independent:
 
 - **Work from Anywhere**: Access your development environment from a coffee shop, office, or while traveling
-- **No Port Forwarding**: Avoid exposing your home router to the internet
-- **Enterprise Security**: Military-grade encryption for all connections
+- **No Port Forwarding**: No need to expose your home router to the internet
+- **Encrypted**: All inter-node traffic is encrypted end-to-end
 - **Simple Setup**: No complex VPN configurations or firewall rules
 - **Persistent Access**: Your laptop stays connected to your homelab wherever you go
-- **Free for Homelabs**: ZeroTier's free tier supports up to 10 nodes - enough for a typical Thinkube setup (2-3 cluster nodes + a few laptops/devices)
 
-**How it Works**: 
-- Your cluster nodes remain on your local network for high-speed communication
-- ZeroTier creates a secure overlay network on top
-- Your laptop joins this overlay network from anywhere
-- You access your services (Control Panel, Code-Server, etc.) as if you were home
-- No public internet exposure - only devices you authorize can connect
+### Step 4b: Overlay Setup
 
-If using ZeroTier, enter your ZeroTier Network CIDR (found in ZeroTier Central).
+After selecting your provider, the installer automatically:
+
+1. Installs the overlay provider on all nodes
+2. Joins each node to your network
+3. Assigns or discovers overlay IPs
+4. Verifies connectivity between all nodes
+
+No manual node bootstrapping is required. Enter the required credentials for your chosen provider (Network ID and API token for ZeroTier, or auth key for Tailscale).
 
 ### Step 5: Server Discovery - Results
 
@@ -179,9 +178,9 @@ Configure your cluster settings:
   - Certificates generated immediately during installation
   - [See Cloudflare Token Setup Guide](./cloudflare-token)
 
-**ZeroTier Configuration:**
-- **Network ID**: Your 16-character ZeroTier network ID
-- **API Token**: For automatic node authorization
+**Overlay Network Configuration:**
+- For **ZeroTier**: Network ID (16-character) and API Token for automatic node authorization
+- For **Tailscale**: Auth key for automatic node registration
 
 **GitHub Integration (Required):**
 - **Personal Access Token**: Powers Thinkube's GitOps workflow
@@ -214,7 +213,7 @@ Configure advanced network settings:
 - Define a range of IPs for load balancer services
 
 The configuration shows:
-- ZeroTier and Kubernetes cluster CIDRs
+- Overlay network and Kubernetes cluster CIDRs
 - IP ranges for MetalLB
 - Server assignments with their IPs and roles
 
@@ -231,7 +230,7 @@ Review your complete configuration:
 
 **Node Assignments:**
 - Each server with hardware specs
-- Network addresses (ZeroTier and local)
+- Network addresses (overlay and local)
 - Assigned roles
 - GPU availability
 
@@ -283,7 +282,7 @@ If issues occur:
 1. Check the live output in installer popups for specific errors
 2. Verify all requirements passed in Step 2
 3. Ensure network connectivity between nodes
-4. Validate GitHub and ZeroTier tokens
+4. Validate GitHub and overlay network tokens
 5. Check firewall rules aren't blocking required ports
 
 ## Next Steps

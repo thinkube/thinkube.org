@@ -28,7 +28,7 @@ export default defineConfig({
 					label: 'Getting Started',
 					items: [
 						{ label: 'Introduction', slug: 'intro' },
-						{ label: 'ZeroTier Setup', slug: 'installation/zerotier-token' },
+						{ label: 'Overlay Network Setup', slug: 'installation/overlay-network' },
 						{ label: 'Cloudflare Token', slug: 'installation/cloudflare-token' },
 						{ label: 'GitHub Token', slug: 'installation/github-token' },
 						{ label: 'Hugging Face Token', slug: 'installation/huggingface-token' },

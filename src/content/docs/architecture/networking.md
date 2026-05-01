@@ -4,7 +4,9 @@ description: How Thinkube connects nodes, routes traffic, and secures communicat
 sidebar_position: 3
 ---
 
-Thinkube builds a location-independent Kubernetes cluster on top of a ZeroTier overlay network. Nodes can be in different buildings, cities, or continents — the networking layer makes them behave as if they share a switch.
+Thinkube builds a location-independent Kubernetes cluster on top of an encrypted overlay network. Nodes can be in different buildings, cities, or continents — the networking layer makes them behave as if they share a switch.
+
+Thinkube supports two overlay providers: **ZeroTier** (software-defined L2 networking) and **Tailscale** (WireGuard-based mesh VPN). You choose your provider during installation; the installer handles setup on all nodes automatically.
 
 ## Network Layers
 
@@ -13,14 +15,14 @@ Internet: {
   Client: Browser / CLI
 }
 
-ZeroTier Overlay: {
+Overlay Network: {
   Node A: Control Plane {
     k8s0: "k8s0 (172.16.0.1)"
-    zt: "zt* (192.168.191.50)"
+    overlay: "overlay IP"
     VIPs: "VIPs (.200–.210)"
   }
   Node B: Worker {
-    zt2: "zt* (192.168.191.10)"
+    overlay2: "overlay IP"
   }
 }
 
@@ -31,16 +33,18 @@ Kubernetes: {
   LB: "Cilium L2 LB"
 }
 
-Internet.Client -> ZeroTier Overlay.Node A.VIPs: HTTPS
-ZeroTier Overlay.Node A.VIPs -> Kubernetes.Gateway
-ZeroTier Overlay.Node A.zt -> ZeroTier Overlay.Node B.zt2: encrypted
-Kubernetes.Cilium -> ZeroTier Overlay.Node A.k8s0
-Kubernetes.Cilium -> ZeroTier Overlay.Node B.zt2
+Internet.Client -> Overlay Network.Node A.VIPs: HTTPS
+Overlay Network.Node A.VIPs -> Kubernetes.Gateway
+Overlay Network.Node A.overlay -> Overlay Network.Node B.overlay2: encrypted
+Kubernetes.Cilium -> Overlay Network.Node A.k8s0
+Kubernetes.Cilium -> Overlay Network.Node B.overlay2
 ```
 
-## ZeroTier Overlay
+## Overlay Providers
 
-ZeroTier creates a virtual L2 Ethernet network across all nodes. Every node gets an IP on the same `/24` subnet (e.g., `192.168.191.0/24`), and all traffic between members is encrypted with AES-256-GCM using Curve25519 key exchange with perfect forward secrecy.
+### ZeroTier
+
+ZeroTier creates a virtual L2 Ethernet network across all nodes. Every node gets a static IP on the same `/24` subnet (e.g., `192.168.191.0/24`), and all traffic between members is encrypted with AES-256-GCM using Curve25519 key exchange with perfect forward secrecy.
 
 | Property | Value |
 |----------|-------|
@@ -50,19 +54,40 @@ ZeroTier creates a virtual L2 Ethernet network across all nodes. Every node gets
 | MTU | 2800 |
 | Subnet | Configurable `/24` (e.g., `192.168.191.0/24`) |
 
-The installer configures ZeroTier during [node setup](/installation/node-setup/), assigns the overlay IP, and authorizes the node via the ZeroTier API.
+### Tailscale
+
+Tailscale builds a WireGuard mesh between all nodes. IPs are auto-assigned from the `100.x.x.x` CGNAT range. All traffic is encrypted with WireGuard (ChaCha20-Poly1305).
+
+| Property | Value |
+|----------|-------|
+| Encryption | WireGuard (ChaCha20-Poly1305) |
+| Key exchange | Noise protocol framework |
+| Topology | Peer-to-peer (DERP relay fallback) |
+| MTU | ~1280 (WireGuard overhead) |
+| Subnet | Auto-assigned `100.x.x.x/32` per node |
+
+### Provider Comparison
+
+| Feature | ZeroTier | Tailscale |
+|---------|----------|-----------|
+| IP assignment | Static from your CIDR | Auto-assigned `100.x.x.x` |
+| Interface name | `zt*` | `tailscale0` |
+| Free tier | 25 nodes | 100 devices |
+| Configuration | Network ID + API token | Auth key |
+
+The installer configures the chosen provider during installation, assigns overlay IPs, and verifies connectivity between all nodes. See [Overlay Network Setup](/installation/overlay-network/) for credential setup.
 
 ### VIP Addresses
 
-The control plane node's ZeroTier member is assigned the MetalLB VIP range (e.g., `.200`–`.210`) as secondary IPs. This makes LoadBalancer services directly reachable from any machine on the ZeroTier network without additional routing.
+The control plane node's overlay interface is assigned the MetalLB VIP range (e.g., `.200`–`.210`) as secondary IPs. This makes LoadBalancer services directly reachable from any machine on the overlay network without additional routing.
 
 ```
-# Control plane ZeroTier interface
-192.168.191.50/24    ← node address
-192.168.191.200/24   ← primary gateway VIP
-192.168.191.201/24   ← secondary VIP
+# Control plane overlay interface (ZeroTier example)
+192.168.191.50/24    <- node address
+192.168.191.200/24   <- primary gateway VIP
+192.168.191.201/24   <- secondary VIP
 ...
-192.168.191.210/24   ← last VIP
+192.168.191.210/24   <- last VIP
 ```
 
 ## The k8s0 Dummy Interface
@@ -72,10 +97,10 @@ The Kubernetes API server binds to a dummy interface (`k8s0`) with a fixed IP (`
 | Interface | IP | Purpose |
 |-----------|-----|---------|
 | `k8s0` | `172.16.0.1` | Kubernetes API server (stable, location-independent) |
-| `zt*` | `192.168.191.x` | ZeroTier overlay (inter-node communication) |
+| `zt*` or `tailscale0` | Overlay IP | Overlay network (inter-node communication) |
 | `enP*` / `wlP*` / `eth*` | DHCP | Physical network (internet access) |
 
-Worker nodes reach `172.16.0.1` via a ZeroTier managed route. The kubelet, kubectl, and all in-cluster clients use this address.
+Worker nodes reach `172.16.0.1` via a managed route on the overlay network. The kubelet, kubectl, and all in-cluster clients use this address.
 
 ## Cilium CNI
 
@@ -86,17 +111,19 @@ Thinkube uses [Cilium](https://cilium.io/) as the Container Network Interface (C
 | Setting | Value | Reason |
 |---------|-------|--------|
 | `kube-proxy-replacement` | `false` | kube-proxy handles service DNAT via iptables |
-| `devices` | `k8s0 en+ eth+ wl+ bond+` | Exclude ZeroTier from BPF (see below) |
-| `enable-wireguard` | `false` | ZeroTier already encrypts inter-node traffic |
+| `devices` | `k8s0 en+ eth+ wl+ bond+` | Exclude overlay interfaces from BPF (see below) |
+| `enable-wireguard` | `false` | Overlay provider already encrypts inter-node traffic |
 | `bpf-lb-sock` | `true` | Socket-level load balancing for local services |
 
-### Why ZeroTier Is Excluded from Cilium Devices
+### Why Overlay Interfaces Are Excluded from Cilium Devices
 
-Cilium auto-detects network interfaces and attaches eBPF programs (`cil_from_netdev`) to process incoming traffic. When attached to the ZeroTier interface, this BPF program intercepts packets destined for LoadBalancer VIPs and blackholes them instead of letting kube-proxy DNAT them to backend pods.
+Cilium auto-detects network interfaces and attaches eBPF programs (`cil_from_netdev`) to process incoming traffic. When attached to overlay interfaces (ZeroTier's `zt*` or Tailscale's `tailscale0`), this BPF program intercepts packets destined for LoadBalancer VIPs and blackholes them instead of letting kube-proxy DNAT them to backend pods.
 
-This is a known issue ([cilium/cilium#44982](https://github.com/cilium/cilium/issues/44982)) affecting overlay VPN interfaces (WireGuard, ZeroTier). The fix is to explicitly set `devices` to include only physical and cluster interfaces, excluding `zt*`.
+This is a known issue ([cilium/cilium#44982](https://github.com/cilium/cilium/issues/44982)) affecting overlay VPN interfaces. The fix is to explicitly set `devices` to include only physical and cluster interfaces, excluding overlay interfaces.
 
-### ZeroTier Peer Path Isolation
+### Overlay Peer Path Isolation
+
+#### ZeroTier
 
 ZeroTier automatically discovers the best UDP path between peers by probing all local network interfaces. On Kubernetes nodes, this can include virtual interfaces created by Cilium (`cilium_host`, `cilium_net`), container bridges (`cni-podman0`), and pod veth pairs — leading to peer paths routed through the CNI network (e.g., `10.1.x.x`) instead of the physical LAN.
 
@@ -112,15 +139,21 @@ Thinkube prevents this by configuring `/var/lib/zerotier-one/local.conf` on ever
 }
 ```
 
-This forces ZeroTier to discover peers only via physical interfaces (LAN or WAN), keeping the overlay network stable regardless of Kubernetes networking state. The configuration is applied automatically during node setup and the add-node flow.
+This forces ZeroTier to discover peers only via physical interfaces (LAN or WAN), keeping the overlay network stable regardless of Kubernetes networking state.
 
-### Why WireGuard Is Not Enabled
+#### Tailscale
+
+Tailscale uses a similar peer discovery mechanism (STUN/DERP) but does not probe arbitrary local interfaces in the same way. No additional interface exclusion is needed for Tailscale.
+
+Both configurations are applied automatically during installation and the add-node flow.
+
+### Why Cilium WireGuard Is Not Enabled
 
 Cilium supports transparent WireGuard encryption for pod-to-pod traffic between nodes. Thinkube does **not** enable this because:
 
-1. **Redundant**: ZeroTier already provides AES-256-GCM encryption on all inter-node traffic
+1. **Redundant**: The overlay provider (ZeroTier or Tailscale) already encrypts all inter-node traffic
 2. **Breaks pod networking**: When the control plane uses a dummy interface (`k8s0` at `172.16.0.1`), WireGuard tunnel negotiation between nodes fails, breaking cross-node pod connectivity
-3. **MTU overhead**: WireGuard reduces MTU to 1420 inside ZeroTier's already-reduced 2800
+3. **MTU overhead**: Additional WireGuard encapsulation further reduces MTU inside the overlay's already-reduced MTU
 
 ## Gateway and Ingress
 
@@ -168,7 +201,7 @@ load-balancer:
     - 192.168.191.200-192.168.191.210
 ```
 
-The VIP range is derived from inventory variables (`metallb_ip_start_octet` and `metallb_ip_end_octet`) combined with the ZeroTier subnet prefix.
+The VIP range is derived from inventory variables (`metallb_ip_start_octet` and `metallb_ip_end_octet`) combined with the overlay subnet prefix.
 
 ## DNS
 
@@ -178,7 +211,7 @@ CoreDNS provides in-cluster DNS resolution. Services are accessible at `<name>.<
 
 ### External
 
-The ZeroTier subnet's DNS IP (e.g., `192.168.191.205`) is assigned to a CoreDNS LoadBalancer service, making cluster DNS available to all nodes on the overlay for resolving `*.yourdomain.com` to the gateway VIP.
+An IP from the overlay subnet (e.g., `192.168.191.205`) is assigned to a CoreDNS LoadBalancer service, making cluster DNS available to all nodes on the overlay for resolving `*.yourdomain.com` to the gateway VIP.
 
 ## TLS Certificates
 
@@ -187,8 +220,8 @@ Thinkube uses a wildcard certificate for `*.yourdomain.com`, managed by `acme.sh
 | Component | How TLS works |
 |-----------|--------------|
 | Client → Gateway | TLS terminated at Envoy with wildcard cert |
-| Gateway → Pods | Plain HTTP (encrypted by ZeroTier if cross-node) |
-| Node → Node | Encrypted by ZeroTier overlay |
+| Gateway → Pods | Plain HTTP (encrypted by overlay if cross-node) |
+| Node → Node | Encrypted by overlay provider |
 | kubectl → API | TLS to `172.16.0.1:6443` (k8s-managed cert) |
 
 There is no need for per-service TLS certificates or cert-manager. The wildcard cert covers all subdomains.
@@ -206,18 +239,18 @@ All nodes run UFW with `default: deny (incoming)`. The k8s install playbook open
 | 4240 | TCP | Cilium health |
 | 8472 | UDP | Cilium VXLAN |
 
-The ZeroTier interface (`zt+`) is allowed for all traffic in both directions — it's a trusted overlay network where all members are authorized nodes.
+The overlay interface (`zt+` for ZeroTier, `tailscale0` for Tailscale) is allowed for all traffic in both directions — it's a trusted overlay network where all members are authorized nodes.
 
 ## Multi-Node Networking
 
 When worker nodes join the cluster:
 
-1. **ZeroTier connects them** to the overlay network with a unique IP
+1. **The overlay provider connects them** to the network with a unique IP
 2. **k8s joins them** as worker nodes with their local LAN IP as `INTERNAL-IP`
 3. **Cilium establishes VXLAN tunnels** between nodes for pod-to-pod traffic
 4. **Cilium L2 LB** continues to ARP-respond on the control plane for VIPs
 
-Pod traffic between nodes flows through Cilium's VXLAN encapsulation, which uses each node's `INTERNAL-IP`. If nodes are on different LANs, the underlying IP connectivity is provided by ZeroTier — but Cilium itself doesn't need to know about ZeroTier.
+Pod traffic between nodes flows through Cilium's VXLAN encapsulation, which uses each node's `INTERNAL-IP`. If nodes are on different LANs, the underlying IP connectivity is provided by the overlay — but Cilium itself doesn't need to know about the overlay provider.
 
 ```d2
 Pod A (Node 1): {
@@ -237,13 +270,13 @@ Pod A (Node 1).app -> Cilium VXLAN.encap -> Pod B (Node 2).app
 
 | From | To | Path |
 |------|----|------|
-| External client | Service (HTTPS) | Client → ZeroTier → VIP:443 → Envoy → Pod |
+| External client | Service (HTTPS) | Client → Overlay → VIP:443 → Envoy → Pod |
 | Pod on Node A | Pod on Node B | Pod → Cilium VXLAN → Node B → Pod |
-| kubectl (any node) | API server | kubectl → `172.16.0.1:6443` (via ZeroTier if remote) |
+| kubectl (any node) | API server | kubectl → `172.16.0.1:6443` (via overlay if remote) |
 | Worker node | LoadBalancer VIP | Cilium socket LB → DNAT to pod IP → VXLAN if cross-node |
 
 ## Next Steps
 
 - [Multi-Architecture Support](/architecture/multi-architecture/) — How ARM64 and AMD64 nodes coexist
-- [ZeroTier Setup](/installation/zerotier-token/) — Create your overlay network
+- [Overlay Network Setup](/installation/overlay-network/) — Set up ZeroTier or Tailscale
 - [Components](/components/) — Available platform services

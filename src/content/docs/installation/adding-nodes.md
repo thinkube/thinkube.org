@@ -8,9 +8,9 @@ After the initial installation you can add worker nodes to your Thinkube cluster
 ## Prerequisites
 
 - A running Thinkube cluster
-- Each new node prepared with the [bootstrap script](./node-setup)
-- SSH access from the cluster to each new node
-- The new node on the same ZeroTier network (if using overlay mode)
+- Each new node meets the [prerequisites](./node-setup) (Ubuntu 24.04, SSH, internet access)
+- No manual bootstrap script is needed — thinkube-control handles overlay setup for new nodes
+- The overlay provider (ZeroTier or Tailscale) is configured automatically based on the cluster's `overlay_provider` setting
 
 ## Overview
 
@@ -41,13 +41,14 @@ The wizard discovers reachable nodes and shows their hostname, IP, and status. S
 
 Review the hardware summary and click **Add Nodes**. The UI streams progress as Thinkube:
 
-1. Distributes SSH keys for inter-node communication
-2. Updates the Ansible inventory
-3. Joins each node to the Kubernetes cluster
-4. Cordons the new nodes (prevents scheduling)
-5. Configures DNS resolution for internal domains
-6. Deploys the GPU operator (if GPUs detected)
-7. Configures GPU time-slicing profiles
+1. Installs and configures the overlay provider (ZeroTier or Tailscale) on the new node
+2. Distributes SSH keys for inter-node communication
+3. Updates the Ansible inventory
+4. Joins each node to the Kubernetes cluster
+5. Cordons the new nodes (prevents scheduling)
+6. Configures DNS resolution for internal domains
+7. Deploys the GPU operator (if GPUs detected)
+8. Configures GPU time-slicing profiles
 
 When complete, the UI shows the nodes as **joined and cordoned** with a command to run in the terminal.
 
