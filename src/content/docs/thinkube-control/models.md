@@ -58,10 +58,19 @@ The table displays available models with:
 
 Models you fine-tune in JupyterHub appear automatically with the "Fine-tuned" badge. These models are already registered in MLflow and show as "Registered" status.
 
-## Using Mirrored Models
+## Loading Models
 
-Once mirrored, deploy models using templates:
-- **tkt-tensorrt-llm-harmony** - For LLM models with TensorRT-LLM
-- **tkt-text-embeddings** - For embedding models with TEI
+Once mirrored, models can be loaded into a running inference backend:
 
-See [Templates](/thinkube-control/templates/) for deployment instructions.
+1. Find your mirrored model (status **Deployable**)
+2. Click **Load**
+3. Select a backend and context length
+4. The model loads into GPU memory and becomes **Available**
+
+Available models are automatically registered with the LLM Gateway and can be called through the API.
+
+## Using Models
+
+Loaded models are accessible through the LLM Gateway at `https://llm.yourdomain.com` using OpenAI or Anthropic-compatible APIs.
+
+See the **[LLM Gateway playbook](/learn/llm-gateway/)** for complete API usage instructions, authentication, and SDK examples.

@@ -15,25 +15,26 @@ Run LLMs, train models, and experiment with AI - all on your own hardware with n
 
 ## Running Local LLMs
 
-Deploy LLM inference from templates - no cloud APIs needed.
+Deploy inference backends, mirror models, and access them through the LLM Gateway — a unified API compatible with both OpenAI and Anthropic SDKs.
 
-### Deploy an LLM Service
+### Inference Backends
 
-1. Open Thinkube Control
-2. Deploy the `tkt-vllm-gradio` template
-3. Provide app name and domain
-4. Wait for deployment (models download on first run)
+| Backend | Deployed as | Best for |
+|---------|-------------|----------|
+| **TensorRT-LLM** | Template (`tkt-tensorrt-llm-harmony`) | Maximum performance with pre-optimized models |
+| **vLLM** | Template (`tkt-vllm-gradio`) | Flexible inference, supports most HuggingFace models |
+| **Ollama** | Optional Component | Lightweight GGUF models for development and testing |
 
-Access your LLM at `https://my-llm.example.com`
+Templates include a Gradio chat UI for interactive testing. Ollama runs as a platform service accessible only through the gateway.
 
-### Available AI Templates
+### Other AI Templates
 
 | Template | Description | GPU Memory |
 |----------|-------------|------------|
-| `tkt-vllm-gradio` | LLM inference with Gradio UI | ~20GB |
 | `tkt-stable-diffusion` | Image generation | ~20GB |
 | `tkt-text-embeddings` | Text embeddings service | ~8GB |
-| `tkt-tensorrt-llm-harmony` | TensorRT-LLM optimized inference | Varies |
+
+See the **[LLM Gateway playbook](/learn/llm-gateway/)** for a step-by-step guide to mirroring models, deploying backends, and calling them through the API.
 
 ## JupyterHub
 
@@ -95,17 +96,20 @@ spec:
 
 The platform handles GPU scheduling and resource allocation.
 
-## LiteLLM Gateway
+## LLM Gateway
 
-Route LLM requests through a unified API at `https://litellm.example.com`.
+The LLM Gateway at `https://llm.yourdomain.com` provides a single API for all your locally-running models.
 
-### Benefits
-- Single API for multiple model backends
-- OpenAI-compatible endpoint
-- Usage tracking via Langfuse (optional)
+- **OpenAI-compatible** — `POST /v1/chat/completions`
+- **Anthropic-compatible** — `POST /v1/messages`
+- **Automatic routing** — use the model ID from the catalog, the gateway finds the right backend
+- **Reasoning separation** — thinking models return reasoning in a separate field
+
+See the **[LLM Gateway playbook](/learn/llm-gateway/)** for complete setup and usage instructions.
 
 ## Next Steps
 
+- [LLM Gateway](/learn/llm-gateway/) - Mirror models and call them through the API
 - [Web Applications](/learn/web-apps/) - Deploy web frontends for your AI services
 - [GitOps & Automation](/learn/devops/) - Understand the deployment flow
 - [Components](/components/) - See all available AI/ML components

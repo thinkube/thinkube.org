@@ -20,6 +20,9 @@ Deploy a full-stack web app with a Vue.js frontend, FastAPI backend, and Postgre
 ### [AI & Machine Learning](/learn/ai-ml/)
 Run local LLMs, train models in JupyterHub, track experiments with MLflow. GPU-accelerated, no cloud costs.
 
+### [LLM Gateway](/learn/llm-gateway/)
+Mirror a model, deploy an inference backend, and call it through the LLM Gateway using OpenAI or Anthropic-compatible APIs.
+
 ---
 
 ## Understand the platform

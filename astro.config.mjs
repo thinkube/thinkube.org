@@ -44,6 +44,7 @@ export default defineConfig({
 						{ label: 'Your First Deploy', slug: 'learn/your-first-deploy' },
 						{ label: 'Web Applications', slug: 'learn/web-apps' },
 						{ label: 'AI & Machine Learning', slug: 'learn/ai-ml' },
+						{ label: 'LLM Gateway', slug: 'learn/llm-gateway' },
 						{ label: 'GitOps & Automation', slug: 'learn/devops' },
 					],
 				},
