@@ -40,7 +40,7 @@ Thinkube provides pre-configured components organized into core (always installe
 ## Optional Components
 
 ### AI/ML Services
-- **LiteLLM**: LLM gateway for routing to local models
+- **LLM Gateway**: Orchestrates inference backends (vLLM, TensorRT-LLM, Ollama) with OpenAI and Anthropic-compatible APIs
 - **Ollama**: Local LLM inference server
 - **Langfuse**: LLM observability and prompt management
 - **Argilla**: Data labeling for NLP

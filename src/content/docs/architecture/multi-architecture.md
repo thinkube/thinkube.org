@@ -6,6 +6,8 @@ sidebar_position: 2
 
 Thinkube supports mixed-architecture clusters with ARM64 and AMD64 nodes. Every container image is built natively on hardware of the target architecture — no QEMU emulation, no slow cross-compilation.
 
+The most common mixed-architecture setup is a **DGX Spark (ARM64) as the AI worker** with an **AMD64 node as the control plane**. This topology keeps the full 128GB unified memory of the DGX Spark available for AI workloads and isolates the control plane from GPU OOM events that can crash unified-memory systems. See [GPU Support — Unified Memory and OOM Behavior](/architecture/gpu/#unified-memory-and-oom-behavior) for details.
+
 ## Core Principle
 
 **Images are only built for architectures that have physical nodes in the cluster.** A single-node ARM64 installation builds ARM64 images only. When an AMD64 worker joins, Thinkube automatically rebuilds all images as multi-arch manifest lists, with each architecture built on its native hardware.

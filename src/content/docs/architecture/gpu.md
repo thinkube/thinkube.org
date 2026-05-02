@@ -173,6 +173,21 @@ The DGX Spark (NVIDIA GB10) is an ARM64 system with an integrated GPU. It receiv
 
 The Docker daemon configuration is specific to DGX Spark because it runs Docker alongside containerd for system-level GPU workloads (NVIDIA's management stack).
 
+### Unified Memory and OOM Behavior
+
+The DGX Spark uses unified memory — CPU and GPU share the same 128GB memory pool. This has a critical stability implication: **a GPU out-of-memory error can take down the entire machine**, not just the offending workload.
+
+On a standard x86 system with a discrete GPU, a CUDA OOM kills the process but the server continues running — GPU memory is separate from system memory. On the DGX Spark, an aggressive model that exhausts memory can starve the kernel, kubelet, and control plane processes.
+
+**Recommended topology for mixed-architecture clusters:**
+
+| Node | Role | Why |
+|------|------|-----|
+| **AMD64 node** | Kubernetes control plane | Survives GPU OOM events; keeps the cluster operational |
+| **DGX Spark (ARM64)** | Dedicated AI worker | Full 128GB unified memory available for models; no control plane overhead |
+
+This separation means a runaway inference workload on the DGX Spark causes a node failure that Kubernetes recovers from automatically — it reschedules the pod, the DGX Spark reboots, and the cluster stays healthy throughout. If the control plane were on the same machine, the entire cluster would go down.
+
 ## Requesting GPUs in Pods
 
 To use a GPU in your workload, set `runtimeClassName` and request GPU resources:

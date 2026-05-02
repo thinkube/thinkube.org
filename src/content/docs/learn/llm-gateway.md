@@ -61,6 +61,8 @@ For inference backends:
 - **TensorRT-LLM** and **vLLM** are deployed as **templates** because they include a Thinkube wrapper (`server.py`) that adds model catalog integration, reasoning support, and Gradio UI.
 - **Ollama** is deployed as an **optional component** because it runs the upstream Ollama image directly — no custom code needed.
 
+**DGX Spark users:** With 128GB of unified memory, you can load 70B+ parameter models that won't fit on consumer GPUs. vLLM and TensorRT-LLM both support the Grace Hopper architecture natively. If you're running a mixed-architecture cluster, inference backends will be scheduled on the DGX Spark automatically.
+
 ### What you'll accomplish
 
 - Mirror a model from HuggingFace to your local MLflow registry

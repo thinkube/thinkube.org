@@ -5,7 +5,7 @@ description: What is Thinkube and why does it exist
 
 # Your personal sovereign AI cloud
 
-Thinkube turns a single GPU machine into a complete AI development environment. Local LLMs, vector databases, experiment tracking, CI/CD, monitoring — all pre-configured and integrated. Install it, and start building.
+Thinkube turns a GPU machine into a complete AI development environment — whether it's an NVIDIA DGX Spark, a workstation with a consumer GPU, or a rack server. ARM64 or x86, single node or multi-node. Local LLMs, vector databases, experiment tracking, CI/CD, monitoring — all pre-configured and integrated. Install it, and start building.
 
 ## The real cost of "just set it up yourself"
 
@@ -94,15 +94,20 @@ Deploy models on your GPUs with no API costs:
 | **Ollama** | Quick experiments, chat | One-click deploy from dashboard |
 | **vLLM** | Production inference, OpenAI-compatible API | Template deployment |
 | **TensorRT-LLM** | Maximum throughput on NVIDIA GPUs | Template deployment |
-| **LiteLLM** | Unified API gateway across all engines | Pre-installed |
 
-Load a model, and every service on the platform can use it — your notebooks, your agents, your applications. LiteLLM provides a single OpenAI-compatible endpoint that routes to whichever engine is serving which model.
+The **LLM Gateway** at `llm.yourdomain.com` orchestrates all three engines and exposes them through a single API — both OpenAI-compatible (`/v1/chat/completions`) and Anthropic-compatible (`/v1/messages`). Load a model, and every service on the platform can use it — your notebooks, your agents, your applications. The Gateway handles routing, GPU resource management, and model lifecycle.
 
 ## Access from anywhere
 
 Thinkube uses ZeroTier to create a secure overlay network. Your laptop — at home, at work, at a coffee shop — connects directly to your server. No port forwarding, no VPN configuration, no exposing services to the public internet.
 
 Open your browser, go to `jupyter.yourdomain.com`, and you're in your notebook environment with full GPU access. It feels like the machine is sitting under your desk, no matter where you are.
+
+## Multi-architecture, built in
+
+Thinkube runs natively on ARM64 and AMD64. Start with a DGX Spark (ARM64), add an x86 worker for specific workloads — every container image is built natively on each architecture. No QEMU emulation, no slow cross-compilation.
+
+For mixed-architecture clusters, we recommend running the Kubernetes control plane on an AMD64 node and dedicating the DGX Spark entirely to AI workloads. Beyond freeing up GPU resources, there's a stability reason: on x86 systems, a GPU out-of-memory error kills the workload. On a DGX Spark's unified memory, a GPU OOM can take down the entire machine — CPU and GPU share the same memory pool. Keeping the control plane on a separate x86 node means a runaway model doesn't take your cluster with it.
 
 ## Next steps
 

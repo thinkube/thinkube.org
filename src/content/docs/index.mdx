@@ -66,7 +66,7 @@ import CardGrid from '../../components/CardGrid.astro';
   <span class="diff-number">01</span>
   <div class="diff-content">
     <h3>Your hardware, your rules</h3>
-    <p>Your GPU sitting under your desk is more powerful than most cloud instances, and nobody else reads your data. Thinkube makes it usable — not as a science project, but as a real platform you open every morning.</p>
+    <p>An NVIDIA DGX Spark, a workstation with a consumer GPU, a rack server — whatever you have. ARM64 or x86. Thinkube makes it usable as a real platform you open every morning. Your data never leaves your network.</p>
   </div>
 </div>
 
@@ -74,7 +74,7 @@ import CardGrid from '../../components/CardGrid.astro';
   <span class="diff-number">02</span>
   <div class="diff-content">
     <h3>Zero to deployed, not zero to configured</h3>
-    <p>Most platforms hand you tools and say "good luck." Thinkube ships pre-integrated. Ollama talks to LiteLLM, LiteLLM talks to your notebooks, your notebooks talk to MLflow. Day one.</p>
+    <p>Most platforms hand you tools and say "good luck." Thinkube ships pre-integrated. Ollama talks to the LLM Gateway, the Gateway talks to your notebooks, your notebooks talk to MLflow. Day one.</p>
   </div>
 </div>
 
@@ -101,7 +101,7 @@ import CardGrid from '../../components/CardGrid.astro';
 		Thinky lives in your JupyterLab sidebar. Ask it to analyze data, fix bugs, or build a pipeline — it reads your cells, writes code, executes it, reads the error, fixes it, and runs again. You watch.
 	</FeatureCard>
 	<FeatureCard title="Your LLMs, your GPUs" icon="cpu">
-		Run Llama, Mistral, Qwen, or any open model. Ollama for quick experiments, vLLM for production throughput, TensorRT-LLM when you need every millisecond. No API bills. No rate limits.
+		Run Llama, Mistral, Qwen, or any open model. The LLM Gateway orchestrates Ollama, vLLM, and TensorRT-LLM behind OpenAI and Anthropic-compatible APIs. No API bills. No rate limits.
 	</FeatureCard>
 	<FeatureCard title="Deploy in 15 lines" icon="rocket">
 		Describe what you want in a simple YAML file. Thinkube handles container builds, registry, TLS certificates, DNS, GitOps deployment, health checks, and monitoring. You never touch a Kubernetes manifest.

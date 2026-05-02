@@ -5,6 +5,8 @@ description: Local LLMs, GPU-accelerated notebooks, experiment tracking — no A
 
 You have a GPU. You want to run models on it, train new ones, track experiments, and build applications — without paying per token and without sending your data to someone else's servers. Here's how.
 
+Running on a **DGX Spark**? Its 128GB of unified memory means you can run 70B+ parameter models on a single machine. Thinkube detects your hardware and configures GPU access automatically — ARM64 or x86, consumer GPU or data center card.
+
 ## The workflow
 
 From model to running inference in four steps:
