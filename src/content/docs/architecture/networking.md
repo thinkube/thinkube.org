@@ -1,43 +1,54 @@
 ---
 title: Networking
-description: How Thinkube connects nodes, routes traffic, and secures communication across the cluster
+description: How the overlay network enables remote access and how traffic flows between nodes, pods, and clients
 sidebar_position: 3
 ---
 
-Thinkube builds a location-independent Kubernetes cluster on top of an encrypted overlay network. Nodes can be in different buildings, cities, or continents — the networking layer makes them behave as if they share a switch.
+Thinkube nodes sit on the same local network. The encrypted overlay network exists so **you** can reach the platform from anywhere — your laptop at home, at work, at a coffee shop — without port forwarding, VPN configuration, or exposing services to the public internet.
 
-Thinkube supports two overlay providers: **ZeroTier** (software-defined L2 networking) and **Tailscale** (WireGuard-based mesh VPN). You choose your provider during installation; the installer handles setup on all nodes automatically.
+Thinkube supports two overlay providers: **ZeroTier** (software-defined L2 networking) and **Tailscale** (WireGuard-based mesh VPN). You choose your provider during installation; the installer handles setup on all nodes and client devices automatically.
+
+### Why the overlay is on every node
+
+The Envoy Gateway's VIP addresses live on the overlay interface. Every `*.yourdomain.com` request — whether from your laptop or from a pod running on a worker node — resolves to a VIP on the overlay. Without the overlay, worker nodes couldn't reach platform services by domain name.
+
+The overlay also carries the Kubernetes API route. The API server binds to a dummy interface (`k8s0` at `172.16.0.1`), and workers reach it via a static route through the control plane's overlay IP. This makes the API address stable regardless of which physical network the machine is on.
 
 ## Network Layers
 
 ```d2
-Internet: {
-  Client: Browser / CLI
+Your Laptop: {
+  browser: "Browser / CLI"
 }
 
-Overlay Network: {
-  Node A: Control Plane {
+LAN: "Local Network" {
+  control: "Control Plane (tkspark)" {
     k8s0: "k8s0 (172.16.0.1)"
-    overlay: "overlay IP"
-    VIPs: "VIPs (.200–.210)"
+    lan_ip: "LAN IP"
   }
-  Node B: Worker {
-    overlay2: "overlay IP"
+  worker: "Worker Node" {
+    lan_ip2: "LAN IP"
   }
+  control.lan_ip -> worker.lan_ip2: "Cilium VXLAN\n(pod traffic)"
+}
+
+Overlay: "Overlay Network (ZeroTier / Tailscale)" {
+  cp_overlay: "Control Plane\n.50"
+  vips: "VIPs\n.200–.210"
+  w_overlay: "Worker\n.10"
+  cp_overlay -> vips
 }
 
 Kubernetes: {
-  Cilium: CNI (VXLAN)
-  Gateway: Envoy Gateway
-  DNS: CoreDNS
-  LB: "Cilium L2 LB"
+  Gateway: "Envoy Gateway\n*.yourdomain.com"
+  Cilium: "Cilium CNI"
+  DNS: "CoreDNS"
 }
 
-Internet.Client -> Overlay Network.Node A.VIPs: HTTPS
-Overlay Network.Node A.VIPs -> Kubernetes.Gateway
-Overlay Network.Node A.overlay -> Overlay Network.Node B.overlay2: encrypted
-Kubernetes.Cilium -> Overlay Network.Node A.k8s0
-Kubernetes.Cilium -> Overlay Network.Node B.overlay2
+Your Laptop.browser -> Overlay.vips: "HTTPS from anywhere"
+Overlay.w_overlay -> Overlay.vips: "pods reach *.yourdomain.com"
+Overlay.vips -> Kubernetes.Gateway
+LAN.worker.lan_ip2 -> Overlay.cp_overlay: "172.16.0.1 route\n(k8s API)"
 ```
 
 ## Overlay Providers
@@ -243,14 +254,12 @@ The overlay interface (`zt+` for ZeroTier, `tailscale0` for Tailscale) is allowe
 
 ## Multi-Node Networking
 
-When worker nodes join the cluster:
+All nodes are expected to be on the same local network. Workers join the cluster with their LAN IP as `INTERNAL-IP`, and pod-to-pod traffic flows directly over the LAN through Cilium's VXLAN encapsulation — the overlay is not in the data path for pod traffic.
 
-1. **The overlay provider connects them** to the network with a unique IP
-2. **k8s joins them** as worker nodes with their local LAN IP as `INTERNAL-IP`
-3. **Cilium establishes VXLAN tunnels** between nodes for pod-to-pod traffic
-4. **Cilium L2 LB** continues to ARP-respond on the control plane for VIPs
+The overlay serves two purposes on worker nodes:
 
-Pod traffic between nodes flows through Cilium's VXLAN encapsulation, which uses each node's `INTERNAL-IP`. If nodes are on different LANs, the underlying IP connectivity is provided by the overlay — but Cilium itself doesn't need to know about the overlay provider.
+1. **VIP reachability** — pods that call `https://mlflow.yourdomain.com` need to reach the gateway VIP, which lives on the overlay interface
+2. **API server route** — `172.16.0.1` is routed via the control plane's overlay IP
 
 ```d2
 Pod A (Node 1): {
@@ -270,10 +279,10 @@ Pod A (Node 1).app -> Cilium VXLAN.encap -> Pod B (Node 2).app
 
 | From | To | Path |
 |------|----|------|
-| External client | Service (HTTPS) | Client → Overlay → VIP:443 → Envoy → Pod |
-| Pod on Node A | Pod on Node B | Pod → Cilium VXLAN → Node B → Pod |
-| kubectl (any node) | API server | kubectl → `172.16.0.1:6443` (via overlay if remote) |
-| Worker node | LoadBalancer VIP | Cilium socket LB → DNAT to pod IP → VXLAN if cross-node |
+| Your laptop (remote) | Service (HTTPS) | Laptop → Overlay → VIP:443 → Envoy → Pod |
+| Pod on worker | `*.yourdomain.com` | Pod → Overlay → VIP:443 → Envoy → Pod |
+| Pod on Node A | Pod on Node B | Pod → Cilium VXLAN (LAN) → Node B → Pod |
+| Worker kubelet | API server | `172.16.0.1:6443` → Overlay → Control plane |
 
 ## Next Steps
 
