@@ -32,7 +32,7 @@ Control Plane: {
 
 Kubernetes Layer: {
   K8s: Kubernetes
-  Ingress: Ingress Controller
+  Gateway: Envoy Gateway
 }
 
 Application Layer: {
@@ -114,7 +114,7 @@ resources:
 ### Network Security
 - Automatic TLS for all services
 - Network policies by default
-- Ingress rate limiting
+- Gateway rate limiting
 - DDoS protection
 
 ### Access Control
@@ -151,7 +151,7 @@ resources:
 - Load balancing
 - Health checking
 
-### Ingress Management
+### Gateway & Routing
 - Automatic route creation
 - SSL termination
 - Path-based routing

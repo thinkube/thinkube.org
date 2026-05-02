@@ -155,7 +155,7 @@ Cilium supports transparent WireGuard encryption for pod-to-pod traffic between 
 2. **Breaks pod networking**: When the control plane uses a dummy interface (`k8s0` at `172.16.0.1`), WireGuard tunnel negotiation between nodes fails, breaking cross-node pod connectivity
 3. **MTU overhead**: Additional WireGuard encapsulation further reduces MTU inside the overlay's already-reduced MTU
 
-## Gateway and Ingress
+## Gateway
 
 All HTTP/HTTPS traffic enters the cluster through Envoy Gateway, which implements the Kubernetes Gateway API.
 

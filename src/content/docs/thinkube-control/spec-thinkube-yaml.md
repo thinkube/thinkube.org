@@ -215,11 +215,11 @@ Special container capabilities.
 
 | Capability | Description |
 |------------|-------------|
-| `large-uploads` | Configure nginx for uploads up to 1GB |
+| `large-uploads` | Configure gateway for uploads up to 1GB |
 
 ## Routes
 
-HTTP ingress routing rules. Paths are matched in order (most specific first).
+HTTP routing rules. Paths are matched in order (most specific first).
 
 ```yaml
 routes:

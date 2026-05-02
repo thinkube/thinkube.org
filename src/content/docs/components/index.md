@@ -11,7 +11,7 @@ Thinkube provides pre-configured components organized into core (always installe
 
 ### Infrastructure
 - **Kubernetes (k8s-snap)**: Canonical's production-grade Kubernetes
-- **Ingress Controller**: NGINX-based traffic routing
+- **Envoy Gateway**: Gateway API-based traffic routing
 - **ACME Certificates**: Automatic TLS via Let's Encrypt
 - **CoreDNS**: Internal and external DNS resolution
 

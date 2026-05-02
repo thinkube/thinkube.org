@@ -202,9 +202,9 @@ The installer validates tokens in real-time, showing green checkmarks and access
 
 Configure advanced network settings:
 
-**Ingress IP Configuration:**
-- **Primary Ingress IP**: For main services (Control Panel, Gitea, etc.)
-- **Secondary Ingress IP**: For Knative/serverless workloads
+**Gateway IP Configuration:**
+- **Primary Gateway IP**: For main services (Control Panel, Gitea, etc.)
+- **Secondary Gateway IP**: For Knative/serverless workloads
 
 **DNS Configuration:**
 - **CoreDNS External IP**: For cluster DNS resolution

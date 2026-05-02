@@ -12,7 +12,7 @@ Traditional Kubernetes deployments require hundreds of lines of YAML across mult
 | | thinkube.yaml | Kubernetes + Helm |
 |---|---|---|
 | **Web app + database** | ~15 lines | ~200+ lines |
-| **Files required** | 1 | 6-10 (Deployment, Service, Ingress, PVC, Secret, ConfigMap...) |
+| **Files required** | 1 | 6-10 (Deployment, Service, HTTPRoute, PVC, Secret, ConfigMap...) |
 | **SSL certificates** | Automatic | Manual cert-manager setup |
 | **Database connection** | `services: [database]` | StatefulSet + Secret + init scripts |
 | **Learning curve** | Minutes | Weeks |
