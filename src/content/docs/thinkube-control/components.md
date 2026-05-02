@@ -25,7 +25,7 @@ Services for running and managing large language models.
 
 | Component | Description | AI Lifecycle Role |
 |-----------|-------------|-------------------|
-| **LLM Gateway** | Orchestrates inference backends (vLLM, TensorRT-LLM, Ollama) with OpenAI and Anthropic-compatible APIs, GPU resource management, and model lifecycle | Unified API at `llm.yourdomain.com` — route requests to any local model through standard SDKs |
+| **LiteLLM** | Unified LLM API proxy supporting 100+ providers with OpenAI-compatible interface, load balancing, and usage tracking | Route requests to any local or remote model through a single API endpoint with standard SDKs |
 | **Ollama** | Local LLM inference server with GPU acceleration | Run smaller models locally for development and testing before deploying optimized TensorRT versions |
 | **Langfuse** | LLM observability platform for tracing, monitoring, and evaluating AI applications | Debug prompts, track token usage, measure response quality, and identify performance bottlenecks |
 
@@ -89,7 +89,7 @@ Some components require others to be installed first:
 | PgAdmin | PostgreSQL, Keycloak |
 | Weaviate | Harbor |
 | Chroma | Harbor |
-| LLM Gateway | Harbor, Keycloak, PostgreSQL, SeaweedFS |
+| LiteLLM | Harbor, Keycloak, PostgreSQL |
 | Argilla | Harbor, Keycloak, OpenSearch, Valkey |
 | Langfuse | PostgreSQL, Keycloak, ClickHouse, Valkey |
 | Ollama | Harbor |
