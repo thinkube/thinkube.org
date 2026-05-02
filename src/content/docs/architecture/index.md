@@ -91,7 +91,7 @@ Simple YAML file that describes your application:
 name: my-app
 type: webapp
 image: myapp:latest
-domain: app.example.com
+domain: app.yourdomain.com
 resources:
   memory: 512Mi
   cpu: 500m

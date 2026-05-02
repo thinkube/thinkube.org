@@ -1,5 +1,5 @@
 ---
-title: AI Models
+title: AI Model Library
 description: Mirror and manage AI models with MLflow
 ---
 

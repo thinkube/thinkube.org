@@ -1,11 +1,11 @@
 ---
-title: Introduction
+title: Why Thinkube
 description: What is Thinkube and why does it exist
 ---
 
-# Your own AI cloud
+# Your personal sovereign AI cloud
 
-Thinkube is a self-hosted platform that turns a single GPU machine into a complete AI development environment. Local LLMs, vector databases, experiment tracking, CI/CD, monitoring — all pre-configured and integrated. Install it, and start building.
+Thinkube turns a single GPU machine into a complete AI development environment. Local LLMs, vector databases, experiment tracking, CI/CD, monitoring — all pre-configured and integrated. Install it, and start building.
 
 ## The real cost of "just set it up yourself"
 
@@ -17,23 +17,21 @@ You haven't written a line of application code yet.
 
 Now add the AI stack. Ollama for quick inference. vLLM for production serving. A vector database for RAG. MLflow for experiment tracking. Langfuse for LLM observability. JupyterHub for notebooks. Each one needs configuration, storage, networking, and integration with everything else.
 
-**This takes weeks. Thinkube takes hours.**
+**This takes weeks. Thinkube takes under 3 hours.**
 
-## What you get
+## Why we built this
 
-After installation, you have a fully working platform at `*.yourdomain.com`:
+We kept hearing the same story: someone buys a powerful GPU, spends weeks setting up infrastructure, and never gets to the actual work. The cloud alternative costs more every month and sends your data to someone else's servers.
 
-- **`jupyter.yourdomain.com`** — JupyterHub with Thinky, your Claude-powered AI assistant that can read, write, and execute notebook cells autonomously
-- **`code.yourdomain.com`** — VS Code in the browser with Claude Code CLI pre-installed
-- **`control.yourdomain.com`** — Dashboard to monitor services, deploy apps, manage models, and configure your platform
-- **`ollama.yourdomain.com`** — LLM inference API, ready to load models
-- **`mlflow.yourdomain.com`** — Experiment tracking and model registry
-- **`gitea.yourdomain.com`** — Your own Git server with CI/CD webhooks
-- **`registry.yourdomain.com`** — Private container registry (Harbor)
+There should be a third option — a platform that gives you everything a cloud provider does, running on hardware you own, with data that never leaves your network. Not a collection of Docker containers you wire together. A real, integrated environment where services discover each other, authenticate through SSO, and deploy through GitOps from the moment you install it.
 
-Plus PostgreSQL, Valkey (Redis), ClickHouse, Qdrant, and more — all accessible from your code with connection strings injected automatically.
+That's what Thinkube is. Your personal sovereign AI cloud.
 
-Everything is behind SSO (Keycloak). One login, all services.
+## What happens after you install
+
+Open your browser. JupyterLab with Thinky, VS Code with Claude Code, a control dashboard, your Git server, your model registry, a private container registry — all at `*.yourdomain.com`, all behind single sign-on. One login, everything works.
+
+Databases, caches, object storage, and vector databases are pre-configured with connection strings injected into your applications automatically. You don't wire anything together. You just build.
 
 ## Thinky — your AI pair programmer
 
@@ -76,7 +74,7 @@ spec:
     - database
 ```
 
-That's it. Thinkube handles:
+That's 15 lines. Thinkube handles:
 - Building container images (Kaniko)
 - Pushing to your private registry (Harbor)
 - Deploying via GitOps (ArgoCD)
@@ -85,7 +83,7 @@ That's it. Thinkube handles:
 - Health checks and monitoring
 - Automatic redeployment on git push
 
-The equivalent Kubernetes setup would be 200+ lines of YAML across Deployments, Services, Ingress, PVCs, Secrets, ConfigMaps, and a database operator. You don't need to know any of that.
+The equivalent Kubernetes setup is 200+ lines of YAML across Deployments, Services, Ingress, PVCs, Secrets, ConfigMaps, and a database operator. You don't need to know any of that.
 
 ## Run your own LLMs
 
@@ -106,31 +104,9 @@ Thinkube uses ZeroTier to create a secure overlay network. Your laptop — at ho
 
 Open your browser, go to `jupyter.yourdomain.com`, and you're in your notebook environment with full GPU access. It feels like the machine is sitting under your desk, no matter where you are.
 
-## Who builds with Thinkube
-
-**AI engineers** who want to run experiments on their own GPUs without cloud costs. Fine-tune models, build RAG pipelines, deploy agents — with full control over the stack.
-
-**Developers** who want Claude-assisted development in a complete environment. Push code, it deploys. Ask Thinky, it writes and runs. No setup, no maintenance.
-
-**Researchers** who need reproducible ML environments with experiment tracking, model registries, and GPU-accelerated notebooks — without depending on institutional IT.
-
-## What's included
-
-| Category | Components |
-|----------|------------|
-| **Development** | JupyterHub + Thinky, Code Server + Claude Code, Thinkube Control |
-| **LLM Inference** | Ollama, vLLM, TensorRT-LLM, LiteLLM |
-| **Vector Databases** | Qdrant, Weaviate, Chroma |
-| **ML Platform** | MLflow, Langfuse |
-| **Databases** | PostgreSQL, Valkey (Redis), ClickHouse |
-| **CI/CD** | Gitea, Argo Workflows, ArgoCD, Harbor |
-| **Monitoring** | Prometheus, Perses |
-| **Storage** | JuiceFS (shared filesystem), SeaweedFS (object storage) |
-| **Security** | Keycloak SSO, Envoy Gateway, ZeroTier |
-
 ## Next steps
 
 1. **[Your First Deploy](/learn/your-first-deploy/)** — Deploy, edit, push, and see it live in 15 minutes
-2. **[Install Thinkube](/installation/overview/)** — Get it running on your machine
+2. **[Install Thinkube](/installation/overview/)** — Get it running on your machine in under 3 hours
 3. **[Playbooks](/learn/overview/)** — Step-by-step guides for web apps, AI, and ML
-4. **[Explore Components](/components/)** — Deep dive into every service
+4. **[See all components](/components/)** — The full list of 30+ services included

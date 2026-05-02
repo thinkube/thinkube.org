@@ -1,87 +1,88 @@
 ---
-title: AI & Machine Learning
-description: Run AI/ML workloads on Thinkube
+title: Run AI on Your Hardware
+description: Local LLMs, GPU-accelerated notebooks, experiment tracking — no API costs, no data leaving your network.
 ---
 
-Run LLMs, train models, and experiment with AI - all on your own hardware with no API costs.
+You have a GPU. You want to run models on it, train new ones, track experiments, and build applications — without paying per token and without sending your data to someone else's servers. Here's how.
 
-## What Thinkube Provides
+## The workflow
 
-- **JupyterHub** - Multi-user notebook environment
-- **MLflow** - Experiment tracking and model registry
-- **GPU Support** - NVIDIA GPU Operator for GPU workloads
-- **LiteLLM** - Gateway to route requests to local LLMs
-- **Vector Databases** - Qdrant, Weaviate, Chroma (optional)
+From model to running inference in four steps:
 
-## Running Local LLMs
+**1. Mirror a model.** Open Thinkube Control, go to AI Model Library, pick a model from the catalog (Llama, Mistral, Qwen, or any Hugging Face model). One click to mirror it to your local storage.
 
-Deploy inference backends, mirror models, and access them through the LLM Gateway — a unified API compatible with both OpenAI and Anthropic SDKs.
+**2. Load it onto your GPU.** Deploy an inference backend — Ollama for quick experiments, vLLM for production throughput, TensorRT-LLM for maximum speed. Load the model through the dashboard.
 
-### Inference Backends
+**3. Call it from your notebook.** Open JupyterHub at `jupyter.yourdomain.com`. The LLM Gateway gives you an OpenAI-compatible API at `llm.yourdomain.com` — use the same SDK you already know:
 
-| Backend | Deployed as | Best for |
-|---------|-------------|----------|
-| **TensorRT-LLM** | Template (`tkt-tensorrt-llm-harmony`) | Maximum performance with pre-optimized models |
-| **vLLM** | Template (`tkt-vllm-gradio`) | Flexible inference, supports most HuggingFace models |
-| **Ollama** | Optional Component | Lightweight GGUF models for development and testing |
+```python
+from openai import OpenAI
 
-Templates include a Gradio chat UI for interactive testing. Ollama runs as a platform service accessible only through the gateway.
+client = OpenAI(
+    base_url="https://llm.yourdomain.com/v1",
+    api_key="your-gateway-token"
+)
 
-### Other AI Templates
+response = client.chat.completions.create(
+    model="llama-3.1-8b",
+    messages=[{"role": "user", "content": "Explain attention mechanisms"}]
+)
+```
 
-| Template | Description | GPU Memory |
-|----------|-------------|------------|
-| `tkt-stable-diffusion` | Image generation | ~20GB |
-| `tkt-text-embeddings` | Text embeddings service | ~8GB |
+**4. Track your experiments.** Log parameters, metrics, and artifacts to MLflow at `mlflow.yourdomain.com`:
 
-See the **[LLM Gateway playbook](/learn/llm-gateway/)** for a step-by-step guide to mirroring models, deploying backends, and calling them through the API.
+```python
+import mlflow
 
-## JupyterHub
+with mlflow.start_run():
+    mlflow.log_param("model", "llama-3.1-8b")
+    mlflow.log_param("temperature", 0.7)
+    mlflow.log_metric("accuracy", 0.92)
+```
 
-Access notebooks at `https://jupyter.example.com` with Keycloak SSO.
+See the **[LLM Gateway playbook](/learn/llm-gateway/)** for the full step-by-step walkthrough with screenshots.
 
-### Features
-- Persistent storage for notebooks
-- Pre-installed ML libraries
-- GPU access for training
-- MLflow integration for experiment tracking
+## Three engines, one API
 
-### Example Workflow
+All three inference engines are accessible through the LLM Gateway at `llm.yourdomain.com`. Your code uses the same OpenAI SDK regardless of which engine serves the model.
 
-1. Open JupyterHub
-2. Create a notebook
-3. Train your model
-4. Log experiments to MLflow
-5. Register models in MLflow Model Registry
+| Engine | Best for | Deploy as |
+|--------|----------|-----------|
+| **Ollama** | Quick experiments. Pull a model, start chatting. | Add-On (one click) |
+| **vLLM** | Production throughput. OpenAI-compatible API, continuous batching. | Template |
+| **TensorRT-LLM** | Maximum speed. Pre-optimized NVIDIA models, lowest latency. | Template |
 
-## MLflow
+The gateway also supports Anthropic-compatible endpoints (`POST /v1/messages`) and separates reasoning tokens for thinking models.
 
-Track experiments and manage models at `https://mlflow.example.com`.
+## JupyterHub + Thinky
 
-### Capabilities
-- **Experiment Tracking** - Log parameters, metrics, artifacts
-- **Model Registry** - Version and stage models
-- **Model Serving** - Deploy models as endpoints
+Open `jupyter.yourdomain.com`. You get a full JupyterLab environment with GPU access, pre-installed ML libraries, and Thinky in your sidebar.
 
-Models are stored in SeaweedFS/JuiceFS and can be mounted by inference services.
+Tell Thinky to load data, write a training loop, plot results — it executes cells autonomously and iterates on errors. It reads your notebook, writes code, runs it, reads the output, fixes mistakes, and runs again. You watch and steer.
 
-## Vector Databases (Optional)
+Your notebooks are stored on persistent shared storage. Your GPU is available for training and inference. MLflow integration logs your experiments automatically.
 
-For RAG applications and semantic search:
+## MLflow: track everything, reproduce anything
 
-| Service | Use Case |
-|---------|----------|
-| Qdrant | Vector similarity search |
-| Weaviate | Vector search with filtering |
-| Chroma | Lightweight embedding database |
+Open `mlflow.yourdomain.com`. Every experiment, every parameter, every metric — versioned and searchable.
 
-Enable via optional component installation.
+- **Experiment tracking** — log parameters, metrics, and artifacts from any notebook or script
+- **Model registry** — version models, stage them from development to production
+- **Artifact storage** — models stored on shared JuiceFS/SeaweedFS, mountable by inference services
 
-## GPU Configuration
+## Three vector databases for RAG
 
-Thinkube uses the NVIDIA GPU Operator for automatic GPU management.
+Install any combination through the Add-Ons page in Thinkube Control:
 
-### GPU in Templates
+| Database | Best for |
+|----------|----------|
+| **Qdrant** | High-performance vector similarity search with filtering and payload storage |
+| **Weaviate** | Hybrid search combining vector and keyword queries |
+| **Chroma** | Lightweight embedding database, great for prototyping RAG pipelines |
+
+All three are accessible from your notebooks and applications with connection strings pre-configured.
+
+## GPU in your templates
 
 Templates request GPU resources in `thinkube.yaml`:
 
@@ -94,22 +95,11 @@ spec:
         memory: "20Gi"
 ```
 
-The platform handles GPU scheduling and resource allocation.
+The platform handles GPU scheduling and resource allocation. Deploy the Stable Diffusion template (`tkt-stable-diffusion`, ~20GB GPU) or the text embeddings template (`tkt-text-embeddings`, ~8GB GPU) the same way.
 
-## LLM Gateway
+## Next steps
 
-The LLM Gateway at `https://llm.yourdomain.com` provides a single API for all your locally-running models.
-
-- **OpenAI-compatible** — `POST /v1/chat/completions`
-- **Anthropic-compatible** — `POST /v1/messages`
-- **Automatic routing** — use the model ID from the catalog, the gateway finds the right backend
-- **Reasoning separation** — thinking models return reasoning in a separate field
-
-See the **[LLM Gateway playbook](/learn/llm-gateway/)** for complete setup and usage instructions.
-
-## Next Steps
-
-- [LLM Gateway](/learn/llm-gateway/) - Mirror models and call them through the API
-- [Web Applications](/learn/web-apps/) - Deploy web frontends for your AI services
-- [GitOps & Automation](/learn/devops/) - Understand the deployment flow
-- [Components](/components/) - See all available AI/ML components
+- **[LLM Gateway playbook](/learn/llm-gateway/)** — Full walkthrough: mirror a model, deploy a backend, call it from code
+- **[Deploy a Web App](/learn/web-apps/)** — Build a frontend for your AI service
+- **[How Deploys Work](/learn/devops/)** — What happens behind the scenes
+- **[All components](/components/)** — Every service available on the platform

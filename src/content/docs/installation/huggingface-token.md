@@ -1,5 +1,5 @@
 ---
-title: Hugging Face Token Setup
+title: Unlock AI Models
 description: Create a Hugging Face token for accessing AI models
 ---
 

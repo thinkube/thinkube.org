@@ -1,5 +1,5 @@
 ---
-title: Creating Templates
+title: Create a Template
 description: Build your own Thinkube application templates
 ---
 

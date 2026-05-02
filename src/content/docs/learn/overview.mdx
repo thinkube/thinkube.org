@@ -1,0 +1,61 @@
+---
+title: Build
+description: Step-by-step playbooks for deploying apps, running AI, and understanding the platform.
+---
+
+import PlaybookCard from '../../../components/PlaybookCard.astro';
+import CardGrid from '../../../components/CardGrid.astro';
+
+Pick a playbook and follow along. Each one walks you through a real task from start to finish — prerequisites, steps, expected results.
+
+**Start with Your First Deploy** — it shows how everything fits together. The rest build on the same workflow.
+
+No Kubernetes expertise required. If you know Git and a terminal, you're ready.
+
+<CardGrid columns={2}>
+  <PlaybookCard
+    title="Your First Deploy"
+    description="Deploy a service, edit the code, push a change, and watch it go live. The complete Thinkube development cycle."
+    href="/learn/your-first-deploy/"
+    icon="rocket"
+    time="15 min"
+    level="Beginner"
+    tools="Thinkube Control, Code Server, Git"
+  />
+  <PlaybookCard
+    title="Deploy a Web App"
+    description="Full-stack application with a Vue.js frontend, FastAPI backend, and PostgreSQL database. Push code, it deploys."
+    href="/learn/web-apps/"
+    icon="globe"
+    time="30 min"
+    level="Intermediate"
+    tools="Thinkube Control, Code Server, PostgreSQL"
+  />
+  <PlaybookCard
+    title="Run AI on Your Hardware"
+    description="Local LLMs, GPU-accelerated notebooks, experiment tracking with MLflow. No API costs, no data leaving your network."
+    href="/learn/ai-ml/"
+    icon="cpu"
+    time="20 min"
+    level="Intermediate"
+    tools="JupyterHub, MLflow, Ollama, vLLM"
+  />
+  <PlaybookCard
+    title="Use Local LLMs via API"
+    description="Mirror a model from Hugging Face, deploy an inference backend, and call it through OpenAI-compatible or Anthropic-compatible APIs."
+    href="/learn/llm-gateway/"
+    icon="server"
+    time="25 min"
+    level="Intermediate"
+    tools="LLM Gateway, Thinkube Control, Harbor"
+  />
+  <PlaybookCard
+    title="How Deploys Work"
+    description="What happens behind the scenes when you push code. Gitea, Argo Workflows, Harbor, and ArgoCD working together."
+    href="/learn/devops/"
+    icon="workflow"
+    time="10 min read"
+    level="Any level"
+    tools="Gitea, Argo Workflows, ArgoCD, Harbor"
+  />
+</CardGrid>

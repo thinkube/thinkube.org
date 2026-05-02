@@ -1,5 +1,5 @@
 ---
-title: Node Setup
+title: Prepare Your Machines
 description: Prepare Ubuntu nodes for Thinkube installation
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "LLM Gateway"
+title: "Use Local LLMs via API"
 description: Mirror a model, deploy an inference backend, and call it through the LLM Gateway using OpenAI or Anthropic APIs.
 ---
 

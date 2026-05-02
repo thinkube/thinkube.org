@@ -1,5 +1,5 @@
 ---
-title: Template Manifest Spec
+title: manifest.yaml Reference
 description: manifest.yaml specification reference
 ---
 

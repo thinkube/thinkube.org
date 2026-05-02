@@ -1,6 +1,6 @@
 ---
-title: Web Applications
-description: Build and deploy web applications on Thinkube
+title: Deploy a Web App
+description: Build and deploy a full-stack web application on Thinkube
 ---
 
 Deploy web applications from templates - just pick a template, name your app, and Thinkube handles the rest.
@@ -18,12 +18,12 @@ That's it. No Kubernetes knowledge required.
 
 ### From Thinkube Control
 
-1. Open `https://control.example.com`
+1. Open `https://control.yourdomain.com`
 2. Click **Deploy Application**
 3. Select a template (e.g., `tkt-webapp-vue-fastapi`)
 4. Enter:
    - **App name**: `my-project`
-   - **Domain**: `example.com`
+   - **Domain**: `yourdomain.com`
 5. Click **Deploy**
 
 Thinkube automatically:
@@ -37,8 +37,8 @@ Thinkube automatically:
 ### Accessing Your App
 
 Once deployed:
-- **Your app**: `https://my-project.example.com`
-- **Your code**: `https://gitea.example.com/thinkube-deployments/my-project`
+- **Your app**: `https://my-project.yourdomain.com`
+- **Your code**: `https://gitea.yourdomain.com/thinkube-deployments/my-project`
 
 ## Available Templates
 
@@ -55,7 +55,7 @@ After deployment, your code lives in Gitea. To make changes:
 
 ### Option 1: Code Server (Browser-based)
 
-1. Open `https://code.example.com`
+1. Open `https://code.yourdomain.com`
 2. Navigate to your project in `/home/thinkube/shared-code/my-project`
 3. Edit files
 4. Commit and push - automatic rebuild and deploy
@@ -63,7 +63,7 @@ After deployment, your code lives in Gitea. To make changes:
 ### Option 2: Clone Locally
 
 ```bash
-git clone https://gitea.example.com/thinkube-deployments/my-project.git
+git clone https://gitea.yourdomain.com/thinkube-deployments/my-project.git
 cd my-project
 
 # Make your changes
@@ -77,8 +77,8 @@ Every push triggers the CI/CD pipeline automatically.
 
 ## Monitoring
 
-- **Build progress**: `https://argo.example.com` (Argo Workflows)
-- **Deployment status**: `https://argocd.example.com` (ArgoCD)
+- **Build progress**: `https://argo.yourdomain.com` (Argo Workflows)
+- **Deployment status**: `https://argocd.yourdomain.com` (ArgoCD)
 - **CI/CD pipeline**: Thinkube Control UI
 
 ## Next Steps

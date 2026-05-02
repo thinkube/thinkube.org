@@ -1,5 +1,5 @@
 ---
-title: Thinkube Control
+title: Control Panel
 description: Central dashboard for managing your Thinkube platform
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: Dashboard
+title: Service Dashboard
 description: Monitor and manage all platform services
 ---
 

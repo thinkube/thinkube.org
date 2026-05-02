@@ -1,6 +1,6 @@
 ---
-title: GitOps & Automation
-description: Understand how Thinkube automates deployments
+title: How Deploys Work
+description: What happens behind the scenes when you push code on Thinkube
 ---
 
 Learn how Thinkube's GitOps architecture automatically builds and deploys your applications.
@@ -27,11 +27,11 @@ Git Push → Argo Workflow → Kaniko Build → Harbor → ArgoCD → Running Ap
 
 ### Step by Step
 
-1. **Git Push** - You push to `gitea.example.com/thinkube-deployments/my-app`
+1. **Git Push** - You push to `gitea.yourdomain.com/thinkube-deployments/my-app`
 2. **Webhook Fires** - Gitea notifies Argo Workflows
 3. **Tests Run** - If enabled, tests execute in containers
 4. **Kaniko Builds** - Container images are built in-cluster (no Docker needed)
-5. **Harbor Stores** - Images push to `registry.example.com/thinkube/my-app`
+5. **Harbor Stores** - Images push to `registry.yourdomain.com/thinkube/my-app`
 6. **Git Updated** - Webhook adapter updates the deployment manifest in Git
 7. **ArgoCD Syncs** - Detects the Git change and deploys new images
 
@@ -41,14 +41,14 @@ Git Push → Argo Workflow → Kaniko Build → Harbor → ArgoCD → Running Ap
 
 ### Argo Workflows
 
-Access `https://argo.example.com` to see:
+Access `https://argo.yourdomain.com` to see:
 - Running and completed workflows
 - Build logs for each step
 - Test results
 
 ### ArgoCD
 
-Access `https://argocd.example.com` to see:
+Access `https://argocd.yourdomain.com` to see:
 - Application sync status
 - Deployed resources
 - Sync history

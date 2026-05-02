@@ -1,5 +1,5 @@
 ---
-title: Templates
+title: App Templates
 description: Deploy applications from pre-configured templates
 ---
 

@@ -150,3 +150,105 @@ input, select, textarea {
 :root[data-theme="light"] nav[aria-label="Main"] a:hover {
   color: var(--th-primary);
 }
+
+/* Section labels — small uppercase overlines above headings */
+.section-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sl-color-accent);
+  margin-bottom: 0.25rem;
+}
+
+/* Before/After comparison blocks */
+.before-after {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+@media (min-width: 640px) {
+  .before-after {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.before-col, .after-col {
+  padding: 1.25rem;
+  border: 1px solid var(--sl-color-hairline);
+}
+
+.before-col {
+  background: var(--sl-color-bg);
+  opacity: 0.75;
+}
+
+.after-col {
+  background: var(--sl-color-accent-low);
+  border-color: var(--sl-color-accent);
+}
+
+.before-col .col-label,
+.after-col .col-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.before-col .col-label {
+  color: var(--sl-color-gray-3);
+}
+
+.after-col .col-label {
+  color: var(--sl-color-accent);
+}
+
+.before-col p, .after-col p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Numbered differentiators */
+.differentiator {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+.differentiator:last-child {
+  border-bottom: none;
+}
+
+.diff-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--sl-color-accent);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 2.5rem;
+}
+
+.diff-content h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.diff-content p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--sl-color-gray-2);
+  line-height: 1.5;
+}
+
+:root[data-theme="light"] .diff-content p {
+  color: #4a4a4a;
+}

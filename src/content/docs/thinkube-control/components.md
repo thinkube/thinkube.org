@@ -1,5 +1,5 @@
 ---
-title: Optional Components
+title: Add-Ons
 description: Extend Thinkube with AI, data, and infrastructure services
 ---
 

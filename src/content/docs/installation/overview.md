@@ -1,5 +1,5 @@
 ---
-title: Running the Installer
+title: Install Thinkube
 description: Complete guide to running the Thinkube installer with visual walkthrough
 ---
 

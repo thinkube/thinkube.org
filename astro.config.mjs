@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import remarkD2 from 'remark-d2';
+import starlightImageZoom from 'starlight-image-zoom';
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,6 +13,7 @@ export default defineConfig({
 	},
 	integrations: [
 		starlight({
+			plugins: [starlightImageZoom()],
 			title: 'Thinkube',
 			logo: {
 				src: './src/assets/logo.svg',
@@ -25,47 +27,37 @@ export default defineConfig({
 			],
 			sidebar: [
 				{
-					label: 'Getting Started',
+					label: 'Set Up',
 					items: [
-						{ label: 'Introduction', slug: 'intro' },
-						{ label: 'Overlay Network Setup', slug: 'installation/overlay-network' },
-						{ label: 'Cloudflare Token', slug: 'installation/cloudflare-token' },
-						{ label: 'GitHub Token', slug: 'installation/github-token' },
-						{ label: 'Hugging Face Token', slug: 'installation/huggingface-token' },
-						{ label: 'Node Setup', slug: 'installation/node-setup' },
-						{ label: 'Running the Installer', slug: 'installation/overview' },
-						{ label: 'Adding Nodes', slug: 'installation/adding-nodes' },
+						{ label: 'Why Thinkube', slug: 'intro' },
+						{ label: 'Connect from Anywhere', slug: 'installation/overlay-network' },
+						{ label: 'Set Up Your Domain', slug: 'installation/cloudflare-token' },
+						{ label: 'Connect to GitHub', slug: 'installation/github-token' },
+						{ label: 'Unlock AI Models', slug: 'installation/huggingface-token' },
+						{ label: 'Prepare Your Machines', slug: 'installation/node-setup' },
+						{ label: 'Install Thinkube', slug: 'installation/overview' },
+						{ label: 'Expand Your Cluster', slug: 'installation/adding-nodes' },
+					],
+				},
+				{ label: 'Build', slug: 'learn/overview' },
+				{
+					label: 'Control Panel',
+					items: [
+						{ label: 'Control Panel', slug: 'thinkube-control' },
+						{ label: 'Service Dashboard', slug: 'thinkube-control/dashboard' },
+						{ label: 'App Templates', slug: 'thinkube-control/templates' },
+						{ label: 'Image Registry', slug: 'thinkube-control/registry' },
+						{ label: 'AI Model Library', slug: 'thinkube-control/models' },
+						{ label: 'Add-Ons', slug: 'thinkube-control/components' },
 					],
 				},
 				{
-					label: 'Playbooks',
+					label: 'Build Templates',
 					items: [
-						{ label: 'Overview', slug: 'learn/overview' },
-						{ label: 'Your First Deploy', slug: 'learn/your-first-deploy' },
-						{ label: 'Web Applications', slug: 'learn/web-apps' },
-						{ label: 'AI & Machine Learning', slug: 'learn/ai-ml' },
-						{ label: 'LLM Gateway', slug: 'learn/llm-gateway' },
-						{ label: 'GitOps & Automation', slug: 'learn/devops' },
-					],
-				},
-				{
-					label: 'Thinkube Control',
-					items: [
-						{ label: 'Overview', slug: 'thinkube-control' },
-						{ label: 'Dashboard', slug: 'thinkube-control/dashboard' },
-						{ label: 'Templates', slug: 'thinkube-control/templates' },
-						{ label: 'Container Registry', slug: 'thinkube-control/registry' },
-						{ label: 'AI Models', slug: 'thinkube-control/models' },
-						{ label: 'Optional Components', slug: 'thinkube-control/components' },
-					],
-				},
-				{
-					label: 'Template Development',
-					items: [
-						{ label: 'Creating Templates', slug: 'thinkube-control/creating-templates' },
-						{ label: 'Manifest Spec', slug: 'thinkube-control/spec-manifest' },
+						{ label: 'Create a Template', slug: 'thinkube-control/creating-templates' },
+						{ label: 'manifest.yaml Reference', slug: 'thinkube-control/spec-manifest' },
 						{ label: 'Environment Variables', slug: 'thinkube-control/spec-variables' },
-						{ label: 'thinkube.yaml Spec', slug: 'thinkube-control/spec-thinkube-yaml' },
+						{ label: 'thinkube.yaml Reference', slug: 'thinkube-control/spec-thinkube-yaml' },
 					],
 				},
 				{

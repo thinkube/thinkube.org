@@ -1,5 +1,5 @@
 ---
-title: GitHub Token Setup
+title: Connect to GitHub
 description: How to create a GitHub Personal Access Token for Thinkube templates and container registry
 ---
 

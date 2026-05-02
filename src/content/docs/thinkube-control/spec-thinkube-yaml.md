@@ -1,5 +1,5 @@
 ---
-title: thinkube.yaml Spec
+title: thinkube.yaml Reference
 description: Deployment descriptor specification reference
 ---
 

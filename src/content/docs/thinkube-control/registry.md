@@ -1,5 +1,5 @@
 ---
-title: Container Registry
+title: Image Registry
 description: Manage container images in Harbor
 ---
 

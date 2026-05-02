@@ -1,9 +1,9 @@
 ---
 title: Welcome to Thinkube
-description: Your own AI cloud. On your own hardware. Under your control.
+description: Your personal sovereign AI cloud. On your own hardware. Under your control.
 template: splash
 hero:
-  tagline: Stop renting AI. Build on your own hardware with Claude, local LLMs, and a complete development platform that installs in hours.
+  tagline: "Your personal sovereign AI cloud."
   image:
     file: ../../assets/logo.svg
     alt: Thinkube Logo
@@ -21,69 +21,111 @@ import FeatureCard from '../../components/FeatureCard.astro';
 import LinkCard from '../../components/LinkCard.astro';
 import CardGrid from '../../components/CardGrid.astro';
 
-## You know the drill
+<span class="section-label">THE PROBLEM</span>
 
-You want to build an AI agent. So you need an LLM. Which means you need inference infrastructure. And a vector database for memory. And an experiment tracker. And somewhere to store models. And CI/CD to deploy it. And monitoring to know when it breaks.
+## Stop renting AI. Own it.
 
-Three weeks later you're debugging Helm charts instead of writing code.
+<div class="before-after">
+  <div class="before-col">
+    <span class="col-label">Setting up infrastructure yourself</span>
+    <p>Kubernetes, CNI plugins, storage drivers, GPU operators, ingress controllers, cert-manager, container registry, Git server, CI/CD. Three weeks of YAML. Still no application code.</p>
+  </div>
+  <div class="after-col">
+    <span class="col-label">With Thinkube</span>
+    <p>Run the installer. Everything is configured, authenticated, and talking to each other. Time: under 3 hours.</p>
+  </div>
+</div>
 
-Or you pay per token, hit rate limits at the worst moment, and watch your data flow through someone else's servers.
+<div class="before-after">
+  <div class="before-col">
+    <span class="col-label">Deploying an app on Kubernetes</span>
+    <p>200+ lines of YAML across Deployments, Services, Ingress, PVCs, Secrets, ConfigMaps. Hope you remembered the database operator.</p>
+  </div>
+  <div class="after-col">
+    <span class="col-label">With Thinkube</span>
+    <p>15 lines of thinkube.yaml. Push to Git. Live at <code>myapp.yourdomain.com</code> with TLS, database, and monitoring.</p>
+  </div>
+</div>
 
-**There's a third option.**
+<div class="before-after">
+  <div class="before-col">
+    <span class="col-label">Using cloud AI APIs</span>
+    <p>$0.015 per 1K tokens. Rate limited at 60 requests/minute. Your proprietary data flowing through someone else's servers.</p>
+  </div>
+  <div class="after-col">
+    <span class="col-label">With Thinkube</span>
+    <p>Your GPU, your models, your data. No API bills. No rate limits. No data leaving your network. Ever.</p>
+  </div>
+</div>
 
-## One machine. Everything you need.
+<span class="section-label">THE DIFFERENCE</span>
 
-Thinkube turns a single GPU machine into a complete AI development platform. Not a collection of tools you wire together — an integrated environment where everything is pre-configured, authenticated, and talking to each other from the moment you install it.
+## Three things that make Thinkube different.
+
+<div class="differentiator">
+  <span class="diff-number">01</span>
+  <div class="diff-content">
+    <h3>Your hardware, your rules</h3>
+    <p>Your GPU sitting under your desk is more powerful than most cloud instances, and nobody else reads your data. Thinkube makes it usable — not as a science project, but as a real platform you open every morning.</p>
+  </div>
+</div>
+
+<div class="differentiator">
+  <span class="diff-number">02</span>
+  <div class="diff-content">
+    <h3>Zero to deployed, not zero to configured</h3>
+    <p>Most platforms hand you tools and say "good luck." Thinkube ships pre-integrated. Ollama talks to LiteLLM, LiteLLM talks to your notebooks, your notebooks talk to MLflow. Day one.</p>
+  </div>
+</div>
+
+<div class="differentiator">
+  <span class="diff-number">03</span>
+  <div class="diff-content">
+    <h3>Templates, not tutorials</h3>
+    <p>You shouldn't need a Kubernetes certification to deploy a web app. Write 15 lines of YAML. Push. Done. The platform handles 200 lines of Kubernetes manifests you'll never see.</p>
+  </div>
+</div>
+
+<span class="section-label">A DAY WITH THINKUBE</span>
+
+## How your day changes.
+
+**Morning.** *Without Thinkube: SSH into the server, activate the conda env, find yesterday's notebook, set up the database connection, hope the GPU driver didn't update overnight.* With Thinkube: Open JupyterLab in your browser. Tell Thinky: "Load yesterday's experiment from MLflow and try a different embedding model." It writes the code, runs it, compares the results. You drink your coffee.
+
+**Afternoon.** *Without Thinkube: Write the Dockerfile, the deployment YAML, the service YAML, the ingress YAML, configure the TLS cert, set up the CI pipeline.* With Thinkube: Claude Code helps you build a FastAPI backend. Push to Git. Your app is live at `myapp.yourdomain.com` with TLS before you finish lunch.
+
+**Evening.** *Without Thinkube: Download model weights, write a serving script, configure GPU memory, set up a reverse proxy, hope nothing conflicts.* With Thinkube: Deploy a new Llama model through the dashboard. One click. It loads onto your GPU and joins your LLM gateway. Your agents use it immediately.
 
 <CardGrid columns={2}>
 	<FeatureCard title="Claude writes your code" icon="sparkles">
 		Thinky lives in your JupyterLab sidebar. Ask it to analyze data, fix bugs, or build a pipeline — it reads your cells, writes code, executes it, reads the error, fixes it, and runs again. You watch.
 	</FeatureCard>
 	<FeatureCard title="Your LLMs, your GPUs" icon="cpu">
-		Run Llama, Mistral, Qwen, or any open model. Ollama for quick experiments, vLLM for production throughput, TensorRT-LLM when you need every millisecond. No API bills. No rate limits. No data leaving your network.
+		Run Llama, Mistral, Qwen, or any open model. Ollama for quick experiments, vLLM for production throughput, TensorRT-LLM when you need every millisecond. No API bills. No rate limits.
 	</FeatureCard>
 	<FeatureCard title="Deploy in 15 lines" icon="rocket">
 		Describe what you want in a simple YAML file. Thinkube handles container builds, registry, TLS certificates, DNS, GitOps deployment, health checks, and monitoring. You never touch a Kubernetes manifest.
 	</FeatureCard>
 	<FeatureCard title="Access from anywhere" icon="globe">
-		ZeroTier gives you a secure overlay network. Your laptop at a coffee shop connects to your home server like you're sitting next to it. JupyterLab, VS Code, dashboards — all in the browser.
+		A secure overlay network connects your laptop to your server from anywhere — home, office, coffee shop. JupyterLab, VS Code, dashboards — all in the browser, as if the machine is under your desk.
 	</FeatureCard>
 </CardGrid>
 
-## What a day looks like
+Thinkube installs 30+ services — from JupyterHub to PostgreSQL to a private container registry — all with SSO, shared storage, and monitoring. [See the full stack](/components/).
 
-**Morning.** Open JupyterLab in your browser. Tell Thinky: "Load yesterday's experiment from MLflow and try a different embedding model." It writes the code, runs it, compares the results, and shows you the graphs. You drink your coffee.
+<span class="section-label">START HERE</span>
 
-**Afternoon.** Switch to Code Server. Claude Code helps you build a FastAPI backend. Push to Git. The CI/CD pipeline builds your container, pushes to your private registry, and deploys it with a TLS certificate. Your app is live at `myapp.yourdomain.com` before you finish lunch.
-
-**Evening.** Deploy a new Llama model through the dashboard. One click. It downloads, loads onto your GPU, and joins your LiteLLM gateway. Your agents can use it immediately.
-
-No cloud bills. No cold starts. No permission requests. It's your machine.
-
-## What's inside
-
-| | |
-|---|---|
-| **AI Development** | JupyterHub + Thinky, Code Server + Claude Code, Thinkube Control dashboard |
-| **LLM Inference** | Ollama, vLLM, TensorRT-LLM, LiteLLM gateway |
-| **Vector Databases** | Qdrant, Weaviate, Chroma |
-| **ML Platform** | MLflow experiment tracking + model registry, Langfuse LLM observability |
-| **Infrastructure** | PostgreSQL, Valkey, ClickHouse, Harbor container registry |
-| **Automation** | Gitea, Argo Workflows, ArgoCD, Prometheus + Perses |
-
-Everything has SSO through Keycloak. Everything stores data on shared JuiceFS storage. Everything is monitored. You install once and it works.
-
-## Get started
+## Pick your starting point.
 
 <CardGrid columns={2}>
+	<LinkCard title="Why Thinkube" icon="book" href="/intro/">
+		The full story — what it does, who it's for, and why we built it.
+	</LinkCard>
 	<LinkCard title="Your First Deploy" icon="rocket" href="/learn/your-first-deploy/">
 		Deploy a service, edit it, push — see it go live in 15 minutes.
 	</LinkCard>
-	<LinkCard title="What is Thinkube?" icon="book" href="/intro/">
-		The full story — what it does, who it's for, and how it works.
-	</LinkCard>
-	<LinkCard title="Install" icon="download" href="/installation/overview/">
-		Get Thinkube running on your hardware.
+	<LinkCard title="Install Thinkube" icon="download" href="/installation/overview/">
+		Get it running on your hardware. Under 3 hours.
 	</LinkCard>
 	<LinkCard title="Playbooks" icon="layers" href="/learn/overview/">
 		Step-by-step guides for web apps, AI, and ML workflows.

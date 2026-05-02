@@ -1,5 +1,5 @@
 ---
-title: Cloudflare Token Setup
+title: Set Up Your Domain
 description: How to create a Cloudflare API token for SSL certificate generation
 ---
 

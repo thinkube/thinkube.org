@@ -1,5 +1,5 @@
 ---
-title: Overlay Network Setup
+title: Connect from Anywhere
 description: Set up ZeroTier or Tailscale for secure remote access to your Thinkube cluster
 ---
 
