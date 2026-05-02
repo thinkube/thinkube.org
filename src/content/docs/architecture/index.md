@@ -9,6 +9,80 @@ Thinkube turns a GPU machine into a complete development platform. This page exp
 
 ## The big picture
 
+```d2
+direction: right
+
+you: You {
+  shape: person
+}
+
+interact: {
+  label: ""
+  style.stroke: "transparent"
+  style.fill: "transparent"
+
+  ui: "Thinkube Control\n(Browser)" {
+    style.fill: "#e3f2fd"
+  }
+  mcp: "Claude Code\n(MCP)" {
+    style.fill: "#e3f2fd"
+  }
+}
+
+you -> interact.ui
+you -> interact.mcp
+
+pipeline: "Thinkube Control — Deployment Pipeline" {
+  style.fill: "#f5f5f5"
+
+  git: "Git Server" {
+    style.fill: "#fff"
+  }
+  build: "Container\nBuild" {
+    style.fill: "#fff"
+  }
+  registry: "Image\nRegistry" {
+    style.fill: "#fff"
+  }
+  deploy: "GitOps\nDeploy" {
+    style.fill: "#fff"
+  }
+
+  git -> build: webhook
+  build -> registry: push
+  registry -> deploy: sync
+}
+
+interact.ui -> pipeline.git
+interact.mcp -> pipeline.git
+
+services: "Platform Services" {
+  style.fill: "#fce4ec"
+
+  sso: "Single Sign-On" {style.fill: "#fff"}
+  db: "PostgreSQL" {style.fill: "#fff"}
+  cache: "Valkey" {style.fill: "#fff"}
+  storage: "Shared Storage" {style.fill: "#fff"}
+  models: "MLflow Models" {style.fill: "#fff"}
+  gpu: "GPU Access" {style.fill: "#fff"}
+}
+
+app: "Your Application\nhttps://myapp.yourdomain.com" {
+  style.fill: "#e8f5e9"
+  style.font-size: 16
+  style.bold: true
+}
+
+gateway: "Envoy Gateway\nAutomatic TLS" {
+  style.fill: "#fff8e1"
+}
+
+pipeline.deploy -> app: deploy
+services -> app: auto-injected
+app -> gateway
+you -> gateway: HTTPS {style.stroke-dash: 3}
+```
+
 Three layers make up the platform. At the bottom, **Canonical k8s-snap** provides a production-grade Kubernetes distribution that works on a single machine and scales to a multi-node cluster. On top of that, **Thinkube Control** orchestrates everything — deployments, model management, service health, the container registry, and single sign-on. At the top, **your applications** run as standard containers with automatic TLS, DNS, and monitoring.
 
 You interact with the platform through the Thinkube Control dashboard in your browser, or through Claude Code using the built-in MCP server. Both paths lead to the same result — you never need to write Kubernetes manifests, Helm charts, or infrastructure code.
