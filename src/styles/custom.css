@@ -134,11 +134,11 @@ input, select, textarea {
 
 /* Hero section styling */
 .hero {
-  background: linear-gradient(135deg, var(--th-background) 0%, #e6f4f7 100%);
+  background: transparent;
 }
 
 :root[data-theme="dark"] .hero {
-  background: linear-gradient(135deg, var(--sl-color-bg) 0%, #1a4d5c 100%);
+  background: transparent;
 }
 
 /* Accent color for special highlights */
