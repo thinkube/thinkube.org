@@ -27,23 +27,23 @@ import CardGrid from '../../components/CardGrid.astro';
 
 <div class="before-after">
   <div class="before-col">
-    <span class="col-label">Setting up infrastructure yourself</span>
-    <p>Kubernetes, CNI plugins, storage drivers, GPU operators, ingress controllers, cert-manager, container registry, Git server, CI/CD. Three weeks of YAML. Still no application code.</p>
+    <span class="col-label">The homelab path</span>
+    <p>Proxmox, Docker Compose, Traefik, fifteen containers with separate configs. No SSO — every service has its own password. No CI/CD — you SSH in and <code>docker compose pull</code>. It works — until your POC succeeds and you realize none of it translates to production.</p>
   </div>
   <div class="after-col">
     <span class="col-label">With Thinkube</span>
-    <p>Run the installer. Everything is configured, authenticated, and talking to each other. Time: under 3 hours.</p>
+    <p>Container registry, CI/CD, single sign-on, TLS, monitoring — the same architecture patterns you'd find on any hyperscaler. Installed on your hardware in under 3 hours. Your prototype runs on production-grade infrastructure from day one.</p>
   </div>
 </div>
 
 <div class="before-after">
   <div class="before-col">
-    <span class="col-label">Deploying an app on Kubernetes</span>
-    <p>200+ lines of YAML across Deployments, Services, Ingress, PVCs, Secrets, ConfigMaps. Hope you remembered the database operator.</p>
+    <span class="col-label">Deploying with Docker Compose</span>
+    <p>Write a Dockerfile, add it to your Compose stack, configure the Traefik labels, SSH in and pull. When the POC succeeds, rewrite everything for production. Your prototype was a throwaway.</p>
   </div>
   <div class="after-col">
     <span class="col-label">With Thinkube</span>
-    <p>15 lines of thinkube.yaml. Push to Git. Live at <code>myapp.yourdomain.com</code> with TLS, database, and monitoring.</p>
+    <p>15 lines of thinkube.yaml. Commit, push. The platform builds your container, deploys it with TLS, and keeps it running. Same patterns you'd use on any hyperscaler. Your POC <em>is</em> your production architecture.</p>
   </div>
 </div>
 
@@ -73,16 +73,16 @@ import CardGrid from '../../components/CardGrid.astro';
 <div class="differentiator">
   <span class="diff-number">02</span>
   <div class="diff-content">
-    <h3>Zero to deployed, not zero to configured</h3>
-    <p>Most platforms hand you tools and say "good luck." Thinkube ships pre-integrated. Ollama talks to the LLM Gateway, the Gateway talks to your notebooks, your notebooks talk to MLflow. Day one.</p>
+    <h3>Developer experience is the product</h3>
+    <p>Thinky writes code in your notebooks. Claude Code manages your platform through MCP. Commit and push — your app builds and deploys automatically. This isn't infrastructure you tolerate — it's an environment designed to disappear behind your work.</p>
   </div>
 </div>
 
 <div class="differentiator">
   <span class="diff-number">03</span>
   <div class="diff-content">
-    <h3>Templates, not tutorials</h3>
-    <p>You shouldn't need a Kubernetes certification to deploy a web app. Write 15 lines of YAML. Push. Done. The platform handles 200 lines of Kubernetes manifests you'll never see.</p>
+    <h3>Cloud-ready from day one</h3>
+    <p>No throwaway prototypes. Thinkube runs the same architecture patterns as any hyperscaler — container registry, CI/CD, single sign-on, TLS. When your POC succeeds, you're already running on production-grade infrastructure.</p>
   </div>
 </div>
 
@@ -90,11 +90,11 @@ import CardGrid from '../../components/CardGrid.astro';
 
 ## How your day changes.
 
-**Morning.** *Without Thinkube: SSH into the server, activate the conda env, find yesterday's notebook, set up the database connection, hope the GPU driver didn't update overnight.* With Thinkube: Open JupyterLab in your browser. Tell Thinky: "Load yesterday's experiment from MLflow and try a different embedding model." It writes the code, runs it, compares the results. You drink your coffee.
+**Morning.** *Without Thinkube: SSH into the VM, `docker exec` into the Jupyter container, find yesterday's notebook on the bind mount, hope the GPU passthrough still works.* With Thinkube: Open JupyterLab in your browser. Tell Thinky: "Load yesterday's experiment from MLflow and try a different embedding model." It writes the code, runs it, compares the results. You drink your coffee.
 
-**Afternoon.** *Without Thinkube: Write the Dockerfile, the deployment YAML, the service YAML, the ingress YAML, configure the TLS cert, set up the CI pipeline.* With Thinkube: Claude Code helps you build a FastAPI backend. Push to Git. Your app is live at `myapp.yourdomain.com` with TLS before you finish lunch.
+**Afternoon.** *Without Thinkube: Add to compose.yml, configure Traefik labels, SSH in and pull. No CI/CD — you are the pipeline. And when you need to scale, you start over.* With Thinkube: Claude Code helps you build a FastAPI backend. Push to Git. Your app builds, deploys, and is live at `myapp.yourdomain.com` with TLS before you finish lunch.
 
-**Evening.** *Without Thinkube: Download model weights, write a serving script, configure GPU memory, set up a reverse proxy, hope nothing conflicts.* With Thinkube: Deploy a new Llama model through the dashboard. One click. It loads onto your GPU and joins your LLM gateway. Your agents use it immediately.
+**Evening.** *Without Thinkube: Download model weights, write a serving script, configure GPU memory, set up a reverse proxy, hope nothing conflicts.* With Thinkube: Deploy a new Llama model through the dashboard. One click. It loads onto your GPU and joins your LLM Gateway. Your agents use it immediately.
 
 <CardGrid columns={2}>
 	<FeatureCard title="Claude writes your code" icon="sparkles">
@@ -103,15 +103,21 @@ import CardGrid from '../../components/CardGrid.astro';
 	<FeatureCard title="Your LLMs, your GPUs" icon="cpu">
 		Run Llama, Mistral, Qwen, or any open model. The LLM Gateway orchestrates Ollama, vLLM, and TensorRT-LLM behind OpenAI and Anthropic-compatible APIs. No API bills. No rate limits.
 	</FeatureCard>
+	<FeatureCard title="Manage from Claude Code" icon="terminal">
+		The Thinkube Control MCP server lets Claude Code deploy templates, load models, check services, and manage your platform — without leaving your terminal. Ask Claude to deploy an app, and it does.
+	</FeatureCard>
 	<FeatureCard title="Deploy in 15 lines" icon="rocket">
-		Describe what you want in a simple YAML file. Thinkube handles container builds, registry, TLS certificates, DNS, GitOps deployment, health checks, and monitoring. You never touch a Kubernetes manifest.
+		Describe what you want in a simple YAML file. Thinkube handles container builds, TLS certificates, DNS, deployment, health checks, and monitoring. You never touch a Kubernetes manifest.
 	</FeatureCard>
 	<FeatureCard title="Access from anywhere" icon="globe">
 		A secure overlay network connects your laptop to your server from anywhere — home, office, coffee shop. JupyterLab, VS Code, dashboards — all in the browser, as if the machine is under your desk.
 	</FeatureCard>
+	<FeatureCard title="Production patterns, not toys" icon="server">
+		Container registry, CI/CD pipelines, GitOps, SSO, TLS — the same architecture you'd use on AWS, GCP, or Azure. Your prototype is production-ready from the start.
+	</FeatureCard>
 </CardGrid>
 
-Thinkube installs 30+ services — from JupyterHub to PostgreSQL to a private container registry — all with SSO, shared storage, and monitoring. [See the full stack](/components/).
+Thinkube installs 30+ services — from JupyterHub to PostgreSQL to a private container registry — all with single sign-on, shared storage, and monitoring. [See the full stack](/components/).
 
 <span class="section-label">START HERE</span>
 

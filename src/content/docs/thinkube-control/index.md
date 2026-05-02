@@ -26,12 +26,14 @@ Install and configure additional platform services. Enable vector databases, mon
 
 Thinkube Control is available at `https://control.<your-domain>` after installation. Authentication is handled through Keycloak SSO - the same credentials you use for all platform services.
 
-## Future: MCP Server
+## MCP Server — manage from Claude Code
 
-Thinkube Control is evolving into an MCP (Model Context Protocol) server, enabling:
-- Natural language control of platform services
-- LLM-based platform management
-- Autonomous platform operations
-- Integration with Claude and other AI assistants
+Thinkube Control exposes an MCP (Model Context Protocol) server that connects directly to Claude Code. From your terminal, you can ask Claude to:
 
-This will allow you to manage your infrastructure through conversation - ask Claude to deploy an application, check service health, or scale resources.
+- Deploy or redeploy a template
+- Load or unload a model onto your GPU
+- Check service status and restart services
+- Browse the model catalog and image registry
+- Install or remove add-ons
+
+No dashboard clicking, no SSH, no kubectl. You describe what you want, and Claude executes it through the Thinkube Control API. The MCP server is available automatically in any Claude Code session running on your platform.

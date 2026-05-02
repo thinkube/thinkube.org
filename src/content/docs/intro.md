@@ -11,19 +11,17 @@ Thinkube turns a GPU machine into a complete AI development environment — whet
 
 You buy a GPU machine. You want to run LLMs on it. Simple, right?
 
-First you need Kubernetes — because you'll want to run more than one thing. That means `kubeadm` or `k3s`, CNI plugins, storage drivers, GPU operators. Then you need a container registry, because you're building custom images. And a Git server for your code. And CI/CD to build and deploy automatically. And an ingress controller for HTTPS. And certificates. And DNS. And authentication — you don't want your services open to the internet.
+You set up Proxmox, create a VM, install Docker. Traefik for reverse proxy. Let's Encrypt for SSL. Each service has its own login. Ollama in one container, a vector database in another, JupyterHub in a third. Fifteen containers, fifteen config files, no CI/CD — you SSH in and `docker compose up`. It works.
 
-You haven't written a line of application code yet.
+Until your POC succeeds and someone asks you to deploy it for real. Now you need a container registry, a CI/CD pipeline, proper TLS, monitoring, authentication. Everything you built is a throwaway.
 
-Now add the AI stack. Ollama for quick inference. vLLM for production serving. A vector database for RAG. MLflow for experiment tracking. Langfuse for LLM observability. JupyterHub for notebooks. Each one needs configuration, storage, networking, and integration with everything else.
-
-**This takes weeks. Thinkube takes under 3 hours.**
+**Thinkube starts where you'd end up.** Container registry, CI/CD, single sign-on, TLS, monitoring — the same architecture patterns as any hyperscaler, installed on your hardware in under 3 hours. Your prototype runs on production-grade infrastructure from day one.
 
 ## Why we built this
 
-We kept hearing the same story: someone buys a powerful GPU, spends weeks setting up infrastructure, and never gets to the actual work. The cloud alternative costs more every month and sends your data to someone else's servers.
+We kept hearing the same story: someone buys a powerful GPU, spends weeks wiring together Docker containers, and ends up with a fragile stack that doesn't survive contact with production. The cloud alternative costs more every month and sends your data to someone else's servers.
 
-There should be a third option — a platform that gives you everything a cloud provider does, running on hardware you own, with data that never leaves your network. Not a collection of Docker containers you wire together. A real, integrated environment where services discover each other, authenticate through SSO, and deploy through GitOps from the moment you install it.
+There should be a third option — a platform that gives you everything a cloud provider does, running on hardware you own, with data that never leaves your network. Not a collection of containers you wire together. A real, integrated environment where services discover each other, authenticate through single sign-on, and deploy automatically from the moment you install it.
 
 That's what Thinkube is. Your personal sovereign AI cloud.
 
@@ -52,6 +50,14 @@ All of this happens in your notebook, in real time. You see each cell appear, ex
 
 You bring your own Claude Pro or Max subscription. Your API key stays on your machine. No proxy, no middleman.
 
+## Manage your platform from Claude Code
+
+Thinkube includes an MCP server that connects Claude Code to your platform. Deploy a template, load a model onto your GPU, check service status, browse the model catalog — from your terminal, through natural language.
+
+No dashboard clicking. No SSH. No kubectl. You describe what you want, and your AI assistant does it.
+
+This is what developer experience looks like when AI isn't just helping you write code — it's operating the infrastructure your code runs on.
+
 ## Deploy without Kubernetes expertise
 
 You don't need to understand Kubernetes to deploy on Thinkube. You write a `thinkube.yaml`:
@@ -74,16 +80,20 @@ spec:
     - database
 ```
 
-That's 15 lines. Thinkube handles:
-- Building container images (Kaniko)
-- Pushing to your private registry (Harbor)
-- Deploying via GitOps (ArgoCD)
+That's 15 lines. Commit, push, and the platform handles everything:
+- Building container images
+- Pushing to your private registry
+- Deploying automatically
 - TLS certificates for `myapp.yourdomain.com`
 - Database provisioning and connection strings
 - Health checks and monitoring
-- Automatic redeployment on git push
+- Automatic redeployment on every push
 
-The equivalent Kubernetes setup is 200+ lines of YAML across Deployments, Services, Ingress, PVCs, Secrets, ConfigMaps, and a database operator. You don't need to know any of that.
+The same CI/CD patterns, container workflows, and deployment models you'd use on any hyperscaler — without writing a single line of infrastructure code.
+
+## Cloud-ready from day one
+
+This is the fundamental difference between Thinkube and a Docker Compose stack: your prototype isn't a throwaway. Thinkube runs the same architecture patterns you'd find on AWS, GCP, or Azure — container registry, CI/CD pipelines, single sign-on, TLS, monitoring. When your POC succeeds, you're already running on production-grade infrastructure. Scale to a cloud provider, and your application is already containerized, deployed through CI/CD, and API-compatible.
 
 ## Run your own LLMs
 
@@ -99,7 +109,7 @@ The **LLM Gateway** at `llm.yourdomain.com` orchestrates all three engines and e
 
 ## Access from anywhere
 
-Thinkube uses ZeroTier to create a secure overlay network. Your laptop — at home, at work, at a coffee shop — connects directly to your server. No port forwarding, no VPN configuration, no exposing services to the public internet.
+Thinkube uses a secure overlay network to connect your devices directly to your server. Your laptop — at home, at work, at a coffee shop — reaches your platform without port forwarding, VPN configuration, or exposing services to the public internet.
 
 Open your browser, go to `jupyter.yourdomain.com`, and you're in your notebook environment with full GPU access. It feels like the machine is sitting under your desk, no matter where you are.
 
