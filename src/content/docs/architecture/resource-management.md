@@ -20,8 +20,15 @@ The kubelet is configured at bootstrap to reserve memory for the OS and Kubernet
 | `kube-reserved` | memory=2Gi, cpu=500m | Reserved for kubelet and containerd |
 | `eviction-hard` | memory.available<2Gi | Hard eviction — pods killed immediately |
 | `eviction-soft` | memory.available<4Gi | Soft eviction — 30s grace period before kill |
+| `enforce-node-allocatable` | pods | Hard cgroup limit on pod memory only |
 
 On a 128 GB node, this makes ~122 GB allocatable for pods. The scheduler will refuse to place pods beyond this limit, preventing overcommit.
+
+### Why only pods are cgroup-enforced
+
+`enforce-node-allocatable` is set to `pods` only. k8s-snap runs all Kubernetes system daemons (kubelet, containerd, API server, etcd) under `system.slice` alongside OS services — there is no separate cgroup for kube-reserved components. Setting hard cgroup limits on those shared slices causes the node to report memory pressure immediately, even with hundreds of gigabytes free, because the cgroup accounting sees the kubelet and API server as "over budget."
+
+The `system-reserved` and `kube-reserved` values still subtract 6 Gi from the advertised allocatable, so the scheduler never overcommits. The eviction thresholds fire before the kernel OOM killer. Pod-level cgroup enforcement (`kubepods.slice`) is what keeps pods within their allocated budget.
 
 ### UMA vs Discrete GPU
 
