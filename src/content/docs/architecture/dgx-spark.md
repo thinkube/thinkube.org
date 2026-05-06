@@ -46,6 +46,7 @@ On a discrete GPU (RTX 3090, A100, H100) the GPU has its own VRAM. A CUDA out-of
 | GPU operator driver | `driver.enabled=false` | `driver.enabled=false` |
 | Time-slicing | Disabled (exclusive GPU per pod) | Enabled (4 vGPUs) |
 | Inference images | Standard wheels | Pre-built `sm_121` wheels in Harbor |
+| Swap | Enabled (default) | Disabled (prevents OOM freeze) |
 | Host kernel tuning | Defaults | `vm.swappiness=1`, `vm.dirty_bytes=256 MB` |
 
 Each of these is automatic. The installer detects DGX Spark hardware (DMI product name + `nvidia-smi` reporting GB10) and applies the Spark-specific paths without user intervention.
@@ -90,7 +91,19 @@ Memory is shared across all virtual GPUs, not partitioned. This is deliberate �
 
 ## Host Memory Tuning
 
-The installer (and `thinkube-control`'s add-node flow) applies a sysctl drop-in at `/etc/sysctl.d/99-thinkube-dgx-spark.conf` on every detected DGX Spark node:
+The installer (and `thinkube-control`'s add-node flow) applies two host-level protections on every detected DGX Spark node:
+
+### Swap Disabled
+
+Swap is **completely disabled** on DGX Spark nodes (`swapoff -a`, fstab entries commented out, systemd swap units disabled).
+
+**Why:** GPU memory allocations on unified-memory hardware bypass Linux cgroups entirely — a CUDA process can consume memory far beyond any container limit without the OOM killer noticing. With swap enabled, this triggers a death spiral: the kernel swaps pages to disk to free RAM, the GPU touches those swapped pages, the kernel swaps them back, and the system freezes indefinitely — requiring a physical reboot. With swap disabled, the OOM killer fires immediately and kills the offending process while the OS, SSH, and kubelet stay alive.
+
+This is a [known issue on DGX Spark](https://forums.developer.nvidia.com/t/dgx-spark-becomes-unresponsive-zombie-instead-of-throwing-cuda-oom/353752) and [confirmed in PyTorch](https://github.com/pytorch/pytorch/issues/174358). CUDA unified memory [is not accounted by Linux cgroups](https://forums.developer.nvidia.com/t/cuda-unified-memory-usage-is-not-accounted-by-linux-cgroup/264689), so cgroup-based memory limits (Kubernetes pod limits, Docker `--memory`) do not protect against GPU memory exhaustion on unified-memory hardware.
+
+### Sysctl Drop-in
+
+A drop-in at `/etc/sysctl.d/99-thinkube-dgx-spark.conf` applies:
 
 ```ini
 vm.swappiness = 1
@@ -102,9 +115,11 @@ vm.dirty_bytes = 268435456
 - `vm.swappiness = 1` — On unified-memory hardware, the kernel's default swappiness (60) aggressively pages anonymous memory out of RAM under pressure. With CPU and GPU sharing the same pool, this causes the kernel to swap out memory that the GPU is actively using, producing severe latency spikes and memory thrashing during inference. Setting swappiness near zero tells the kernel to prefer reclaiming page cache over swapping.
 - `vm.dirty_bytes = 268435456` (256 MB) — Default dirty-page thresholds on a 128 GB system can buffer multiple gigabytes before forced write-back, producing large bursty I/O that contends with GPU memory bandwidth. A 256 MB cap keeps write-back smooth and predictable.
 
-The drop-in is idempotent and self-detecting: the playbook ends silently on non-Spark hosts (DMI product name + `nvidia-smi` GB10 check), so it's safe to leave in the default install path on mixed clusters.
+### Detection and Idempotency
 
-To revert, run `ansible/00_initial_setup/17_rollback_dgx_spark_tuning.yaml` — it removes the drop-in and reloads sysctl to distribution defaults.
+Both protections are idempotent and self-detecting: the playbook ends silently on non-Spark hosts (DMI product name + `nvidia-smi` GB10 check), so it's safe to leave in the default install path on mixed clusters.
+
+To revert, run `ansible/00_initial_setup/17_rollback_dgx_spark_tuning.yaml` — it removes the drop-in, re-enables swap, and reloads sysctl to distribution defaults.
 
 ## Recommended Workload Patterns
 
@@ -117,7 +132,7 @@ To revert, run `ansible/00_initial_setup/17_rollback_dgx_spark_tuning.yaml` — 
 
 **Topology — single-node DGX Spark:**
 
-This is supported but you accept the tradeoff: a runaway inference workload can take down the cluster, requiring a reboot. Thinkube's host tuning reduces the probability significantly but does not eliminate it.
+This is supported but you accept the tradeoff: a runaway inference workload can exhaust the unified memory pool. With swap disabled, the Linux OOM killer terminates the offending process instead of freezing the system — the cluster recovers without a reboot in most cases. However, the OOM killer may occasionally choose the wrong process (e.g., kubelet), so a multi-node topology with the control plane on a separate AMD64 node is strongly recommended for production use.
 
 **Inference framework defaults to be aware of:**
 
