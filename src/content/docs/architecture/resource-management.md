@@ -1,7 +1,7 @@
 ---
 title: Resource Management
 description: How Thinkube prevents OOM crashes with kubelet protection, priority-based eviction, namespace budgets, and dynamic pod resizing
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 Thinkube implements a 5-layer memory protection system to prevent kernel OOM crashes on nodes where many services share physical RAM. This is especially critical on unified memory systems (like DGX Spark) where CPU and GPU share the same memory pool.
