@@ -57,21 +57,31 @@ Every namespace has a **LimitRange** (default resources for pods that don't decl
 
 ### LimitRange Defaults
 
-| Tier | Default Limit | Default Request |
-|------|---------------|-----------------|
-| Critical / Platform | 512Mi / 500m | 128Mi / 50m |
-| Workload / Optional / Batch | 256Mi / 250m | 64Mi / 25m |
+| Tier | Default Memory Limit | Default CPU Limit | Default Memory Request | Default CPU Request |
+|------|---------------------|-------------------|----------------------|-------------------|
+| Critical / Platform | 1Gi | 500m | 128Mi | 50m |
+| Workload / Optional | 256Mi | 250m | 64Mi | 25m |
+| Batch | 1Gi | 4 | 256Mi | 100m |
 
-These prevent pods without explicit resource declarations from running unbounded.
+These prevent pods without explicit resource declarations from running unbounded. The batch tier has higher defaults because its primary consumers are CI/CD build pods (Kaniko) which need significant memory and CPU to build container images efficiently.
+
+**CPU limits and CFS throttling:** CPU limits use Linux CFS bandwidth throttling, which caps CPU usage even when the node has idle cores. For build workloads, this makes builds slower for no benefit. Thinkube sets high CPU limits on build containers (8 cores for Kaniko) and the batch tier default (4 cores) so builds can burst to available CPUs without throttling. Memory limits are still enforced strictly — exceeding a memory limit triggers the OOM killer.
 
 ### ResourceQuota Budgets
 
-| Tier | Memory Requests | Memory Limits |
-|------|-----------------|---------------|
-| Critical / Platform | 16Gi | 32Gi |
-| Workload / Optional / Batch | 8Gi | 16Gi |
+| Tier | Memory Requests | Memory Limits | CPU Requests | CPU Limits |
+|------|-----------------|---------------|-------------|-----------|
+| Critical / Platform | 16Gi | 32Gi | 4 | 8 |
+| Workload / Optional | 8Gi | 16Gi | 4 | 8 |
+| Batch | 16Gi | 32Gi | 8 | 16 |
+
+The batch tier has double the quota because multi-architecture builds run two Kaniko pods simultaneously (one per architecture), each needing up to 4Gi memory.
 
 Template-deployed app namespaces also get these policies automatically at deployment time.
+
+### Exceptions
+
+**JupyterHub:** The JupyterHub namespace has no ResourceQuota (`skip_quota: true`). Resource limits are enforced by the JupyterHub spawn form, which dynamically filters CPU, memory, and GPU options based on the selected node's capacity. A static quota would block legitimate AI workloads that need 64Gi+ memory on GPU nodes.
 
 ## Layer 4: Template Size Presets
 
