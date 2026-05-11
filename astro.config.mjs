@@ -21,7 +21,7 @@ export default defineConfig({
 			head: [
 				{
 					tag: 'script',
-					content: `document.addEventListener('DOMContentLoaded',()=>{const s=document.createElement('div');s.id='dgx-stamp';s.textContent='DGX Spark Ready';document.body.appendChild(s);const v=document.createElementNS('http://www.w3.org/2000/svg','svg');v.setAttribute('width','0');v.setAttribute('height','0');v.style.position='absolute';v.innerHTML='<filter id="rough-edges"><feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="4" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5" xChannelSelector="R" yChannelSelector="G"/></filter>';document.body.appendChild(v)})`,
+					content: `document.addEventListener('DOMContentLoaded',()=>{const s=document.createElement('div');s.id='dgx-stamp';s.textContent='Runs on DGX Spark';document.body.appendChild(s);const v=document.createElementNS('http://www.w3.org/2000/svg','svg');v.setAttribute('width','0');v.setAttribute('height','0');v.style.position='absolute';v.innerHTML='<filter id="rough-edges"><feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="4" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5" xChannelSelector="R" yChannelSelector="G"/></filter>';document.body.appendChild(v)})`,
 				},
 			],
 			customCss: [
