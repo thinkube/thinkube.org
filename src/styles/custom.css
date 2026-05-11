@@ -160,27 +160,27 @@ input, select, textarea {
 /* Corner ribbon — diagonal badge */
 .corner-ribbon {
   position: fixed;
-  top: 0;
-  right: 0;
+  top: -10px;
+  right: -10px;
   z-index: 100;
   overflow: hidden;
-  width: 200px;
-  height: 200px;
+  width: 300px;
+  height: 300px;
   pointer-events: none;
 }
 
 .corner-ribbon span {
   display: block;
   position: absolute;
-  top: 42px;
-  right: -55px;
-  width: 280px;
-  padding: 0.5rem 0;
+  top: 60px;
+  right: -40px;
+  width: 340px;
+  padding: 0.55rem 0;
   background: #76b900;
   color: #fff;
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   text-align: center;
   transform: rotate(45deg);
