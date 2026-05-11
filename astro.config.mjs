@@ -18,6 +18,12 @@ export default defineConfig({
 			logo: {
 				src: './src/assets/logo.svg',
 			},
+			head: [
+				{
+					tag: 'script',
+					content: `document.addEventListener('DOMContentLoaded',()=>{const d=document.createElement('div');d.id='corner-ribbon';d.innerHTML='<span>DGX Spark Ready</span>';document.body.appendChild(d)})`,
+				},
+			],
 			customCss: [
 				'./src/styles/custom.css',
 				'./src/styles/fonts.css',
