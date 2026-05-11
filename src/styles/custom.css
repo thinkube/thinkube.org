@@ -157,21 +157,16 @@ input, select, textarea {
   margin-inline: auto;
 }
 
-/* Corner ribbon — diagonal badge */
-.corner-ribbon {
+/* Corner ribbon — diagonal badge via body pseudo-element
+   Uses body::after so the ribbon is outside .sl-markdown-content,
+   avoiding ancestor transform issues that break position:fixed */
+body::after {
+  content: "DGX Spark Ready";
   position: fixed;
   top: 0;
   right: 0;
-  z-index: 100;
-  width: 200px;
-  height: 200px;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.corner-ribbon span {
+  z-index: 9999;
   display: block;
-  position: absolute;
   width: 200px;
   padding: 6px 0;
   background: #76b900;
@@ -180,12 +175,11 @@ input, select, textarea {
   letter-spacing: 1px;
   text-transform: uppercase;
   text-align: center;
-  left: -30px;
-  bottom: 55px;
-  transform-origin: bottom left;
   transform: rotate(45deg);
+  margin-top: 70px;
+  margin-right: -55px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 /* Accent color for special highlights */
