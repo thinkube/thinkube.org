@@ -163,27 +163,27 @@ input, select, textarea {
   top: 0;
   right: 0;
   z-index: 100;
-  overflow: hidden;
-  width: 150px;
-  height: 150px;
+  width: 0;
+  height: 0;
   pointer-events: none;
 }
 
 .corner-ribbon span {
   display: block;
   position: absolute;
-  top: 30px;
-  right: -35px;
-  width: 210px;
+  width: 200px;
   padding: 0.45rem 0;
   background: #76b900;
   color: #fff;
-  font-size: 0.58rem;
+  font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   text-align: center;
   transform: rotate(45deg);
+  transform-origin: top right;
+  top: 0;
+  right: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   pointer-events: auto;
 }
