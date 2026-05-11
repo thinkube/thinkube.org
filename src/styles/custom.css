@@ -164,21 +164,21 @@ input, select, textarea {
   right: 0;
   z-index: 100;
   overflow: hidden;
-  width: 180px;
-  height: 180px;
+  width: 250px;
+  height: 250px;
   pointer-events: none;
 }
 
 .corner-ribbon span {
   display: block;
   position: absolute;
-  top: 38px;
-  right: -32px;
-  width: 220px;
-  padding: 0.5rem 0;
+  top: 55px;
+  right: -50px;
+  width: 300px;
+  padding: 0.55rem 0;
   background: #76b900;
   color: #fff;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
