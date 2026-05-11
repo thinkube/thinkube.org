@@ -141,6 +141,22 @@ input, select, textarea {
   background: transparent;
 }
 
+/* Tighten hero layout on splash pages */
+[data-page-type="splash"] .hero {
+  padding-block: 3rem;
+  gap: 2rem;
+}
+
+[data-page-type="splash"] .hero img {
+  max-width: 220px;
+}
+
+/* Constrain splash page content width */
+[data-page-type="splash"] .sl-markdown-content {
+  max-width: 900px;
+  margin-inline: auto;
+}
+
 /* Accent color for special highlights */
 .sl-markdown-content strong {
   color: inherit;
@@ -159,7 +175,20 @@ input, select, textarea {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--sl-color-accent);
+  margin-top: 4rem;
   margin-bottom: 0.25rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--sl-color-hairline);
+}
+
+/* First section label doesn't need top border */
+.sl-markdown-content > .section-label:first-child {
+  border-top: none;
+  margin-top: 2rem;
+}
+
+.section-label + h2 {
+  margin-top: 0.5rem;
 }
 
 /* Before/After comparison blocks */
@@ -184,12 +213,13 @@ input, select, textarea {
 
 .before-col {
   background: var(--sl-color-bg);
-  opacity: 0.75;
+  border-left: 3px solid var(--sl-color-gray-4, #ccc);
 }
 
 .after-col {
   background: var(--sl-color-accent-low);
   border-color: var(--sl-color-accent);
+  border-left: 3px solid var(--sl-color-accent);
 }
 
 .before-col .col-label,
@@ -212,15 +242,15 @@ input, select, textarea {
 
 .before-col p, .after-col p {
   margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.5;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 /* Numbered differentiators */
 .differentiator {
   display: flex;
-  gap: 1.25rem;
-  padding: 1.5rem 0;
+  gap: 1.5rem;
+  padding: 2rem 0;
   border-bottom: 1px solid var(--sl-color-hairline);
 }
 
@@ -229,17 +259,19 @@ input, select, textarea {
 }
 
 .diff-number {
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: 700;
   color: var(--sl-color-accent);
   line-height: 1;
   flex-shrink: 0;
-  width: 2.5rem;
+  width: 3.5rem;
+  text-align: center;
+  opacity: 0.3;
 }
 
 .diff-content h3 {
   margin: 0 0 0.5rem;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 
 .diff-content p {
@@ -251,4 +283,28 @@ input, select, textarea {
 
 :root[data-theme="light"] .diff-content p {
   color: #4a4a4a;
+}
+
+/* Timeline "without" and "with" text styles (used in TimelineBlock) */
+.timeline-content .without {
+  font-size: 0.85rem;
+  color: var(--sl-color-gray-3);
+  font-style: italic;
+  margin-bottom: 0.75rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--sl-color-hairline);
+}
+
+.timeline-content .with {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+:root[data-theme="light"] .timeline-content .without {
+  color: #888;
+}
+
+:root[data-theme="light"] .timeline-content .with {
+  color: #2a2a2a;
 }

@@ -3,7 +3,7 @@ title: Welcome to Thinkube
 description: Your personal sovereign AI cloud. On your own hardware. Under your control.
 template: splash
 hero:
-  tagline: "Your personal sovereign AI cloud."
+  tagline: "Your personal sovereign AI cloud. On your own hardware. Under your control."
   image:
     file: ../../assets/logo.svg
     alt: Thinkube Logo
@@ -20,6 +20,8 @@ hero:
 import FeatureCard from '../../components/FeatureCard.astro';
 import LinkCard from '../../components/LinkCard.astro';
 import CardGrid from '../../components/CardGrid.astro';
+import TimelineBlock from '../../components/TimelineBlock.astro';
+import StackStrip from '../../components/StackStrip.astro';
 
 <span class="section-label">THE PROBLEM</span>
 
@@ -31,7 +33,7 @@ import CardGrid from '../../components/CardGrid.astro';
     <p>Proxmox, Docker Compose, Traefik, fifteen containers with separate configs. No SSO — every service has its own password. No CI/CD — you SSH in and <code>docker compose pull</code>. It works — until your POC succeeds and you realize none of it translates to production.</p>
   </div>
   <div class="after-col">
-    <span class="col-label">With Thinkube</span>
+    <span class="col-label">Production-grade from day one</span>
     <p>Container registry, CI/CD, single sign-on, TLS, monitoring — the same architecture patterns you'd find on any hyperscaler. Installed on your hardware in under 3 hours. Your prototype runs on production-grade infrastructure from day one.</p>
   </div>
 </div>
@@ -42,7 +44,7 @@ import CardGrid from '../../components/CardGrid.astro';
     <p>Write a Dockerfile, add it to your Compose stack, configure the Traefik labels, SSH in and pull. When the POC succeeds, rewrite everything for production. Your prototype was a throwaway.</p>
   </div>
   <div class="after-col">
-    <span class="col-label">With Thinkube</span>
+    <span class="col-label">Commit, push, live</span>
     <p>15 lines of thinkube.yaml. Commit, push. The platform builds your container, deploys it with TLS, and keeps it running. Same patterns you'd use on any hyperscaler. Your POC <em>is</em> your production architecture.</p>
   </div>
 </div>
@@ -53,7 +55,7 @@ import CardGrid from '../../components/CardGrid.astro';
     <p>$0.015 per 1K tokens. Rate limited at 60 requests/minute. Your proprietary data flowing through someone else's servers.</p>
   </div>
   <div class="after-col">
-    <span class="col-label">With Thinkube</span>
+    <span class="col-label">Your GPU, your rules</span>
     <p>Your GPU, your models, your data. No API bills. No rate limits. No data leaving your network. Ever.</p>
   </div>
 </div>
@@ -90,26 +92,35 @@ import CardGrid from '../../components/CardGrid.astro';
 
 ## How your day changes.
 
-**Morning.** *Without Thinkube: SSH into the VM, `docker exec` into the Jupyter container, find yesterday's notebook on the bind mount, hope the GPU passthrough still works.* With Thinkube: Open JupyterLab in your browser. Tell Thinky: "Load yesterday's experiment from MLflow and try a different embedding model." It writes the code, runs it, compares the results. You drink your coffee.
+<TimelineBlock time="Morning" icon="coffee">
+  <p class="without">SSH into the VM. Docker exec into the Jupyter container. Find yesterday's notebook on the bind mount. Hope the GPU passthrough still works.</p>
+  <p class="with">Open JupyterLab in your browser. Tell Thinky: "Load yesterday's experiment from MLflow and try a different embedding model." It writes the code, runs it, compares the results. You drink your coffee.</p>
+</TimelineBlock>
 
-**Afternoon.** *Without Thinkube: Add to compose.yml, configure Traefik labels, SSH in and pull. No CI/CD — you are the pipeline. And when you need to scale, you start over.* With Thinkube: Claude Code helps you build a FastAPI backend. Push to Git. Your app builds, deploys, and is live at `myapp.yourdomain.com` with TLS before you finish lunch.
+<TimelineBlock time="Afternoon" icon="sun">
+  <p class="without">Add to compose.yml, configure Traefik labels, SSH in and pull. No CI/CD — you are the pipeline. And when you need to scale, you start over.</p>
+  <p class="with">Claude Code helps you build a FastAPI backend. Push to Git. Your app builds, deploys, and is live at myapp.yourdomain.com with TLS before you finish lunch.</p>
+</TimelineBlock>
 
-**Evening.** *Without Thinkube: Download model weights, write a serving script, configure GPU memory, set up a reverse proxy, hope nothing conflicts.* With Thinkube: Deploy a new Llama model through the dashboard. One click. It loads onto your GPU and joins your LLM Gateway. Your agents use it immediately.
+<TimelineBlock time="Evening" icon="moon">
+  <p class="without">Download model weights, write a serving script, configure GPU memory, set up a reverse proxy, hope nothing conflicts.</p>
+  <p class="with">Deploy a new Llama model through the dashboard. One click. It loads onto your GPU and joins your LLM Gateway. Your agents use it immediately.</p>
+</TimelineBlock>
 
 <CardGrid columns={2}>
-	<FeatureCard title="Claude writes your code" icon="sparkles">
+	<FeatureCard title="Claude writes your code" icon="sparkles" accent="amber">
 		Thinky lives in your JupyterLab sidebar. Ask it to analyze data, fix bugs, or build a pipeline — it reads your cells, writes code, executes it, reads the error, fixes it, and runs again. You watch.
 	</FeatureCard>
-	<FeatureCard title="Your LLMs, your GPUs" icon="cpu">
+	<FeatureCard title="Your LLMs, your GPUs" icon="cpu" accent="amber">
 		Run Llama, Mistral, Qwen, or any open model. The LLM Gateway orchestrates Ollama, vLLM, and TensorRT-LLM behind OpenAI and Anthropic-compatible APIs. No API bills. No rate limits.
 	</FeatureCard>
-	<FeatureCard title="Manage from Claude Code" icon="terminal">
+	<FeatureCard title="Manage from Claude Code" icon="terminal" accent="slate">
 		The Thinkube Control MCP server lets Claude Code deploy templates, load models, check services, and manage your platform — without leaving your terminal. Ask Claude to deploy an app, and it does.
 	</FeatureCard>
 	<FeatureCard title="Deploy in 15 lines" icon="rocket">
 		Describe what you want in a simple YAML file. Thinkube handles container builds, TLS certificates, DNS, deployment, health checks, and monitoring. You never touch a Kubernetes manifest.
 	</FeatureCard>
-	<FeatureCard title="Access from anywhere" icon="globe">
+	<FeatureCard title="Access from anywhere" icon="globe" accent="slate">
 		A secure overlay network connects your laptop to your server from anywhere — home, office, coffee shop. JupyterLab, VS Code, dashboards — all in the browser, as if the machine is under your desk.
 	</FeatureCard>
 	<FeatureCard title="Production patterns, not toys" icon="server">
@@ -117,7 +128,13 @@ import CardGrid from '../../components/CardGrid.astro';
 	</FeatureCard>
 </CardGrid>
 
-Thinkube installs 30+ services — from JupyterHub to PostgreSQL to a private container registry — all with single sign-on, shared storage, and monitoring. [See the full stack](/components/).
+<span class="section-label">THE STACK</span>
+
+## 30+ services. One install.
+
+<StackStrip />
+
+All with single sign-on, shared storage, TLS, and monitoring. [See the full component list](/components/).
 
 <span class="section-label">START HERE</span>
 
