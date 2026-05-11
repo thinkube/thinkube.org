@@ -39,7 +39,13 @@ export default defineConfig({
 						{ label: 'Expand Your Cluster', slug: 'installation/adding-nodes' },
 					],
 				},
-				{ label: 'Build', slug: 'learn/overview' },
+				{
+					label: 'Build',
+					items: [
+						{ label: 'Overview', slug: 'learn/overview' },
+						{ label: 'tk-llm Python SDK', slug: 'learn/tk-llm' },
+					],
+				},
 				{
 					label: 'Control Panel',
 					items: [
