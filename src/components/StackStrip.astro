@@ -7,28 +7,33 @@
 const layers = [
   {
     label: 'AI & ML',
-    badges: ['JupyterHub', 'MLflow', 'Ollama', 'vLLM', 'LLM Gateway'],
+    badges: ['AI Notebooks', 'Experiment Tracking', 'GPU Management'],
+  },
+  {
+    label: 'Development',
+    badges: ['Hosted VS Code', 'Git Server', 'CI/CD Pipelines', 'GitOps'],
   },
   {
     label: 'Platform',
-    badges: ['Harbor', 'Gitea', 'ArgoCD', 'Keycloak', 'Cert-Manager'],
+    badges: ['Single Sign-On', 'Container Registry', 'SQL Database', 'Object Storage (S3)', 'Shared Filesystem'],
   },
   {
-    label: 'Infrastructure',
-    badges: ['MicroK8s', 'Ceph', 'MetalLB', 'Prometheus', 'Grafana'],
+    label: 'Optional',
+    badges: ['Local LLM Inference', 'Vector Databases', 'Serverless', 'Metrics & Dashboards', 'LLM Observability'],
+    isOptional: true,
   },
 ];
 ---
 
 <div class="stack-strip">
   {layers.map((layer) => (
-    <div class="stack-row">
+    <div class:list={["stack-row", { "stack-optional": layer.isOptional }]}>
       <span class="stack-layer-label">{layer.label}</span>
       <div class="stack-badges">
         {layer.badges.map((badge) => (
           <span class="stack-badge">{badge}</span>
         ))}
-        <span class="stack-badge stack-more">+more</span>
+        {!layer.isOptional && <span class="stack-badge stack-more">+more</span>}
       </div>
     </div>
   ))}
@@ -95,6 +100,12 @@ const layers = [
   /* First row (AI) gets amber accent */
   .stack-row:first-child .stack-badge:not(.stack-more) {
     border-color: rgba(196, 163, 90, 0.3);
+  }
+
+  /* Optional row gets dashed borders */
+  .stack-optional .stack-badge {
+    border-style: dashed;
+    opacity: 0.7;
   }
 
   @media (max-width: 639px) {
