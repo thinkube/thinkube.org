@@ -157,37 +157,24 @@ input, select, textarea {
   margin-inline: auto;
 }
 
-/* Corner ribbon — injected via script onto body, outside Starlight
-   content tree to avoid ancestor transform breaking position:fixed.
-   overflow:hidden on the container clips both ends symmetrically. */
-#corner-ribbon {
+/* DGX Spark Ready stamp — injected via script onto body */
+#dgx-stamp {
   position: fixed;
-  top: 0;
-  right: 0;
+  top: 85px;
+  right: 40px;
   z-index: 9999;
-  width: 200px;
-  height: 200px;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-#corner-ribbon span {
-  position: absolute;
-  display: block;
-  width: 200px;
-  padding: 6px 0;
-  background: #76b900;
-  color: #fff;
-  font: 700 10px/1 sans-serif;
-  letter-spacing: 1px;
+  padding: 14px 28px;
+  border: 4px solid #76b900;
+  color: #76b900;
+  font: 700 24px/1 sans-serif;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  text-align: center;
-  left: -30px;
-  bottom: 55px;
-  transform-origin: bottom left;
-  transform: rotate(45deg);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-  pointer-events: auto;
+  transform: rotate(12deg);
+  opacity: 0.8;
+  pointer-events: none;
+  background: transparent;
+  border-radius: 6px;
+  filter: url(#rough-edges);
 }
 
 /* Accent color for special highlights */
