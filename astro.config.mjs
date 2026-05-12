@@ -49,6 +49,7 @@ export default defineConfig({
 					label: 'Build',
 					items: [
 						{ label: 'Overview', slug: 'learn/overview' },
+						{ label: 'CLI Tools in Code Server', slug: 'learn/cli-tools' },
 						{ label: 'tk-llm Python SDK', slug: 'learn/tk-llm' },
 					],
 				},
