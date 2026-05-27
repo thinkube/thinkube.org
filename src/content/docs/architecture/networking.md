@@ -115,20 +115,29 @@ Worker nodes reach `172.16.0.1` via a managed route on the overlay network. The 
 
 ## Cilium CNI
 
-Thinkube uses [Cilium](https://cilium.io/) as the Container Network Interface (CNI), deployed automatically by the Canonical k8s snap. Cilium provides pod networking, network policies, and load balancing using eBPF.
+Thinkube uses [Cilium](https://cilium.io/) as the Container Network Interface (CNI). Cilium provides pod networking, network policies, and load balancing using eBPF.
 
 ### Configuration
 
-| Setting | Value | Reason |
-|---------|-------|--------|
-| `kube-proxy-replacement` | `false` | kube-proxy handles service DNAT via iptables |
-| `devices` | `k8s0 en+ eth+ wl+ bond+` | Exclude overlay interfaces from BPF (see below) |
-| `enable-wireguard` | `false` | Overlay provider already encrypts inter-node traffic |
-| `bpf-lb-sock` | `true` | Socket-level load balancing for local services |
+Cilium's kube-proxy replacement mode differs between overlay providers:
+
+| Setting | ZeroTier | Tailscale | Reason |
+|---------|----------|-----------|--------|
+| `kubeProxyReplacement` | `true` | `false` | See below |
+| `devices` | `k8s0 en+ eth+ wl+ bond+` | Same | Exclude overlay interfaces from BPF |
+| `socketLB.hostNamespaceOnly` | `true` | `true` | Required for Tailscale operator compatibility |
+| `encryption.enabled` | `false` | `false` | Overlay already encrypts inter-node traffic |
+| `l2announcements.enabled` | `true` | `false` | ZeroTier uses Cilium L2 LB; Tailscale uses operator |
+
+### Why kube-proxy Replacement Differs by Overlay Provider
+
+**ZeroTier mode** uses `kubeProxyReplacement: true` — Cilium handles all service routing in BPF. LoadBalancer VIPs live on the ZeroTier L2 overlay, and Cilium L2 LB assigns and announces them via ARP. Everything stays within the L2 domain, so Cilium's BPF DNAT works correctly.
+
+**Tailscale mode** uses `kubeProxyReplacement: false` — because Cilium's BPF intercepts traffic to Tailscale-assigned LoadBalancer IPs (`100.x.x.x`) on worker nodes. It recognizes these as service IPs and attempts to DNAT them locally, but the Tailscale proxy pod isn't on the worker — so the traffic is dropped instead of being forwarded through the WireGuard tunnel. With `kubeProxyReplacement: false`, Cilium still handles ClusterIP services via socket-level load balancing but lets external LoadBalancer traffic pass through to the Tailscale tunnel untouched.
 
 ### Why Overlay Interfaces Are Excluded from Cilium Devices
 
-Cilium auto-detects network interfaces and attaches eBPF programs (`cil_from_netdev`) to process incoming traffic. When attached to overlay interfaces (ZeroTier's `zt*` or Tailscale's `tailscale0`), this BPF program intercepts packets destined for LoadBalancer VIPs and blackholes them instead of letting kube-proxy DNAT them to backend pods.
+Cilium auto-detects network interfaces and attaches eBPF programs (`cil_from_netdev`) to process incoming traffic. When attached to overlay interfaces (ZeroTier's `zt*` or Tailscale's `tailscale0`), this BPF program intercepts packets destined for LoadBalancer VIPs and blackholes them instead of letting them reach backend pods.
 
 This is a known issue ([cilium/cilium#44982](https://github.com/cilium/cilium/issues/44982)) affecting overlay VPN interfaces. The fix is to explicitly set `devices` to include only physical and cluster interfaces, excluding overlay interfaces.
 
@@ -203,16 +212,16 @@ Knative services (serverless workloads) use `DomainMapping` to route through the
 
 Thinkube uses Cilium's built-in L2 load balancer (which replaced MetalLB). In L2 mode, the control plane node responds to ARP requests for VIP addresses, directing traffic to itself.
 
+**ZeroTier mode** uses Cilium L2 announcements. The control plane responds to ARP requests for VIPs, claiming them on the overlay interface:
+
 ```yaml
-# Configured via k8s set
-load-balancer:
-  enabled: true
-  l2-mode: true
-  cidrs:
-    - 192.168.191.200-192.168.191.210
+# CiliumLoadBalancerIPPool
+blocks:
+  - start: "192.168.191.200"
+    stop: "192.168.191.210"
 ```
 
-The VIP range is derived from inventory variables (`metallb_ip_start_octet` and `metallb_ip_end_octet`) combined with the overlay subnet prefix.
+**Tailscale mode** uses the Tailscale Kubernetes Operator. Each `LoadBalancer` service with `loadBalancerClass: tailscale` gets a tailnet IP assigned by the operator. The operator deploys a proxy pod that bridges tailnet traffic to the service's backend pods.
 
 ## DNS
 
