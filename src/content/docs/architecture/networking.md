@@ -124,6 +124,9 @@ Cilium's kube-proxy replacement mode differs between overlay providers:
 | Setting | ZeroTier | Tailscale | Reason |
 |---------|----------|-----------|--------|
 | `kubeProxyReplacement` | `true` | `false` | See below |
+| `kube-proxy` | Not installed | Installed | Required when Cilium doesn't replace it |
+| `hostPort.enabled` | (included in KPR) | `true` | Explicit — KPR=false disables it by default |
+| `nodePort.enabled` | (included in KPR) | `true` | Explicit — KPR=false disables it by default |
 | `devices` | `k8s0 en+ eth+ wl+ bond+` | Same | Exclude overlay interfaces from BPF |
 | `socketLB.hostNamespaceOnly` | `true` | `true` | Required for Tailscale operator compatibility |
 | `encryption.enabled` | `false` | `false` | Overlay already encrypts inter-node traffic |
@@ -131,9 +134,13 @@ Cilium's kube-proxy replacement mode differs between overlay providers:
 
 ### Why kube-proxy Replacement Differs by Overlay Provider
 
-**ZeroTier mode** uses `kubeProxyReplacement: true` — Cilium handles all service routing in BPF. LoadBalancer VIPs live on the ZeroTier L2 overlay, and Cilium L2 LB assigns and announces them via ARP. Everything stays within the L2 domain, so Cilium's BPF DNAT works correctly.
+**ZeroTier mode** uses `kubeProxyReplacement: true` — Cilium handles all service routing in BPF. LoadBalancer VIPs live on the ZeroTier L2 overlay, and Cilium L2 LB assigns and announces them via ARP. Everything stays within the L2 domain, so Cilium's BPF DNAT works correctly. kube-proxy is not installed (skipped during `kubeadm init`).
 
-**Tailscale mode** uses `kubeProxyReplacement: false` — because Cilium's BPF intercepts traffic to Tailscale-assigned LoadBalancer IPs (`100.x.x.x`) on worker nodes. It recognizes these as service IPs and attempts to DNAT them locally, but the Tailscale proxy pod isn't on the worker — so the traffic is dropped instead of being forwarded through the WireGuard tunnel. With `kubeProxyReplacement: false`, Cilium still handles ClusterIP services via socket-level load balancing but lets external LoadBalancer traffic pass through to the Tailscale tunnel untouched.
+**Tailscale mode** uses `kubeProxyReplacement: false` — because Cilium's BPF intercepts traffic to Tailscale-assigned LoadBalancer IPs (`100.x.x.x`) on worker nodes. It recognizes these as service IPs and attempts to DNAT them locally, but the Tailscale proxy pod isn't on the worker — so the traffic is dropped instead of being forwarded through the WireGuard tunnel.
+
+With `kubeProxyReplacement: false`, Cilium disables all service routing BPF in pod namespaces (Socket LB is fully off). This means pods on worker nodes have no way to reach services without kube-proxy. **kube-proxy is therefore required** — it provides iptables-based service DNAT so pods on any node can reach ClusterIP and LoadBalancer services.
+
+Additionally, `hostPort` and `nodePort` BPF are disabled by default when `kubeProxyReplacement: false`. They must be enabled explicitly via `hostPort.enabled: true` and `nodePort.enabled: true` in the Cilium helm values.
 
 ### Why Overlay Interfaces Are Excluded from Cilium Devices
 
