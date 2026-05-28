@@ -295,8 +295,6 @@ All nodes run UFW with `default: deny (incoming)`. The k8s install playbook open
 | 4240 | TCP | Cilium health | All |
 | 8472 | UDP | Cilium VXLAN | All |
 | 53 | TCP/UDP | DNS (BIND9 hostPort) | Control plane |
-| 10080 | TCP | Envoy Gateway HTTP (Tailscale only) | Control plane |
-| 10443 | TCP | Envoy Gateway HTTPS (Tailscale only) | Control plane |
 
 The overlay interface (`zt+` for ZeroTier, `tailscale0` for Tailscale) is allowed for all traffic in both directions — it's a trusted overlay network where all members are authorized nodes.
 
