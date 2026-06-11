@@ -1,48 +1,47 @@
 ARG CONTAINER_REGISTRY
 
-# Build stage
+# Build stage — Antora renders the AsciiDoc site to ./build/site
 FROM ${CONTAINER_REGISTRY}/library/node-base:22-alpine AS build
 
 WORKDIR /app
 
-# Install D2 for diagram rendering at build time
-RUN apk add --no-cache curl && \
-    curl -fsSL https://d2lang.com/install.sh | sh
+# git: Antora reads its content source from a git repo. We init a throwaway one
+# below so the build is self-contained regardless of whether the deploy context
+# carried .git (the Copier sync may not).
+RUN apk add --no-cache git
 
 COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
 
-# Override base path for cluster deployment (GitHub Pages uses /thinkube.org/)
-ENV ASTRO_BASE=/
-# node-base image sets NODE_ENV=development; override for production build
+# node-base sets NODE_ENV=development; production for the build
 ENV NODE_ENV=production
 
-RUN sed -i "s|base: '/thinkube.org/'|base: '/'|" astro.config.mjs && \
-    npm run build && \
-    chmod -R a+r dist/d2 2>/dev/null || true
+# Give Antora a git HEAD to read, then build. `npm run build` runs
+# `antora --fetch`, which fetches the UI bundle and renders d2 diagrams via the
+# Kroki server — the cluster build has external egress (the previous Astro build
+# already curl'd d2lang.com and ran npm ci). Base path is "/" for the cluster
+# (GitHub Pages overrides it with `--url /thinkube.org/` in its own workflow).
+RUN git init -q && git add -A \
+ && git -c user.email=build@thinkube.io -c user.name=thinkube-build commit -qm build \
+ && npm run build
 
-# Serve stage
+# Serve stage — static nginx on :8080, base path "/"
 FROM ${CONTAINER_REGISTRY}/library/nginx:stable-alpine
 
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/build/site /usr/share/nginx/html
 
-# SPA fallback and security headers
 RUN printf 'server {\n\
     listen 8080;\n\
     root /usr/share/nginx/html;\n\
     index index.html;\n\
 \n\
     location / {\n\
-        try_files $uri $uri/ $uri.html /index.html;\n\
+        try_files $uri $uri/ =404;\n\
     }\n\
 \n\
-    # Pagefind WASM search index\n\
-    location ~* \\.pagefind$ {\n\
-        types { application/wasm pagefind; }\n\
-        default_type application/wasm;\n\
-    }\n\
+    error_page 404 /404.html;\n\
 \n\
     # Cache static assets\n\
     location ~* \\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {\n\

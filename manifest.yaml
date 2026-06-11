@@ -3,9 +3,9 @@ kind: TemplateManifest
 metadata:
   name: thinkube-docs
   title: "Thinkube Documentation"
-  description: Official documentation site for the Thinkube platform, built with Astro and Starlight.
+  description: Official documentation site for the Thinkube platform, built with Antora and AsciiDoc.
   version: 0.1.0
   author: Thinkube
-  tags: ["documentation", "astro", "starlight"]
+  tags: ["documentation", "antora", "asciidoc"]
 
 parameters: []
