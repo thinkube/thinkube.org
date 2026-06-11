@@ -19,6 +19,16 @@ ui:
     snapshot: true
   supplemental_files: ./supplemental-ui
 
+asciidoc:
+  extensions:
+    - asciidoctor-kroki
+  attributes:
+    # d2 diagrams are rendered via a Kroki server and fetched at BUILD time so
+    # the published site embeds the image and needs no runtime Kroki access.
+    kroki-server-url: https://kroki.io
+    kroki-fetch-diagram: true
+    kroki-default-format: svg
+
 output:
   dir: ./build/site
 
