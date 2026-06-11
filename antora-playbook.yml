@@ -22,6 +22,11 @@ ui:
 output:
   dir: ./build/site
 
+antora:
+  extensions:
+    - require: '@antora/lunr-extension'
+      index_latest_only: true
+
 runtime:
   fetch: true
   log:
