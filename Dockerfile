@@ -43,10 +43,10 @@ RUN printf 'server {\n\
 \n\
     error_page 404 /404.html;\n\
 \n\
-    # Cache static assets\n\
+    # Antora UI assets are NOT content-hashed, so never cache them immutably —\n\
+    # revalidate (cheap via etags) so a redeploy is picked up immediately.\n\
     location ~* \\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {\n\
-        expires 1y;\n\
-        add_header Cache-Control "public, immutable";\n\
+        add_header Cache-Control "no-cache";\n\
     }\n\
 }\n' > /etc/nginx/conf.d/default.conf
 
