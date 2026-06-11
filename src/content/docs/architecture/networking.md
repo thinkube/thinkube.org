@@ -14,9 +14,9 @@ The overlay serves different purposes depending on the provider:
 
 **ZeroTier mode:** The Envoy Gateway's VIP addresses live on the overlay interface. Every `*.yourdomain.com` request resolves to a VIP on the overlay. Cilium L2 LB announces these VIPs via ARP on the overlay subnet.
 
-**Tailscale mode:** The Tailscale Kubernetes Operator exposes services as tailnet devices with `100.x.x.x` IPs. Your laptop reaches services via WireGuard. Worker nodes and pods access services via the control plane's LAN IP using kube-proxy and `externalIPs`.
+**Tailscale mode:** The Tailscale Kubernetes Operator exposes services as tailnet devices with `100.x.x.x` IPs. Your laptop reaches services via WireGuard. Nodes are tailnet members themselves, so pods and host processes reach `*.yourdomain.com` through the same tailnet IPs.
 
-In both modes, the overlay carries the Kubernetes API route. The API server binds to a dummy interface (`k8s0` at `172.16.0.1`), and workers reach it via a static route through the control plane's LAN IP.
+The Kubernetes API is **not** on the overlay in either mode. Every node carries the stable API address `172.16.0.1` locally (see [The Node-Local API VIP](#the-node-local-api-vip-k8s0) below), so the control-plane path never depends on the overlay or on any specific physical network.
 
 ## Network Layers
 
@@ -26,14 +26,16 @@ Your Laptop: {
 }
 
 LAN: "Local Network" {
-  control: "Control Plane (tkspark)" {
-    k8s0: "k8s0 (172.16.0.1)"
+  control: "Control Plane" {
+    k8s0: "k8s0 (172.16.0.1)\nAPI server"
     lan_ip: "LAN IP"
   }
   worker: "Worker Node" {
+    k8s0w: "k8s0 (172.16.0.1)\nlocal API proxy"
     lan_ip2: "LAN IP"
   }
   control.lan_ip -> worker.lan_ip2: "Cilium VXLAN\n(pod traffic)"
+  worker.k8s0w -> control.lan_ip: "k8s API\n(node-local proxy)"
 }
 
 Overlay: "Overlay Network (ZeroTier / Tailscale)" {
@@ -52,7 +54,6 @@ Kubernetes: {
 Your Laptop.browser -> Overlay.vips: "HTTPS from anywhere"
 Overlay.w_overlay -> Overlay.vips: "pods reach *.yourdomain.com"
 Overlay.vips -> Kubernetes.Gateway
-LAN.worker.lan_ip2 -> Overlay.cp_overlay: "172.16.0.1 route\n(k8s API)"
 ```
 
 ## Overlay Providers
@@ -98,19 +99,38 @@ The installer configures the chosen provider during installation, assigns overla
 
 **ZeroTier mode:** Cilium L2 LB assigns VIPs from a pool on the overlay subnet (e.g., `192.168.191.200`–`.210`). The control plane responds to ARP requests for these VIPs, making LoadBalancer services directly reachable from any machine on the overlay.
 
-**Tailscale mode:** The Tailscale Kubernetes Operator assigns each LoadBalancer service a tailnet IP (`100.x.x.x`). The operator deploys a proxy pod per service that bridges WireGuard traffic to the backend. Additionally, a `ClusterIP` service with `externalIPs` set to the control plane's LAN IP makes the gateway reachable at the LAN address via kube-proxy iptables DNAT.
+**Tailscale mode:** The Tailscale Kubernetes Operator assigns each LoadBalancer service a tailnet IP (`100.x.x.x`) and a MagicDNS name. The operator deploys a proxy pod per service that bridges WireGuard traffic to the backend. Cluster nodes are tailnet members themselves, so the same tailnet IPs work for pods and host processes — no separate LAN-side exposure path is needed.
 
-## The k8s0 Dummy Interface
+## The Node-Local API VIP (k8s0)
 
-The Kubernetes API server binds to a dummy interface (`k8s0`) with a fixed IP (`172.16.0.1/32`) instead of a physical network interface. This makes the cluster location-independent — you can unplug the machine, move it to a different network, and the API server address doesn't change.
+The Kubernetes API has one stable address on every node: `172.16.0.1`. Each node — control plane and workers alike — carries a dummy interface (`k8s0`) with `172.16.0.1/32`, so the address means "the API server, however *this* node reaches it":
+
+- **On the control plane**, the API server itself binds the address. `controlPlaneEndpoint`, the API server certificate, `cluster-info`, all kubeconfigs, and Cilium's `k8sServiceHost` are all `172.16.0.1` — nothing baked into the cluster references a physical network.
+- **On workers**, a socket-activated proxy (`k8s-api-proxy`, using systemd's `systemd-socket-proxyd`) listens on `172.16.0.1:6443` and forwards to the control plane's current LAN IP. The kubelet, the Cilium agent, and `kubeadm join` all connect to the local address; only ordinary worker-to-control-plane LAN traffic crosses the wire.
+
+This is the same pattern as kubespray's localhost load balancer and k0s's node-local load balancing — and it means the single-vs-multinode question never has to be answered at install time: every cluster is initialized the same way, and workers can be added at any point.
 
 | Interface | IP | Purpose |
 |-----------|-----|---------|
-| `k8s0` | `172.16.0.1` | Kubernetes API server (stable, location-independent) |
-| `zt*` or `tailscale0` | Overlay IP | Overlay network (inter-node communication) |
-| `enP*` / `wlP*` / `eth*` | DHCP | Physical network (internet access) |
+| `k8s0` | `172.16.0.1` | Kubernetes API (server on the control plane, local proxy on workers) |
+| `zt*` or `tailscale0` | Overlay IP | Remote client access and service exposure |
+| `enP*` / `wlP*` / `eth*` | DHCP | Physical network (LAN, internet access) |
 
-Worker nodes reach `172.16.0.1` via a static route through the control plane's LAN IP (`ip route replace 172.16.0.1/32 via <control_plane_lan_ip>`), managed by a systemd oneshot service. The kubelet, kubectl, and all in-cluster clients use this address.
+### Stable Endpoint, Dynamic Node Identity
+
+The architecture separates two layers deliberately:
+
+- **The API endpoint** (everything above) is network-independent and never changes.
+- **Node identity** — each node's `InternalIP`, set via kubelet's `--node-ip` — is the node's *real* LAN IP. Cilium's VXLAN tunnels and apiserver→kubelet traffic (`kubectl exec`/`logs`, metrics scraping on port 10250) target `InternalIP` directly and cannot ride a proxy, so it must be a genuinely reachable per-node address.
+
+### Moving Between Networks
+
+Because node identity is the only network-dependent layer, it self-heals at boot. A oneshot service (`thinkube-node-ip-sync`, ordered before the kubelet) runs on every node:
+
+1. It rewrites kubelet's `--node-ip` from the current default route's source address. A control plane with no network at all falls back to `172.16.0.1`, which is harmless standalone.
+2. On workers, it re-resolves the control plane's hostname via LLMNR (enabled on all nodes; Ubuntu ships it off) and repoints the API proxy if the control plane's LAN IP changed. If resolution fails, the last-known address is kept.
+
+Moving a single-node Thinkube to a different network is therefore: shut down, plug in, boot. A whole-cluster move is: boot everything on the new network. No reconfiguration step is required — by design, since the tooling that runs playbooks lives *inside* the cluster and could never repair a cluster that is down because it moved.
 
 ## Cilium CNI
 
@@ -118,28 +138,22 @@ Thinkube uses [Cilium](https://cilium.io/) as the Container Network Interface (C
 
 ### Configuration
 
-Cilium's kube-proxy replacement mode differs between overlay providers:
+Cilium runs in full kube-proxy replacement mode with both overlay providers — kube-proxy is never installed (`kubeadm init` skips the addon). The configuration is identical except for L2 announcements:
 
-| Setting | ZeroTier | Tailscale | Reason |
-|---------|----------|-----------|--------|
-| `kubeProxyReplacement` | `true` | `false` | See below |
-| `kube-proxy` | Not installed | Installed | Required when Cilium doesn't replace it |
-| `hostPort.enabled` | (included in KPR) | `true` | Explicit — KPR=false disables it by default |
-| `nodePort.enabled` | (included in KPR) | `true` | Explicit — KPR=false disables it by default |
-| `devices` | `k8s0 en+ eth+ wl+ bond+` | Same | Exclude overlay interfaces from BPF |
-| `socketLB.hostNamespaceOnly` | `true` | `true` | Required for Tailscale operator compatibility |
-| `encryption.enabled` | `false` | `false` | Overlay already encrypts inter-node traffic |
-| `l2announcements.enabled` | `true` | `false` | ZeroTier uses Cilium L2 LB; Tailscale uses operator |
+| Setting | Value | Reason |
+|---------|-------|--------|
+| `k8sServiceHost` | `172.16.0.1` | The node-local API VIP — resolves locally on every node |
+| `kubeProxyReplacement` | `true` | Cilium handles all service routing in BPF |
+| `devices` | `k8s0 en+ eth+ wl+ bond+` | Exclude overlay interfaces from BPF |
+| `socketLB.hostNamespaceOnly` | `true` | Tailscale operator compatibility (see below) |
+| `bpf.lbExternalClusterIP` | `true` | Allow external access to ClusterIP services |
+| `ipam.mode` | `cluster-pool` (/23 per node) | 510 pod IPs per node, above kubelet's maxPods=500 |
+| `encryption.enabled` | `false` | No second encryption layer (see [below](#why-cilium-wireguard-is-not-enabled)) |
+| `l2announcements.enabled` | ZeroTier: `true`, Tailscale: `false` | ZeroTier uses Cilium L2 LB; Tailscale uses the operator |
 
-### Why kube-proxy Replacement Differs by Overlay Provider
+### Tailscale Operator Compatibility
 
-**ZeroTier mode** uses `kubeProxyReplacement: true` — Cilium handles all service routing in BPF. LoadBalancer VIPs live on the ZeroTier L2 overlay, and Cilium L2 LB assigns and announces them via ARP. Everything stays within the L2 domain, so Cilium's BPF DNAT works correctly. kube-proxy is not installed (skipped during `kubeadm init`).
-
-**Tailscale mode** uses `kubeProxyReplacement: false` — because Cilium's BPF intercepts traffic to Tailscale-assigned LoadBalancer IPs (`100.x.x.x`) on worker nodes. It recognizes these as service IPs and attempts to DNAT them locally, but the Tailscale proxy pod isn't on the worker — so the traffic is dropped instead of being forwarded through the WireGuard tunnel.
-
-With `kubeProxyReplacement: false`, Cilium disables all service routing BPF in pod namespaces (Socket LB is fully off). This means pods on worker nodes have no way to reach services without kube-proxy. **kube-proxy is therefore required** — it provides iptables-based service DNAT so pods on any node can reach ClusterIP and LoadBalancer services.
-
-Additionally, `hostPort` and `nodePort` BPF are disabled by default when `kubeProxyReplacement: false`. They must be enabled explicitly via `hostPort.enabled: true` and `nodePort.enabled: true` in the Cilium helm values.
+Cilium's eBPF socket-level load balancing intercepts `connect()` inside pod namespaces, bypassing nftables entirely — so the Tailscale proxy pods' DNAT rules never fire, making operator-exposed services unreachable from external tailnet devices. Restricting socket LB to the host namespace (`socketLB.hostNamespaceOnly: true`) re-enables the tc BPF path where netfilter hooks work (see [tailscale/tailscale#11552](https://github.com/tailscale/tailscale/issues/11552), [cilium/cilium#36491](https://github.com/cilium/cilium/issues/36491)). This keeps full kube-proxy replacement viable in Tailscale mode.
 
 ### Why Overlay Interfaces Are Excluded from Cilium Devices
 
@@ -177,9 +191,8 @@ Both configurations are applied automatically during installation and the add-no
 
 Cilium supports transparent WireGuard encryption for pod-to-pod traffic between nodes. Thinkube does **not** enable this because:
 
-1. **Redundant**: The overlay provider (ZeroTier or Tailscale) already encrypts all inter-node traffic
-2. **Breaks pod networking**: When the control plane uses a dummy interface (`k8s0` at `172.16.0.1`), WireGuard tunnel negotiation between nodes fails, breaking cross-node pod connectivity
-3. **MTU overhead**: Additional WireGuard encapsulation further reduces MTU inside the overlay's already-reduced MTU
+1. **Redundant**: Inter-node traffic on a trusted home LAN doesn't need a second encryption layer, and anything that leaves the LAN already rides the encrypted overlay
+2. **MTU overhead**: Additional WireGuard encapsulation reduces the usable MTU, compounding with the overlay's already-reduced MTU for any tunneled path
 
 ## Gateway
 
@@ -203,17 +216,7 @@ Services like ArgoCD, Gitea, JupyterHub, and Harbor all share this gateway. Each
 
 **ZeroTier mode:** The gateway's LoadBalancer service gets a VIP from the Cilium L2 pool. No special pod configuration is needed.
 
-**Tailscale mode:** The gateway runs with `hostNetwork: true` on the control plane node, binding ports directly on the host's network interfaces. This makes it accessible via the LAN IP even when Cilium VXLAN is disrupted. Key configuration:
-
-| Setting | Value | Reason |
-|---------|-------|--------|
-| `hostNetwork` | `true` | LAN-reachable without VXLAN dependency |
-| `dnsPolicy` | `ClusterFirstWithHostNet` | Cluster DNS works in host network namespace |
-| `--base-id 1` | Envoy extra arg | Avoids shared memory collision with cilium-envoy (base-id 0) |
-| `nodeSelector` | Control plane | Pinned to the node DNS resolves to |
-| `strategy` | `Recreate` | hostNetwork prevents rolling updates (port conflicts) |
-
-The `envoy-gateway-lan` Service with `externalIPs` set to the control plane's LAN IP provides kube-proxy DNAT rules, so pods and hosts on any node can reach `<lan_ip>:443`. Envoy Gateway shifts privileged ports by 10000 internally (80 → 10080, 443 → 10443), so the Service uses these shifted targetPorts.
+**Tailscale mode:** The gateway is a regular pod; its LoadBalancer service uses `loadBalancerClass: tailscale`, so the operator gives it a tailnet IP and MagicDNS name (e.g., `<cluster>-gw.<tailnet>.ts.net`). All `*.yourdomain.com` queries resolve to that tailnet IP — for external clients and for cluster nodes and pods alike, since every node runs `tailscaled`.
 
 ### Knative Services
 
@@ -230,11 +233,7 @@ blocks:
     stop: "192.168.191.210"
 ```
 
-**Tailscale mode** uses two mechanisms:
-
-1. **Tailscale Kubernetes Operator** — Each `LoadBalancer` service with `loadBalancerClass: tailscale` gets a tailnet IP (`100.x.x.x`). The operator deploys a proxy pod that bridges WireGuard traffic to the service's backend pods. This is how external clients (your laptop) reach services.
-
-2. **kube-proxy `externalIPs`** — A `ClusterIP` service with `externalIPs` set to the control plane's LAN IP. kube-proxy installs iptables DNAT rules on every node, so traffic to `<lan_ip>:<port>` is forwarded to the gateway pod. This is how pods and host processes (kubelet, containerd) reach services.
+**Tailscale mode** uses the Tailscale Kubernetes Operator: each `LoadBalancer` service with `loadBalancerClass: tailscale` gets a tailnet IP (`100.x.x.x`) and MagicDNS name. The operator deploys a proxy pod that bridges WireGuard traffic to the service's backend pods. External clients (your laptop) and cluster nodes reach services the same way — every node is a tailnet member.
 
 ## DNS
 
@@ -244,28 +243,28 @@ Thinkube uses a two-layer DNS architecture:
 
 1. **CoreDNS** (in-cluster) — resolves `*.svc.cluster.local` for pod-to-pod service discovery. Forwards all other queries to BIND9.
 
-2. **BIND9** (deployed as a pod) — the authoritative DNS server for `*.yourdomain.com`. Runs with `hostNetwork: true` on the control plane, binding port 53 on the host's LAN IP. Returns the gateway IP for all `*.yourdomain.com` queries.
+2. **BIND9** (deployed as a pod) — the authoritative DNS server for `*.yourdomain.com`. Returns the gateway's address for all `*.yourdomain.com` queries and is exposed both in-cluster (for CoreDNS) and externally (for node hosts and remote clients).
 
-### Split DNS (Tailscale mode)
+### BIND9 Exposure (Tailscale mode)
 
-In Tailscale mode, BIND9 runs two containers to serve different zone data to different clients:
+BIND9 runs as a regular pod with two Services:
 
-| Container | Port | Wildcard resolves to | Clients |
-|-----------|------|---------------------|---------|
-| `bind9` (internal) | 53 (hostPort) | Control plane LAN IP | Pods, worker hosts |
-| `bind9-external` | 5353 | Tailscale gateway IP | External Tailscale clients |
+| Service | Type | Clients |
+|---------|------|---------|
+| `bind9-internal` | ClusterIP | CoreDNS forwards `yourdomain.com` queries here |
+| `bind9-external` | LoadBalancer (`loadBalancerClass: tailscale`) | Node hosts and external tailnet clients |
 
-The `bind9-external` LoadBalancer service (`loadBalancerClass: tailscale`) exposes port 53 on the tailnet, mapped to container port 5353. Tailscale split DNS (configured via the Tailscale API) forwards `yourdomain.com` queries from external clients to this service.
+The `bind9-external` service gets a tailnet IP and MagicDNS name (e.g., `<cluster>-dns.<tailnet>.ts.net`). Tailscale split DNS (configured via the Tailscale API) forwards `yourdomain.com` queries from external clients to it, and the wildcard resolves to the gateway's tailnet IP for all clients.
 
-In ZeroTier mode, a single container serves all clients with the wildcard resolving to the overlay VIP.
+In ZeroTier mode, BIND9 serves all clients with the wildcard resolving to the overlay VIP.
 
 ### Node DNS Configuration
 
-Worker nodes and the control plane use `systemd-resolved` with the BIND9 hostPort as their primary DNS server:
+Cluster nodes use `systemd-resolved` with BIND9's external address as their domain DNS server (written to `/etc/systemd/resolved.conf.d/` by the node DNS playbook):
 
-- **Kubernetes nodes:** `DNS=<control_plane_lan_ip>` in `/etc/systemd/resolved.conf.d/10-thinkube.conf`
-- **Pods:** CoreDNS at the standard cluster DNS IP, which forwards to BIND9
-- **Tailscale mode:** `Domains=~yourdomain.com` restricts BIND9 to domain queries only; all other queries use fallback DNS (8.8.8.8)
+- **Kubernetes nodes:** `DNS=<bind9 external IP>` — the tailnet IP in Tailscale mode, the overlay VIP in ZeroTier mode
+- **Pods:** CoreDNS at the standard cluster DNS IP, which forwards `yourdomain.com` to `bind9-internal`
+- **Tailscale mode:** `Domains=~yourdomain.com` restricts BIND9 to platform-domain queries only; everything else uses fallback DNS (8.8.8.8)
 
 ## TLS Certificates
 
@@ -287,33 +286,26 @@ All nodes run UFW with `default: deny (incoming)`. The k8s install playbook open
 | Port | Protocol | Purpose | Nodes |
 |------|----------|---------|-------|
 | 22 | TCP | SSH | All |
-| 6443 | TCP | Kubernetes API | Control plane |
+| 6443 | TCP | Kubernetes API (server on control plane, node-local proxy on workers) | All |
 | 2379-2380 | TCP | etcd | Control plane |
 | 10250 | TCP | Kubelet | All |
 | 10257 | TCP | kube-controller-manager | Control plane |
 | 10259 | TCP | kube-scheduler | Control plane |
 | 4240 | TCP | Cilium health | All |
 | 8472 | UDP | Cilium VXLAN | All |
-| 53 | TCP/UDP | DNS (BIND9 hostPort) | Control plane |
-| 10080 | TCP | Envoy Gateway HTTP (Tailscale only) | Control plane |
-| 10443 | TCP | Envoy Gateway HTTPS (Tailscale only) | Control plane |
+| 5355 | UDP | LLMNR (boot-time control plane re-resolution) | All |
 
 The overlay interface (`zt+` for ZeroTier, `tailscale0` for Tailscale) is allowed for all traffic in both directions — it's a trusted overlay network where all members are authorized nodes.
 
 ## Multi-Node Networking
 
-All nodes are expected to be on the same local network. Workers join the cluster with their LAN IP as `INTERNAL-IP`, and pod-to-pod traffic flows directly over the LAN through Cilium's VXLAN encapsulation — the overlay is not in the data path for pod traffic.
+All nodes are expected to be on the same local network. Every node registers its real LAN IP as `INTERNAL-IP` (kubelet `--node-ip`, kept current at boot by `thinkube-node-ip-sync`), and pod-to-pod traffic flows directly over the LAN through Cilium's VXLAN encapsulation — the overlay is not in the data path for pod traffic. The Kubernetes API is reached through each worker's node-local proxy on `172.16.0.1:6443`, which is also plain LAN traffic.
 
-The overlay serves different purposes on worker nodes depending on the provider:
+The overlay's role on worker nodes depends on the provider:
 
-**ZeroTier mode:**
-1. **VIP reachability** — pods reach the gateway VIP on the overlay interface via Cilium L2 LB
-2. **API server route** — `172.16.0.1` is routed via the control plane's LAN IP
+**ZeroTier mode:** pods reach the gateway VIP on the overlay interface via Cilium L2 LB.
 
-**Tailscale mode:**
-1. **Tailnet connectivity** — external clients reach services via WireGuard tunnel
-2. **API server route** — `172.16.0.1` is routed via the control plane's LAN IP
-3. **Service access** — pods and hosts reach `*.yourdomain.com` via kube-proxy `externalIPs` DNAT to the control plane's LAN IP
+**Tailscale mode:** nodes are tailnet members, so pods and hosts reach `*.yourdomain.com` via the gateway's tailnet IP, and external clients reach services through the WireGuard tunnel.
 
 ```d2
 Pod A (Node 1): {
@@ -338,17 +330,17 @@ Pod A (Node 1).app -> Cilium VXLAN.encap -> Pod B (Node 2).app
 | Your laptop | Service (HTTPS) | Laptop → ZeroTier → VIP:443 → Envoy → Pod |
 | Pod on worker | `*.yourdomain.com` | Pod → ZeroTier → VIP:443 → Envoy → Pod |
 | Pod on Node A | Pod on Node B | Pod → Cilium VXLAN (LAN) → Node B → Pod |
-| Worker kubelet | API server | `172.16.0.1:6443` → Static route → Control plane LAN IP |
+| Worker kubelet | API server | `172.16.0.1:6443` → node-local proxy → Control plane LAN IP:6443 |
 
 **Tailscale mode:**
 
 | From | To | Path |
 |------|----|------|
 | Your laptop | Service (HTTPS) | Laptop → WireGuard → Tailscale LB IP:443 → TS proxy → Envoy → Pod |
-| Pod on worker | `*.yourdomain.com` | Pod → kube-proxy DNAT (externalIP:443 → LAN IP:10443) → Envoy → Pod |
-| Worker kubelet | `*.yourdomain.com` | kubelet → kube-proxy DNAT (externalIP:443 → LAN IP:10443) → Envoy |
+| Pod on worker | `*.yourdomain.com` | Pod → gateway tailnet IP:443 (via node's tailscaled) → TS proxy → Envoy → Pod |
+| Worker kubelet | `*.yourdomain.com` | kubelet → gateway tailnet IP:443 (via node's tailscaled) → TS proxy → Envoy |
 | Pod on Node A | Pod on Node B | Pod → Cilium VXLAN (LAN) → Node B → Pod |
-| Worker kubelet | API server | `172.16.0.1:6443` → Static route → Control plane LAN IP |
+| Worker kubelet | API server | `172.16.0.1:6443` → node-local proxy → Control plane LAN IP:6443 |
 
 ## Next Steps
 
