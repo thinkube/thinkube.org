@@ -1,23 +1,16 @@
 {
   "name": "thinkube-docs",
-  "description": "Official documentation for Thinkube platform",
+  "description": "Official documentation site for the Thinkube platform, built with Antora and AsciiDoc.",
   "author": "Alejandro Martínez Corriá",
   "license": "Apache-2.0",
-  "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
+    "build": "antora --fetch antora-playbook.yml",
+    "serve": "npx --yes http-server build/site -p 4321 -c-1"
   },
-  "dependencies": {
-    "@astrojs/starlight": "^0.38.3",
-    "@lucide/astro": "^1.8.0",
-    "astro": "^6.0.5",
-    "remark-d2": "^0.2.3",
-    "sharp": "^0.34.5",
-    "starlight-image-zoom": "^0.13.2"
+  "devDependencies": {
+    "@antora/cli": "^3.1.0",
+    "@antora/site-generator": "^3.1.0"
   }
 }

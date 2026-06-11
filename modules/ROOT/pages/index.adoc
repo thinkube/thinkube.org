@@ -1,0 +1,26 @@
+= Thinkube Documentation
+:page-type: concept
+
+image::logo.svg[Thinkube,200]
+
+Welcome to the Thinkube documentation platform — rebuilt on *Antora* and
+*AsciiDoc*.
+
+This page exists to prove the platform machine: a clean Antora build, served on
+the custom Thinkube UI bundle. Real content lands later (TEP-tghabr); the
+page-type templates land in SL-2.
+
+NOTE: This is the new Antora-based documentation platform. If you can read this
+on a teal, Poppins-typeset site with the DGX Spark stamp in the corner, the
+branded build works.
+
+== What this proves
+
+* Antora builds the site from AsciiDoc source.
+* The custom Thinkube UI bundle (brand colours, fonts, sharp corners, the DGX
+  Spark stamp) is applied — visibly not the stock Antora theme.
+
+== Next
+
+The four page-types (tutorial, how-to, reference, concept), in-site search, and
+d2 diagrams arrive in the following slices.

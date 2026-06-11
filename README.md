@@ -1,24 +1,17 @@
 # Thinkube.org
 
-> **Warning**: This project is under active development and not yet ready for production use.
+> **Warning**: under active development; not yet ready for production use.
 
 ---
 
-Official documentation website for the Thinkube platform, built with Astro and Starlight.
+Official documentation site for the Thinkube platform, built with **Antora** and
+**AsciiDoc**.
 
-## Overview
-
-This repository contains the source for [thinkube.org](https://thinkube.org), providing:
-- Getting started guides
-- Platform documentation
-- Tutorials and examples
-- Architecture documentation
-
-## Development
+## Develop
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 
 ### Commands
 
@@ -26,46 +19,46 @@ This repository contains the source for [thinkube.org](https://thinkube.org), pr
 # Install dependencies
 npm install
 
-# Start development server (localhost:4321)
-npm run dev
-
-# Build for production
+# Build the site (output: ./build/site)
 npm run build
 
-# Preview production build
-npm run preview
+# Serve the built site locally on http://localhost:4321
+npm run serve
 ```
 
-## Project Structure
+There is no live-reload dev server: the fast authoring loop is the deploy itself
+— push the branch and the thinkube template rebuilds the docs in ~90s.
+
+## Project structure
 
 ```
-src/
-├── assets/          # Images, logos, static assets
-├── content/
-│   └── docs/        # Documentation content (Markdown/MDX)
-│       ├── index.mdx
-│       ├── installation/
-│       ├── learn/
-│       ├── components/
-│       └── architecture/
-├── styles/          # Custom CSS
-└── content.config.ts
+antora-playbook.yml      # Antora playbook (content, UI, output, base path)
+antora.yml               # component descriptor
+modules/ROOT/
+├── pages/*.adoc         # documentation pages (AsciiDoc)
+├── nav.adoc             # navigation
+└── images/              # content images
+supplemental-ui/         # Thinkube branding over the default Antora UI
 ```
 
-## Built With
+## Deploys
 
-- [Astro](https://astro.build/) - Static site generator
-- [Starlight](https://starlight.astro.build/) - Documentation theme
+- **Cluster (thinkube template):** the `Dockerfile` builds the Antora site and
+  serves it on nginx :8080 at base `/`. This is the primary deploy.
+- **GitHub Pages:** `.github/workflows/pages.yml` builds at base `/thinkube.org/`
+  but is **manual-only** (`workflow_dispatch`) — the product is not yet announced,
+  so nothing publishes automatically. To enable auto-publish at announce time,
+  flip the single documented switch in that workflow (uncomment the `push`
+  trigger).
 
-## Contributing
+## Built with
 
-For now, contributions are limited to reporting issues and feedback. Code contributions via pull requests are planned for a future version.
-
-- **Issues & Feedback**: https://github.com/thinkube/thinkube/issues
+- [Antora](https://antora.org/) — multi-repo documentation site generator
+- [AsciiDoc](https://asciidoc.org/) — the markup
 
 ## License
 
-Apache License 2.0 - See [LICENSE](LICENSE)
+Apache License 2.0 — see [LICENSE](LICENSE)
 
 ## Copyright
 

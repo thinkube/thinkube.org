@@ -1,0 +1,86 @@
+/* Thinkube brand over the default Antora UI.
+   Brand carried from the previous Starlight theme: Poppins + Noto Sans Mono,
+   teal primary, amber accent, sharp corners, the DGX Spark stamp. */
+
+:root {
+  --th-primary: #1a6b7c;
+  --th-primary-light: #008ca8;
+  --th-accent: #c4a35a;
+  --th-bg: #fdfcfa;
+
+  /* Default-UI variable overrides (names from antora-ui-default) */
+  --navbar-background: var(--th-primary);
+  --navbar-foreground: #ffffff;
+  --color-primary: var(--th-primary);
+  --link-color: var(--th-primary);
+  --link-mouse-color: var(--th-primary-light);
+  --body-font-family: "Poppins", system-ui, -apple-system, sans-serif;
+  --monospace-font-family: "Noto Sans Mono", ui-monospace, monospace;
+}
+
+body {
+  font-family: "Poppins", system-ui, -apple-system, sans-serif;
+  background: var(--th-bg);
+}
+
+code, pre, kbd, .colist > table code {
+  font-family: "Noto Sans Mono", ui-monospace, monospace;
+}
+
+/* Brand the navbar regardless of the bundle's exact variable names */
+.navbar {
+  background: var(--th-primary);
+}
+.navbar a,
+.navbar .navbar-item,
+.navbar .navbar-link {
+  color: #ffffff;
+}
+
+/* Links + headings in the Thinkube teal */
+.doc a, .toc a:hover, .nav-menu a:hover {
+  color: var(--th-primary);
+}
+.doc h1, .doc h2, .doc h3, .doc h4, .doc h5, .doc h6 {
+  color: var(--th-primary);
+  font-family: "Poppins", system-ui, sans-serif;
+}
+
+/* Amber accent for inline emphasis markers */
+.doc .colist > table > tbody > tr > td:first-of-type i {
+  color: var(--th-accent);
+}
+
+/* Sharp corners, like the Thinkube apps */
+*, *::before, *::after { border-radius: 0 !important; }
+
+/* DGX Spark stamp — fixed, rotated, rough-edged (no JS; static markup) */
+#dgx-stamp {
+  position: fixed;
+  top: 85px;
+  right: 40px;
+  z-index: 9999;
+  padding: 12px 24px;
+  border: 4px solid oklch(70% 0.19 50);
+  color: oklch(70% 0.19 50);
+  font: 600 16px/1.2 "Poppins", sans-serif;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+  transform: rotate(12deg);
+  opacity: 0.8;
+  pointer-events: none;
+  background: transparent;
+  filter: url(#rough-edges);
+}
+#dgx-stamp strong {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 5px;
+  margin-top: 2px;
+}
+
+@media (max-width: 1024px) {
+  #dgx-stamp { display: none; }
+}

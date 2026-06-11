@@ -1,0 +1,12 @@
+<footer class="footer">
+  <p class="footer-text">© Thinkube — built with Antora &amp; AsciiDoc.</p>
+</footer>
+
+{{! Thinkube "Runs on DGX Spark" stamp + its rough-edges SVG filter }}
+<div id="dgx-stamp" aria-hidden="true">Runs on<br><strong>DGX Spark</strong></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rough-edges">
+    <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="4" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>

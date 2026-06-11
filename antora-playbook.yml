@@ -1,0 +1,28 @@
+# Antora playbook for the Thinkube documentation site.
+# Base path per deploy target is set via the `--url` CLI flag, NOT here:
+#   cluster (default):  antora antora-playbook.yml            -> base "/"
+#   GitHub Pages (SL-6): antora --url /thinkube.org/ ...      -> base "/thinkube.org/"
+site:
+  title: Thinkube
+  start_page: thinkube-docs::index.adoc
+  url: /
+
+content:
+  sources:
+    - url: .
+      branches: HEAD
+      start_path: .
+
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true
+  supplemental_files: ./supplemental-ui
+
+output:
+  dir: ./build/site
+
+runtime:
+  fetch: true
+  log:
+    failure_level: warn

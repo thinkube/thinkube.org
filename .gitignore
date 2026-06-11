@@ -1,7 +1,5 @@
-# build output
-dist/
-# generated types
-.astro/
+# build output (Antora)
+build/
 
 # dependencies
 node_modules/
