@@ -17,3 +17,7 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# local scratch (browser screenshots / playwright)
+.playwright-mcp/
+*-render.png
