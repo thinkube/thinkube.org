@@ -1,0 +1,10 @@
+= What Is Thinkube
+:page-type: concept
+
+Understanding-oriented explanation — the *concept* page-type. It builds the mental
+model, with no steps to follow.
+
+Thinkube is a single-user, self-hosted platform for the whole AI/ML development
+lifecycle — get a model, fine-tune it, build apps that consume it, and serve it —
+on your own hardware, with the power of a CNCF-conformant Kubernetes and none of
+the Kubernetes knowledge required.

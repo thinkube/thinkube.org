@@ -1,0 +1,10 @@
+<article class="doc{{#with page.attributes.type}} doc--{{this}}{{/with}}">
+{{#with page.attributes.type}}
+<div class="page-type-badge" data-type="{{this}}">{{this}}</div>
+{{/with}}
+{{#with page.title}}
+<h1 class="page">{{{this}}}</h1>
+{{/with}}
+{{{page.contents}}}
+{{> pagination}}
+</article>

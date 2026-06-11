@@ -1,0 +1,14 @@
+= thinkube.yaml Reference
+:page-type: reference
+
+Lookup material — the *reference* page-type. Dry, complete, scannable.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `deployment.type` | string | `app`, `knative`, or `component`.
+| `containers[].port` | integer | Port the container listens on.
+| `containers[].size` | string | `small`, `medium`, `large`, `xlarge`.
+| `routes[].path` | string | Path prefix routed to a container.
+|===

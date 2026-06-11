@@ -84,3 +84,32 @@ code, pre, kbd, .colist > table code {
 @media (max-width: 1024px) {
   #dgx-stamp { display: none; }
 }
+
+/* ---- Page-type treatment (SL-2) -------------------------------------------
+   Each page declares :page-type:; article.hbs adds a `doc--<type>` class and a
+   badge. Each type gets a distinct accent + label so the four are visibly
+   different layouts. */
+.page-type-badge {
+  display: inline-block;
+  font: 700 0.7rem/1 "Poppins", sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.75rem;
+  margin-bottom: 1.25rem;
+  color: #ffffff;
+}
+.doc--tutorial,
+.doc--how-to,
+.doc--reference,
+.doc--concept {
+  padding-top: 1rem;
+  border-top: 4px solid var(--th-primary);
+}
+.doc--tutorial  { border-top-color: #1a6b7c; }
+.doc--how-to    { border-top-color: #c4a35a; }
+.doc--reference { border-top-color: #4a5e8c; }
+.doc--concept   { border-top-color: #6b4a7c; }
+.doc--tutorial  .page-type-badge { background: #1a6b7c; }
+.doc--how-to    .page-type-badge { background: #c4a35a; }
+.doc--reference .page-type-badge { background: #4a5e8c; }
+.doc--concept   .page-type-badge { background: #6b4a7c; }

@@ -1,1 +1,6 @@
 * xref:index.adoc[Home]
+* Page types
+** xref:tutorial.adoc[Tutorial]
+** xref:how-to.adoc[How-to]
+** xref:reference.adoc[Reference]
+** xref:concept.adoc[Concept]

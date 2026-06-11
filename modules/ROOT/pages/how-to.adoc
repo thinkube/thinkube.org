@@ -1,0 +1,11 @@
+= Set Up Your Domain
+:page-type: how-to
+
+A task-oriented recipe — the *how-to* page-type. It assumes you know what you want
+and gets you there.
+
+. Add your domain's Cloudflare API token in the control panel.
+. Point the domain's nameservers at Cloudflare.
+. Re-run the installer's network step.
+
+NOTE: How-to guides skip the teaching — they solve one concrete problem.
