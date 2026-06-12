@@ -1,8 +1,6 @@
 = Documentation Map
 :page-type: reference
-
-[.docref]
-ref dyjm
+:page-docref: dyjm
 
 
 The whole documentation set, by section and xref:contributing/page-types.adoc[page-type].

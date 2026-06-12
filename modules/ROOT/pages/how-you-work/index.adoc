@@ -1,8 +1,6 @@
 = The Cockpit
 :page-type: concept
-
-[.docref]
-ref ag4k
+:page-docref: ag4k
 
 
 _code-server + Claude + MCP is the primary way to operate Thinkube; the GUIs are the visual alternative._

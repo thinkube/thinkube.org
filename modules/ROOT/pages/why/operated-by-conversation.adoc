@@ -1,8 +1,6 @@
 = Operated by Conversation
 :page-type: concept
-
-[.docref]
-ref n34l
+:page-docref: n34l
 
 
 _code-server + Claude + MCP as the durable, economically-aligned way to work._

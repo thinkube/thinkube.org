@@ -1,8 +1,6 @@
 = Serve a Model
 :page-type: how-to
-
-[.docref]
-ref vi64
+:page-docref: vi64
 
 
 _Serve with vLLM or TensorRT-LLM via the LLM Gateway; GPUs and Knative scale-to-zero._

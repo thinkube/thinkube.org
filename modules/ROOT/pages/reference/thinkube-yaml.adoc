@@ -1,8 +1,6 @@
 = thinkube.yaml Reference
 :page-type: reference
-
-[.docref]
-ref 2b2s
+:page-docref: 2b2s
 
 
 Lookup material — the *reference* page-type. Dry, complete, scannable.

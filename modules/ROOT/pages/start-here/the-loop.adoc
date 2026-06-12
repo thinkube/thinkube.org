@@ -1,8 +1,6 @@
 = The AI/ML Loop
 :page-type: concept
-
-[.docref]
-ref yu1c
+:page-docref: yu1c
 
 
 _Get a model, fine-tune it, build apps that consume it, serve it — the loop, in two minutes._

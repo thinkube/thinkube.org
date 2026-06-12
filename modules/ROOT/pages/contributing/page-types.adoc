@@ -1,8 +1,6 @@
 = Page Types
 :page-type: reference
-
-[.docref]
-ref 6bz5
+:page-docref: 6bz5
 
 
 Every Thinkube documentation page is exactly **one** of four Diátaxis

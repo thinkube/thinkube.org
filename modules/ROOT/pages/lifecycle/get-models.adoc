@@ -1,8 +1,6 @@
 = Get a Model
 :page-type: how-to
-
-[.docref]
-ref gu5o
+:page-docref: gu5o
 
 
 _Mirror or download a model from Hugging Face; the model catalog and LLM registry._

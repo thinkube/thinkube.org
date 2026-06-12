@@ -1,8 +1,6 @@
 = MicroK8s to kubeadm
 :page-type: concept
-
-[.docref]
-ref hezu
+:page-docref: hezu
 
 
 _The journey from MicroK8s to a certified kubeadm cluster._

@@ -1,8 +1,6 @@
 = Build an App
 :page-type: tutorial
-
-[.docref]
-ref jyut
+:page-docref: jyut
 
 
 _Scaffold from a template and deploy it onto the platform._

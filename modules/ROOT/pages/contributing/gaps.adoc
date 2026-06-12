@@ -1,8 +1,6 @@
 = Gap Analysis
 :page-type: reference
-
-[.docref]
-ref 010a
+:page-docref: 010a
 
 
 The worklist for content authoring (TEP-tghabr): what each page in the

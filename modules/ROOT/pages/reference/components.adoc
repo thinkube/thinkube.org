@@ -1,8 +1,6 @@
 = Components Catalog
 :page-type: reference
-
-[.docref]
-ref xrd1
+:page-docref: xrd1
 
 
 _The core services and the optional components you can install._

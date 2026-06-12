@@ -1,8 +1,6 @@
 = Fine-tune a Model
 :page-type: tutorial
-
-[.docref]
-ref 5du7
+:page-docref: 5du7
 
 
 _Fine-tune in the AI Lab and register the result in MLflow._

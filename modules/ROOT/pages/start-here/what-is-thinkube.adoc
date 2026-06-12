@@ -1,8 +1,6 @@
 = What Is Thinkube
 :page-type: concept
-
-[.docref]
-ref 66s0
+:page-docref: 66s0
 
 
 _Single-user, self-hosted platform for the whole AI/ML lifecycle on a CNCF-conformant Kubernetes._
