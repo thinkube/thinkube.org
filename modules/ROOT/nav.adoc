@@ -50,3 +50,4 @@
 * xref:contributing/style-guide.adoc[Style guide]
 * xref:contributing/documentation-map.adoc[Documentation map]
 * xref:contributing/screenshots.adoc[Screenshot inventory]
+* xref:contributing/gaps.adoc[Gap analysis]

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="Poppins, system-ui, sans-serif">
+  <rect x="6" y="6" width="788" height="488" rx="6" fill="#f6f2ea"
+        stroke="#c4a35a" stroke-width="3" stroke-dasharray="10 7"/>
+  <rect x="6" y="6" width="788" height="46" rx="6" fill="#1a6b7c"/>
+  <circle cx="34" cy="29" r="6" fill="#d9636e"/><circle cx="56" cy="29" r="6" fill="#d7a94f"/><circle cx="78" cy="29" r="6" fill="#54bd8a"/>
+  <text x="106" y="34" fill="#cfe6e6" font-size="16" font-weight="600">cp-model-mirror</text>
+  <text x="400" y="150" text-anchor="middle" font-size="56">📷</text>
+  <text x="400" y="210" text-anchor="middle" fill="#1a6b7c" font-size="30" font-weight="700" letter-spacing="2">MOCK SCREENSHOT</text>
+  <text x="400" y="262" text-anchor="middle" fill="#5a5a5a" font-size="20"><tspan x="400" dy="0">Mirroring a model + job status.</tspan></text>
+  <text x="400" y="430" text-anchor="middle" fill="#9a8a5e" font-size="16">capture method: Playwright  ·  pending real capture (TEP-tghabr)</text>
+</svg>

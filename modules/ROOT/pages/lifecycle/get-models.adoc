@@ -8,18 +8,8 @@ _Mirror or download a model from Hugging Face; the model catalog and LLM registr
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: cp-model-catalog
-[.screenshot-needed]
---
-📷 *Screenshot needed* · `cp-model-catalog` · 🤖 Playwright
+// SCREENSHOT: cp-model-catalog (mock — real capture in a follow-on spec)
+image::cp-model-catalog.svg[The model catalog / browse.,role=mock-screenshot]
 
-_The model catalog / browse._
---
-
-// SCREENSHOT: cp-model-mirror
-[.screenshot-needed]
---
-📷 *Screenshot needed* · `cp-model-mirror` · 🤖 Playwright
-
-_Mirroring a model + job status._
---
+// SCREENSHOT: cp-model-mirror (mock — real capture in a follow-on spec)
+image::cp-model-mirror.svg[Mirroring a model + job status.,role=mock-screenshot]

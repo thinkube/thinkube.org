@@ -8,18 +8,8 @@ _Fine-tune in the AI Lab and register the result in MLflow._
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: lab-finetune
-[.screenshot-needed]
---
-📷 *Screenshot needed* · `lab-finetune` · ✋ Manual
+// SCREENSHOT: lab-finetune (mock — real capture in a follow-on spec)
+image::lab-finetune.svg[A fine-tuning notebook mid-run.,role=mock-screenshot]
 
-_A fine-tuning notebook mid-run._
---
-
-// SCREENSHOT: mlflow-registry
-[.screenshot-needed]
---
-📷 *Screenshot needed* · `mlflow-registry` · 🤖 Playwright
-
-_The registered model in MLflow._
---
+// SCREENSHOT: mlflow-registry (mock — real capture in a follow-on spec)
+image::mlflow-registry.svg[The registered model in MLflow.,role=mock-screenshot]

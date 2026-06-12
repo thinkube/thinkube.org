@@ -1,0 +1,46 @@
+= Gap Analysis
+:page-type: reference
+
+The worklist for content authoring (TEP-tghabr): what each page in the
+xref:contributing/documentation-map.adoc[IA] still needs, ground-truth first.
+Status of the whole set today: the **structure is complete** (nav, 24 pages,
+templates, style guide, the screenshot inventory) and **mock screens** stand in
+for captures — but the **prose is not yet written**. Every page below is therefore
+"missing: body" until a tghabr authoring spec fills it from the real system.
+
+== Cross-cutting
+
+* *All §1/§3/§4/§6/§7 pages are typed stubs* — they carry a `:page-type:`, a
+  one-line purpose, and (where relevant) a mock screen, but **no authored prose**.
+  Each is authored against its page-type template, from ground truth + your guidance.
+* *Installer screenshots are stale* — the 17 in `thinkube-installer` are an old
+  installer version; the **whole walkthrough is recaptured** (see the
+  xref:contributing/screenshots.adoc[inventory], §2). Manual / desktop app.
+* *Real captures are mocked* — every screenshot slot shows a labelled mock; the
+  real captures land in a follow-on capture spec.
+* *Diagrams are not authored yet* — the loop exists; architecture, deploy-loop, and
+  the component map are still to be drawn (d2/kroki) in an authoring spec.
+* *Old prose is not a source* — the previous site (preserved at tag
+  `pre-antora-content` / `thinkube.bak`) is a **topic checklist only**, never copied.
+
+== Per section
+
+[cols="1,4",options="header"]
+|===
+| Section | Gaps to fill
+
+| §1 Start here | Write *What is Thinkube* (the positioning), *The AI/ML loop*, and the *Quickstart*. The loop diagram exists; the quickstart needs the real fast-path + `cp-dashboard`.
+| §2 Set up | Content lives in `thinkube-installer` (live at `/install/`); **recapture the full walkthrough** against the current installer; re-verify each step's prose against the current flow.
+| §3 How you work | Author the cockpit (code-server + Claude + MCP), *Driving from Claude*, and *Thinkube AI Lab*; the control-panel reference is in the `control` repo and needs its tour written + `cp-overview`.
+| §4 The lifecycle | Author all five (loop, get-models, fine-tune, build, serve) from the real tools — the model catalog/mirror, JupyterHub+MLflow, `tkt-webapp-vue-fastapi`, the LLM Gateway/GPU/Knative. Heaviest capture load.
+| §5 Reference | Fill the *Templates* and *Components* catalogs from the live `list_templates` / components (9 templates, 13 core + 16 optional); `thinkube.yaml` reference exists (real include).
+| §6 How it works | Author the deep layer + draw the diagrams (architecture, deploy-loop, components). Quarantine volatile policy (the Agent-SDK credit specifics) into a single dated page here.
+| §7 Why | Author the story (MicroK8s→kubeadm, opinions-on-a-standard, single-user, operated-by-conversation) — narrative, no captures.
+|===
+
+== Discard / leftovers
+
+* The SP-tgicqj SL-2 proof pages (`concept`/`how-to`/`tutorial`/`components` demos)
+  are already retired into the real IA — nothing to carry forward from them.
+* No per-service dashboard docs (the SP-tgivi3 scope boundary) — don't author pages
+  for Gitea/Harbor/ArgoCD/MLflow/Keycloak/… as interfaces.

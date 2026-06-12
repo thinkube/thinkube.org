@@ -8,10 +8,5 @@ _arm64 (DGX Spark) and amd64; the GPU operator._
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: gpu-multiarch
-[.screenshot-needed]
---
-📷 *Screenshot needed* · `gpu-multiarch` · ✋ Manual
-
-_nvidia-smi / node arch in a terminal._
---
+// SCREENSHOT: gpu-multiarch (mock — real capture in a follow-on spec)
+image::gpu-multiarch.svg[nvidia-smi / node arch in a terminal.,role=mock-screenshot]

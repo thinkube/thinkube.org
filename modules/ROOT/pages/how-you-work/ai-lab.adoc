@@ -8,18 +8,8 @@ _JupyterHub notebooks and fine-tuning, with the Thinky assistant exposed over MC
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: lab-hub
-[.screenshot-needed]
---
-📷 *Screenshot needed* · `lab-hub` · 🤖 Playwright
+// SCREENSHOT: lab-hub (mock — real capture in a follow-on spec)
+image::lab-hub.svg[The JupyterHub launcher / spawner.,role=mock-screenshot]
 
-_The JupyterHub launcher / spawner._
---
-
-// SCREENSHOT: lab-notebook
-[.screenshot-needed]
---
-📷 *Screenshot needed* · `lab-notebook` · ✋ Manual
-
-_A notebook with the Thinky assistant._
---
+// SCREENSHOT: lab-notebook (mock — real capture in a follow-on spec)
+image::lab-notebook.svg[A notebook with the Thinky assistant.,role=mock-screenshot]

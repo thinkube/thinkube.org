@@ -406,3 +406,7 @@ html[data-theme="dark"] .last-updated { color: var(--th-muted); }
 html[data-theme="dark"] .doc .openblock.screenshot-needed > .content { color: var(--th-muted); }
 html[data-theme="dark"] .doc .openblock.screenshot-needed .title,
 html[data-theme="dark"] .doc .openblock.screenshot-needed p:first-child { color: var(--th-accent); }
+
+/* Mock screenshot images (stand-ins until the real captures land) */
+.doc .imageblock.mock-screenshot { margin: 1.4rem 0; }
+.doc .imageblock.mock-screenshot img { width: 100%; max-width: 620px; height: auto; display: block; }

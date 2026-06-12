@@ -8,18 +8,8 @@ _Scaffold from a template and deploy it onto the platform._
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: cockpit-scaffold
-[.screenshot-needed]
---
-📷 *Screenshot needed* · `cockpit-scaffold` · ✋ Manual
+// SCREENSHOT: cockpit-scaffold (mock — real capture in a follow-on spec)
+image::cockpit-scaffold.svg[Claude scaffolding an app from a template.,role=mock-screenshot]
 
-_Claude scaffolding an app from a template._
---
-
-// SCREENSHOT: webapp-deployed
-[.screenshot-needed]
---
-📷 *Screenshot needed* · `webapp-deployed` · 🤖 Playwright
-
-_The deployed Vue+FastAPI app._
---
+// SCREENSHOT: webapp-deployed (mock — real capture in a follow-on spec)
+image::webapp-deployed.svg[The deployed Vue + FastAPI app.,role=mock-screenshot]
