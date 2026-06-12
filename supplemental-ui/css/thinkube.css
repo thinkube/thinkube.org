@@ -303,3 +303,7 @@ html[data-theme="dark"] th { background: var(--th-surface); }
 html[data-theme="dark"] .doc .admonitionblock td.content { color: var(--th-text); }
 html[data-theme="dark"] .footer { background: #0e1b22; color: var(--th-muted); }
 html[data-theme="dark"] hr { border-color: var(--th-border); }
+
+/* Last-updated stamp (replaces the edit-this-page link) */
+.last-updated { margin-left: auto; padding-right: 1rem; color: #8a8a8a; font-size: .8rem; }
+html[data-theme="dark"] .last-updated { color: var(--th-muted); }

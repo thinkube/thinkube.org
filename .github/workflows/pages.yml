@@ -39,7 +39,7 @@ jobs:
       # GitHub Pages serves this repo under the /thinkube.org/ path, so build
       # with that base via Antora's --url flag (the cluster build uses "/").
       - name: Build Antora site (base /thinkube.org/)
-        run: npx antora --fetch --url /thinkube.org antora-playbook.yml
+        run: npx antora --fetch --url /thinkube.org --attribute page-updated="$(date -u +%Y-%m-%d)" antora-playbook.yml
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

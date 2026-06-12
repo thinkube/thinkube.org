@@ -1,0 +1,5 @@
+{{! Replaces the default "Edit this Page" link with a last-updated stamp.
+    The date comes from the --attribute page-updated=<build date> passed to Antora. }}
+{{#if page.attributes.updated}}
+<div class="last-updated">Updated {{page.attributes.updated}}</div>
+{{/if}}

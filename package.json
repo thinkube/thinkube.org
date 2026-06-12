@@ -6,7 +6,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "antora --fetch antora-playbook.yml",
+    "build": "antora --fetch --attribute page-updated=\"$(date -u +%Y-%m-%d)\" antora-playbook.yml",
     "serve": "npx --yes http-server build/site -p 4321 -c-1"
   },
   "devDependencies": {
