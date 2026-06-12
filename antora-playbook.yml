@@ -18,6 +18,11 @@ content:
     - url: https://github.com/thinkube/thinkube-installer.git
       branches: main
       start_path: docs
+    # docs-with-code (TEP-tgh6iy): thinkube-control's docs live in its own repo,
+    # beside the control-plane code they describe, and aggregate here at build time.
+    - url: https://github.com/thinkube/thinkube-control.git
+      branches: main
+      start_path: docs
 
 ui:
   bundle:
