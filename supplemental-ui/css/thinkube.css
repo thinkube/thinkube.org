@@ -424,6 +424,11 @@ html[data-theme="dark"] .nav-list .nav-item[data-depth="0"] > .nav-text { color:
    Auto-derived from the item, so adding/removing content never renumbers. */
 /* Page ref lives in the top-right metadata row, next to "Updated" — subtle. */
 .last-updated .doc-ref { font-family: "Noto Sans Mono", ui-monospace, monospace; letter-spacing: .06em; }
+/* Section ref: subtle code next to each bold nav section header. */
+.nav-text .sec-ref {
+  font: 400 .78em/1 "Noto Sans Mono", ui-monospace, monospace;
+  color: #9aa0a3; letter-spacing: .06em; margin-left: .4rem;
+}
 /* The landing has no toolbar, so its ref sits quietly under the hero. */
 .page-ref {
   display: inline-block; margin: 0 0 .9rem; padding: 0; background: none;

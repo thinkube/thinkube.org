@@ -1,9 +1,9 @@
-.Start here
+.Start here [.sec-ref]#i8ll#
 * xref:start-here/what-is-thinkube.adoc[What is Thinkube]
 * xref:start-here/the-loop.adoc[The AI/ML loop]
 * xref:start-here/quickstart.adoc[Quickstart]
 
-.Set up
+.Set up [.sec-ref]#o2fw#
 * xref:install:ROOT:overview.adoc[Install Thinkube]
 * xref:install:ROOT:node-setup.adoc[Prepare your machines]
 * xref:install:ROOT:overlay-network.adoc[Connect from anywhere]
@@ -12,26 +12,26 @@
 * xref:install:ROOT:huggingface-token.adoc[Unlock AI models]
 * xref:install:ROOT:adding-nodes.adoc[Add more nodes]
 
-.How you work
+.How you work [.sec-ref]#9hd7#
 * xref:how-you-work/index.adoc[The cockpit]
 * xref:how-you-work/claude-code.adoc[Driving Thinkube from Claude]
 * xref:how-you-work/ai-lab.adoc[Thinkube AI Lab]
 * xref:control:ROOT:index.adoc[thinkube-control]
 
-.The lifecycle
+.The lifecycle [.sec-ref]#tm7y#
 * xref:lifecycle/index.adoc[The loop]
 * xref:lifecycle/get-models.adoc[Get a model]
 * xref:lifecycle/fine-tune.adoc[Fine-tune]
 * xref:lifecycle/build-apps.adoc[Build an app]
 * xref:lifecycle/serve.adoc[Serve a model]
 
-.Reference
+.Reference [.sec-ref]#wt1c#
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]
 * xref:reference/templates.adoc[Templates catalog]
 * xref:reference/components.adoc[Components catalog]
 * xref:control:ROOT:index.adoc[Control panel & MCP tools]
 
-.How it works
+.How it works [.sec-ref]#4xh3#
 * xref:how-it-works/architecture.adoc[Architecture]
 * xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop]
 * xref:how-it-works/certified-kubernetes.adoc[Certified Kubernetes]
@@ -39,13 +39,13 @@
 * xref:how-it-works/mcp-operation-model.adoc[The MCP operation model]
 * xref:how-it-works/components.adoc[Platform components]
 
-.Why it's built this way
+.Why it's built this way [.sec-ref]#z59y#
 * xref:why/the-story.adoc[MicroK8s to kubeadm]
 * xref:why/opinions-on-a-standard.adoc[Opinions on a standard]
 * xref:why/single-user-by-design.adoc[Single-user by design]
 * xref:why/operated-by-conversation.adoc[Operated by conversation]
 
-.Authoring
+.Authoring [.sec-ref]#aa8q#
 * xref:contributing/page-types.adoc[Page types]
 * xref:contributing/style-guide.adoc[Style guide]
 * xref:contributing/documentation-map.adoc[Documentation map]
