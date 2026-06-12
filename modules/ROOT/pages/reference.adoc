@@ -3,24 +3,13 @@
 
 Lookup material — the *reference* page-type. Dry, complete, scannable.
 
-A minimal `thinkube.yaml`:
+The example below is *not* hand-typed — it is `include::`-d from the real
+`thinkube.yaml` that deploys this very documentation site, so it can never
+silently drift from a working manifest:
 
 [source,yaml]
 ----
-apiVersion: thinkube.io/v1
-kind: ThinkubeDeployment
-spec:
-  deployment:
-    type: app          # app | knative | component
-  containers:
-    - name: web
-      build: .
-      port: 8080
-      size: small       # small | medium | large | xlarge
-      health: /health
-  routes:
-    - path: /
-      to: web
+include::example$thinkube.yaml[]
 ----
 
 [cols="1,1,3"]
@@ -28,7 +17,10 @@ spec:
 | Field | Type | Description
 
 | `deployment.type` | string | `app`, `knative`, or `component`.
+| `containers[].build` | string | Build context (a path, e.g. `.`).
 | `containers[].port` | integer | Port the container listens on.
 | `containers[].size` | string | `small`, `medium`, `large`, `xlarge`.
+| `containers[].health` | string | HTTP path probed for readiness.
 | `routes[].path` | string | Path prefix routed to a container.
+| `routes[].to` | string | Name of the container the path routes to.
 |===
