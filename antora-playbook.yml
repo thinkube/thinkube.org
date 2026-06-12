@@ -12,13 +12,12 @@ content:
     - url: .
       branches: HEAD
       start_path: .
-    # Multi-repo / docs-with-code: a template's docs live in its OWN repo and are
-    # aggregated here at build time. Proven locally (SL-3). Disabled for the
-    # deployed build until the source repo is public or build credentials are
-    # configured (tkt-texplitter is currently private):
-    # - url: https://github.com/kubexlat/tkt-texplitter.git
-    #   branches: main
-    #   start_path: docs
+    # Multi-repo / docs-with-code: the Get Started guide lives in the installer
+    # repo that performs the install, and Antora aggregates it here at build
+    # time. The installer repo is public, so the cluster build fetches it too.
+    - url: https://github.com/thinkube/thinkube-installer.git
+      branches: main
+      start_path: docs
 
 ui:
   bundle:
