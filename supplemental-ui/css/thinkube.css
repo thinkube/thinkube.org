@@ -422,14 +422,13 @@ html[data-theme="dark"] .nav-list .nav-item[data-depth="0"] > .nav-text { color:
 
 /* Stable opaque review ref — a per-page / per-screen serial (SP-tgiy46).
    Auto-derived from the item, so adding/removing content never renumbers. */
-.doc .docref { margin: .1rem 0 1.1rem; }
-.doc .docref p {
-  display: inline-block; margin: 0;
-  font: 700 .85rem/1 "Noto Sans Mono", ui-monospace, monospace; letter-spacing: .14em;
-  background: var(--th-accent); color: #13343b; padding: .4rem .75rem; border-radius: 3px;
-}
+.doc .docref { margin: .15rem 0 1rem; }
+.doc .docref p,
 .page-ref {
-  display: inline-block; margin: 0 0 1rem;
-  font: 700 .8rem/1 "Noto Sans Mono", ui-monospace, monospace; letter-spacing: .14em;
-  background: var(--th-accent); color: #13343b; padding: .35rem .7rem;
+  display: inline-block; margin: 0; padding: 0; background: none; border: 0;
+  font: 400 .8rem/1 "Noto Sans Mono", ui-monospace, monospace; letter-spacing: .08em;
+  color: #9aa0a3;
 }
+.page-ref { margin: 0 0 .9rem; }
+html[data-theme="dark"] .doc .docref p,
+html[data-theme="dark"] .page-ref { color: var(--th-muted); }
