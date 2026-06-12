@@ -1,0 +1,339 @@
+/* Thinkube Custom Theme for Starlight */
+/* Matching thinkube-control and thinkube-installer styling */
+
+:root {
+  /* Thinkube Brand Colors (converted from OKLCH) */
+  --th-primary: #1a6b7c;           /* oklch(38% 0.15 220) - teal primary */
+  --th-primary-light: #008ca8;     /* oklch(60% 0.13 220) - lighter teal */
+  --th-accent: #c4a35a;            /* oklch(65% 0.10 75) - amber accent */
+  --th-background: #fdfcfa;        /* oklch(99% 0.005 75) - warm off-white */
+
+  /* Override Starlight accent colors */
+  --sl-color-accent: var(--th-primary);
+  --sl-color-accent-low: #e6f4f7;
+  --sl-color-accent-high: #0d4a57;
+
+  /* Sharp corners like thinkube apps */
+  --sl-border-radius-sm: 0;
+  --sl-border-radius-md: 0;
+  --sl-border-radius-lg: 0;
+
+  /* Background */
+  --sl-color-bg: var(--th-background);
+}
+
+/* Light Theme */
+:root[data-theme="light"] {
+  --sl-color-accent-high: #0d4a57;
+  --sl-color-accent: var(--th-primary);
+  --sl-color-accent-low: #e6f4f7;
+  --sl-color-bg: var(--th-background);
+}
+
+/* Dark Theme - matches thinkube-control dark mode */
+:root[data-theme="dark"] {
+  --sl-color-accent-low: #1a4d5c;
+  --sl-color-accent: var(--th-primary-light);
+  --sl-color-accent-high: var(--th-primary-light);
+  --sl-color-text-accent: var(--th-primary-light);
+  --sl-color-bg: #1f3a42;          /* oklch(24% 0.06 220) */
+  --sl-color-bg-nav: #243f48;
+  --sl-color-bg-sidebar: #1f3a42;
+  --sl-color-hairline: #3d5a64;
+  --sl-color-hairline-light: #2d4a54;
+}
+
+/* Headings with theme color */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--th-primary);
+}
+
+:root[data-theme="dark"] h1,
+:root[data-theme="dark"] h2,
+:root[data-theme="dark"] h3,
+:root[data-theme="dark"] h4,
+:root[data-theme="dark"] h5,
+:root[data-theme="dark"] h6 {
+  color: var(--th-primary-light);
+}
+
+/* Site title */
+.site-title {
+  color: var(--th-primary) !important;
+  font-weight: 600;
+}
+
+:root[data-theme="dark"] .site-title {
+  color: var(--th-primary-light) !important;
+}
+
+/* Selected menu item */
+nav[aria-label="Main"] a[aria-current="page"] {
+  background-color: var(--th-primary) !important;
+  color: white !important;
+}
+
+:root[data-theme="dark"] nav[aria-label="Main"] a[aria-current="page"] {
+  background-color: var(--th-primary-light) !important;
+}
+
+/* Primary buttons */
+:root[data-theme="light"] a[href][class*="primary"],
+:root[data-theme="light"] .sl-link-button.primary {
+  background-color: var(--th-primary) !important;
+  color: white !important;
+  border-radius: 0 !important;
+}
+
+:root[data-theme="dark"] a[href][class*="primary"],
+:root[data-theme="dark"] .sl-link-button.primary {
+  background-color: var(--th-primary-light) !important;
+  color: white !important;
+  border-radius: 0 !important;
+}
+
+/* All buttons sharp corners */
+.sl-link-button,
+a[href][class*="link-button"] {
+  border-radius: 0 !important;
+}
+
+a[href][class*="link-button"]:hover,
+.sl-link-button:hover {
+  opacity: 0.9;
+}
+
+/* Cards - sharp corners */
+.card {
+  border-radius: 0 !important;
+}
+
+/* Sidebar items */
+nav.sidebar a {
+  border-radius: 0 !important;
+}
+
+/* Code blocks - sharp corners */
+.expressive-code pre {
+  border-radius: 0 !important;
+}
+
+/* Tables */
+table {
+  border-radius: 0 !important;
+}
+
+th, td {
+  border-radius: 0 !important;
+}
+
+/* Input fields */
+input, select, textarea {
+  border-radius: 0 !important;
+}
+
+/* Hero section styling */
+.hero {
+  background: transparent;
+}
+
+:root[data-theme="dark"] .hero {
+  background: transparent;
+}
+
+/* Tighten hero layout on splash pages */
+[data-page-type="splash"] .hero {
+  padding-block: 3rem;
+  gap: 2rem;
+}
+
+[data-page-type="splash"] .hero img {
+  max-width: 220px;
+}
+
+/* Constrain splash page content width */
+[data-page-type="splash"] .sl-markdown-content {
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+/* DGX Spark stamp — injected via script onto body */
+#dgx-stamp {
+  position: fixed;
+  top: 85px;
+  right: 40px;
+  z-index: 9999;
+  padding: 12px 24px;
+  border: 4px solid oklch(70% 0.19 50);
+  color: oklch(70% 0.19 50);
+  font: 600 16px/1.2 sans-serif;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+  transform: rotate(12deg);
+  opacity: 0.8;
+  pointer-events: none;
+  background: transparent;
+  border-radius: 6px;
+  filter: url(#rough-edges);
+}
+
+#dgx-stamp strong {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 5px;
+  margin-top: 2px;
+}
+
+/* Accent color for special highlights */
+.sl-markdown-content strong {
+  color: inherit;
+}
+
+/* Fix navigation hover */
+:root[data-theme="light"] nav[aria-label="Main"] a:hover {
+  color: var(--th-primary);
+}
+
+/* Section labels — small uppercase overlines above headings */
+.section-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sl-color-accent);
+  margin-top: 4rem;
+  margin-bottom: 0.25rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--sl-color-hairline);
+}
+
+/* First section label doesn't need top border */
+.sl-markdown-content > .section-label:first-child {
+  border-top: none;
+  margin-top: 2rem;
+}
+
+.section-label + h2 {
+  margin-top: 0.5rem;
+}
+
+/* Before/After comparison blocks */
+.before-after {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+@media (min-width: 640px) {
+  .before-after {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.before-col, .after-col {
+  padding: 1.25rem;
+  border: 1px solid var(--sl-color-hairline);
+}
+
+.before-col {
+  background: var(--sl-color-bg);
+  border-left: 3px solid var(--sl-color-gray-4, #ccc);
+}
+
+.after-col {
+  background: var(--sl-color-accent-low);
+  border-color: var(--sl-color-accent);
+  border-left: 3px solid var(--sl-color-accent);
+}
+
+.before-col .col-label,
+.after-col .col-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.before-col .col-label {
+  color: var(--sl-color-gray-3);
+}
+
+.after-col .col-label {
+  color: var(--sl-color-accent);
+}
+
+.before-col p, .after-col p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Numbered differentiators */
+.differentiator {
+  display: flex;
+  gap: 1.5rem;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+.differentiator:last-child {
+  border-bottom: none;
+}
+
+.diff-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--sl-color-accent);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 3.5rem;
+  text-align: center;
+  opacity: 0.3;
+}
+
+.diff-content h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.diff-content p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--sl-color-gray-2);
+  line-height: 1.5;
+}
+
+:root[data-theme="light"] .diff-content p {
+  color: #4a4a4a;
+}
+
+/* Timeline "without" and "with" text styles (used in TimelineBlock) */
+.timeline-content .without {
+  font-size: 0.85rem;
+  color: var(--sl-color-gray-3);
+  font-style: italic;
+  margin-bottom: 0.75rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--sl-color-hairline);
+}
+
+.timeline-content .with {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+:root[data-theme="light"] .timeline-content .without {
+  color: #888;
+}
+
+:root[data-theme="light"] .timeline-content .with {
+  color: #2a2a2a;
+}
