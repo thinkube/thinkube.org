@@ -7,3 +7,27 @@ _Serve with vLLM or TensorRT-LLM via the LLM Gateway; GPUs and Knative scale-to-
 ====
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
+
+// SCREENSHOT: cp-llm-serve
+[.screenshot-needed]
+--
+📷 *Screenshot needed* · `cp-llm-serve` · 🤖 Playwright
+
+_The LLM load / serve UI._
+--
+
+// SCREENSHOT: cp-gpu
+[.screenshot-needed]
+--
+📷 *Screenshot needed* · `cp-gpu` · 🤖 Playwright
+
+_GPU status._
+--
+
+// SCREENSHOT: serve-gradio
+[.screenshot-needed]
+--
+📷 *Screenshot needed* · `serve-gradio` · 🤖 Playwright
+
+_The served vLLM gradio app._
+--

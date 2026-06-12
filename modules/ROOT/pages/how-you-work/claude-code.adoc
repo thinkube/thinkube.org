@@ -7,3 +7,11 @@ _Deploy templates, load models, check GPUs, manage services — all via MCP from
 ====
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
+
+// SCREENSHOT: cockpit-mcp-call
+[.screenshot-needed]
+--
+📷 *Screenshot needed* · `cockpit-mcp-call` · ✋ Manual
+
+_A Claude+MCP action (deploy / load a model) in the editor._
+--

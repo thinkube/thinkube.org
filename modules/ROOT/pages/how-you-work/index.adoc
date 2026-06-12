@@ -7,3 +7,11 @@ _code-server + Claude + MCP is the primary way to operate Thinkube; the GUIs are
 ====
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
+
+// SCREENSHOT: cockpit-session
+[.screenshot-needed]
+--
+📷 *Screenshot needed* · `cockpit-session` · ✋ Manual
+
+_code-server with a live Claude Code session._
+--

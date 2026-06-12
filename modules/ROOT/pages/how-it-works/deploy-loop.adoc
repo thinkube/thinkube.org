@@ -7,3 +7,11 @@ _Copier to Gitea to Argo Workflows/Kaniko to Harbor to ArgoCD, in about ninety s
 ====
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
+
+// SCREENSHOT: argocd-sync
+[.screenshot-needed]
+--
+📷 *Screenshot needed* · `argocd-sync` · 🤖 Playwright
+
+_ArgoCD mid-sync (mechanism illustration — optional)._
+--

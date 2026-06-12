@@ -49,3 +49,4 @@
 * xref:contributing/page-types.adoc[Page types]
 * xref:contributing/style-guide.adoc[Style guide]
 * xref:contributing/documentation-map.adoc[Documentation map]
+* xref:contributing/screenshots.adoc[Screenshot inventory]

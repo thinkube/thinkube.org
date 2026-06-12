@@ -393,3 +393,16 @@ html[data-theme="dark"] hr { border-color: var(--th-border); }
 /* Last-updated stamp (replaces the edit-this-page link) */
 .last-updated { margin-left: auto; padding-right: 1rem; color: #8a8a8a; font-size: .8rem; }
 html[data-theme="dark"] .last-updated { color: var(--th-muted); }
+
+/* ===== "Screenshot needed" placeholder (TEP-tghabr / SP-tgiy46) ============ */
+.doc .openblock.screenshot-needed > .content {
+  border: 2px dashed var(--th-accent);
+  background: repeating-linear-gradient(135deg, rgba(196,163,90,.05) 0 12px, rgba(196,163,90,.10) 12px 24px);
+  padding: 1rem 1.2rem; margin: 1.3rem 0; color: #6b5d3a;
+}
+.doc .openblock.screenshot-needed .title,
+.doc .openblock.screenshot-needed p:first-child { font-weight: 600; color: var(--th-primary); }
+.doc .openblock.screenshot-needed p { margin: .25rem 0; font-size: .92rem; }
+html[data-theme="dark"] .doc .openblock.screenshot-needed > .content { color: var(--th-muted); }
+html[data-theme="dark"] .doc .openblock.screenshot-needed .title,
+html[data-theme="dark"] .doc .openblock.screenshot-needed p:first-child { color: var(--th-accent); }

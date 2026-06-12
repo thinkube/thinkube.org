@@ -7,3 +7,19 @@ _Fine-tune in the AI Lab and register the result in MLflow._
 ====
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
+
+// SCREENSHOT: lab-finetune
+[.screenshot-needed]
+--
+📷 *Screenshot needed* · `lab-finetune` · ✋ Manual
+
+_A fine-tuning notebook mid-run._
+--
+
+// SCREENSHOT: mlflow-registry
+[.screenshot-needed]
+--
+📷 *Screenshot needed* · `mlflow-registry` · 🤖 Playwright
+
+_The registered model in MLflow._
+--

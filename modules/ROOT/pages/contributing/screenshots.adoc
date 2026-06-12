@@ -1,0 +1,66 @@
+= Screenshot Inventory
+:page-type: reference
+
+Every screen capture the documentation needs, by id. Pages mark where each goes
+with a `[.screenshot-needed]` placeholder that cross-references the **id** here.
+The xref:contributing/documentation-map.adoc[documentation map] is the page list;
+this is the image list.
+
+*Capture method:* 🤖 *Playwright* (web UI — I drive it through a Keycloak login) ·
+✋ *Manual* (you — a live session, the desktop installer, or dynamic state) ·
+▢ *Diagram* (authored as d2/kroki, not a capture).
+
+[cols="2,2,4,1,1",options="header"]
+|===
+| id | Page | What it shows | How | Status
+
+5+| *§1 · Start here*
+| `cp-dashboard` | Quickstart | thinkube-control dashboard right after login | 🤖 | needed
+| `loop-diagram` | The AI/ML loop | the four-stage loop | ▢ | have
+
+5+| *§2 · Set up* — **recapture all** (existing 17 are an old installer version)
+| `installer-01…NN` | Install Thinkube + the Set up pages | the full *current* installer walkthrough, one shot per screen | ✋ | needed (desktop app)
+
+5+| *§3 · How you work*
+| `cockpit-session`  | The cockpit                 | code-server with a live Claude Code session | ✋ | needed
+| `cockpit-mcp-call` | Driving Thinkube from Claude| a Claude+MCP action (deploy/load) in the editor | ✋ | needed
+| `lab-hub`          | Thinkube AI Lab             | the JupyterHub launcher/spawner | 🤖 | needed
+| `lab-notebook`     | Thinkube AI Lab             | a notebook with the Thinky assistant | ✋ | needed
+| `cp-overview`      | thinkube-control _(control repo)_ | the control panel main view + tiles | 🤖 | needed
+
+5+| *§4 · The lifecycle*
+| `cp-model-catalog` | Get a model   | the model catalog / browse | 🤖 | needed
+| `cp-model-mirror`  | Get a model   | mirroring a model + job status | 🤖 | needed
+| `lab-finetune`     | Fine-tune     | a fine-tuning notebook mid-run | ✋ | needed
+| `mlflow-registry`  | Fine-tune     | the registered model in MLflow | 🤖 | needed
+| `cockpit-scaffold` | Build an app  | Claude scaffolding from `tkt-webapp-vue-fastapi` | ✋ | needed
+| `webapp-deployed`  | Build an app  | the deployed Vue+FastAPI app | 🤖 | needed
+| `cp-llm-serve`     | Serve a model | the LLM load/serve UI (backends, load options) | 🤖 | needed
+| `cp-gpu`           | Serve a model | GPU status | 🤖 | needed
+| `serve-gradio`     | Serve a model | the served vLLM gradio app | 🤖 | needed
+
+5+| *§5 · Reference*
+| `cp-templates`  | Templates catalog  | the templates screen | 🤖 | needed
+| `cp-components` | Components catalog | the optional-components / install screen | 🤖 | needed
+
+5+| *§6 · How it works* (mechanism only)
+| `arch-diagram`        | Architecture            | the two layers / cluster shape | ▢ | needed
+| `deploy-loop-diagram` | The GitOps deploy loop  | Copier→Gitea→Argo→Harbor→ArgoCD | ▢ | needed
+| `components-diagram`  | Platform components     | the component map | ▢ | needed
+| `argocd-sync`         | The GitOps deploy loop  | ArgoCD mid-sync, _as mechanism_ (optional) | 🤖 | needed
+| `gpu-multiarch`       | GPU & multi-arch        | `nvidia-smi` / node arch in a terminal | ✋ | needed
+
+5+| *§7 · Why it's built this way*
+| `story-timeline` | MicroK8s to kubeadm | the journey, as a timeline (optional) | ▢ | needed
+|===
+
+== Where images land
+
+Captured images are named `<id>.png` and committed into the owning component's
+`modules/ROOT/images/` — the docs repo for §1/§3-docs/§4/§5/§6, the `control` repo
+for `cp-overview`, and `thinkube-installer` for the installer set (docs-with-code).
+When an image lands, swap the page's `[.screenshot-needed]` block for
+`image::<id>.png[caption]`.
+
+NOTE: The Playwright/Keycloak approach and the manual capture checklist live in
+SP-tgiy46 SL-3 (added to this page).

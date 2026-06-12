@@ -7,3 +7,11 @@ _The tkt-* templates — app, component, and knative deployment types._
 ====
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
+
+// SCREENSHOT: cp-templates
+[.screenshot-needed]
+--
+📷 *Screenshot needed* · `cp-templates` · 🤖 Playwright
+
+_The templates catalog screen._
+--

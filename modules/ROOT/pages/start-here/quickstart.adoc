@@ -7,3 +7,11 @@ _From a fresh install to your first served model._
 ====
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
+
+// SCREENSHOT: cp-dashboard
+[.screenshot-needed]
+--
+📷 *Screenshot needed* · `cp-dashboard` · 🤖 Playwright
+
+_The thinkube-control dashboard right after login._
+--

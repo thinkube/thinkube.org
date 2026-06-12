@@ -7,3 +7,11 @@ _The core services and the optional components you can install._
 ====
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
+
+// SCREENSHOT: cp-components
+[.screenshot-needed]
+--
+📷 *Screenshot needed* · `cp-components` · 🤖 Playwright
+
+_The optional-components / install screen._
+--
