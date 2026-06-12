@@ -79,8 +79,8 @@ code, pre, kbd, .colist > table code {
   letter-spacing: 3px;
   text-transform: uppercase;
   text-align: center;
-  transform: rotate(12deg);
-  opacity: 0.8;
+  transform: rotate(12deg) scale(0.85);
+  opacity: 0.38;
   pointer-events: none;
   background: transparent;
   filter: url(#rough-edges);
@@ -241,3 +241,65 @@ body.home #dgx-stamp { display: none; } /* the stamp is a doc-page accent, not t
 .doc .ulist.cards > ul > li > p:not(:first-child) {
   margin-top: .5rem; color: #555; font-size: .92rem; line-height: 1.55;
 }
+
+/* ===== Code copy button =================================================== */
+.copy-btn {
+  position: absolute; top: .4rem; right: .4rem; z-index: 3;
+  font: 600 .68rem/1 "Poppins", sans-serif; letter-spacing: .04em; text-transform: uppercase;
+  background: var(--th-primary); color: #fff; border: none; padding: .35rem .6rem;
+  cursor: pointer; opacity: .55; transition: opacity .12s ease;
+}
+.doc .listingblock:hover .copy-btn, .doc pre:hover .copy-btn, .copy-btn:focus { opacity: 1; }
+
+/* ===== Theme toggle ======================================================= */
+.theme-toggle {
+  background: transparent; border: none; cursor: pointer; color: #fff;
+  font-size: 1.05rem; line-height: 1; padding: 0 .55rem;
+}
+.theme-toggle-icon::before { content: "🌙"; }
+html[data-theme="dark"] .theme-toggle-icon::before { content: "☀️"; }
+
+/* ===== Dark mode ========================================================== */
+html[data-theme="dark"] {
+  --th-bg: #15262b;
+  --th-surface: #1f343b;
+  --th-border: #2d4a54;
+  --th-text: #d8e3e6;
+  --th-muted: #9fb3b8;
+}
+html[data-theme="dark"] body { background: var(--th-bg); color: var(--th-text); }
+
+html[data-theme="dark"] .doc { color: var(--th-text); }
+html[data-theme="dark"] .doc h1, html[data-theme="dark"] .doc h2,
+html[data-theme="dark"] .doc h3, html[data-theme="dark"] .doc h4,
+html[data-theme="dark"] .doc h5, html[data-theme="dark"] .doc h6,
+html[data-theme="dark"] .doc a { color: var(--th-primary-light); }
+
+/* left nav, right toc, breadcrumb toolbar, version selector */
+html[data-theme="dark"] .nav-container, html[data-theme="dark"] .nav,
+html[data-theme="dark"] .toc, html[data-theme="dark"] .toolbar,
+html[data-theme="dark"] .nav-panel-explore, html[data-theme="dark"] .page-versions .versions {
+  background: var(--th-surface); color: var(--th-text);
+}
+html[data-theme="dark"] .nav a, html[data-theme="dark"] .toc a,
+html[data-theme="dark"] .toolbar a, html[data-theme="dark"] .crumbs a { color: var(--th-muted); }
+html[data-theme="dark"] .nav a:hover, html[data-theme="dark"] .toc a:hover,
+html[data-theme="dark"] .toolbar a:hover { color: var(--th-primary-light); }
+html[data-theme="dark"] .toolbar { border-color: var(--th-border); }
+
+/* surfaces: cards, code, tables, footer */
+html[data-theme="dark"] .ulist.cards > ul > li, html[data-theme="dark"] .card,
+html[data-theme="dark"] .loop-node {
+  background: var(--th-surface); border-color: var(--th-border);
+}
+html[data-theme="dark"] .ulist.cards > ul > li > p:not(:first-child),
+html[data-theme="dark"] .card-desc, html[data-theme="dark"] .hero-sub { color: var(--th-muted); }
+html[data-theme="dark"] .doc pre, html[data-theme="dark"] .listingblock pre,
+html[data-theme="dark"] .doc :not(pre) > code { background: #0e1b1f; color: #e6eef0; }
+html[data-theme="dark"] table, html[data-theme="dark"] th, html[data-theme="dark"] td {
+  border-color: var(--th-border);
+}
+html[data-theme="dark"] th { background: var(--th-surface); }
+html[data-theme="dark"] .doc .admonitionblock td.content { color: var(--th-text); }
+html[data-theme="dark"] .footer { background: #0e1b22; color: var(--th-muted); }
+html[data-theme="dark"] hr { border-color: var(--th-border); }

@@ -3,6 +3,26 @@
 
 Lookup material — the *reference* page-type. Dry, complete, scannable.
 
+A minimal `thinkube.yaml`:
+
+[source,yaml]
+----
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+spec:
+  deployment:
+    type: app          # app | knative | component
+  containers:
+    - name: web
+      build: .
+      port: 8080
+      size: small       # small | medium | large | xlarge
+      health: /health
+  routes:
+    - path: /
+      to: web
+----
+
 [cols="1,1,3"]
 |===
 | Field | Type | Description

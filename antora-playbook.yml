@@ -12,6 +12,8 @@ content:
     - url: .
       branches: HEAD
       start_path: .
+      # "Edit this Page" -> GitHub (source is local, so the base is explicit)
+      edit_url: 'https://github.com/thinkube/thinkube.org/edit/main/{path}'
 
 ui:
   bundle:
