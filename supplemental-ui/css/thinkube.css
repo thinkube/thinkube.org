@@ -193,14 +193,33 @@ body.home #dgx-stamp { display: none; } /* the stamp is a doc-page accent, not t
   display: grid; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); gap: 1.25rem;
 }
 .card {
-  display: flex; flex-direction: column; padding: 1.6rem; text-decoration: none;
+  position: relative; display: flex; flex-direction: column; overflow: hidden;
+  padding: 1.7rem 1.5rem 1.4rem; text-decoration: none;
   background: #fff; border: 1px solid #e6e2dc; border-top: 3px solid var(--th-primary);
-  transition: transform .1s ease, box-shadow .15s ease, border-top-color .15s ease;
+  transition: transform .14s ease, box-shadow .18s ease, border-color .18s ease;
+}
+/* folded-corner accent that lights up on hover */
+.card::after {
+  content: ""; position: absolute; top: 0; right: 0;
+  border-style: solid; border-width: 0 22px 22px 0;
+  border-color: transparent #efe7d4 transparent transparent;
+  transition: border-color .18s ease;
 }
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 34px rgba(26,107,124,.14);
+  transform: translateY(-5px);
+  box-shadow: 0 18px 42px rgba(26,107,124,.16);
   border-top-color: var(--th-accent);
+}
+.card:hover::after { border-color: transparent var(--th-accent) transparent transparent; }
+.card-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.7rem; height: 2.7rem; margin-bottom: 1.05rem; color: var(--th-primary);
+  background: linear-gradient(135deg, rgba(26,107,124,.13), rgba(26,107,124,.04));
+  transition: background .18s ease, color .18s ease;
+}
+.card-icon svg { width: 1.45rem; height: 1.45rem; }
+.card:hover .card-icon {
+  background: linear-gradient(135deg, rgba(196,163,90,.22), rgba(196,163,90,.06));
 }
 .card-kicker {
   font: 700 0.72rem/1 "Poppins", sans-serif; letter-spacing: .08em;
@@ -209,8 +228,59 @@ body.home #dgx-stamp { display: none; } /* the stamp is a doc-page accent, not t
 .card-title {
   font: 600 1.15rem/1.25 "Poppins", sans-serif; color: var(--th-primary); margin: .45rem 0 .6rem;
 }
-.card-desc { color: #555; font-size: .95rem; line-height: 1.55; margin: 0 0 1rem; flex: 1; }
+.card-desc { color: #555; font-size: .95rem; line-height: 1.55; margin: 0 0 1.1rem; flex: 1; }
 .card-arrow { color: var(--th-primary); font-weight: 600; font-size: .9rem; }
+.card-arrow em { font-style: normal; display: inline-block; transition: transform .18s ease; }
+.card:hover .card-arrow em { transform: translateX(5px); }
+
+/* ===== Cockpit: the code-window showcase =================================== */
+.cockpit { max-width: 1080px; margin: 4.5rem auto 1rem; padding: 0 2rem; }
+.cockpit-copy { max-width: 760px; margin: 0 auto 1.7rem; text-align: center; }
+.cockpit .kicker {
+  font: 700 0.72rem/1 "Poppins", sans-serif; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--th-accent);
+}
+.cockpit .section-h { margin: .55rem 0 .8rem; }
+.cockpit-lead { color: #4a4a4a; line-height: 1.62; font-size: 1.02rem; margin: 0 auto; }
+.cockpit-lead strong { color: var(--th-primary); }
+.codewin {
+  background: #0e2a30; overflow: hidden;
+  border: 1px solid rgba(255,255,255,.07);
+  box-shadow: 0 26px 60px rgba(14,42,48,.34), 0 6px 16px rgba(14,42,48,.24);
+}
+.codewin-bar {
+  display: flex; align-items: center; gap: .65rem;
+  padding: .62rem .9rem; background: rgba(255,255,255,.035);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.codewin-dots { display: inline-flex; gap: .42rem; }
+.codewin-dots i { width: .72rem; height: .72rem; border-radius: 50%; display: block; }
+.codewin-dots i:nth-child(1) { background: #d9636e; }
+.codewin-dots i:nth-child(2) { background: #d7a94f; }
+.codewin-dots i:nth-child(3) { background: #54bd8a; }
+.codewin-title {
+  font: 600 .74rem/1 "Poppins", sans-serif; letter-spacing: .03em;
+  color: rgba(220,240,240,.5);
+}
+.codewin-body {
+  margin: 0; padding: 1.15rem 1.35rem; overflow-x: auto; background: transparent;
+  font-family: "Noto Sans Mono", ui-monospace, monospace;
+  font-size: .9rem; line-height: 1.8; color: #bfe0e0; white-space: pre;
+}
+.codewin-body code { background: transparent; color: inherit; padding: 0; border: 0; }
+.codewin .copy-btn { display: none; } /* it's a showcase, not a copyable block */
+.c-prompt { color: var(--th-accent); font-weight: 700; }
+.c-user   { color: #eaf6f6; }
+.c-claude { color: #38c4d8; font-weight: 700; }
+.c-ok     { color: #5fd6a2; font-weight: 700; }
+.c-tool   { color: #82d3df; font-weight: 600; }
+.c-paren  { color: #6f9099; }
+.c-dim    { color: #6c8990; }
+.c-link   { color: var(--th-accent); text-decoration: underline; text-underline-offset: 2px; }
+
+@media (max-width: 600px) {
+  .codewin-body { font-size: .78rem; }
+}
 
 @media (max-width: 600px) {
   .loop-node + .loop-node { border-left: 2px solid var(--th-primary); }
@@ -293,7 +363,14 @@ html[data-theme="dark"] .loop-node {
   background: var(--th-surface); border-color: var(--th-border);
 }
 html[data-theme="dark"] .ulist.cards > ul > li > p:not(:first-child),
-html[data-theme="dark"] .card-desc, html[data-theme="dark"] .hero-sub { color: var(--th-muted); }
+html[data-theme="dark"] .card-desc, html[data-theme="dark"] .hero-sub,
+html[data-theme="dark"] .cockpit-lead { color: var(--th-muted); }
+html[data-theme="dark"] .card::after { border-color: transparent var(--th-border) transparent transparent; }
+html[data-theme="dark"] .card:hover::after { border-color: transparent var(--th-accent) transparent transparent; }
+html[data-theme="dark"] .card-icon {
+  background: linear-gradient(135deg, rgba(0,140,168,.22), rgba(0,140,168,.06)); color: var(--th-primary-light);
+}
+html[data-theme="dark"] .cockpit-lead strong { color: var(--th-primary-light); }
 html[data-theme="dark"] .doc pre, html[data-theme="dark"] .listingblock pre,
 html[data-theme="dark"] .doc :not(pre) > code { background: #0e1b1f; color: #e6eef0; }
 html[data-theme="dark"] table, html[data-theme="dark"] th, html[data-theme="dark"] td {
