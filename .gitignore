@@ -25,3 +25,12 @@ pnpm-debug.log*
 # more local scratch
 *-final.png
 *.tmp.png
+
+# Machine-specific MCP config — regenerated per-machine by the Tandem bundle installer
+.mcp.json
+
+# Local / runtime Claude state — never commit (may hold local settings or secrets)
+.claude/settings.local.json
+.claude/*.local.json
+.claude/scheduled_tasks.lock
+.claude/.bundle-version.json
