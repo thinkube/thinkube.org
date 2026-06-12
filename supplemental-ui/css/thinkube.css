@@ -218,3 +218,26 @@ body.home #dgx-stamp { display: none; } /* the stamp is a doc-page accent, not t
     content: "↓"; right: auto; left: 50%; top: auto; bottom: -0.7em; transform: translateX(-50%);
   }
 }
+
+/* ===== Reusable cards on content pages: [.cards] on a ulist ================= */
+.doc .ulist.cards > ul {
+  list-style: none; margin: 1.5rem 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.1rem;
+}
+.doc .ulist.cards > ul > li {
+  margin: 0; padding: 1.3rem 1.4rem; background: #fff;
+  border: 1px solid #e6e2dc; border-top: 3px solid var(--th-primary);
+  transition: transform .1s ease, box-shadow .15s ease, border-top-color .15s ease;
+}
+.doc .ulist.cards > ul > li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(26,107,124,.13); border-top-color: var(--th-accent);
+}
+.doc .ulist.cards > ul > li > p { margin: 0; }
+.doc .ulist.cards > ul > li > p:first-child a {
+  font: 600 1.12rem/1.3 "Poppins", sans-serif; color: var(--th-primary); text-decoration: none;
+}
+.doc .ulist.cards > ul > li > p:first-child a:hover { color: var(--th-primary-light); }
+.doc .ulist.cards > ul > li > p:not(:first-child) {
+  margin-top: .5rem; color: #555; font-size: .92rem; line-height: 1.55;
+}

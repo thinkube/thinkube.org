@@ -1,4 +1,5 @@
 * xref:index.adoc[Home]
+* xref:components.adoc[Components]
 * Page types
 ** xref:tutorial.adoc[Tutorial]
 ** xref:how-to.adoc[How-to]
