@@ -1,0 +1,9 @@
+= Components Catalog
+:page-type: reference
+
+_The core services and the optional components you can install._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

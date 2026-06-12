@@ -1,0 +1,9 @@
+= The Loop
+:page-type: concept
+
+_The four stages — get a model, fine-tune, build, serve — and how they chain._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

@@ -1,0 +1,9 @@
+= Thinkube AI Lab
+:page-type: how-to
+
+_JupyterHub notebooks and fine-tuning, with the Thinky assistant exposed over MCP._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

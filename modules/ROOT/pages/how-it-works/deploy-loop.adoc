@@ -1,0 +1,9 @@
+= The GitOps Deploy Loop
+:page-type: concept
+
+_Copier to Gitea to Argo Workflows/Kaniko to Harbor to ArgoCD, in about ninety seconds._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

@@ -1,0 +1,9 @@
+= Single-user by Design
+:page-type: concept
+
+_The single-user threat model and why effort is calibrated to it._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

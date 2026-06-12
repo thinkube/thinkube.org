@@ -1,0 +1,9 @@
+= Certified Kubernetes
+:page-type: concept
+
+_kubeadm, CNCF-conformant, no lock-in._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

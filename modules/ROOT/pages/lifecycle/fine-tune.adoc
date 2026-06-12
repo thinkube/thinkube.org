@@ -1,0 +1,9 @@
+= Fine-tune a Model
+:page-type: tutorial
+
+_Fine-tune in the AI Lab and register the result in MLflow._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

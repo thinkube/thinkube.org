@@ -1,0 +1,9 @@
+= GPU and Multi-arch
+:page-type: concept
+
+_arm64 (DGX Spark) and amd64; the GPU operator._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

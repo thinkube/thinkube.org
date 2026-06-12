@@ -1,0 +1,9 @@
+= Driving Thinkube from Claude
+:page-type: how-to
+
+_Deploy templates, load models, check GPUs, manage services — all via MCP from your editor._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

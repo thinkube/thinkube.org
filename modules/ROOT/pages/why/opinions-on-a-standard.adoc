@@ -1,0 +1,9 @@
+= Opinions on a Standard
+:page-type: concept
+
+_An opinionated platform on conformant Kubernetes — convenience without lock-in._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

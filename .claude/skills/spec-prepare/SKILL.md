@@ -1,0 +1,104 @@
+---
+description: Walk the user through filling a Spec's body. Writes specs/SP-{n}/spec.md with the standard Tandem spec sections (acceptance criteria, constraints, design, file plan).
+allowed-tools:
+  [
+    "Read",
+    "Grep",
+    "Glob",
+    "mcp__thinkube-kanban__get_thinkube_file",
+    "mcp__thinkube-kanban__write_spec",
+    "Task",
+  ]
+argument-hint: "<spec-number>"
+thinkube-bundle: 0.0.1
+---
+
+# /spec-prepare
+
+Fill in a Spec's body to the standard Tandem shape. The Spec lives as a committed file at `specs/SP-{n}/spec.md` **in the board** (the central sidecar namespace, TEP-0008) — the single source of truth. Read it with `get_thinkube_file` and write it with `write_spec`; **both are board-aware**, so the file always lands in the sidecar regardless of where the session is rooted. Never write the Spec with a raw `Write`/`Edit` — a relative path resolves against the session's cwd (the code repo), not the board. After this skill runs, the → Ready gate passes (the Spec has a non-empty `## Acceptance Criteria`) and the Spec is ready for `/slice`.
+
+## Mission
+
+Produce a fully-shaped `specs/SP-{n}/spec.md` containing the four canonical sections, with:
+
+- **Acceptance criteria** that the → Ready gate will accept (non-empty checklist) and that are **user-observable / verifiable**.
+- **Constraints** that bound the design (perf, compat, security, deadlines).
+- **Design** at the depth needed to start slicing, not a full implementation guide.
+- **File plan** naming the files the spec will touch.
+
+## Inputs
+
+- `$ARGUMENTS`: the Spec id `{n}` — an opaque string (base36-epoch for new Specs, a legacy integer for old ones).
+
+## Context discipline
+
+Gather the minimum, in the right order, and only after the governing document exists:
+
+- **The shapes embedded in this skill are authoritative and complete.** The skeleton (step 3) and the target shape (step 6) _are_ the canonical Spec format — **never read other specs or slice files to learn the format.** Reading neighbours "for the format" is wasted context and copies their drift.
+- **No uninstructed reads.** Don't call `list_board` or other "just in case" tools the task didn't ask for. Fetch the one spec file you're filling — nothing else up front.
+- **`CLAUDE.md` before any codebase search.** Architecture questions are usually answered by `CLAUDE.md` and the docs; consult them first, and search the code only for what the docs don't answer.
+- **Explore only _after_ — and _scoped by_ — the acceptance criteria.** Codebase exploration grounds the _Design_, so it cannot precede the AC that bound it. Delegate genuine "what's in this codebase" questions to the `explorer` subagent to keep the main context lean.
+- **The bar: lead with the interview.** Two setup actions accompany the opening — fetching `specs/SP-{n}/spec.md` via `get_thinkube_file` (step 2) and scaffolding via `write_spec` (step 3) — but the first turn to the user is a question, not a "go read the file" handoff. No other reads up front.
+
+## Procedure
+
+1. **Read methodology context** if not in session.
+2. **Fetch the spec file.** Use `get_thinkube_file specs/SP-{n}/spec.md`; if the file is non-empty, treat it as a draft to refine rather than rewriting from scratch. _(Action 1 — the only read before the skeleton.)_
+3. **Open with the interview, scaffold alongside.** The conversation leads — ask the user for the spec's acceptance criteria as the first turn. Scaffold the file in parallel: `write_spec { spec: {n}, body }` with the exact shape of step 6 and placeholder bodies (`_(under discussion — see chat)_`). Mention the path once and, if the user wants a rendered view alongside the chat, point them at the Command Palette (_Markdown: Open Preview to the Side_) — optional, and never quote a keybinding (they don't fire reliably in browser / code-server).
+4. **Interview the user, section by section.** Ask in chat and land every agreed draft into the FILE — chat and the file are both fine to review in; the file is just the durable record. `write_spec` replaces the whole body, so each update is **read-modify-write**: `get_thinkube_file specs/SP-{n}/spec.md` to fetch the current body, apply your change, then `write_spec` the full body back. The user may edit the file directly at any time and their edits are authoritative: **always re-fetch with `get_thinkube_file` immediately before each `write_spec`** and never clobber text you didn't write. **Acceptance criteria come first** — they scope the exploration in step 5.
+   - **Acceptance criteria**: elicited **from the user** — there is no parent Story to inherit them from. They must be **user-observable outcomes**, framed so they can be verified, not implementation steps. Good: "A new user receives an email within 30s of submitting the form." / "Endpoint returns 401 when the token is expired and the body matches `{error: 'expired_token'}`." Bad: "Add a Redis session store" (that's work, it belongs in a slice).
+   - **Constraints**: list. Performance budgets, browser support, dependency rules, deadlines.
+   - **Design**: 1–3 paragraphs. Approach + key data structures + integration seams. Not pseudocode. This is also where **spikes / investigations** ("confirm X behaves like Y") land — they are not slices.
+   - **File structure plan**: bullet list of files we expect to create / modify, one line of why each.
+5. **Explore the codebase — only now, scoped by the agreed AC.** With the acceptance criteria settled, ground the Design against reality: consult `CLAUDE.md` first, then delegate "what's currently in this codebase" questions to the `explorer` subagent (`Task` tool), or use Grep/Glob for a targeted check. Explore only what the docs don't already answer and only what the AC require — then fold what you learn into the Design / File Structure Plan in the file.
+6. **Target shape.** The file must converge to exactly this structure (the skeleton from step 3 already has it; sections fill in as agreement lands):
+
+```
+# {title}
+
+{one-paragraph summary}
+
+## Acceptance Criteria
+
+- [ ] <criterion 1>
+- [ ] <criterion 2>
+- [ ] …
+
+## Constraints
+
+- <constraint 1>
+- <constraint 2>
+
+## Design
+
+<approach + structures + seams>
+
+## File Structure Plan
+
+- `path/to/file.ts` — <reason>
+- `other/file.tsx` — <reason>
+```
+
+7. **Commit, then report.** Commit **and push** the spec file to the board and report the commit — don't ask first (board bookkeeping, per CLAUDE.md). Then print the path, AC count, and the suggested next step (`/slice {n}`).
+
+## Constraints
+
+- The four section headers (`## Acceptance Criteria`, `## Constraints`, `## Design`, `## File Structure Plan`) are **load-bearing** — the quality gates and the staleness hash look for these exact strings. Don't rename them.
+- **Acceptance criteria are outcome-level, not implementation steps.** Each `- [ ]` line is something the user can observe or a verifier can check. Implementation work lives in slices, not here.
+- Don't invent acceptance criteria the user didn't agree to. Each `- [ ]` line should trace to something the user explicitly said or confirmed.
+
+## Output
+
+```
+✅ SP-{n}: <title>
+   spec:    specs/SP-{n}/spec.md
+   ac:      <count> acceptance criteria
+   files:   <count> in file plan
+   next:    /slice {n}
+```
+
+## Safety / fallback
+
+- **No acceptance criteria the user will commit to.** Refuse to write — at least one user-observable criterion is required, or the → Ready gate will block the Spec's slices from advancing.
+- **Existing spec with user edits.** Re-fetch with `get_thinkube_file` first; preserve sections the user has filled out. `write_spec` rewrites the whole body, so only re-emit sections the user has agreed to update during this run — keep the rest verbatim.
+- **`write_spec` / `get_thinkube_file` absent in this session.** STOP and say so — do **not** fall back to a raw `Write`/`Edit`, which would write the Spec outside the board (into the code repo). Fix: start a fresh session in the repo so `.mcp.json` loads the kanban server.

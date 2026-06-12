@@ -1,0 +1,9 @@
+= Architecture
+:page-type: concept
+
+_The two layers and the shape of the cluster._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

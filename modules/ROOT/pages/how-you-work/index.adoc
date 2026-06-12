@@ -1,0 +1,9 @@
+= The Cockpit
+:page-type: concept
+
+_code-server + Claude + MCP is the primary way to operate Thinkube; the GUIs are the visual alternative._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

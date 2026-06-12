@@ -1,0 +1,9 @@
+= Templates Catalog
+:page-type: reference
+
+_The tkt-* templates — app, component, and knative deployment types._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

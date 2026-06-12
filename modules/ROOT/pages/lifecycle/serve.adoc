@@ -1,0 +1,9 @@
+= Serve a Model
+:page-type: how-to
+
+_Serve with vLLM or TensorRT-LLM via the LLM Gateway; GPUs and Knative scale-to-zero._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

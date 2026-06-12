@@ -1,0 +1,9 @@
+= What Is Thinkube
+:page-type: concept
+
+_Single-user, self-hosted platform for the whole AI/ML lifecycle on a CNCF-conformant Kubernetes._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

@@ -1,0 +1,9 @@
+= Build an App
+:page-type: tutorial
+
+_Scaffold from a template and deploy it onto the platform._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

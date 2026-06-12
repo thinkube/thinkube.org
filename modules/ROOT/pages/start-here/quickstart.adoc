@@ -1,0 +1,9 @@
+= Quickstart
+:page-type: tutorial
+
+_From a fresh install to your first served model._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

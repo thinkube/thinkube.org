@@ -1,0 +1,9 @@
+= Get a Model
+:page-type: how-to
+
+_Mirror or download a model from Hugging Face; the model catalog and LLM registry._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====

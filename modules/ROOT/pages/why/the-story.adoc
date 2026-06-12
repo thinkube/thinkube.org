@@ -1,0 +1,9 @@
+= MicroK8s to kubeadm
+:page-type: concept
+
+_The journey from MicroK8s to a certified kubeadm cluster._
+
+[NOTE]
+====
+Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+====
