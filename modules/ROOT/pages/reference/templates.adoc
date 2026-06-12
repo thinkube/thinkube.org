@@ -1,6 +1,10 @@
 = Templates Catalog
 :page-type: reference
 
+[.docref]
+ref 4z68
+
+
 _The tkt-* templates — app, component, and knative deployment types._
 
 [NOTE]
@@ -8,5 +12,5 @@ _The tkt-* templates — app, component, and knative deployment types._
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: cp-templates (#18; mock — real capture in a follow-on spec)
-image::cp-templates.svg[Screen #18 — The templates catalog screen.,role=mock-screenshot]
+// SCREENSHOT: cp-templates (ref qzco; mock — real capture in a follow-on spec)
+image::cp-templates.svg[ref qzco — the templates screen,role=mock-screenshot]

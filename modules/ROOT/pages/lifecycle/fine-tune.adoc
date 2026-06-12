@@ -1,6 +1,10 @@
 = Fine-tune a Model
 :page-type: tutorial
 
+[.docref]
+ref 5du7
+
+
 _Fine-tune in the AI Lab and register the result in MLflow._
 
 [NOTE]
@@ -8,8 +12,8 @@ _Fine-tune in the AI Lab and register the result in MLflow._
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: lab-finetune (#11; mock — real capture in a follow-on spec)
-image::lab-finetune.svg[Screen #11 — A fine-tuning notebook mid-run.,role=mock-screenshot]
+// SCREENSHOT: lab-finetune (ref wjld; mock — real capture in a follow-on spec)
+image::lab-finetune.svg[ref wjld — a fine-tuning notebook mid-run,role=mock-screenshot]
 
-// SCREENSHOT: mlflow-registry (#12; mock — real capture in a follow-on spec)
-image::mlflow-registry.svg[Screen #12 — The registered model in MLflow.,role=mock-screenshot]
+// SCREENSHOT: mlflow-registry (ref q1e7; mock — real capture in a follow-on spec)
+image::mlflow-registry.svg[ref q1e7 — the registered model in MLflow,role=mock-screenshot]

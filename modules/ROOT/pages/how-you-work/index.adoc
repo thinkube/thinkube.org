@@ -1,6 +1,10 @@
 = The Cockpit
 :page-type: concept
 
+[.docref]
+ref ag4k
+
+
 _code-server + Claude + MCP is the primary way to operate Thinkube; the GUIs are the visual alternative._
 
 [NOTE]
@@ -8,5 +12,5 @@ _code-server + Claude + MCP is the primary way to operate Thinkube; the GUIs are
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: cockpit-session (#04; mock — real capture in a follow-on spec)
-image::cockpit-session.svg[Screen #04 — code-server with a live Claude Code session.,role=mock-screenshot]
+// SCREENSHOT: cockpit-session (ref 8ik1; mock — real capture in a follow-on spec)
+image::cockpit-session.svg[ref 8ik1 — code-server with a live Claude Code session,role=mock-screenshot]

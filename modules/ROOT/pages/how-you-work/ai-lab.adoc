@@ -1,6 +1,10 @@
 = Thinkube AI Lab
 :page-type: how-to
 
+[.docref]
+ref tiss
+
+
 _JupyterHub notebooks and fine-tuning, with the Thinky assistant exposed over MCP._
 
 [NOTE]
@@ -8,8 +12,8 @@ _JupyterHub notebooks and fine-tuning, with the Thinky assistant exposed over MC
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: lab-hub (#06; mock — real capture in a follow-on spec)
-image::lab-hub.svg[Screen #06 — The JupyterHub launcher / spawner.,role=mock-screenshot]
+// SCREENSHOT: lab-hub (ref t3nf; mock — real capture in a follow-on spec)
+image::lab-hub.svg[ref t3nf — the JupyterHub launcher/spawner,role=mock-screenshot]
 
-// SCREENSHOT: lab-notebook (#07; mock — real capture in a follow-on spec)
-image::lab-notebook.svg[Screen #07 — A notebook with the Thinky assistant.,role=mock-screenshot]
+// SCREENSHOT: lab-notebook (ref sca7; mock — real capture in a follow-on spec)
+image::lab-notebook.svg[ref sca7 — a notebook with the Thinky assistant,role=mock-screenshot]

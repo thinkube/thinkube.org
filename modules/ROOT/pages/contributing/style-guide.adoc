@@ -1,6 +1,10 @@
 = Style Guide
 :page-type: reference
 
+[.docref]
+ref 906o
+
+
 How Thinkube documentation sounds and reads, so it stays consistent across
 authors and pages.
 

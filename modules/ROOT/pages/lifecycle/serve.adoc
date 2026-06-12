@@ -1,6 +1,10 @@
 = Serve a Model
 :page-type: how-to
 
+[.docref]
+ref vi64
+
+
 _Serve with vLLM or TensorRT-LLM via the LLM Gateway; GPUs and Knative scale-to-zero._
 
 [NOTE]
@@ -8,11 +12,11 @@ _Serve with vLLM or TensorRT-LLM via the LLM Gateway; GPUs and Knative scale-to-
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: cp-llm-serve (#15; mock — real capture in a follow-on spec)
-image::cp-llm-serve.svg[Screen #15 — The LLM load / serve UI.,role=mock-screenshot]
+// SCREENSHOT: cp-llm-serve (ref gfic; mock — real capture in a follow-on spec)
+image::cp-llm-serve.svg[ref gfic — the LLM load/serve UI,role=mock-screenshot]
 
-// SCREENSHOT: cp-gpu (#16; mock — real capture in a follow-on spec)
-image::cp-gpu.svg[Screen #16 — GPU status.,role=mock-screenshot]
+// SCREENSHOT: cp-gpu (ref ysj1; mock — real capture in a follow-on spec)
+image::cp-gpu.svg[ref ysj1 — GPU status,role=mock-screenshot]
 
-// SCREENSHOT: serve-gradio (#17; mock — real capture in a follow-on spec)
-image::serve-gradio.svg[Screen #17 — The served vLLM gradio app.,role=mock-screenshot]
+// SCREENSHOT: serve-gradio (ref 892o; mock — real capture in a follow-on spec)
+image::serve-gradio.svg[ref 892o — the served vLLM gradio app,role=mock-screenshot]

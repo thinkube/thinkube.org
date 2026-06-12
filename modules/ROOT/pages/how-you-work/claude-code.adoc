@@ -1,6 +1,10 @@
 = Driving Thinkube from Claude
 :page-type: how-to
 
+[.docref]
+ref t7lv
+
+
 _Deploy templates, load models, check GPUs, manage services — all via MCP from your editor._
 
 [NOTE]
@@ -8,5 +12,5 @@ _Deploy templates, load models, check GPUs, manage services — all via MCP from
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: cockpit-mcp-call (#05; mock — real capture in a follow-on spec)
-image::cockpit-mcp-call.svg[Screen #05 — A Claude + MCP action (deploy / load a model) in the editor.,role=mock-screenshot]
+// SCREENSHOT: cockpit-mcp-call (ref nl8j; mock — real capture in a follow-on spec)
+image::cockpit-mcp-call.svg[ref nl8j — a Claude+MCP action in the editor,role=mock-screenshot]

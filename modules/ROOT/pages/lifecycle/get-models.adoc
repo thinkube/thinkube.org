@@ -1,6 +1,10 @@
 = Get a Model
 :page-type: how-to
 
+[.docref]
+ref gu5o
+
+
 _Mirror or download a model from Hugging Face; the model catalog and LLM registry._
 
 [NOTE]
@@ -8,8 +12,8 @@ _Mirror or download a model from Hugging Face; the model catalog and LLM registr
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: cp-model-catalog (#09; mock — real capture in a follow-on spec)
-image::cp-model-catalog.svg[Screen #09 — The model catalog / browse.,role=mock-screenshot]
+// SCREENSHOT: cp-model-catalog (ref uazk; mock — real capture in a follow-on spec)
+image::cp-model-catalog.svg[ref uazk — the model catalog / browse,role=mock-screenshot]
 
-// SCREENSHOT: cp-model-mirror (#10; mock — real capture in a follow-on spec)
-image::cp-model-mirror.svg[Screen #10 — Mirroring a model + job status.,role=mock-screenshot]
+// SCREENSHOT: cp-model-mirror (ref 2pt6; mock — real capture in a follow-on spec)
+image::cp-model-mirror.svg[ref 2pt6 — mirroring a model + job status,role=mock-screenshot]

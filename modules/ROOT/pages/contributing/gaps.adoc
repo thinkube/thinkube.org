@@ -1,6 +1,10 @@
 = Gap Analysis
 :page-type: reference
 
+[.docref]
+ref 010a
+
+
 The worklist for content authoring (TEP-tghabr): what each page in the
 xref:contributing/documentation-map.adoc[IA] still needs, ground-truth first.
 Status of the whole set today: the **structure is complete** (nav, 24 pages,

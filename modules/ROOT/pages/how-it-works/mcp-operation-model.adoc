@@ -1,6 +1,10 @@
 = The MCP Operation Model
 :page-type: concept
 
+[.docref]
+ref a2jn
+
+
 _Why the platform is operated through MCP, and why that path is the durable one._
 
 [NOTE]

@@ -1,6 +1,10 @@
 = Architecture
 :page-type: concept
 
+[.docref]
+ref n2hp
+
+
 _The two layers and the shape of the cluster._
 
 [NOTE]

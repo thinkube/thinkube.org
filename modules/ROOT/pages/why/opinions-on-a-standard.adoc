@@ -1,6 +1,10 @@
 = Opinions on a Standard
 :page-type: concept
 
+[.docref]
+ref 6d8b
+
+
 _An opinionated platform on conformant Kubernetes — convenience without lock-in._
 
 [NOTE]

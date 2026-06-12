@@ -1,6 +1,10 @@
 = Platform Components
 :page-type: concept
 
+[.docref]
+ref ht9f
+
+
 _Gitea, Harbor, ArgoCD, Keycloak, MLflow, SeaweedFS and the rest — as mechanism, not interfaces._
 
 [NOTE]

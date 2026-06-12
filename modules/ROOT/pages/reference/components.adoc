@@ -1,6 +1,10 @@
 = Components Catalog
 :page-type: reference
 
+[.docref]
+ref xrd1
+
+
 _The core services and the optional components you can install._
 
 [NOTE]
@@ -8,5 +12,5 @@ _The core services and the optional components you can install._
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: cp-components (#19; mock — real capture in a follow-on spec)
-image::cp-components.svg[Screen #19 — The optional-components / install screen.,role=mock-screenshot]
+// SCREENSHOT: cp-components (ref jydt; mock — real capture in a follow-on spec)
+image::cp-components.svg[ref jydt — the optional-components / install screen,role=mock-screenshot]

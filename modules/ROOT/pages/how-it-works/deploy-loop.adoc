@@ -1,6 +1,10 @@
 = The GitOps Deploy Loop
 :page-type: concept
 
+[.docref]
+ref rxx8
+
+
 _Copier to Gitea to Argo Workflows/Kaniko to Harbor to ArgoCD, in about ninety seconds._
 
 [NOTE]
@@ -8,5 +12,5 @@ _Copier to Gitea to Argo Workflows/Kaniko to Harbor to ArgoCD, in about ninety s
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: argocd-sync (#23; mock — real capture in a follow-on spec)
-image::argocd-sync.svg[Screen #23 — ArgoCD mid-sync (mechanism illustration, optional).,role=mock-screenshot]
+// SCREENSHOT: argocd-sync (ref ad7g; mock — real capture in a follow-on spec)
+image::argocd-sync.svg[ref ad7g — ArgoCD mid-sync (mechanism, optional),role=mock-screenshot]
