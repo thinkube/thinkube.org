@@ -1,59 +1,59 @@
 = Screenshot Inventory & Capture Plan
 :page-type: reference
 
-Every screen capture the documentation needs, by id. Pages currently render a
-**labelled mock** in each slot (so the docs are visually complete); the **real
-captures land in a follow-on spec**, replacing the mocks by id. The
-xref:contributing/documentation-map.adoc[documentation map] is the page list; this
-is the image list.
+Every screen capture the documentation needs, by **serial #** and id — so a review
+can point at "screen #15" unambiguously. Pages currently render a **labelled mock**
+(stamped with its serial) in each slot; the **real captures land in a follow-on
+spec**, replacing the mocks by id. The xref:contributing/documentation-map.adoc[documentation map]
+is the numbered page list; this is the numbered image list.
 
 *Capture method:* 🤖 *Playwright* (web UI — driven through a Keycloak login) ·
 ✋ *Manual* (a live session, the desktop installer, or dynamic state) ·
 ▢ *Diagram* (authored as d2/kroki, not a capture). *Status:* `mock` = a placeholder
 image is in place; `have` = the real asset exists.
 
-[cols="2,2,4,1,1",options="header"]
+[cols="1,2,2,4,1,1",options="header"]
 |===
-| id | Page | What it shows | How | Status
+| # | id | Page | What it shows | How | Status
 
-5+| *§1 · Start here*
-| `cp-dashboard` | Quickstart | thinkube-control dashboard right after login | 🤖 | mock
-| `loop-diagram` | The AI/ML loop | the four-stage loop | ▢ | have
+6+| *Section 1 · Start here*
+| 01 | `loop-diagram` | The AI/ML loop | the four-stage loop | ▢ | have
+| 02 | `cp-dashboard` | Quickstart | thinkube-control dashboard right after login | 🤖 | mock
 
-5+| *§2 · Set up* — **recapture all** (existing 17 are an old installer version)
-| `installer-01…NN` | Install Thinkube + the Set up pages | the full *current* installer walkthrough | ✋ | needed (desktop app)
+6+| *Section 2 · Set up* — **recapture all** (existing 17 are an old installer version)
+| 03 | `installer-01…NN` | Install Thinkube + the Set up pages | the full *current* installer walkthrough | ✋ | needed
 
-5+| *§3 · How you work*
-| `cockpit-session`  | The cockpit                 | code-server with a live Claude Code session | ✋ | mock
-| `cockpit-mcp-call` | Driving Thinkube from Claude| a Claude+MCP action in the editor | ✋ | mock
-| `lab-hub`          | Thinkube AI Lab             | the JupyterHub launcher/spawner | 🤖 | mock
-| `lab-notebook`     | Thinkube AI Lab             | a notebook with the Thinky assistant | ✋ | mock
-| `cp-overview`      | thinkube-control _(control repo)_ | the control panel main view + tiles | 🤖 | needed
+6+| *Section 3 · How you work*
+| 04 | `cockpit-session`  | The cockpit                 | code-server with a live Claude Code session | ✋ | mock
+| 05 | `cockpit-mcp-call` | Driving Thinkube from Claude| a Claude+MCP action in the editor | ✋ | mock
+| 06 | `lab-hub`          | Thinkube AI Lab             | the JupyterHub launcher/spawner | 🤖 | mock
+| 07 | `lab-notebook`     | Thinkube AI Lab             | a notebook with the Thinky assistant | ✋ | mock
+| 08 | `cp-overview`      | thinkube-control _(control repo)_ | the control panel main view + tiles | 🤖 | needed
 
-5+| *§4 · The lifecycle*
-| `cp-model-catalog` | Get a model   | the model catalog / browse | 🤖 | mock
-| `cp-model-mirror`  | Get a model   | mirroring a model + job status | 🤖 | mock
-| `lab-finetune`     | Fine-tune     | a fine-tuning notebook mid-run | ✋ | mock
-| `mlflow-registry`  | Fine-tune     | the registered model in MLflow | 🤖 | mock
-| `cockpit-scaffold` | Build an app  | Claude scaffolding from `tkt-webapp-vue-fastapi` | ✋ | mock
-| `webapp-deployed`  | Build an app  | the deployed Vue+FastAPI app | 🤖 | mock
-| `cp-llm-serve`     | Serve a model | the LLM load/serve UI | 🤖 | mock
-| `cp-gpu`           | Serve a model | GPU status | 🤖 | mock
-| `serve-gradio`     | Serve a model | the served vLLM gradio app | 🤖 | mock
+6+| *Section 4 · The lifecycle*
+| 09 | `cp-model-catalog` | Get a model   | the model catalog / browse | 🤖 | mock
+| 10 | `cp-model-mirror`  | Get a model   | mirroring a model + job status | 🤖 | mock
+| 11 | `lab-finetune`     | Fine-tune     | a fine-tuning notebook mid-run | ✋ | mock
+| 12 | `mlflow-registry`  | Fine-tune     | the registered model in MLflow | 🤖 | mock
+| 13 | `cockpit-scaffold` | Build an app  | Claude scaffolding from `tkt-webapp-vue-fastapi` | ✋ | mock
+| 14 | `webapp-deployed`  | Build an app  | the deployed Vue+FastAPI app | 🤖 | mock
+| 15 | `cp-llm-serve`     | Serve a model | the LLM load/serve UI | 🤖 | mock
+| 16 | `cp-gpu`           | Serve a model | GPU status | 🤖 | mock
+| 17 | `serve-gradio`     | Serve a model | the served vLLM gradio app | 🤖 | mock
 
-5+| *§5 · Reference*
-| `cp-templates`  | Templates catalog  | the templates screen | 🤖 | mock
-| `cp-components` | Components catalog | the optional-components / install screen | 🤖 | mock
+6+| *Section 5 · Reference*
+| 18 | `cp-templates`  | Templates catalog  | the templates screen | 🤖 | mock
+| 19 | `cp-components` | Components catalog | the optional-components / install screen | 🤖 | mock
 
-5+| *§6 · How it works* (mechanism only)
-| `arch-diagram`        | Architecture            | the two layers / cluster shape | ▢ | needed
-| `deploy-loop-diagram` | The GitOps deploy loop  | Copier→Gitea→Argo→Harbor→ArgoCD | ▢ | needed
-| `components-diagram`  | Platform components     | the component map | ▢ | needed
-| `argocd-sync`         | The GitOps deploy loop  | ArgoCD mid-sync, _as mechanism_ (optional) | 🤖 | mock
-| `gpu-multiarch`       | GPU & multi-arch        | `nvidia-smi` / node arch in a terminal | ✋ | mock
+6+| *Section 6 · How it works* (mechanism only)
+| 20 | `arch-diagram`        | Architecture            | the two layers / cluster shape | ▢ | needed
+| 21 | `deploy-loop-diagram` | The GitOps deploy loop  | Copier→Gitea→Argo→Harbor→ArgoCD | ▢ | needed
+| 22 | `components-diagram`  | Platform components     | the component map | ▢ | needed
+| 23 | `argocd-sync`         | The GitOps deploy loop  | ArgoCD mid-sync, _as mechanism_ (optional) | 🤖 | mock
+| 24 | `gpu-multiarch`       | GPU & multi-arch        | `nvidia-smi` / node arch in a terminal | ✋ | mock
 
-5+| *§7 · Why it's built this way*
-| `story-timeline` | MicroK8s to kubeadm | the journey, as a timeline (optional) | ▢ | needed
+6+| *Section 7 · Why it's built this way*
+| 25 | `story-timeline` | MicroK8s to kubeadm | the journey, as a timeline (optional) | ▢ | needed
 |===
 
 == Capture plan (the follow-on spec)
@@ -62,26 +62,24 @@ Mocks are swapped for real assets by id. Two paths:
 
 🤖 *Playwright set* — log in **once** through Keycloak (`auth.thinkube.com`) in the
 Playwright MCP browser (you complete the login; the session carries), then for each
-🤖 id navigate its URL and `browser_take_screenshot` to `<id>.png`. URLs come from
-the control panel / `jupyter.thinkube.com` / `mlflow.thinkube.com` / the deployed
-apps. Images replace `<id>.svg` with `<id>.png` in the owning component's
-`modules/ROOT/images/`.
+🤖 id navigate its URL and `browser_take_screenshot` to `<id>.png`. Images replace
+`<id>.svg` with `<id>.png` in the owning component's `modules/ROOT/images/`.
 
 ✋ *Manual checklist (yours)* — capture each from your logged-in session and drop the
 file in by id:
 
-* `cockpit-session` — code-server with a live Claude Code session running.
-* `cockpit-mcp-call` — a Claude turn calling an MCP tool (e.g. `deploy_template`).
-* `lab-notebook` — a JupyterHub notebook with the Thinky assistant panel open.
-* `lab-finetune` — a fine-tuning notebook mid-run (loss/output visible).
-* `cockpit-scaffold` — Claude scaffolding an app from `tkt-webapp-vue-fastapi`.
-* `gpu-multiarch` — a terminal showing `nvidia-smi` + the node arch (arm64/amd64).
-* *Installer walkthrough* — the **full current installer** (Tauri desktop app),
+* *#04 `cockpit-session`* — code-server with a live Claude Code session running.
+* *#05 `cockpit-mcp-call`* — a Claude turn calling an MCP tool (e.g. `deploy_template`).
+* *#07 `lab-notebook`* — a JupyterHub notebook with the Thinky assistant panel open.
+* *#11 `lab-finetune`* — a fine-tuning notebook mid-run (loss/output visible).
+* *#13 `cockpit-scaffold`* — Claude scaffolding an app from `tkt-webapp-vue-fastapi`.
+* *#24 `gpu-multiarch`* — a terminal showing `nvidia-smi` + the node arch (arm64/amd64).
+* *#03 Installer walkthrough* — the **full current installer** (Tauri desktop app),
   one shot per screen, `installer-01…NN`, replacing the stale set in
   `thinkube-installer`.
 
 == Where images land
 
 Named `<id>.png`, committed into the owning component's `modules/ROOT/images/` — the
-docs repo for most, the `control` repo for `cp-overview`, and `thinkube-installer`
-for the installer set (docs-with-code).
+docs repo for most, the `control` repo for `cp-overview` (#08), and
+`thinkube-installer` for the installer set (#03).

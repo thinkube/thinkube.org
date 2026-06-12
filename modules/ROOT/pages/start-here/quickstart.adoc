@@ -8,5 +8,5 @@ _From a fresh install to your first served model._
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: cp-dashboard (mock — real capture in a follow-on spec)
-image::cp-dashboard.svg[The thinkube-control dashboard right after login.,role=mock-screenshot]
+// SCREENSHOT: cp-dashboard (#02; mock — real capture in a follow-on spec)
+image::cp-dashboard.svg[Screen #02 — The thinkube-control dashboard right after login.,role=mock-screenshot]

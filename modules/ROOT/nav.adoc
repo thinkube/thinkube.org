@@ -1,9 +1,9 @@
-.Start here
+.1 · Start here
 * xref:start-here/what-is-thinkube.adoc[What is Thinkube]
 * xref:start-here/the-loop.adoc[The AI/ML loop]
 * xref:start-here/quickstart.adoc[Quickstart]
 
-.Set up
+.2 · Set up
 * xref:install:ROOT:overview.adoc[Install Thinkube]
 * xref:install:ROOT:node-setup.adoc[Prepare your machines]
 * xref:install:ROOT:overlay-network.adoc[Connect from anywhere]
@@ -12,26 +12,26 @@
 * xref:install:ROOT:huggingface-token.adoc[Unlock AI models]
 * xref:install:ROOT:adding-nodes.adoc[Add more nodes]
 
-.How you work
+.3 · How you work
 * xref:how-you-work/index.adoc[The cockpit]
 * xref:how-you-work/claude-code.adoc[Driving Thinkube from Claude]
 * xref:how-you-work/ai-lab.adoc[Thinkube AI Lab]
 * xref:control:ROOT:index.adoc[thinkube-control]
 
-.The lifecycle
+.4 · The lifecycle
 * xref:lifecycle/index.adoc[The loop]
 * xref:lifecycle/get-models.adoc[Get a model]
 * xref:lifecycle/fine-tune.adoc[Fine-tune]
 * xref:lifecycle/build-apps.adoc[Build an app]
 * xref:lifecycle/serve.adoc[Serve a model]
 
-.Reference
+.5 · Reference
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]
 * xref:reference/templates.adoc[Templates catalog]
 * xref:reference/components.adoc[Components catalog]
 * xref:control:ROOT:index.adoc[Control panel & MCP tools]
 
-.How it works
+.6 · How it works
 * xref:how-it-works/architecture.adoc[Architecture]
 * xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop]
 * xref:how-it-works/certified-kubernetes.adoc[Certified Kubernetes]
@@ -39,7 +39,7 @@
 * xref:how-it-works/mcp-operation-model.adoc[The MCP operation model]
 * xref:how-it-works/components.adoc[Platform components]
 
-.Why it's built this way
+.7 · Why it's built this way
 * xref:why/the-story.adoc[MicroK8s to kubeadm]
 * xref:why/opinions-on-a-standard.adoc[Opinions on a standard]
 * xref:why/single-user-by-design.adoc[Single-user by design]

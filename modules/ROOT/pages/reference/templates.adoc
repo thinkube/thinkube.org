@@ -8,5 +8,5 @@ _The tkt-* templates — app, component, and knative deployment types._
 Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
 ====
 
-// SCREENSHOT: cp-templates (mock — real capture in a follow-on spec)
-image::cp-templates.svg[The templates catalog screen.,role=mock-screenshot]
+// SCREENSHOT: cp-templates (#18; mock — real capture in a follow-on spec)
+image::cp-templates.svg[Screen #18 — The templates catalog screen.,role=mock-screenshot]
