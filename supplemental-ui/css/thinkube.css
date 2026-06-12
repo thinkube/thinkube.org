@@ -134,7 +134,10 @@ code, pre, kbd, .colist > table code {
 
 /* ===== Landing page (home layout) ========================================== */
 body.home { background: var(--th-bg); }
-body.home #dgx-stamp { display: none; } /* the stamp is a doc-page accent, not the landing */
+/* The "Runs on DGX Spark" stamp shows on the landing too — it's core identity
+   (it was previously hidden here). Same fixed bottom-right corner as doc pages,
+   a touch more present since it matters on the landing. */
+body.home #dgx-stamp { opacity: 0.5; }
 
 .hero {
   max-width: 1080px;
