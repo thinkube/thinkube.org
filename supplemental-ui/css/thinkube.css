@@ -410,3 +410,12 @@ html[data-theme="dark"] .doc .openblock.screenshot-needed p:first-child { color:
 /* Mock screenshot images (stand-ins until the real captures land) */
 .doc .imageblock.mock-screenshot { margin: 1.4rem 0; }
 .doc .imageblock.mock-screenshot img { width: 100%; max-width: 620px; height: auto; display: block; }
+
+/* Prominent numbered section headers in the left nav (review serials, SP-tgiy46) */
+.nav-menu .nav-item[data-depth="0"] > .nav-text,
+.nav-list .nav-item[data-depth="0"] > .nav-text {
+  font-weight: 700; color: var(--th-primary); font-size: 1rem;
+  text-transform: none; letter-spacing: .01em;
+}
+html[data-theme="dark"] .nav-menu .nav-item[data-depth="0"] > .nav-text,
+html[data-theme="dark"] .nav-list .nav-item[data-depth="0"] > .nav-text { color: var(--th-primary-light); }

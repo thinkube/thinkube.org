@@ -4,9 +4,12 @@
   <rect x="6" y="6" width="788" height="46" rx="6" fill="#1a6b7c"/>
   <circle cx="34" cy="29" r="6" fill="#d9636e"/><circle cx="56" cy="29" r="6" fill="#d7a94f"/><circle cx="78" cy="29" r="6" fill="#54bd8a"/>
   <text x="106" y="34" fill="#cfe6e6" font-size="16" font-weight="600">cp-model-mirror</text>
-  <text x="770" y="34" text-anchor="end" fill="#f6e7c4" font-size="17" font-weight="700" letter-spacing="1">#10</text>
-  <text x="400" y="148" text-anchor="middle" font-size="52">📷</text>
-  <text x="400" y="206" text-anchor="middle" fill="#1a6b7c" font-size="29" font-weight="700" letter-spacing="2">SCREEN #10 · MOCK</text>
+  <rect x="694" y="12" width="94" height="28" rx="14" fill="#c4a35a"/>
+  <text x="741" y="32" text-anchor="middle" fill="#13343b" font-size="18" font-weight="800" letter-spacing="1">#10</text>
+  <circle cx="120" cy="150" r="56" fill="#1a6b7c"/>
+  <text x="120" y="166" text-anchor="middle" fill="#ffffff" font-size="46" font-weight="800">10</text>
+  <text x="400" y="150" text-anchor="middle" font-size="52">📷</text>
+  <text x="400" y="206" text-anchor="middle" fill="#1a6b7c" font-size="30" font-weight="800" letter-spacing="2">SCREEN #10 · MOCK</text>
   <text x="400" y="256" text-anchor="middle" fill="#5a5a5a" font-size="20"><tspan x="400" dy="0">Mirroring a model + job status.</tspan></text>
   <text x="400" y="430" text-anchor="middle" fill="#9a8a5e" font-size="16">capture method: Playwright  ·  pending real capture (TEP-tghabr)</text>
 </svg>
