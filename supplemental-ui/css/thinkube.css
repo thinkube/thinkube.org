@@ -46,7 +46,13 @@ code, pre, kbd, .colist > table code {
 .navbar-logo img {
   height: 1.6rem;
   width: auto;
+  /* the logo is a single dark-teal mark; render it white so it reads on the teal navbar */
+  filter: brightness(0) invert(1);
 }
+
+/* Area-switching lives in the top navbar (Get started / Reference), so hide the
+   default UI's bottom component selector — it silently swapped the whole sidebar. */
+.nav-panel-explore { display: none; }
 
 /* Links + headings in the Thinkube teal */
 .doc a, .toc a:hover, .nav-menu a:hover {
