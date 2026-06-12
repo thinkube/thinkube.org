@@ -125,3 +125,96 @@ code, pre, kbd, .colist > table code {
 .doc--how-to    .page-type-badge { background: #c4a35a; }
 .doc--reference .page-type-badge { background: #4a5e8c; }
 .doc--concept   .page-type-badge { background: #6b4a7c; }
+
+/* ===== Landing page (home layout) ========================================== */
+body.home { background: var(--th-bg); }
+body.home #dgx-stamp { display: none; } /* the stamp is a doc-page accent, not the landing */
+
+.hero {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 5rem 2rem 1rem;
+  text-align: center;
+}
+.hero-eyebrow {
+  font: 600 0.8rem/1 "Poppins", sans-serif;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--th-primary-light); margin: 0 0 1rem;
+}
+.hero-title {
+  font-family: "Poppins", sans-serif; font-weight: 700;
+  font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.1;
+  color: var(--th-primary); margin: 0 0 1.25rem;
+}
+.hero-title .accent { color: var(--th-accent); }
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.2rem); line-height: 1.6;
+  color: #4a4a4a; max-width: 700px; margin: 0 auto 2rem;
+}
+.hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-block; padding: 0.8rem 1.7rem;
+  font: 600 1rem/1 "Poppins", sans-serif; text-decoration: none;
+  border: 2px solid transparent; transition: transform .08s ease, box-shadow .15s ease;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-primary { background: var(--th-primary); color: #fff; }
+.btn-primary:hover { box-shadow: 0 8px 22px rgba(26,107,124,.28); }
+.btn-ghost { background: transparent; color: var(--th-primary); border-color: var(--th-primary); }
+
+/* The AI/ML loop */
+.loop {
+  list-style: none; display: flex; justify-content: center; align-items: stretch;
+  flex-wrap: wrap; gap: 0; margin: 3.5rem auto 0; padding: 0; max-width: 860px;
+}
+.loop-node {
+  position: relative; flex: 1 1 0; min-width: 150px; padding: 1.5rem 1rem;
+  border: 2px solid var(--th-primary); background: #fff; text-align: center;
+}
+.loop-node + .loop-node { border-left: none; }
+.loop-node:not(:last-child)::after {
+  content: "→"; position: absolute; right: -0.62em; top: 50%; transform: translateY(-50%);
+  color: var(--th-accent); font: 700 1.5rem/1 sans-serif; z-index: 2;
+  background: var(--th-bg); padding: 0 .08em;
+}
+.loop-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2rem; height: 2rem; background: var(--th-primary); color: #fff;
+  font-weight: 700; margin-bottom: .6rem;
+}
+.loop-label { display: block; font-weight: 600; color: var(--th-primary); }
+
+/* Journey cards */
+.journeys { max-width: 1080px; margin: 4.5rem auto 5rem; padding: 0 2rem; }
+.section-h {
+  font: 600 1.5rem/1.2 "Poppins", sans-serif; color: var(--th-primary); margin: 0 0 1.5rem;
+}
+.card-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); gap: 1.25rem;
+}
+.card {
+  display: flex; flex-direction: column; padding: 1.6rem; text-decoration: none;
+  background: #fff; border: 1px solid #e6e2dc; border-top: 3px solid var(--th-primary);
+  transition: transform .1s ease, box-shadow .15s ease, border-top-color .15s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px rgba(26,107,124,.14);
+  border-top-color: var(--th-accent);
+}
+.card-kicker {
+  font: 700 0.72rem/1 "Poppins", sans-serif; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--th-accent);
+}
+.card-title {
+  font: 600 1.15rem/1.25 "Poppins", sans-serif; color: var(--th-primary); margin: .45rem 0 .6rem;
+}
+.card-desc { color: #555; font-size: .95rem; line-height: 1.55; margin: 0 0 1rem; flex: 1; }
+.card-arrow { color: var(--th-primary); font-weight: 600; font-size: .9rem; }
+
+@media (max-width: 600px) {
+  .loop-node + .loop-node { border-left: 2px solid var(--th-primary); }
+  .loop-node:not(:last-child)::after {
+    content: "↓"; right: auto; left: 50%; top: auto; bottom: -0.7em; transform: translateX(-50%);
+  }
+}

@@ -1,21 +1,4 @@
-= Thinkube Documentation
+= Thinkube
+:page-layout: home
 
-image::logo.svg[Thinkube,200]
-
-Welcome to the Thinkube documentation platform — rebuilt on *Antora* and
-*AsciiDoc*.
-
-This is the platform machine: a clean Antora build on the custom Thinkube UI.
-Real content lands later (TEP-tghabr); this site proves the base.
-
-== The four page-types
-
-Every page is exactly one type, each with its own visible treatment:
-
-* xref:tutorial.adoc[Tutorial] — learning by doing
-* xref:how-to.adoc[How-to] — solve one task
-* xref:reference.adoc[Reference] — look it up
-* xref:concept.adoc[Concept] — understand it
-
-NOTE: Teal, Poppins, sharp corners, and the DGX Spark stamp in the corner — if you
-see those, the branded build works.
+Your own platform for the entire AI/ML lifecycle.

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="{{or page.attributes.lang 'en'}}">
+  <head>
+{{> head}}
+  </head>
+  <body class="home">
+{{> header}}
+    <main class="home-main">
+
+      <section class="hero">
+        <p class="hero-eyebrow">Single-user · self-hosted · CNCF-conformant Kubernetes</p>
+        <h1 class="hero-title">Your own platform for the<br><span class="accent">entire AI/ML lifecycle</span></h1>
+        <p class="hero-sub">Get a model, fine-tune it, build apps that consume it, and serve it — on
+          your own hardware, with the power of Kubernetes and none of the Kubernetes knowledge required.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="tutorial.html">Get started</a>
+          <a class="btn btn-ghost" href="concept.html">What is Thinkube?</a>
+        </div>
+
+        <ol class="loop" aria-label="The Thinkube AI/ML loop">
+          <li class="loop-node"><span class="loop-num">1</span><span class="loop-label">Get models</span></li>
+          <li class="loop-node"><span class="loop-num">2</span><span class="loop-label">Fine-tune</span></li>
+          <li class="loop-node"><span class="loop-num">3</span><span class="loop-label">Build apps</span></li>
+          <li class="loop-node"><span class="loop-num">4</span><span class="loop-label">Serve</span></li>
+        </ol>
+      </section>
+
+      <section class="journeys">
+        <h2 class="section-h">Where to next</h2>
+        <div class="card-grid">
+          <a class="card" href="how-to.html">
+            <span class="card-kicker">Set up</span>
+            <h3 class="card-title">Get Thinkube running</h3>
+            <p class="card-desc">Install on your own machines — discovery, SSH, GPUs, networking — then put the installer away for good.</p>
+            <span class="card-arrow">Set up →</span>
+          </a>
+          <a class="card" href="concept.html">
+            <span class="card-kicker">How you work</span>
+            <h3 class="card-title">code-server + Claude</h3>
+            <p class="card-desc">Operate the whole platform by talking to Claude in your editor — MCP drives the rest.</p>
+            <span class="card-arrow">Learn the cockpit →</span>
+          </a>
+          <a class="card" href="tutorial.html">
+            <span class="card-kicker">The lifecycle</span>
+            <h3 class="card-title">Run the loop</h3>
+            <p class="card-desc">Models, fine-tuning, building apps, serving them — the full AI/ML lifecycle, step by step.</p>
+            <span class="card-arrow">Start the loop →</span>
+          </a>
+          <a class="card" href="reference.html">
+            <span class="card-kicker">Reference</span>
+            <h3 class="card-title">Look it up</h3>
+            <p class="card-desc">thinkube.yaml, the control panel, templates, components — precise and complete.</p>
+            <span class="card-arrow">Browse reference →</span>
+          </a>
+        </div>
+      </section>
+
+    </main>
+{{> footer}}
+  </body>
+</html>

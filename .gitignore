@@ -21,3 +21,7 @@ pnpm-debug.log*
 # local scratch (browser screenshots / playwright)
 .playwright-mcp/
 *-render.png
+
+# more local scratch
+*-final.png
+*.tmp.png
