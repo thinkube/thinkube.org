@@ -85,7 +85,7 @@ code, pre, kbd, .colist > table code {
   letter-spacing: 3px;
   text-transform: uppercase;
   text-align: center;
-  transform: rotate(12deg) scale(0.85);
+  transform: rotate(-12deg) scale(0.85);
   opacity: 0.38;
   pointer-events: none;
   background: transparent;
