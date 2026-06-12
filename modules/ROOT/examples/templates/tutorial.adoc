@@ -1,0 +1,18 @@
+= Title — a thing the reader will accomplish
+:page-type: tutorial
+
+// TUTORIAL — learning-oriented. The reader follows it start to finish and ends
+// with something working. One happy path, concrete not abstract, no detours
+// into reference or "why" (link out for those).
+
+A sentence on what you will build and what must already be in place.
+
+== Step 1: <do the first thing>
+. Action.
+. Action, with the result they should see.
+
+== Step 2: <do the next thing>
+. Action.
+
+== What you have now
+A one-line recap and a xref: to the next step.

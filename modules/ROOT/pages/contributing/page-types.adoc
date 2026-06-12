@@ -1,0 +1,53 @@
+= Page Types
+:page-type: reference
+
+Every Thinkube documentation page is exactly **one** of four Diátaxis
+page-types, declared with a `:page-type:` attribute under the title. The type
+is shown as a badge on the page and decides the page's shape.
+
+[IMPORTANT]
+====
+**One type per page — no mixing.** A page that needs to both teach a concept and
+walk through a task is two pages: a concept and a tutorial/how-to that links to
+it. Mixing types is what made the old docs read as amateur.
+====
+
+[cols="1,2,3",options="header"]
+|===
+| Type | Orientation | Use it for
+
+| `tutorial`  | Learning   | A start-to-finish walkthrough that ends with something working.
+| `how-to`    | Task       | A recipe for a reader who already knows what they want.
+| `reference` | Information| Dry, complete, scannable lookup material.
+| `concept`   | Understanding | The "what" and "why" — the mental model, no steps.
+|===
+
+To start a page, copy the matching skeleton below.
+
+== tutorial
+
+[source,asciidoc]
+----
+include::example$templates/tutorial.adoc[]
+----
+
+== how-to
+
+[source,asciidoc]
+----
+include::example$templates/how-to.adoc[]
+----
+
+== reference
+
+[source,asciidoc]
+----
+include::example$templates/reference.adoc[]
+----
+
+== concept
+
+[source,asciidoc]
+----
+include::example$templates/concept.adoc[]
+----

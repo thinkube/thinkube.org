@@ -44,3 +44,8 @@
 * xref:why/opinions-on-a-standard.adoc[Opinions on a standard]
 * xref:why/single-user-by-design.adoc[Single-user by design]
 * xref:why/operated-by-conversation.adoc[Operated by conversation]
+
+.Authoring
+* xref:contributing/page-types.adoc[Page types]
+* xref:contributing/style-guide.adoc[Style guide]
+* xref:contributing/documentation-map.adoc[Documentation map]

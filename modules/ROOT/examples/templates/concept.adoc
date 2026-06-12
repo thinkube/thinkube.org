@@ -1,0 +1,7 @@
+= Title
+:page-type: concept
+
+// CONCEPT — understanding-oriented. Builds the mental model: the "what" and the
+// "why", not the "how" (link to the how-to/tutorial for steps). Prose is fine.
+
+Explain the idea and why it matters.

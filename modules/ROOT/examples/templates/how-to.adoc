@@ -1,0 +1,9 @@
+= How to <accomplish the task>
+:page-type: how-to
+
+// HOW-TO — task-oriented recipe. Assumes the reader knows what they want and
+// just needs the steps. No teaching, no background. Imperative, numbered.
+
+. First step.
+. Second step.
+. The result, and a xref: to anything that comes next.

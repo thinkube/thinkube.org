@@ -1,0 +1,12 @@
+= Title
+:page-type: reference
+
+// REFERENCE — lookup material. Dry, complete, scannable. Prefer tables and
+// lists to prose. No tutorials, no opinions, no "why".
+
+[cols="1,1,3"]
+|===
+| Name | Type | Description
+
+| `field` | string | What it is.
+|===

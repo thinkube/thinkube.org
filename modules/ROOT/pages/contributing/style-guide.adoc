@@ -1,0 +1,74 @@
+= Style Guide
+:page-type: reference
+
+How Thinkube documentation sounds and reads, so it stays consistent across
+authors and pages.
+
+== Voice
+
+* **Second person, present tense.** "You deploy a template", not "the user will
+  deploy" or "we deploy".
+* **Direct and calm.** Short sentences. Say the thing; skip the throat-clearing
+  ("In order to…", "It is important to note that…").
+* **Show, don't sell.** No marketing adjectives ("powerful", "seamless",
+  "blazing-fast"). Let the capability speak.
+* **The reader is capable, not expert.** Assume intelligence, not prior
+  Kubernetes knowledge. Explain the platform's own terms; don't explain general
+  computing.
+
+== Terminology
+
+Use these spellings exactly:
+
+[cols="1,2",options="header"]
+|===
+| Write it | Not
+
+| Thinkube              | thinkube, ThinKube
+| thinkube-control      | Thinkube Control, the control panel app
+| code-server           | Code Server, VS Code
+| Thinkube AI Lab (JupyterHub) | Jupyter, the notebook server
+| MCP tools             | MCP functions, the API
+| `thinkube.yaml`       | the manifest file, the config
+|===
+
+* Call the three interfaces the **three pillars**: code-server + Claude,
+  Thinkube AI Lab, thinkube-control.
+* The four lifecycle stages are **get a model → fine-tune → build → serve**.
+
+== Headings
+
+* Sentence case: "Set up your domain", not "Set Up Your Domain".
+* Headings are a scannable outline — a reader skimming only the headings should
+  get the gist. No "Introduction" / "Overview" filler headings.
+
+== Admonitions
+
+Use sparingly — overused, they stop meaning anything.
+
+[NOTE]
+====
+A useful aside the reader can skip without breaking anything.
+====
+
+[TIP]
+====
+A shortcut or a better way to do what they're already doing.
+====
+
+[IMPORTANT]
+====
+Something they must get right or the task fails.
+====
+
+[WARNING]
+====
+An action that can lose data or break the platform.
+====
+
+== Page-types and structure
+
+Every page is one Diátaxis type — see xref:contributing/page-types.adoc[Page
+types]. Don't mix teaching and reference on one page; link between them instead.
+Volatile policy (e.g. credit/quota specifics) lives in one dated page in §6 How
+it works, never smeared through tutorials.

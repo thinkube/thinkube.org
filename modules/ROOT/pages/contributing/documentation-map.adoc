@@ -1,0 +1,58 @@
+= Documentation Map
+:page-type: reference
+
+The whole documentation set, by section and xref:contributing/page-types.adoc[page-type].
+This is the plan the content is written against (TEP-tgh735). Pages marked
+_(installer)_ / _(control)_ live with their code in another repo and aggregate
+in via Antora (docs-with-code).
+
+== The seven-section peel
+
+The site is organised outside-in, **cockpit-first** — you meet *how you work*
+before the lifecycle, and peel down to *how it works* / *why* only if you want to.
+
+.§1 — Start here
+* xref:start-here/what-is-thinkube.adoc[What is Thinkube] — _concept_
+* xref:start-here/the-loop.adoc[The AI/ML loop] — _concept_
+* xref:start-here/quickstart.adoc[Quickstart] — _tutorial_
+
+.§2 — Set up _(installer)_
+* xref:install:ROOT:overview.adoc[Install Thinkube] — _tutorial_
+* Prepare your machines · Connect from anywhere · Set up your domain · Connect to GitHub · Unlock AI models · Add more nodes — _how-to_
+
+.§3 — How you work (the three pillars)
+* xref:how-you-work/index.adoc[The cockpit] — _concept_
+* xref:how-you-work/claude-code.adoc[Driving Thinkube from Claude] — _how-to_
+* xref:how-you-work/ai-lab.adoc[Thinkube AI Lab] — _how-to_
+* xref:control:ROOT:index.adoc[thinkube-control] — _reference (control)_
+
+.§4 — The lifecycle
+* xref:lifecycle/index.adoc[The loop] — _concept_
+* xref:lifecycle/get-models.adoc[Get a model] — _how-to_
+* xref:lifecycle/fine-tune.adoc[Fine-tune] — _tutorial_
+* xref:lifecycle/build-apps.adoc[Build an app] — _tutorial_
+* xref:lifecycle/serve.adoc[Serve a model] — _how-to_
+
+.§5 — Reference
+* xref:reference/thinkube-yaml.adoc[thinkube.yaml] — _reference_
+* xref:reference/templates.adoc[Templates catalog] — _reference_
+* xref:reference/components.adoc[Components catalog] — _reference_
+* xref:control:ROOT:index.adoc[Control panel & MCP tools] — _reference (control)_
+
+.§6 — How it works
+* xref:how-it-works/architecture.adoc[Architecture] · xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop] · xref:how-it-works/certified-kubernetes.adoc[Certified Kubernetes] · xref:how-it-works/gpu-multiarch.adoc[GPU & multi-arch] · xref:how-it-works/mcp-operation-model.adoc[The MCP operation model] · xref:how-it-works/components.adoc[Platform components] — all _concept_
+
+.§7 — Why it's built this way
+* xref:why/the-story.adoc[MicroK8s to kubeadm] · xref:why/opinions-on-a-standard.adoc[Opinions on a standard] · xref:why/single-user-by-design.adoc[Single-user by design] · xref:why/operated-by-conversation.adoc[Operated by conversation] — all _concept_
+
+== Scope boundary — what we do *not* document
+
+Thinkube runs a lot of services — Gitea, Harbor, ArgoCD, MLflow, Keycloak,
+JuiceFS, SeaweedFS, PostgreSQL, DevPI, Argo Workflows and the optional
+components. **None of these get interface ("here's their dashboard") docs.**
+
+* They appear only as **mechanism** in xref:how-it-works/components.adoc[§6 Platform components] —
+  what they are and how the platform uses them — not as places you operate.
+* Operationally you reach them through **Claude + MCP**, not their own UIs.
+* The documented interface surface is the **three pillars + the loop**. That is
+  the boundary; new service docs do not get added without revisiting this map.
