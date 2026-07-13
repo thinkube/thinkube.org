@@ -23,7 +23,10 @@ ENV NODE_ENV=production
 # Kroki server — the cluster build has external egress (the previous Astro build
 # already curl'd d2lang.com and ran npm ci). Base path is "/" for the cluster
 # (GitHub Pages overrides it with `--url /thinkube.org/` in its own workflow).
-RUN git init -q && git add -A \
+# kaniko unpacks the rootfs so /app's owner differs from the uid running git,
+# which makes git abort with "detected dubious ownership"; mark it safe first.
+RUN git config --global --add safe.directory /app \
+ && git init -q && git add -A \
  && git -c user.email=build@thinkube.io -c user.name=thinkube-build commit -qm build \
  && npm run build
 
