@@ -23,6 +23,11 @@ content:
     - url: https://github.com/thinkube/thinkube-control.git
       branches: main
       start_path: docs
+    # docs-with-code: Tandem's user docs live beside the extension code.
+    # Tracks v2/core until the v2 PR lands on main; then this moves to main.
+    - url: https://github.com/thinkube/thinkube-tandem.git
+      branches: v2/core
+      start_path: docs
 
 ui:
   bundle:
