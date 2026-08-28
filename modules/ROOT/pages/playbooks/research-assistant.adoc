@@ -1,0 +1,107 @@
+= Build a research assistant over your own papers
+:page-type: tutorial
+:page-docref: r4qm
+
+You will stand up a retrieval-augmented assistant on your own hardware — index a
+corpus of papers, ask it questions it answers from them, then have two agents
+argue an open research question using that index and a third judge the argument
+and write the code for the winner.
+
+Four notebooks, run in order. Each one leaves something the next one uses, so the
+platform is assembled rather than demonstrated: services, then models, then
+retrieval, then agents.
+
+.What you need
+* The *AI Lab* with the `agent-dev` venv
+* A GPU node with room for a chat model and an embedding model
+* Outbound access to arXiv for the paper fetch
+
+There is no training step here, so this is far shorter than
+xref:playbooks/zebra-grpo.adoc[the fine-tuning playbook]. The time goes on
+fetching papers, embedding them, and loading two models onto a GPU.
+
+== Step 1: Check the platform is actually there
+
+Open `examples/research-assistant/` and run the `00-` notebook.
+
+It exercises seven services in turn and tells you which are reachable: the *LLM
+Gateway*, *Qdrant* for vectors, *Langfuse* for tracing, *Thinkube Experiments*
+for runs, *PostgreSQL*, *Valkey* for caching, and *NATS* for messaging between
+agents.
+
+Run this first even when you are confident. Every later notebook assumes these,
+and a missing service is far easier to read here than three notebooks later
+inside an agent loop.
+
+== Step 2: Load the models you will use
+
+The `01-` notebook is about model management: what the catalog offers, what your
+GPUs have room for, and how a model goes from *deployable* to *loading* to
+*available*.
+
+[source,python]
+----
+from tk_llm import LLMClient, get_openai_client
+
+llm = LLMClient()
+llm.list_models()                       # catalog and state
+llm.get_load_options("<model>")         # nodes with free, measurable slots
+llm.load_model("<model>", node="<node>")
+----
+
+You need two: a chat model and an embedding model. Both are then reachable
+through one OpenAI-compatible endpoint, which is what lets the next two notebooks
+use LangChain and AG2 unmodified.
+
+The unload cell at the end is worth remembering. Registry space is cheap; GPU
+slots are not.
+
+== Step 3: Index a corpus and ask it questions
+
+The `02-` notebook builds the retrieval pipeline: fetch papers from arXiv, chunk
+them, embed the chunks, store them in Qdrant, and wire a chain that answers from
+what it retrieved.
+
+Two details in it are worth more than the pipeline itself:
+
+* *The corpus names its own foundations.* Rather than hand-listing the important
+  papers, the notebook lets citation patterns surface them — so the index is not
+  limited by what you already knew to look for.
+* *Chunking decides answer quality.* Left uncapped this corpus is 70% numbers,
+  and questions get answered from benchmark tables that contain no argument.
+  Reserved slots for prose and evidence are not tidiness; they are the difference
+  between a citation and a number.
+
+Langfuse tracing is added here too, so every query decomposes into embed, search
+and generate with timings attached. When an answer is wrong, that trace tells you
+whether retrieval or generation failed.
+
+== Step 4: Put the index to work in an argument
+
+The `03-` notebook runs a debate. Two agents take opposite sides of a genuinely
+unsettled question — whether to post-train a small model with reinforcement
+learning on verifiable rewards, or by distilling a larger model's traces — and
+each argues only from what `search_papers` returns from your index. A third agent
+judges, then retrieves algorithm blocks for the winning approach and writes an
+implementation grounded in them.
+
+The debate structure is the point. One model asked "which is better?" produces a
+balanced-sounding summary; two models made to argue and read each other surface
+the strongest objection to each position.
+
+Re-run it with a different seed, or after adding papers. A verdict that flips is
+telling you the evidence is thin, which is itself worth knowing.
+
+== What you have now
+
+A working retrieval assistant over a corpus you chose, running entirely on your
+own hardware: your models, your vector store, your traces.
+
+The pattern transfers directly. Swap arXiv for your own documents and the same
+four steps hold — validate, load, index, reason over it — with Qdrant, the
+gateway and Langfuse unchanged.
+
+If the debate leaves you wanting to run the winner rather than read about it,
+xref:playbooks/zebra-grpo.adoc[the fine-tuning playbook] does exactly that: it
+trains a model with reinforcement learning on rewards a program checks, and
+serves the result through the same gateway you loaded models with here.

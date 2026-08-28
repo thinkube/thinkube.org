@@ -22,6 +22,11 @@ than a result it hopes for.
 |===
 | Playbook | What it demonstrates
 
+| xref:playbooks/research-assistant.adoc[Build a research assistant]
+| Retrieval over a corpus you choose, then agents that argue from it. Exercises
+  the platform services, model loading, Qdrant, Langfuse tracing and a
+  multi-agent debate — no GPU training.
+
 | xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards]
 | Reinforcement learning with a program as the grader — no labels. Mirrors a
   base model, trains a LoRA on your GPU, registers the result against its

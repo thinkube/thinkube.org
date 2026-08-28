@@ -37,6 +37,7 @@ before the lifecycle, and peel down to *how it works* / *why* only if you want t
 
 .§5 — Playbooks
 * xref:playbooks/index.adoc[What a playbook is] — _concept_
+* xref:playbooks/research-assistant.adoc[Build a research assistant] — _tutorial_
 * xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards] — _tutorial_
 
 .§6 — Reference
