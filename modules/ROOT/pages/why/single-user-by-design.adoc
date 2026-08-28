@@ -7,5 +7,5 @@ _The single-user threat model and why effort is calibrated to it._
 
 [NOTE]
 ====
-Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+Skeleton page: the structure is in place, the content is not yet written.
 ====

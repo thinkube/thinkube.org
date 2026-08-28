@@ -7,5 +7,5 @@ _An opinionated platform on conformant Kubernetes — convenience without lock-i
 
 [NOTE]
 ====
-Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+Skeleton page: the structure is in place, the content is not yet written.
 ====

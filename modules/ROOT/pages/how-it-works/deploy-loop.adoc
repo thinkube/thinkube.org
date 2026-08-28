@@ -7,7 +7,7 @@ _Copier to Gitea to Argo Workflows/Kaniko to Harbor to ArgoCD, in about ninety s
 
 [NOTE]
 ====
-Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+Skeleton page: the structure is in place, the content is not yet written.
 ====
 
 // SCREENSHOT: argocd-sync (ref ad7g; mock — real capture in a follow-on spec)

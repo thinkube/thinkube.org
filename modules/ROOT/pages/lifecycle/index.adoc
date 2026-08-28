@@ -7,5 +7,5 @@ _The four stages — get a model, fine-tune, build, serve — and how they chain
 
 [NOTE]
 ====
-Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+Skeleton page: the structure is in place, the content is not yet written.
 ====

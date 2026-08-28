@@ -7,7 +7,7 @@ _The tkt-* templates — app, component, and knative deployment types._
 
 [NOTE]
 ====
-Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+Skeleton page: the structure is in place, the content is not yet written.
 ====
 
 // SCREENSHOT: cp-templates (ref qzco; mock — real capture in a follow-on spec)

@@ -7,7 +7,7 @@ _code-server + Claude + MCP is the primary way to operate Thinkube; the GUIs are
 
 [NOTE]
 ====
-Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+Skeleton page: the structure is in place, the content is not yet written.
 ====
 
 // SCREENSHOT: cockpit-session (ref 8ik1; mock — real capture in a follow-on spec)

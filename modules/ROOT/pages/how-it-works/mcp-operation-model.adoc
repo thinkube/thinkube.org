@@ -7,5 +7,5 @@ _Why the platform is operated through MCP, and why that path is the durable one.
 
 [NOTE]
 ====
-Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+Skeleton page: the structure is in place, the content is not yet written.
 ====

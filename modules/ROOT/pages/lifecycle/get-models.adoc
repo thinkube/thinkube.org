@@ -7,7 +7,7 @@ _Mirror or download a model from Hugging Face; the model catalog and LLM registr
 
 [NOTE]
 ====
-Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+Skeleton page: the structure is in place, the content is not yet written.
 ====
 
 // SCREENSHOT: cp-model-catalog (ref uazk; mock — real capture in a follow-on spec)

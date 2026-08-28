@@ -7,7 +7,7 @@ _From a fresh install to your first served model._
 
 [NOTE]
 ====
-Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+Skeleton page: the structure is in place, the content is not yet written.
 ====
 
 // SCREENSHOT: cp-dashboard (ref n2j0; mock — real capture in a follow-on spec)

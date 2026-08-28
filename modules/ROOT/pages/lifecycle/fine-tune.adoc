@@ -7,7 +7,7 @@ _Fine-tune in the AI Lab and register the result in MLflow._
 
 [NOTE]
 ====
-Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+Skeleton page: the structure is in place, the content is not yet written.
 ====
 
 // SCREENSHOT: lab-finetune (ref wjld; mock — real capture in a follow-on spec)

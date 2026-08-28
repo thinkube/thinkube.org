@@ -4,7 +4,7 @@
 
 
 The whole documentation set, by section and xref:contributing/page-types.adoc[page-type].
-This is the plan the content is written against (TEP-tgh735). Pages marked
+This is the plan the content is written against. Pages marked
 _(installer)_ / _(control)_ live with their code in another repo and aggregate
 in via Antora (docs-with-code).
 

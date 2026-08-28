@@ -7,5 +7,5 @@ _code-server + Claude + MCP as the durable, economically-aligned way to work._
 
 [NOTE]
 ====
-Skeleton page (TEP-tgh735 — the documentation IA). Full content is authored in TEP-tghabr.
+Skeleton page: the structure is in place, the content is not yet written.
 ====
