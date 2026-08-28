@@ -8,7 +8,7 @@ This is the plan the content is written against. Pages marked
 _(installer)_ / _(control)_ live with their code in another repo and aggregate
 in via Antora (docs-with-code).
 
-== The seven-section peel
+== The eight-section peel
 
 The site is organised outside-in, **cockpit-first** — you meet *how you work*
 before the lifecycle, and peel down to *how it works* / *why* only if you want to.
@@ -35,16 +35,20 @@ before the lifecycle, and peel down to *how it works* / *why* only if you want t
 * xref:lifecycle/build-apps.adoc[Build an app] — _tutorial_
 * xref:lifecycle/serve.adoc[Serve a model] — _how-to_
 
-.§5 — Reference
+.§5 — Playbooks
+* xref:playbooks/index.adoc[What a playbook is] — _concept_
+* xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards] — _tutorial_
+
+.§6 — Reference
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml] — _reference_
 * xref:reference/templates.adoc[Templates catalog] — _reference_
 * xref:reference/components.adoc[Components catalog] — _reference_
 * xref:control:ROOT:index.adoc[Control panel & MCP tools] — _reference (control)_
 
-.§6 — How it works
+.§7 — How it works
 * xref:how-it-works/architecture.adoc[Architecture] · xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop] · xref:how-it-works/certified-kubernetes.adoc[Certified Kubernetes] · xref:how-it-works/gpu-multiarch.adoc[GPU & multi-arch] · xref:how-it-works/mcp-operation-model.adoc[The MCP operation model] · xref:how-it-works/components.adoc[Platform components] — all _concept_
 
-.§7 — Why it's built this way
+.§8 — Why it's built this way
 * xref:why/the-story.adoc[MicroK8s to kubeadm] · xref:why/opinions-on-a-standard.adoc[Opinions on a standard] · xref:why/single-user-by-design.adoc[Single-user by design] · xref:why/operated-by-conversation.adoc[Operated by conversation] — all _concept_
 
 == Scope boundary — what we do *not* document

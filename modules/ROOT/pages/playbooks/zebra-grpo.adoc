@@ -1,0 +1,127 @@
+= Fine-tune a model on rewards a program can check
+:page-type: tutorial
+:page-docref: 8sy2
+
+You will train a 4B model on your own GPU, register it, and call it through the
+LLM Gateway — the whole loop, ending with a model that did not exist when you
+started.
+
+The task is a zebra puzzle: five houses, fifteen clues, fill in the grid. The
+twist is that *the model never solves it*. It translates each clue into a formal
+rule, and a constraint solver deduces the grid. That division is what makes the
+run possible without a labelled dataset: the solver grades every attempt, so the
+reward is a program's verdict rather than a human's.
+
+.What you need
+* The *AI Lab* with the `fine-tuning` venv, on a node with a GPU
+* Roughly *20 GB* of free GPU memory
+* Thinkube Experiments and the LLM Gateway reachable — xref:lifecycle/get-models.adoc[Get a model] covers the first
+* *About 9.5 hours* at full scale. Set `FULL_RUN = False` for a one-hour run that
+  still shows the model learning.
+
+== Step 1: Open the notebook
+
+. In the AI Lab, open `examples/zebra-grpo/zebra_grpo.ipynb`.
+. Select the *fine-tuning* kernel.
+. Run the cells from the top with a fresh kernel — later sections read the
+  configuration set in section 2.
+
+== Step 2: Load the base model from the cluster's mirror
+
+The notebook asks Thinkube Experiments where the model already is, and falls
+back to Hugging Face only if it is missing:
+
+[source,text]
+----
+Loading from local MLflow mirror: /home/thinkube/thinkube/mlflow/artifacts/...
+Parameters: 4,560,499,200 total, 21,233,664 trainable (0.47%)
+----
+
+A mirrored model is read from shared storage by every GPU node, so nothing is
+downloaded per node. If you see `No local mirror; downloading from HuggingFace`,
+mirror it first — that is the subject of xref:lifecycle/get-models.adoc[Get a model].
+
+== Step 3: Generate puzzles and measure the starting point
+
+The generator starts *from* a solution and invents clues for it, so every puzzle
+arrives with its answer key. That is why no labelling is needed.
+
+The notebook then scores the untrained model twice: on its own puzzles, and on
+*ZebraLogic*, a public benchmark it never trains on. Expect roughly:
+
+[source,text]
+----
+In-dist    solved=8%   cell_acc=0.313  parse=99%
+ZebraLogic solved=28%  cell_acc=0.527  parse=97%
+----
+
+Note the parse rate. The model can already emit well-formed rules — what it gets
+wrong is *which* rule. That is what training fixes.
+
+== Step 4: Train
+
+GRPO writes eight answers per puzzle, scores all eight with the solver, and
+pushes the above-average ones up. There is no target answer to imitate.
+
+Reward climbs from about 0.17 to its ceiling of 1.30, reaching it around step
+190. Training is the long part: *6 h 54 min for 250 steps* on a GB10.
+
+== Step 5: Record the run
+
+Section 10b opens a run in Thinkube Experiments and replays the whole training
+history into it — around 6,000 metric points. It logs *after* training rather
+than streaming, because the platform's bearer token expires in minutes and this
+run lasts hours.
+
+This matters more than it sounds: if the browser tab dies, the reward curve
+survives.
+
+== Step 6: Measure what changed
+
+[cols="1,1,1,1",options="header"]
+|===
+| | baseline | trained | change
+
+| in-dist puzzles solved | 8% | *99%* | +92 points
+| ZebraLogic puzzles solved | 28% | *67%* | +39 points
+| ZebraLogic cell accuracy | 0.527 | *0.782* | +0.255
+| rules that parsed | 97–99% | *100%* | —
+|===
+
+The row that matters is ZebraLogic. In-distribution accuracy can be reached by
+learning the generator's habits; a public benchmark written by other people
+cannot.
+
+== Step 7: Register and serve it
+
+The notebook merges the adapter into the base weights, uploads them, and
+registers a version *against the training run* — so the model version walks back
+to the reward curve that produced it. Then it loads on vLLM and calls it exactly
+as any stock model:
+
+[source,python]
+----
+from tk_llm import LLMClient, get_openai_client
+
+llm = LLMClient()
+llm.load_model("zebra-rules-qwen35-4b", node="tkspark")   # deployable → available
+
+client = get_openai_client()
+client.chat.completions.create(model="zebra-rules-qwen35-4b", messages=[...])
+----
+
+== What you have now
+
+A model you trained, versioned beside its experiment, served on your own
+hardware behind an OpenAI-compatible endpoint.
+
+Be precise about what it learned: *it translates better*. It does not reason
+better — the deduction was always the solver's, and nothing here measured the
+model solving puzzles without one. What the run demonstrates is that fine-tuning
+buys a large, verifiable accuracy gain on a bounded task.
+
+That is the shape worth reusing. Any task where a program can decide whether an
+output is right — text to SQL, documents to records, sentences to a knowledge
+graph — fits the same loop with the rule language and the solver swapped out.
+
+Next: xref:lifecycle/serve.adoc[Serve a model] for the serving surface on its own.

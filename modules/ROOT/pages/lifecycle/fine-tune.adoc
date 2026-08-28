@@ -1,5 +1,5 @@
 = Fine-tune a Model
-:page-type: tutorial
+:page-type: concept
 :page-docref: 5du7
 
 
@@ -9,6 +9,9 @@ _Fine-tune in the AI Lab and register the result in MLflow._
 ====
 Skeleton page: the structure is in place, the content is not yet written.
 ====
+
+For a worked run — mirror, train, register, serve, with the numbers it produced —
+see xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards].
 
 // SCREENSHOT: lab-finetune (ref wjld; mock — real capture in a follow-on spec)
 image::lab-finetune.svg[ref wjld — a fine-tuning notebook mid-run,role=mock-screenshot]

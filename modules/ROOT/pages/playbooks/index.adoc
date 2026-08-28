@@ -1,0 +1,29 @@
+= Playbooks
+:page-type: concept
+:page-docref: vk3d
+
+
+A playbook is a complete, opinionated run of the platform end to end: one task,
+carried from an empty GPU to something serving, with the numbers it actually
+produced.
+
+The rest of the documentation is organised by *stage* — get a model, fine-tune,
+serve. That is the right shape when you know which step you need. It is the
+wrong shape when you want to see whether the whole thing works, because a real
+piece of work crosses every stage and the interesting part is the seam between
+them.
+
+Each playbook ships as a notebook in the AI Lab under `examples/`, so the page
+you read and the code you run are the same thing. Every one of them states what
+it costs in time before you start, and reports the result it measured rather
+than a result it hopes for.
+
+[cols="1,2",options="header"]
+|===
+| Playbook | What it demonstrates
+
+| xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards]
+| Reinforcement learning with a program as the grader — no labels. Mirrors a
+  base model, trains a LoRA on your GPU, registers the result against its
+  experiment, and serves it through the LLM Gateway.
+|===

@@ -25,6 +25,10 @@
 * xref:lifecycle/build-apps.adoc[Build an app]
 * xref:lifecycle/serve.adoc[Serve a model]
 
+.Playbooks [.sec-ref]#vk3d#
+* xref:playbooks/index.adoc[What a playbook is]
+* xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards]
+
 .Reference [.sec-ref]#wt1c#
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]
 * xref:reference/templates.adoc[Templates catalog]
