@@ -191,6 +191,8 @@ Tests run in CI before the container is built, in the named image. A failure pre
 | `one` | string | Runs a single test file. `<file>` is replaced by the file's path relative to the container's `build` directory. Optional. Thinkube Tandem uses it to run one check at a time while it builds; when absent, Tandem infers it from the repository's own tests and keeps what it proves.
 |===
 
+Keep the test environment in one place. The application templates give each container a `run_tests.sh` that runs the whole suite without arguments and one file with a file argument, so `command` is `./run_tests.sh` and `one` is `./run_tests.sh <file>`, and the settings a test needs are set in the script, never repeated in this file.
+
 == spec.parts
 
 Only for a repository with `deployment.type: none`. Each part is a tree with its own toolchain: where its files are, and how its tests run there. A repository with containers does not declare parts; its containers are its parts.
