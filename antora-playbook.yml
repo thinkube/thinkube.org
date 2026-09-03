@@ -28,6 +28,11 @@ content:
     - url: https://github.com/thinkube/thinkube-tandem.git
       branches: v2/core
       start_path: docs
+    # docs-with-code: the web app template teaches the template round trip, and
+    # its pages live in the template they describe so they stay true to it.
+    - url: https://github.com/thinkube/tkt-webapp-react-fastapi.git
+      branches: main
+      start_path: docs
 
 ui:
   bundle:

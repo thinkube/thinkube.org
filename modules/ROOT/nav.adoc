@@ -30,6 +30,14 @@
 * xref:playbooks/research-assistant.adoc[Build a research assistant]
 * xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards]
 
+.Building templates [.sec-ref]#c5re#
+* xref:webapp-template:ROOT:index.adoc[The template round trip]
+* xref:webapp-template:ROOT:deploy.adoc[Deploy a template]
+* xref:webapp-template:ROOT:develop.adoc[Change the app and ship it]
+* xref:webapp-template:ROOT:create-a-template.adoc[Turn your app into a template]
+* xref:webapp-template:ROOT:variables.adoc[How configuration reaches your app]
+* xref:webapp-template:ROOT:anatomy.adoc[What is in the web app template]
+
 .Reference [.sec-ref]#wt1c#
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]
 * xref:reference/templates.adoc[Templates catalog]
