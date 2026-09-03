@@ -219,6 +219,14 @@
             ]
           }
         },
+        "publicEnv": {
+          "description": "Names of variables this container may show the browser. An allow-list; absent means nothing is published.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*$"
+          }
+        },
         "test": {
           "$ref": "#/definitions/test"
         },

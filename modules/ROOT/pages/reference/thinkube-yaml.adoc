@@ -56,6 +56,8 @@ spec:
         memory: string
       capabilities:         # Special capabilities (optional)
         - string            # e.g. "large-uploads"
+      publicEnv:            # Variables this container may show the browser (optional)
+        - string            # A variable name, e.g. "APP_TITLE"
       test:                 # Tests, run before the build in CI (optional)
         enabled: boolean    # default false
         command: string     # The whole suite (required when enabled)
@@ -173,6 +175,7 @@ At least one container, unless `deployment.type` is `none`.
 | `mounts` | list | `storage-name:/mount/path`. The storage must be declared under `services`.
 | `gpu` | object | `count` and `memory` are both required. The platform allocates that many GPUs with at least that memory each, preferring the smallest GPU that fits.
 | `capabilities` | list | `large-uploads` configures the gateway for uploads up to 1GB.
+| `publicEnv` | list | Names of variables this container may show the browser. See below.
 | `test` | object | See below.
 | `migrations` | object | `tool` is one of `alembic`, `django`, `flyway`, `liquibase`, `prisma`, `sequelize`, `gorm`, `custom`. `auto`, default `true`, runs them on startup.
 |===
@@ -192,6 +195,28 @@ Tests run in CI before the container is built, in the named image. A failure pre
 |===
 
 Keep the test environment in one place. The application templates give each container a `run_tests.sh` that runs the whole suite without arguments and one file with a file argument, so `command` is `./run_tests.sh` and `one` is `./run_tests.sh <file>`, and the settings a test needs are set in the script, never repeated in this file.
+
+=== containers[].publicEnv
+
+Names of variables this container may show the browser.
+
+A container reads its variables from its environment. A browser application cannot: it is a bundle built before the deployment exists, and by the time it runs it is a file served by a web server. `publicEnv` is how a variable crosses that gap. The platform sets `PUBLIC_ENV_VARS` in the container to the names listed here, and the image's entrypoint writes those variables, and only those, where the page can read them.
+
+[source,yaml]
+----
+containers:
+  - name: frontend
+    build: ./frontend
+    port: 80
+    health: /health
+    publicEnv:
+      - APP_TITLE
+      - API_BASE_URL
+----
+
+Any variable the container has can be named: one the platform sets such as `APP_TITLE`, one declared in `spec.env`, one wired from `dependencies`, or a parameter answered at deploy time. The list holds names, never values. Values reach the container from the deployment, so a template carries the list and never the answers.
+
+The list is an allow-list, and an absent list means nothing is published. This matters: every container receives the whole environment, including `POSTGRES_PASSWORD`, `KEYCLOAK_CLIENT_SECRET` and `ADMIN_PASSWORD`. A container that wrote its environment to the page would serve those to every visitor. Name a variable here only when it is safe for anyone who opens the application to read it, and treat a secret in this list as a disclosed secret.
 
 == spec.parts
 
@@ -286,6 +311,8 @@ Variables you can set when you deploy. thinkube-control shows them with their de
 | `default` | string | Optional.
 |===
 
+A variable declared here reaches the containers. To let a browser application read one, name it in that container's `publicEnv`.
+
 == Examples
 
 === A minimal application
@@ -332,6 +359,8 @@ spec:
       build: ./frontend
       port: 80
       health: /health
+      publicEnv:
+        - APP_TITLE
       test:
         enabled: true
         command: "npx vitest run"
@@ -473,4 +502,4 @@ Conditional logic, Kubernetes resources, cloud-specific settings, deployment str
 
 == Version
 
-v1.0. A static descriptor with one to many containers; routing, services, dependencies and configurable variables; Knative scaling; components with a fixed name and gateway-managed pods; health endpoints; per-container tests with the whole suite and one file; parts, deploy, verify and docs for repositories the platform does not deploy.
+v1.0. A static descriptor with one to many containers; routing, services, dependencies and configurable variables, with a per-container allow-list of the variables a browser application may read; Knative scaling; components with a fixed name and gateway-managed pods; health endpoints; per-container tests with the whole suite and one file; parts, deploy, verify and docs for repositories the platform does not deploy.
