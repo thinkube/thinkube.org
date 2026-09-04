@@ -16,6 +16,7 @@
 * xref:how-you-work/index.adoc[The cockpit]
 * xref:how-you-work/claude-code.adoc[Driving Thinkube from Claude]
 * xref:how-you-work/ai-lab.adoc[Thinkube AI Lab]
+* xref:tandem/reading-the-surface.adoc[Reading Tandem's pages]
 * xref:tandem/the-todo-walkthrough.adoc[A worked example: the todo app]
 * xref:control:ROOT:index.adoc[thinkube-control]
 
