@@ -1,0 +1,63 @@
+= A worked example: the todo app
+:description: The nine sentences a person wrote, and what Thinkube Tandem did with them, from an empty application to accepted work.
+
+_A walkthrough, written from a real run and kept as it happened. The sentences below are the whole input: nothing else was typed._
+
+== Why this example
+
+An application deployed from a template does what the template does. Making it do what *you* want is the ordinary work of a week, and it is the work Tandem is for. So the example starts where you would start: a fresh application from a template, and a list of things you wish it did.
+
+Nothing here is written in the language of software. There are no tickets, no acceptance criteria, no file names. Those are what the machine derives; they are not what you say.
+
+== The nine sentences
+
+[source,text]
+----
+My tasks come back in a sensible order — what is due soonest first, and high
+priority above low — instead of whatever order the database felt like.
+
+A task that is past its due date is obvious at a glance, not grey small print
+I have to read.
+
+Finished tasks stop crowding the ones I still have to do.
+
+I can see how many tasks I have without counting cards.
+
+I can look at just the high priority ones when I want to.
+
+When I open the new-task box the cursor is already in the title, so I can just
+type.
+
+I can add a task with the keyboard alone — type a title, press Enter, done.
+
+If I try to save a task with no title it tells me, instead of doing nothing.
+
+Deleting a task asks me first, because one mis-click should not lose work.
+----
+
+Read them again and notice what they are not. They do not say which file to
+change, which component holds the list, or how a task is stored. They say what
+a person wants to be true when they open the page.
+
+== What the machine made of them
+
+Nine sentences became three *things worth building on their own*:
+
+[cols="1,3"]
+|===
+| I can see at a glance what still needs doing | the first five sentences
+| I can add a task without leaving the keyboard | the next three
+| I never delete a task by accident | the last one
+|===
+
+That grouping is a proposal, not a decision. A person picks the thing to build,
+one at a time, and the delivery that comes back is about that thing alone.
+
+== What comes next
+
+The rest of this walkthrough — what each thing became, what the run did, what
+the delivery report said, and what happened when the work turned out wrong
+after it was merged — is written as the example is walked again on the current
+templates. It is kept here rather than in a private note because the method is
+the product: a person reading this should be able to type these nine sentences
+into their own application and watch the same thing happen.
