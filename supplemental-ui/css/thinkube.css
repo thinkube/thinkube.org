@@ -171,7 +171,7 @@ body.home #dgx-stamp { opacity: 0.5; }
 .btn-primary:hover { box-shadow: 0 8px 22px rgba(26,107,124,.28); }
 .btn-ghost { background: transparent; color: var(--th-primary); border-color: var(--th-primary); }
 
-/* The AI/ML loop */
+/* The AI loop */
 .loop {
   list-style: none; display: flex; justify-content: center; align-items: stretch;
   flex-wrap: wrap; gap: 0; margin: 3.5rem auto 0; padding: 0; max-width: 860px;

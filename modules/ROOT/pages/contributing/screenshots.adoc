@@ -15,7 +15,7 @@ land in a follow-on spec, swapping the mock by id.
 |===
 | ref | id | Page | What it shows | How | Status
 6+| *Start here*
-| `lowk` | `loop-diagram` | The AI/ML loop | the four-stage loop | ▢ | have
+| `lowk` | `loop-diagram` | The AI loop | the four-stage loop | ▢ | have
 | `n2j0` | `cp-dashboard` | Quickstart | thinkube-control dashboard right after login | 🤖 | mock
 6+| *Set up — recapture all (existing 17 are an old installer version)*
 | `mef2` | `installer-set` | Install Thinkube + the Set up pages | the full current installer walkthrough | ✋ | needed

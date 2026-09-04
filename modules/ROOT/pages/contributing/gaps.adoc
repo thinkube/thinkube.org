@@ -31,7 +31,7 @@ for captures — but the **prose is not yet written**. Every page below is there
 |===
 | Section | Gaps to fill
 
-| §1 Start here | Write *What is Thinkube* (the positioning), *The AI/ML loop*, and the *Quickstart*. The loop diagram exists; the quickstart needs the real fast-path + `cp-dashboard`.
+| §1 Start here | Write *What is Thinkube* (the positioning), *The AI loop*, and the *Quickstart*. The loop diagram exists; the quickstart needs the real fast-path + `cp-dashboard`.
 | §2 Set up | Content lives in `thinkube-installer` (live at `/install/`); **recapture the full walkthrough** against the current installer; re-verify each step's prose against the current flow.
 | §3 How you work | Author the cockpit (code-server + Claude + MCP), *Driving from Claude*, and *Thinkube AI Lab*; the control-panel reference is in the `control` repo and needs its tour written + `cp-overview`.
 | §4 The lifecycle | Author all five (loop, get-models, fine-tune, build, serve) from the real tools — the model catalog/mirror, JupyterHub+MLflow, `tkt-webapp-vue-fastapi`, the LLM Gateway/GPU/Knative. Heaviest capture load.

@@ -1,6 +1,6 @@
 .Start here [.sec-ref]#i8ll#
 * xref:start-here/what-is-thinkube.adoc[What is Thinkube]
-* xref:start-here/the-loop.adoc[The AI/ML loop]
+* xref:start-here/the-loop.adoc[The AI loop]
 * xref:start-here/quickstart.adoc[Quickstart]
 
 .Set up [.sec-ref]#o2fw#

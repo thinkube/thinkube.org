@@ -15,7 +15,7 @@ before the lifecycle, and peel down to *how it works* / *why* only if you want t
 
 .§1 — Start here
 * xref:start-here/what-is-thinkube.adoc[What is Thinkube] — _concept_
-* xref:start-here/the-loop.adoc[The AI/ML loop] — _concept_
+* xref:start-here/the-loop.adoc[The AI loop] — _concept_
 * xref:start-here/quickstart.adoc[Quickstart] — _tutorial_
 
 .§2 — Set up _(installer)_

@@ -1,4 +1,4 @@
 = Thinkube
 :page-layout: home
 
-Your own platform for the entire AI/ML lifecycle.
+Your own platform for the entire AI lifecycle.
