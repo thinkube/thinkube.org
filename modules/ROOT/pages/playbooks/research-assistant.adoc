@@ -1,106 +1,141 @@
 = Build a research assistant over your own papers
 :page-type: tutorial
 
-You will stand up a retrieval-augmented assistant on your own hardware — index a
-corpus of papers, ask it questions it answers from them, then have two agents
-argue an open research question using that index and a third judge the argument
-and write the code for the winner.
+_Check the platform's services from a notebook, load a chat model and an embedding model, index a corpus of papers in Qdrant, ask it questions with sources, then have two agents argue from the index and a third judge them. Four notebooks, run in order; what each one showed on the reference cluster._
 
-Four notebooks, run in order. Each one leaves something the next one uses, so the
-platform is assembled rather than demonstrated: services, then models, then
-retrieval, then agents.
+The four notebooks are under `thinkube/notebooks/examples/research-assistant/` in Thinkube Notebooks. Each leaves something the next one uses, so the platform is assembled rather than demonstrated: services, then models, then retrieval, then agents. There is no training here.
 
 .What you need
-* *Thinkube Notebooks* with the `agent-dev` venv
-* A GPU node with room for a chat model and an embedding model
-* Outbound access to arXiv for the paper fetch
+* Thinkube Notebooks with the `agent-dev` kernel. A node without a GPU is enough; the models run behind the LLM Gateway, not in the notebook.
+* The vLLM and text-embeddings backends installed from *Optional Components*, and a chat model and an embedding model mirrored. The run below used `Qwen/Qwen3.5-4B` and `Qwen/Qwen3-Embedding-0.6B`.
+* For notebooks `02` and `03`: the optional components Qdrant and Langfuse, and outbound access to arXiv. Langfuse needs ClickHouse and Valkey, which *Optional Components* lists as its requirements.
+* For the caching and messaging cells of `00`: Valkey and NATS.
 
-There is no training step here, so this is far shorter than
-xref:playbooks/zebra-grpo.adoc[the fine-tuning playbook]. The time goes on
-fetching papers, embedding them, and loading two models onto a GPU.
+Notebook `00` runs with whatever is present and says what is missing, so run it first even when you are confident.
 
-== Step 1: Check the platform is actually there
+== 1. Check the services are there
 
-Open `examples/research-assistant/` and run the `00-` notebook.
+Open `00-platform-validation.ipynb` with the `agent-dev` kernel and run all cells. It tries seven services in turn: the LLM Gateway, Qdrant, Langfuse, Thinkube Experiments, PostgreSQL, Valkey and NATS. Each cell prints a green line for a service it reached, a grey line for one it is not configured for, and a red line for one that answered with an error.
 
-It exercises seven services in turn and tells you which are reachable: the *LLM
-Gateway*, *Qdrant* for vectors, *Langfuse* for tracing, *Thinkube Experiments*
-for runs, *PostgreSQL*, *Valkey* for caching, and *NATS* for messaging between
-agents.
+On the reference cluster, run before the optional components were installed, it showed:
 
-Run this first even when you are confident. Every later notebook assumes these,
-and a missing service is far easier to read here than three notebooks later
-inside an agent loop.
+* *LLM Gateway*: connected; chat model `Qwen/Qwen3.5-4B` and embedding model `Qwen/Qwen3-Embedding-0.6B` loaded; the two GPU nodes with 3 of 4 slots free each. Then a red line: `'NoneType' object has no attribute 'strip'`. The chat test asks for one word with `max_tokens=20`. Qwen3.5 is a reasoning model and spends its budget thinking, so the visible answer came back empty. Notebook `01` makes the same call with `max_tokens=1024` and explains the budget; `02` and `03` switch thinking off. The red line is the cell reporting a real limit, not a broken gateway.
+* *Qdrant*: `404 (Not Found)`, because Qdrant was not installed yet.
+* *Langfuse*: not configured, because it was not installed yet.
+* *Thinkube Experiments*: connected; the cell created the `research-assistant-validation` experiment and a run named `platform-test`, and printed the link to it.
+* *PostgreSQL*: connected, PostgreSQL 18.6.
+* *Valkey*: connection reset, because it was not installed yet.
+* *NATS*: connected; the pub/sub test received its own message.
 
-== Step 2: Load the models you will use
+Install the missing components and run the notebook again; the grey and red lines turn green.
 
-The `01-` notebook is about model management: what the catalog offers, what your
-GPUs have room for, and how a model goes from *deployable* to *loading* to
-*available*.
+== 2. Load the models you will use
+
+`01-register-litellm.ipynb` is about model management: what the registry holds, what your GPUs have room for, and how a model goes from `deployable` to `loading` to `available`. It uses `tk_llm`, the platform's Python client:
 
 [source,python]
 ----
 from tk_llm import LLMClient, get_openai_client
 
 llm = LLMClient()
-llm.list_models()                       # catalog and state
-llm.get_load_options("<model>")         # nodes with free, measurable slots
-llm.load_model("<model>", node="<node>")
+llm.list_models()                     # registry and state
+llm.gpu_status()                      # nodes, slots, memory
+llm.load_model("<model>", node="<node>", max_context_length=32768)
 ----
 
-You need two: a chat model and an embedding model. Both are then reachable
-through one OpenAI-compatible endpoint, which is what lets the next two notebooks
-use LangChain and AG2 unmodified.
+On the reference cluster, with the two models already loaded, the cells showed:
 
-The unload cell at the end is worth remembering. Registry space is cheap; GPU
-slots are not.
+----
+Total models: 2
+  Available (loaded): 2
+  Deployable (ready to load): 0
+  Installed backends: vllm, text-embeddings
 
-== Step 3: Index a corpus and ask it questions
+Chat models (1):
+  🟢 loaded Qwen/Qwen3.5-4B — ~9GB — vllm
 
-The `02-` notebook builds the retrieval pipeline: fetch papers from arXiv, chunk
-them, embed the chunks, store them in Qdrant, and wire a chain that answers from
-what it retrieved.
+Embedding models (1):
+  🟢 loaded Qwen/Qwen3-Embedding-0.6B — ~1GB — text-embeddings
+----
 
-Two details in it are worth more than the pipeline itself:
+----
+Total GPU memory: 170 GB
+Used: 51 GB
+Can accept new model: Yes
 
-* *The corpus names its own foundations.* Rather than hand-listing the important
-  papers, the notebook lets citation patterns surface them — so the index is not
-  limited by what you already knew to look for.
-* *Chunking decides answer quality.* Left uncapped this corpus is 70% numbers,
-  and questions get answered from benchmark tables that contain no argument.
-  Reserved slots for prose and evidence are not tidiness; they are the difference
-  between a citation and a number.
+📍 tkamd2
+   GPU: NVIDIA-GeForce-RTX-3090-SHARED
+   Memory: 46 GB available of 48 GB total
+   Slots: 3/4 free (time-slicing active)
+   └─ Qwen/Qwen3-Embedding-0.6B (2.4 GB)
 
-Langfuse tracing is added here too, so every query decomposes into embed, search
-and generate with timings attached. When an answer is wrong, that trace tells you
-whether retrieval or generation failed.
+📍 tkspark
+   GPU: NVIDIA-GB10-SHARED
+   Memory: 73 GB available of 122 GB total
+   Slots: 3/4 free (time-slicing active)
+   └─ Qwen/Qwen3.5-4B (34.9 GB)
+----
 
-== Step 4: Put the index to work in an argument
+The load cells found both models already available and moved on. When nothing is loaded they pick the smallest deployable chat model and the smallest embedding model, choose the node with the most free memory, and ask for a 32k context, because the retrieval and debate in the next notebooks carry several thousand tokens of evidence per turn.
 
-The `03-` notebook runs a debate. Two agents take opposite sides of a genuinely
-unsettled question — whether to post-train a small model with reinforcement
-learning on verifiable rewards, or by distilling a larger model's traces — and
-each argues only from what `search_papers` returns from your index. A third agent
-judges, then retrieves algorithm blocks for the winning approach and writes an
-implementation grounded in them.
+The backends cell listed the two backends the gateway discovered, `vLLM (tkspark)` and `TEI (tkamd2)`, both healthy, each with its one model.
 
-The debate structure is the point. One model asked "which is better?" produces a
-balanced-sounding summary; two models made to argue and read each other surface
-the strongest objection to each position.
+The chat test asked what LoRA fine-tuning is, in two sentences, with `max_tokens=1024`:
 
-Re-run it with a different seed, or after adding papers. A verdict that flips is
-telling you the evidence is thin, which is itself worth knowing.
+----
+✅ Chat completion with Qwen/Qwen3.5-4B
+ℹ️  Tokens: 39 prompt + 973 completion
+ℹ️  The model reasoned for 4234 characters before answering
+----
+
+followed by a two-sentence answer. 973 completion tokens for two sentences is the reasoning: it is billed, and it is why the 20-token call in `00` came back empty.
+
+The embeddings test embedded three sentences and compared them:
+
+----
+✅ Embeddings with Qwen/Qwen3-Embedding-0.6B — 1024 dimensions
+📐 Semantic Similarity:
+  LoRA ↔ QLoRA:    0.833  (related topics)
+  LoRA ↔ Weather:  0.289  (unrelated)
+  QLoRA ↔ Weather: 0.260  (unrelated)
+----
+
+That is the property the next notebook builds on: closeness in meaning becomes closeness in space.
+
+Leave the models loaded; the unload cell at the end is commented out on purpose.
+
+== 3. Index a corpus and ask it questions
+
+`02-langchain-rag.ipynb` builds the retrieval pipeline over the 2025–2026 literature on reasoning post-training: fetch papers from arXiv, chunk them, embed the chunks through the gateway, store them in Qdrant with a payload you can filter on, and wire a chain that answers from what it retrieved, with Langfuse tracing every query.
+
+The numbers below are the ones the notebook carries from its saved run; the notebook was not re-run for this page because Langfuse was not yet installed on the reference cluster when it was written.
+
+*Fetch.* Three anchor papers are fetched by identifier, because keyword search cannot reach a field's founding paper, then three keyword searches of 50 results each, one per side of the debate plus background. With `FETCH_FULL_TEXT = False`, the default, only abstracts are indexed; arXiv's metadata is public domain. Switching it on downloads each paper's LaTeX source, which carries its own licence, and extracts algorithms, results tables, equations and the setup and limitations prose. The notebook says why that is a decision to make knowingly. Fetching is rate-limited to one request per three seconds, as arXiv asks.
+
+*Let the corpus name its foundations.* With sources fetched, the bibliographies are read, the most-cited works missing from the corpus are fetched by identifier, and they join as anchors. On the saved run the top of that ranking was DeepSeekMath, cited by 89 of 145 papers, DeepSeek-R1 with 88, and PPO with 69: the paper that introduced GRPO, the model that made it famous, and the algorithm it modifies.
+
+*Chunk.* Pieces of about 1,000 characters with 200 of overlap, tagged with their content type. Left uncapped, the full-text corpus was 70% numbers; capping results and equation chunks per paper brought the prose share from 30% to 52%.
+
+*Embed.* Batches of 32, because Text Embeddings Inference rejects a larger batch with a bare 422 that reaches the notebook as a 503 from the gateway. Items can come back out of order and are re-sorted by index.
+
+*Store.* A Qdrant collection with the embedding's dimension and cosine distance, uploaded in batches of 500 because a single request is capped at 32 MB. The saved run indexed 143 papers.
+
+*Ask.* Two settings decide whether the chain works at all, and both were found by reading answers rather than exit codes. `check_embedding_ctx_length=False`, because LangChain otherwise pre-tokenises the query with OpenAI's tokenizer and sends integers, which a non-OpenAI embedding server embeds as if they were words; measured on this notebook, the query vector's similarity to the same sentence sent as text was 0.30 with the default and 1.0 with the flag. And `enable_thinking: False`, because a reasoning model's thinking is billed against `max_tokens` and leaves nothing for the answer. The retriever reserves four prose chunks and two evidence chunks per question, so a conceptual question is answered with an argument rather than a benchmark grid.
+
+*Trace.* Langfuse's callback records each retrieval and each generation. The saved run's trace summary held 14 traces, 12 of them retrieval-and-answer and 2 embedding runs, and the notebook plots their latencies per trace type, because pooling the two produces a mean that describes neither.
+
+== 4. Put the index to work in an argument
+
+`03-multi-agent.ipynb` reads the collection `02` built and hands it to three AG2 agents. Two advocates argue opposite sides of a question the literature has not settled: whether to post-train a small model with reinforcement learning on verifiable rewards or by distilling a larger model's reasoning traces. Each can only cite what `search_papers` returns from your index. A judge scores both on five equally weighted criteria, declares a winner, and calls `generate_code`, which retrieves algorithm chunks for the winning approach and writes an implementation grounded in them, checked for completeness and syntax but never run.
+
+The notebook prefers a model whose serving stack advertises tool support, because the agents cannot cite anything unless the model can emit a well-formed call. Every advocate prompt says *search once, then argue* and ends every turn with a marker, because without the first an agent keeps searching and without the second the proxy cannot tell the turn is over. Thinking is switched off in three places for the same reason as in `02`.
+
+Rebuttals are what make it a debate rather than two monologues: each side reads the other's opening and answers it. Re-run it with a different seed, or after adding papers. A verdict that flips is telling you the evidence is thin, which is itself worth knowing.
+
+This notebook was not re-run for this page either; it needs the index from `02`.
 
 == What you have now
 
-A working retrieval assistant over a corpus you chose, running entirely on your
-own hardware: your models, your vector store, your traces.
+A retrieval assistant over a corpus you chose, running on your own hardware: your models, your vector store, your traces. Swap arXiv for your own documents and the same four steps hold, with Qdrant, the gateway and Langfuse unchanged.
 
-The pattern transfers directly. Swap arXiv for your own documents and the same
-four steps hold — validate, load, index, reason over it — with Qdrant, the
-gateway and Langfuse unchanged.
-
-If the debate leaves you wanting to run the winner rather than read about it,
-xref:playbooks/zebra-grpo.adoc[the fine-tuning playbook] does exactly that: it
-trains a model with reinforcement learning on rewards a program checks, and
-serves the result through the same gateway you loaded models with here.
+If the debate leaves you wanting to run the winner rather than read about it, xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards] trains a model with reinforcement learning on rewards a program checks and serves it through the same gateway.
