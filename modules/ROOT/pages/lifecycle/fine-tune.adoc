@@ -1,19 +1,37 @@
-= Fine-tune a Model
+= Fine-tune a model
 :page-type: concept
 
+_What fine-tuning looks like on Thinkube, and what to reach for._
 
-_Fine-tune in Thinkube Notebooks and register the result in MLflow._
+You fine-tune in Thinkube Notebooks, in an environment that is already built
+for your hardware, and the run is tracked in Thinkube Experiments. When the
+result is worth keeping, you register it, and it becomes a model you can
+serve.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+== The environment
 
-For a worked run — mirror, train, register, serve, with the numbers it produced —
-see xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards].
+The `fine-tuning` environment carries peft, trl, bitsandbytes and Unsloth,
+with the CUDA and torch versions pinned to what this hardware needs. It is
+built from a definition, per architecture, so it can be rebuilt rather than
+remembered. You can add packages to it or define your own from it.
 
-// SCREENSHOT: lab-finetune (ref wjld; mock — real capture in a follow-on spec)
-image::lab-finetune.svg[ref wjld — a fine-tuning notebook mid-run,role=mock-screenshot]
+== Tracking
 
-// SCREENSHOT: mlflow-registry (ref q1e7; mock — real capture in a follow-on spec)
-image::mlflow-registry.svg[ref q1e7 — the registered model in MLflow,role=mock-screenshot]
+Every run logs to Thinkube Experiments — parameters, metrics, artifacts.
+Registering a model against its run is what turns a checkpoint on disk into
+an entry in the catalogue, with the run that produced it one click away. From
+there the LLM Gateway can load it.
+
+== One GPU or several
+
+Unsloth's open version runs on one GPU; its multi-GPU support is in paid
+tiers. TRL with PEFT and accelerate scales across GPUs under Apache-2.0. Both
+are in the environment. If you have more than one card and want them all in
+the run, TRL is the path.
+
+== A complete run
+
+xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards] is the whole
+loop: mirror a base model, train with GRPO against a program that grades each
+attempt, evaluate before and after, register, serve, call. The notebook and
+the page are the same thing.

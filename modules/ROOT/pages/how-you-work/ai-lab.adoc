@@ -1,16 +1,66 @@
 = Thinkube Notebooks
 :page-type: how-to
 
+_Open a notebook, pick or build an environment, and find the playbooks._
 
-_JupyterHub notebooks and fine-tuning, with the Thinky assistant exposed over MCP._
+Thinkube Notebooks is JupyterHub, reachable from the dashboard. It shares its
+workspace with Thinkube IDE: a file you save in one is the same file in the
+other.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+== Open it
+
+From the thinkube-control dashboard, open Thinkube Notebooks. You are already
+logged in — it uses the same identity as everything else.
 
 // SCREENSHOT: lab-hub (ref t3nf; mock — real capture in a follow-on spec)
 image::lab-hub.svg[ref t3nf — the JupyterHub launcher/spawner,role=mock-screenshot]
-
 // SCREENSHOT: lab-notebook (ref sca7; mock — real capture in a follow-on spec)
 image::lab-notebook.svg[ref sca7 — a notebook with the Thinky assistant,role=mock-screenshot]
+
+== Pick an environment
+
+Environments appear as kernels. Two are ready:
+
+*  — peft, trl, bitsandbytes, Unsloth, with the CUDA and torch
+  pins set for this hardware
+*  — LangChain, CrewAI, AG2
+
+== Build your own
+
+Ask Claude in Thinkube IDE:
+
+----
+› make me a venv from agent-dev and add trackio and polars
+----
+
+Or in thinkube-control, under *Jupyter Kernels*, start from a template and add
+packages. Either way the environment is built for your architecture and
+appears as a kernel when it finishes.
+
+== Find the playbooks
+
+The playbooks ship as notebooks in the workspace under :
+ and . xref:playbooks/index.adoc[Playbooks]
+describes each.
+
+== Call a served model
+
+In any environment where  is available:
+
+[source,python]
+----
+from tk_llm import get_openai_client
+
+client = get_openai_client()
+response = client.chat.completions.create(
+    model="Qwen/Qwen3.5-4B",
+    messages=[{"role": "user", "content": "Hello"}],
+)
+----
+
+The client is pre-configured for your LLM Gateway; the model name is the one
+the catalogue shows.
+
+== Configure the hub
+
+thinkube-control, under *JupyterHub Config*.

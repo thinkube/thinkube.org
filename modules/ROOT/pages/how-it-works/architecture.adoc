@@ -1,10 +1,78 @@
 = Architecture
 :page-type: concept
 
+_What is on the machine after an install, layer by layer._
 
-_The two layers and the shape of the cluster._
+== Before the cluster
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+The installer runs on your laptop and deploys over SSH. Before Kubernetes
+exists it prepares each machine: grows the root volume Ubuntu leaves at
+100 GB, sets up SSH between nodes, checks the NVIDIA driver, and on a DGX
+Spark applies the unified-memory tuning. It joins the machines to your
+Tailscale network. Then it moves the tokens you entered onto the control-plane
+host, so the machine you ran the installer from can be put away.
+
+== The cluster
+
+kubeadm installs unmodified upstream Kubernetes. Cilium is the network and the
+load balancer. Routes are Gateway API. The cluster runs its own DNS, and
+certificates come from Let's Encrypt through your Cloudflare token — real
+certificates, which parts of the stack require.
+
+Every internal reference points at a stable virtual IP, and the one value tied
+to the physical network — the kubelet's node IP — is rewritten at boot from
+the default route. Move the machine to a different router and it comes back
+up.
+
+== Storage
+
+Thinkube Storage, powered by SeaweedFS, is S3-compatible object storage.
+JuiceFS puts a filesystem on top of it, and that filesystem is the workspace
+shared by Thinkube IDE, Thinkube Notebooks and thinkube-control. PostgreSQL
+holds relational data for the platform and for your applications.
+
+== Identity
+
+Thinkube Identity, powered by Keycloak, is the one login. Every service
+registers as a client, so you authenticate once and reach all of them.
+
+== The factory
+
+Thinkube Git (Gitea) holds your repositories. Argo Workflows builds images
+from them and pushes to Thinkube Registry (Harbor). ArgoCD deploys what the
+repository says. Thinkube Packages (DevPI) serves private Python packages.
+Thinkube IDE (code-server) is where you work, with Claude Code installed.
+xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop] is how they
+connect.
+
+== AI
+
+Thinkube Notebooks (JupyterHub) with environments built from definitions.
+Thinkube Experiments (MLflow) for runs and the model registry. The NVIDIA GPU
+Operator with time-slicing. The LLM Gateway, which loads models onto GPU
+nodes and exposes them as one endpoint.
+xref:how-it-works/gpu-multiarch.adoc[GPU & multi-arch] covers the budgeting.
+
+== Control
+
+thinkube-control is the web UI and the MCP endpoint, one application. It
+reads the catalogues — models, optional components, images — from
+`thinkube-metadata`, and it ships through the same deploy loop as your
+applications.
+
+== What survives what
+
+[cols="2,1,1,1",options="header"]
+|===
+| | Pod restart | Cluster rebuild | `thinkube-wipe.sh`
+
+| The shared workspace | kept | kept | emptied
+| Data in Thinkube Storage | kept | kept | removed
+| Harbor, Keycloak, PostgreSQL volumes | kept | removed | removed
+| Ubuntu, your account, sshd, the NVIDIA driver | kept | kept | kept
+|===
+
+A cluster rebuild is `19_rollback_control.yaml` followed by a fresh install:
+your files stay, the platform's databases start over. The wipe script returns
+the machine to as close to a fresh Ubuntu Server as it can, home directory
+included.

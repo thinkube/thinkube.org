@@ -1,13 +1,28 @@
-= Templates Catalog
+= Templates catalog
 :page-type: reference
 
+_Every template, what it deploys, and what it needs._
 
-_The tkt-* templates — app, component, and knative deployment types._
+A template is a repository with a `thinkube.yaml` and a Copier configuration.
+Deploying one gives you a running application and a git repository you own.
+The `type` comes from the descriptor: *app* is always on, *knative* scales to
+zero, *component* has a fixed name and is managed by the LLM Gateway.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+[cols="2,1,1,3",options="header"]
+|===
+| Template | Type | GPU | Deploys
 
-// SCREENSHOT: cp-templates (ref qzco; mock — real capture in a follow-on spec)
-image::cp-templates.svg[ref qzco — the templates screen,role=mock-screenshot]
+| `tkt-webapp-react-fastapi` | app | — | A web application: React frontend, FastAPI backend, PostgreSQL, with tests and migrations wired
+| `tkt-vllm-gradio` | component | yes | A model served by vLLM behind a Gradio chat UI
+| `tkt-text-embeddings` | component | yes | An embedding server (TEI), registered with Thinkube Experiments
+| `tkt-tensorrt-llm-harmony` | component | yes | A model served by TensorRT-LLM with NVFP4 on Blackwell, behind Gradio
+| `tkt-stable-diffusion` | app | yes | Stable Diffusion image generation
+| `tkt-knative-demo` | knative | — | A scale-to-zero service, for exercising Knative deployments
+| `tkt-seaweedfs` | app | — | A file gateway over Thinkube Storage: REST API and an upload UI
+|===
+
+Deploy one from thinkube-control under *Templates*, or ask Claude —
+`deploy the vLLM template`. xref:webapp-template:ROOT:index.adoc[The template
+round trip] shows what happens after, and
+xref:webapp-template:ROOT:create-a-template.adoc[Turn your app into a
+template] shows how an application you built becomes one of these.
