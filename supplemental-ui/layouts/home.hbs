@@ -8,23 +8,36 @@
     <main class="home-main">
 
       <section class="hero">
-        <p class="hero-eyebrow">Alpha · single-user · runs on DGX Spark and NVIDIA GPUs</p>
-        <h1 class="hero-title">Get a model, fine-tune, build, serve.<br><span class="accent">On hardware you own.</span></h1>
-        <p class="hero-sub">The setup a company's platform team would give you, if you had one:
-          Python environments already built for this machine, models downloaded once and served from
-          where they are, experiment tracking already running, and a path from a notebook to something
-          with an address. Certified Kubernetes underneath; the intent is that you never touch it.</p>
+        <p class="hero-eyebrow">Alpha · single-user · tested on a DGX Spark and an RTX 3090 workstation</p>
+        <h1 class="hero-title">The setup a platform team would give you.<br><span class="accent">If you had one.</span></h1>
+        <p class="hero-sub">Your machine stops breaking. Every experiment is findable. Every project
+          starts the same way, and there is a path from a notebook to something with an address — a
+          URL, a certificate, a login in front of it. You never have to learn Kubernetes, identity,
+          registries or GPU scheduling to get there.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="../install/overview.html">Get started</a>
-          <a class="btn btn-ghost" href="start-here/what-is-thinkube.html">What is Thinkube?</a>
+          <a class="btn btn-primary" href="start-here/what-is-thinkube.html">What is Thinkube?</a>
+          <a class="btn btn-ghost" href="../install/overview.html">Before you install</a>
         </div>
 
-        <ol class="loop" aria-label="The Thinkube AI loop">
-          <li class="loop-node"><span class="loop-num">1</span><span class="loop-label">Get models</span></li>
-          <li class="loop-node"><span class="loop-num">2</span><span class="loop-label">Fine-tune</span></li>
-          <li class="loop-node"><span class="loop-num">3</span><span class="loop-label">Build apps</span></li>
-          <li class="loop-node"><span class="loop-num">4</span><span class="loop-label">Serve</span></li>
-        </ol>
+        <ul class="facts" aria-label="What is different on a machine running Thinkube">
+          <li class="fact"><strong>Environments are built from definitions, not remembered.</strong>
+            Install one more package and what worked yesterday still works.</li>
+          <li class="fact"><strong>Models are downloaded once</strong>, stored, versioned, and served
+            from where they are. It says what fits on your hardware before you download.</li>
+          <li class="fact"><strong>Experiment tracking is already running</strong> and already logged
+            in. A run you cannot find did not happen; here you can find it.</li>
+          <li class="fact"><strong>A template, a git repository, an image, an address.</strong>
+            What you built stops being a notebook.</li>
+        </ul>
+      </section>
+
+      <section class="plain">
+        <span class="kicker">What comes out</span>
+        <h2 class="section-h">A git repository, not a configuration</h2>
+        <p class="plain-lead">Not a no-code platform. The easy part is the same — describe what you
+          want. What comes out is real code: source, a Dockerfile, tests, and about twenty lines
+          describing ports and routes, built into a standard image, running on certified Kubernetes.
+          Delete Thinkube tomorrow and that repository still builds and still deploys anywhere.</p>
       </section>
 
       <section class="cockpit">
@@ -57,6 +70,15 @@
         </div>
       </section>
 
+      <section class="plain alpha">
+        <span class="kicker">Alpha</span>
+        <h2 class="section-h">Two machines have run this. Yours will be the third kind.</h2>
+        <p class="plain-lead">Tested on a DGX Spark (GB10, arm64) and an x86-64 workstation with
+          RTX 3090s, both on Ubuntu 24.04. A future version may require reinstalling from scratch;
+          there is no promised migration path. Install it if you have a machine you can afford to
+          reinstall, and you would write down what happened.</p>
+      </section>
+
       <section class="journeys">
         <h2 class="section-h">Where to next</h2>
         <div class="card-grid">
@@ -83,8 +105,8 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 8 16 8"/></svg>
             </span>
             <span class="card-kicker">The lifecycle</span>
-            <h3 class="card-title">Get a model, fine-tune, build, serve</h3>
-            <p class="card-desc">The four stages, one at a time, each ending with something working.</p>
+            <h3 class="card-title">From a model to an address</h3>
+            <p class="card-desc">Get a model, fine-tune it, build something, serve it — one stage at a time.</p>
             <span class="card-arrow">The lifecycle <em>→</em></span>
           </a>
           <a class="card" href="reference/thinkube-yaml.html">
