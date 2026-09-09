@@ -1,13 +1,56 @@
-= The GitOps Deploy Loop
+= The GitOps deploy loop
 :page-type: concept
 
+_How `thinkube.yaml` becomes a running application, and why the manifests you never write are still in your repository._
 
-_Copier to Gitea to Argo Workflows/Kaniko to Harbor to ArgoCD, in about ninety seconds._
+----
+thinkube.yaml
+  → thinkube-control generates k8s/
+  → committed into your repository, pushed to Thinkube Git
+      ├─ webhook → Argo Workflows builds and pushes to Thinkube Registry
+      └─ ArgoCD watches the same repository and deploys
+----
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+== One repository is the source of truth
 
-// SCREENSHOT: argocd-sync (ref ad7g; mock — real capture in a follow-on spec)
-image::argocd-sync.svg[ref ad7g — ArgoCD mid-sync (mechanism, optional),role=mock-screenshot]
+You describe the application in `thinkube.yaml`. thinkube-control reads it,
+generates the Kubernetes manifests into a `k8s/` directory, and commits them
+*into your repository*. Then it pushes to Thinkube Git, powered by Gitea, at
+`git.<your domain>`.
+
+Two things watch that repository. A webhook triggers Argo Workflows, which
+builds your containers. ArgoCD watches the same repository — the `k8s/` path,
+at `HEAD`, over SSH — and syncs what it finds into your application's
+namespace.
+
+So the manifests exist, in git, versioned. You never write them, and you can
+read them whenever you want to.
+
+== The build
+
+Argo Workflows builds each container with Kaniko — in the cluster, without a
+Docker daemon — once per architecture the cluster has, then combines the
+results into a multi-arch manifest and pushes it to Thinkube Registry, powered
+by Harbor.
+
+The build tooling itself comes from Thinkube Registry. The installer mirrors
+Kaniko and the base images at install time, so builds do not depend on Docker
+Hub being reachable.
+
+Adding a node of a new architecture widens the builds automatically: an arm64
+node means arm64 images from then on.
+
+== The deploy
+
+ArgoCD applies what is in `k8s/`. A change to `thinkube.yaml` regenerates the
+manifests, the commit lands, ArgoCD notices, and the running application
+follows. Rolling back is checking out the previous commit.
+
+thinkube-control itself ships through this same loop. The control plane is not
+special-cased.
+
+== Where the descriptor is documented
+
+xref:reference/thinkube-yaml.adoc[thinkube.yaml] is the full specification.
+xref:webapp-template:ROOT:index.adoc[The template round trip] walks the loop
+with a real application.

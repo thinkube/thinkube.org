@@ -1,10 +1,53 @@
 = Certified Kubernetes
 :page-type: concept
 
+_What the certification covers, what it doesn't, and why Thinkube is an installer rather than a distribution._
 
-_kubeadm, CNCF-conformant, no lock-in._
+Thinkube installs Certified Kubernetes. The cluster it produces passed the
+CNCF conformance suite — 446 of 446 tests — on Kubernetes v1.36.4 on
+2026-09-09, and the result is submitted to the
+https://github.com/cncf/k8s-conformance[cncf/k8s-conformance] repository.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+== Installer, not distribution
+
+The CNCF distinguishes three kinds of product. A *distribution* "includes
+patches to the upstream codebase." An *installer* "downloads and then installs
+vanilla upstream Kubernetes." A *hosted platform* is a managed service.
+
+Thinkube is an installer. The cluster reports:
+
+----
+gitVersion:    v1.36.4
+gitCommit:     bb826b1d48562f110659e64e8ec444327433db95
+gitTreeState:  clean
+----
+
+That commit is the upstream release commit for v1.36.4. Nothing is patched,
+nothing is forked, and the version carries no vendor suffix. Compare k3s
+(`v1.36.0+k3s1`) or RKE2 (`v1.36.0+rke2r1`), which patch upstream and declare
+themselves distributions.
+
+Bundling components on top does not change the category. Keycloak, Harbor,
+MLflow and the rest sit above Kubernetes; the codebase underneath is untouched.
+
+== What it guarantees
+
+Anything you build on Thinkube targets standard Kubernetes. The images, the
+manifests and the descriptor that produced them run on any conformant cluster
+— a colleague's, a cloud provider's, a different installer's. Nothing is trapped
+by the layer you built it on.
+
+== What it doesn't
+
+The certification covers the Kubernetes layer and nothing above it. It says
+nothing about Thinkube Notebooks, the LLM Gateway or the templates. "Thinkube
+installs Certified Kubernetes" is accurate; "Thinkube is Certified Kubernetes"
+would claim more than the test measures.
+
+== Keeping it current
+
+Certification is per Kubernetes minor version, and the CNCF accepts the current
+release and the two before it. Thinkube tracks Cilium, which supports a new
+Kubernetes minor a few months after it ships, so the certified version is
+usually one behind the newest. That is the normal case: two weeks after 1.37
+shipped, 48 products were certified on 1.36 and two on 1.37.

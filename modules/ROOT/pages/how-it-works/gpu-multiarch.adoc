@@ -1,13 +1,64 @@
-= GPU and Multi-arch
+= GPU & multi-arch
 :page-type: concept
 
+_How GPUs are shared, how memory is budgeted on unified-memory hardware, and how one cluster runs amd64 and arm64 together._
 
-_arm64 (DGX Spark) and amd64; the GPU operator._
+== Time-slicing
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+The NVIDIA GPU Operator exposes each physical GPU as four slots by default.
+That is what lets one person run several workloads — a served model, a
+fine-tune, an embedding server — on one card. The number is configurable.
 
-// SCREENSHOT: gpu-multiarch (ref sgkb; mock — real capture in a follow-on spec)
-image::gpu-multiarch.svg[ref sgkb — nvidia-smi / node arch in a terminal,role=mock-screenshot]
+Slot accounting is backend-aware. vLLM, TensorRT-LLM and text-embeddings take
+one slot per model, because each model is its own pod. Ollama hosts many
+models in one pod and takes one slot for all of them.
+
+== Two memory models
+
+On a discrete GPU — an RTX 3090 or 4090 — GPU memory is separate from host
+RAM. The AI budget is the card's VRAM, and nothing is reserved.
+
+On the DGX Spark, GPU memory *is* host RAM: a single 128 GB pool shared with
+the operating system and the platform. The budget is therefore a fixed
+ceiling, not the whole device — **96 GB** when the platform runs on the same
+node, **112 GB** when the node is dedicated to AI. The remainder is what keeps
+the node from being driven into out-of-memory.
+
+The installer also tunes the Spark's kernel for this: swap disabled,
+`vm.swappiness=1`, `vm.dirty_bytes=256MB`. Without that, exhausting the shared
+pool produces a frozen node rather than a killed process.
+
+== Node profiles
+
+The default is all-in-one: the platform and your models share the node.
+Labelling a node `dedicated-ai` taints it so the platform stack moves off, and
+the LLM Gateway offers the larger budget.
+
+The order matters. The GPU Operator's own pods must tolerate the taint before
+it is applied, or they are evicted and the GPU disappears from the cluster.
+The playbook patches the tolerations first.
+
+== The utilisation floor
+
+vLLM takes a `gpu_memory_utilization` fraction. Set it too low and there is no
+room for the KV cache, and the server exits with "No available memory for the
+cache blocks." The LLM Gateway computes a floor from the model's weight size
+plus a framework overhead of 24 GB — about 6 GB measured on GB10 with
+`--enforce-eager`, plus a usable cache — and never sets utilisation below it.
+
+== Multi-arch
+
+One cluster can hold amd64 and arm64 nodes. Builds run once per architecture
+and produce a multi-arch image; notebook environments are built per
+architecture; the scheduler places each pod on a node that can run it.
+
+The arm64 side is where the platform carries builds that don't exist upstream:
+vLLM compiled from source for the GB10's compute capability, and Harbor images
+with the x86 binaries that community builds still contain replaced.
+
+== Hardware
+
+Two configurations have run this: the DGX Spark (GB10, arm64) and an x86-64
+workstation with RTX 3090s, both on Ubuntu 24.04. The GPU Operator supports
+the Spark and consumer and workstation NVIDIA cards; the installer requires
+driver 580 or newer.
