@@ -12,7 +12,7 @@ wrong shape when you want to see whether the whole thing works, because a real
 piece of work crosses every stage and the interesting part is the seam between
 them.
 
-Each playbook ships as a notebook in the AI Lab under `examples/`, so the page
+Each playbook ships as a notebook in Thinkube Notebooks under `examples/`, so the page
 you read and the code you run are the same thing. Every one of them states what
 it costs in time before you start, and reports the result it measured rather
 than a result it hopes for.

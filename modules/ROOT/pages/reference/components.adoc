@@ -8,7 +8,8 @@ thinkube-control under *Optional Components*, and each carries a toggle that
 scales it to zero — an installed component costs nothing until you use it.
 The LLM Gateway unloads models the same way.
 
-Where the platform shows a concept, this table gives the component behind it.
+The first column is the name the dashboard shows; the second is the component
+behind it.
 That is the name to search for when something goes wrong.
 
 == Core
@@ -17,19 +18,19 @@ That is the name to search for when something goes wrong.
 |===
 | Shown as | Component | What it does
 
-| Identity | Keycloak | One login across every service
-| Registry | Harbor | Container images, built here and mirrored from upstream
-| Git | Gitea | Your repositories, in-cluster
-| Builds | Argo Workflows | Builds images from your repositories
-| Deploys | ArgoCD | Deploys what Git says
-| Database | PostgreSQL | Relational storage for the platform and your apps
-| Object storage | SeaweedFS | S3-compatible; models and artifacts
-| Shared workspace | JuiceFS | The workspace shared by the three pillars, on SeaweedFS
-| Package index | DevPi | Private Python packages
-| Thinkube AI Lab | JupyterHub | Notebooks and environments
+| Thinkube Identity | Keycloak | One login across every service
+| Thinkube Registry | Harbor | Container images, built here and mirrored from upstream
+| Thinkube Git | Gitea | Your repositories, in-cluster
+| Argo Workflows | Argo Workflows | Builds images from your repositories
+| ArgoCD | ArgoCD | Deploys what Git says
+| PostgreSQL | PostgreSQL | Relational storage for the platform and your apps
+| Thinkube Storage | SeaweedFS | S3-compatible; models and artifacts
+| JuiceFS | JuiceFS | The workspace shared by the three pillars, on SeaweedFS
+| Thinkube Packages | DevPI | Private Python packages
+| Thinkube Notebooks | JupyterHub | Notebooks and environments
 | Thinkube Experiments | MLflow | Runs, registered models, the model registry
-| GPU | NVIDIA GPU Operator | Device access; four time-slice slots per GPU by default
-| Editor | code-server | With Claude Code installed
+| GPU Operator | NVIDIA GPU Operator | Device access; four time-slice slots per GPU by default
+| Thinkube IDE | code-server | With Claude Code installed
 | Control panel | thinkube-control | The web UI and the MCP endpoint
 | Cluster | kubeadm, Cilium | Unmodified upstream Kubernetes; Cilium as network and load balancer
 |===

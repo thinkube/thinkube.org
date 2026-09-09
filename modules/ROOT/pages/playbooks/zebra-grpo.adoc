@@ -12,7 +12,7 @@ run possible without a labelled dataset: the solver grades every attempt, so the
 reward is a program's verdict rather than a human's.
 
 .What you need
-* The *AI Lab* with the `fine-tuning` venv, on a node with a GPU
+* The *Thinkube Notebooks* with the `fine-tuning` venv, on a node with a GPU
 * Roughly *20 GB* of free GPU memory
 * Thinkube Experiments and the LLM Gateway reachable — xref:lifecycle/get-models.adoc[Get a model] covers the first
 * *About 9.5 hours* at full scale. Set `FULL_RUN = False` for a one-hour run that
@@ -20,7 +20,7 @@ reward is a program's verdict rather than a human's.
 
 == Step 1: Open the notebook
 
-. In the AI Lab, open `examples/zebra-grpo/zebra_grpo.ipynb`.
+. In Thinkube Notebooks, open `examples/zebra-grpo/zebra_grpo.ipynb`.
 . Select the *fine-tuning* kernel.
 . Run the cells from the top with a fresh kernel — later sections read the
   configuration set in section 2.

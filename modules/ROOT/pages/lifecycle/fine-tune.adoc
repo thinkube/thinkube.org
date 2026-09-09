@@ -2,7 +2,7 @@
 :page-type: concept
 
 
-_Fine-tune in the AI Lab and register the result in MLflow._
+_Fine-tune in Thinkube Notebooks and register the result in MLflow._
 
 [NOTE]
 ====

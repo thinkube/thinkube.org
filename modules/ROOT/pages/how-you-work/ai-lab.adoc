@@ -1,4 +1,4 @@
-= Thinkube AI Lab
+= Thinkube Notebooks
 :page-type: how-to
 
 

@@ -11,8 +11,8 @@ something you can point at.
 == Get a model
 
 You pick a model from the catalogue in thinkube-control and it is mirrored
-from Hugging Face into your own registry — stored once, versioned, and served
-from your storage from then on.
+from Hugging Face into Thinkube Registry — stored once, versioned, and served
+from Thinkube Storage from then on.
 
 Before you download anything, the platform tells you what will fit: which
 backends can run the model, which of your GPUs have room, and roughly how much
@@ -22,7 +22,7 @@ is configured from that rather than guessed.
 
 == Fine-tune
 
-You work in Thinkube AI Lab (JupyterHub). Python environments are built from
+You work in Thinkube Notebooks. Python environments are built from
 definitions: a `fine-tuning` environment with peft, trl, bitsandbytes and
 Unsloth, with the CUDA and torch pins already set for this hardware, and an
 `agent-dev` environment with LangChain, CrewAI and AG2. You can add packages

@@ -11,8 +11,8 @@ is left to the person building the thing.
 
 == Decided for you
 
-Identity is Keycloak. The registry is Harbor. The database is PostgreSQL.
-Object storage is SeaweedFS. Git is Gitea; builds and deploys are Argo
+Thinkube Identity is Keycloak. Thinkube Registry is Harbor. The database is
+PostgreSQL. Thinkube Storage is SeaweedFS. Thinkube Git is Gitea; builds and deploys are Argo
 Workflows and ArgoCD. The cluster is kubeadm with Cilium. You install none of
 these, configure none of them, and they're wired together before you log in.
 

@@ -3,8 +3,8 @@
 
 _From a fresh install to your first served model._
 
-You have installed Thinkube and can open code-server at its address. You will
-mirror a model into your registry, load it onto your GPU, call it from a
+You have installed Thinkube and can open Thinkube IDE at its address. You will
+mirror a model into Thinkube Registry, load it onto your GPU, call it from a
 notebook, and unload it.
 
 Each step is done by asking Claude Code. Each is also a click in
@@ -12,7 +12,7 @@ thinkube-control, under *AI Models* and *LLM Gateway*, if you prefer.
 
 == 1. Open code-server and start Claude
 
-Open code-server in your browser and log in.
+Open Thinkube IDE in your browser and log in.
 
 // SCREENSHOT: cp-dashboard (ref n2j0; mock — real capture in a follow-on spec)
 image::cp-dashboard.svg[ref n2j0 — thinkube-control dashboard right after login,role=mock-screenshot]
@@ -47,7 +47,7 @@ served by vLLM.
 › mirror Qwen/Qwen3.5-4B
 ----
 
-The download starts into your registry. How long it takes is your
+The download starts into Thinkube Registry. How long it takes is your
 connection's; ask for the status and Claude reads it. When it finishes, the
 model is stored once and served from your machine from then on.
 
@@ -62,7 +62,7 @@ Claude loads the model onto a GPU node with vLLM. It reports `loading`, then
 
 == 5. Call it
 
-Open Thinkube AI Lab and start a notebook in the `fine-tuning` environment,
+Open Thinkube Notebooks and start a new notebook in the `fine-tuning` environment,
 where `tk_llm` is available:
 
 [source,python]
@@ -91,7 +91,7 @@ The GPU memory comes back.
 == What you did
 
 You ran the *serve* stage of xref:start-here/the-loop.adoc[the AI loop] end
-to end: a model in your registry, served from your GPU, called from your
+to end: a model in Thinkube Registry, served from your GPU, called from your
 notebook. From here:
 
 * xref:playbooks/index.adoc[Playbooks] — complete runs across every stage

@@ -3,7 +3,7 @@
 
 _Why the assistant is part of the platform, not a tool you point at it._
 
-You open code-server and Claude Code is already there. The platform installed
+You open Thinkube IDE and Claude Code is already there. The platform installed
 it, with thinkube-control's own API in reach: every operation the control panel
 can perform is exposed to it as MCP tools. There is nothing to configure.
 

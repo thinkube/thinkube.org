@@ -6,17 +6,17 @@ _The three places you work, and what each is for._
 Thinkube gives you three surfaces. They share one workspace, so a file you
 edit in one is the same file in the others.
 
-== code-server with Claude
+== Thinkube IDE with Claude
 
-Your editor, in the browser. Claude Code is installed and connected to
+Your editor, in the browser, powered by code-server. Claude Code is installed and connected to
 thinkube-control's MCP tools, so operating the platform is something you ask
 for from a terminal — xref:how-you-work/claude-code.adoc[Drive Thinkube from
-Claude Code]. Git is configured against your own Gitea and your GitHub.
+Claude Code]. Git is configured against Thinkube Git and your GitHub.
 Thinkube Tandem is installed here too.
 
-== Thinkube AI Lab
+== Thinkube Notebooks
 
-JupyterHub, with Python environments built from definitions rather than
+Notebooks, powered by JupyterHub, with Python environments built from definitions rather than
 assembled by hand. The `fine-tuning` and `agent-dev` environments are ready;
 you can extend them or define your own from thinkube-control or by asking
 Claude. The xref:playbooks/index.adoc[playbooks] ship here as notebooks.
@@ -37,7 +37,7 @@ Gateway unloads models. What's running on your machine is what you're using.
 
 == One workspace
 
-The three share a persistent workspace. Edit a notebook in Thinkube AI Lab and
-open the same file in code-server; thinkube-control runs its playbooks from
+The three share a persistent workspace. Edit a notebook in Thinkube Notebooks and
+open the same file in Thinkube IDE; thinkube-control runs its playbooks from
 the same tree. It lives on your storage, outside the cluster, and survives a
 rebuild of the cluster underneath.

@@ -3,8 +3,8 @@
 
 _Ask for things in your editor instead of clicking through thinkube-control._
 
-Claude Code is installed in code-server by the platform, with thinkube-control's
-MCP tools already connected. Open a terminal in code-server and run `claude`.
+Claude Code is installed in Thinkube IDE by the platform, with thinkube-control's
+MCP tools already connected. Open a terminal in Thinkube IDE and run `claude`.
 Everything below is also a click in thinkube-control.
 
 == See what's running
@@ -31,7 +31,7 @@ tells you. For one service, it reads `get_service_details`.
 › mirror Qwen3.5-4B, then load it when it's ready
 ----
 
-`submit_model_mirror` starts the download into your registry;
+`submit_model_mirror` starts the download into Thinkube Registry;
 `get_mirror_status` reports when it has finished. Before loading, Claude can
 read `get_llm_load_options` to tell you which backends and GPU nodes fit.
 `load_llm_model` returns `loading` with the backend it chose;
@@ -51,7 +51,7 @@ read `get_llm_load_options` to tell you which backends and GPU nodes fit.
 
 `get_venv_templates` lists the starting points — `fine-tuning`, `agent-dev`.
 `create_jupyter_venv` defines yours; `build_jupyter_venv` builds it for your
-architecture. It appears in Thinkube AI Lab as a kernel.
+architecture. It appears in Thinkube Notebooks as a kernel.
 
 == When something is wrong
 

@@ -27,14 +27,26 @@ Use these spellings exactly:
 
 | Thinkube              | thinkube, ThinKube
 | thinkube-control      | Thinkube Control, the control panel app
-| code-server           | Code Server, VS Code
-| Thinkube AI Lab (JupyterHub) | Jupyter, the notebook server
+| Thinkube IDE          | code-server, Code Server, VS Code
+| Thinkube Notebooks    | Thinkube AI Lab, JupyterHub, Jupyter, the notebook server
+| Thinkube Experiments  | MLflow, the tracking server
+| Thinkube Registry     | Harbor, the registry
+| Thinkube Git          | Gitea
+| Thinkube Storage      | SeaweedFS, S3
+| Thinkube Identity     | Keycloak, SSO
+| Thinkube Packages     | DevPI, the package index
 | MCP tools             | MCP functions, the API
 | `thinkube.yaml`       | the manifest file, the config
 |===
 
-* Call the three interfaces the **three pillars**: code-server + Claude,
-  Thinkube AI Lab, thinkube-control.
+* The branded names above are the `display_name` each service registers for the
+  dashboard. Argo Workflows, ArgoCD, GPU Operator, JuiceFS and PostgreSQL keep
+  their own names. Name the implementation once where a reader might need to
+  search for it — "Thinkube IDE, powered by code-server" — and use the
+  implementation's name where the implementation is the point: error messages,
+  logs, the components catalog.
+* Call the three interfaces the **three pillars**: Thinkube IDE + Claude,
+  Thinkube Notebooks, thinkube-control.
 * The four lifecycle stages are **get a model → fine-tune → build → serve**.
 
 == Headings

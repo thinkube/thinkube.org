@@ -29,8 +29,8 @@ routes — and it is built, deployed, and given a URL behind a login.
 xref:start-here/the-loop.adoc[The AI loop] walks the four stages: get a model,
 fine-tune, build, serve.
 
-You work through three pillars: code-server with Claude, Thinkube AI Lab
-(JupyterHub), and thinkube-control. xref:how-you-work/index.adoc[How you work]
+You work through three pillars: Thinkube IDE with Claude, Thinkube
+Notebooks, and thinkube-control. xref:how-you-work/index.adoc[How you work]
 describes each.
 
 Underneath is Kubernetes, unmodified and certified. You don't have to learn
