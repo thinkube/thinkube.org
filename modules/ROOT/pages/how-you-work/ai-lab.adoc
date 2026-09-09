@@ -21,9 +21,9 @@ image::lab-notebook.svg[ref sca7 — a notebook with the Thinky assistant,role=m
 
 Environments appear as kernels. Two are ready:
 
-*  — peft, trl, bitsandbytes, Unsloth, with the CUDA and torch
+* `fine-tuning` — peft, trl, bitsandbytes, Unsloth, with the CUDA and torch
   pins set for this hardware
-*  — LangChain, CrewAI, AG2
+* `agent-dev` — LangChain, CrewAI, AG2
 
 == Build your own
 
@@ -39,13 +39,13 @@ appears as a kernel when it finishes.
 
 == Find the playbooks
 
-The playbooks ship as notebooks in the workspace under :
- and . xref:playbooks/index.adoc[Playbooks]
+The playbooks ship as notebooks in the workspace under `examples/`:
+`research-assistant/` and `zebra-grpo/`. xref:playbooks/index.adoc[Playbooks]
 describes each.
 
 == Call a served model
 
-In any environment where  is available:
+In any environment where `tk_llm` is available:
 
 [source,python]
 ----
