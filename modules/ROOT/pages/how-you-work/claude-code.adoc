@@ -1,13 +1,79 @@
-= Driving Thinkube from Claude
+= Drive Thinkube from Claude Code
 :page-type: how-to
 
+_Ask for things in your editor instead of clicking through thinkube-control._
 
-_Deploy templates, load models, check GPUs, manage services — all via MCP from your editor._
+Claude Code is installed in code-server by the platform, with thinkube-control's
+MCP tools already connected. Open a terminal in code-server and run `claude`.
+Everything below is also a click in thinkube-control.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+== See what's running
 
-// SCREENSHOT: cockpit-mcp-call (ref nl8j; mock — real capture in a follow-on spec)
-image::cockpit-mcp-call.svg[ref nl8j — a Claude+MCP action in the editor,role=mock-screenshot]
+----
+› what's running, and is anything unhealthy?
+----
+
+Claude reads `list_services_minimal` and `get_service_health_history` and
+tells you. For one service, it reads `get_service_details`.
+
+== Deploy a template
+
+----
+› deploy the vLLM template
+----
+
+`deploy_template` queues the deployment and returns `pending`. Claude polls
+`get_deployment_status` until it reports `running`, and tells you the address.
+
+== Get a model and serve it
+
+----
+› mirror Qwen3.5-4B, then load it when it's ready
+----
+
+`submit_model_mirror` starts the download into your registry;
+`get_mirror_status` reports when it has finished. Before loading, Claude can
+read `get_llm_load_options` to tell you which backends and GPU nodes fit.
+`load_llm_model` returns `loading` with the backend it chose;
+`get_llm_model_status` reaches `available`.
+
+----
+› unload it
+----
+
+`unload_llm_model` frees the memory.
+
+== Build a notebook environment
+
+----
+› make me a fine-tuning venv with unsloth and add trackio
+----
+
+`get_venv_templates` lists the starting points — `fine-tuning`, `agent-dev`.
+`create_jupyter_venv` defines yours; `build_jupyter_venv` builds it for your
+architecture. It appears in Thinkube AI Lab as a kernel.
+
+== When something is wrong
+
+----
+› jupyterhub isn't loading — what's going on?
+----
+
+Claude reads `describe_pod`, `get_container_logs` and
+`get_service_health_history` for the service, and tells you what it found.
+If a restart is the fix, it asks before calling `restart_service`.
+
+== Find it in the documentation
+
+----
+› where is thinkube.yaml documented?
+----
+
+`search_thinkube_docs` returns the matching pages; `get_thinkube_doc` reads
+one. The answer comes from the documentation deployed in your cluster.
+
+== What it can and cannot do
+
+Reads are resources: Claude consults them freely. Changes are tools: Claude
+uses them only when asked. xref:how-it-works/mcp-operation-model.adoc[The MCP
+operation model] explains the split.

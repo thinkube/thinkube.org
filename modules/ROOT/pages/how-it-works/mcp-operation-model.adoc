@@ -1,10 +1,57 @@
-= The MCP Operation Model
+= The MCP operation model
 :page-type: concept
 
+_How thinkube-control's API becomes resources and tools for an assistant, and why the split matters._
 
-_Why the platform is operated through MCP, and why that path is the durable one._
+thinkube-control is a FastAPI application. Every endpoint carries an
+`operation_id`, and the application is wrapped with `ExtendedFastApiMCP` and
+mounted at `/mcp` alongside the web UI. One codebase serves both; there is no
+separate MCP implementation to fall out of step.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+The operations exposed over MCP are chosen deliberately, in an include list
+annotated in the source. Each is classified as a resource or a tool.
+
+== Resources
+
+`GET` endpoints become resources — things the assistant may read as context
+without being asked. Among them:
+
+* `list_services_minimal`, `get_service_details`, `get_service_health_history`
+* `describe_pod`, `get_container_logs`
+* `get_cluster_resources`, `get_llm_gpu_status`
+* `get_model_catalog`, `get_llm_load_options`, `get_deployment_status`
+* `search_thinkube_docs`, `get_thinkube_doc`
+
+A resource answers a question. It changes nothing.
+
+== Tools
+
+Endpoints that change state become tools — used only when you ask. Among them:
+
+* `deploy_template`, `redeploy_template`
+* `submit_model_mirror`, `load_llm_model`, `unload_llm_model`
+* `create_jupyter_venv`, `build_jupyter_venv`
+* `toggle_service`, `restart_service`, `install_optional_component`
+
+A tool is an instruction. The assistant does not reach for one on its own.
+
+== Why the split
+
+Diagnosis before action. An assistant that can read a pod's logs and health
+history can work out what is wrong before it touches anything, and can tell
+you what it found. An assistant that could only act would have to guess.
+
+And nothing mutates without a request. The line between "look" and "do" is
+drawn in the API, not left to the assistant's judgement.
+
+== The documentation as a resource
+
+`search_thinkube_docs` and `get_thinkube_doc` read the documentation site
+deployed inside the cluster. Until that deployment exists, the tool returns
+`docs_not_deployed` with the instruction to deploy it. Once it does, the
+assistant answers documentation questions from the pages themselves.
+
+== Where to find them
+
+thinkube-control's own documentation lists every operation:
+xref:control:ROOT:index.adoc[Control panel & MCP tools].

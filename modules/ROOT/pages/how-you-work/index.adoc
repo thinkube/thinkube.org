@@ -1,13 +1,43 @@
-= The Cockpit
+= The cockpit
 :page-type: concept
 
+_The three places you work, and what each is for._
 
-_code-server + Claude + MCP is the primary way to operate Thinkube; the GUIs are the visual alternative._
+Thinkube gives you three surfaces. They share one workspace, so a file you
+edit in one is the same file in the others.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+== code-server with Claude
 
-// SCREENSHOT: cockpit-session (ref 8ik1; mock — real capture in a follow-on spec)
-image::cockpit-session.svg[ref 8ik1 — code-server with a live Claude Code session,role=mock-screenshot]
+Your editor, in the browser. Claude Code is installed and connected to
+thinkube-control's MCP tools, so operating the platform is something you ask
+for from a terminal — xref:how-you-work/claude-code.adoc[Drive Thinkube from
+Claude Code]. Git is configured against your own Gitea and your GitHub.
+Thinkube Tandem is installed here too.
+
+== Thinkube AI Lab
+
+JupyterHub, with Python environments built from definitions rather than
+assembled by hand. The `fine-tuning` and `agent-dev` environments are ready;
+you can extend them or define your own from thinkube-control or by asking
+Claude. The xref:playbooks/index.adoc[playbooks] ship here as notebooks.
+
+== thinkube-control
+
+The browser panel. Everything the assistant can do is a click here, grouped
+as:
+
+* *Dashboard* — favourites, all services, Knative services
+* *Deployment & infrastructure* — LLM Gateway, AI Models, Templates, Harbor
+  Images, Optional Components, Cluster Nodes
+* *Configuration & security* — Jupyter Kernels, JupyterHub Config, Secrets,
+  API Tokens
+
+Non-core components carry a toggle that scales them to zero, and the LLM
+Gateway unloads models. What's running on your machine is what you're using.
+
+== One workspace
+
+The three share a persistent workspace. Edit a notebook in Thinkube AI Lab and
+open the same file in code-server; thinkube-control runs its playbooks from
+the same tree. It lives on your storage, outside the cluster, and survives a
+rebuild of the cluster underneath.
