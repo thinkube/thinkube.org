@@ -1,13 +1,99 @@
 = Quickstart
 :page-type: tutorial
 
-
 _From a fresh install to your first served model._
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+You have installed Thinkube and can open code-server at its address. You will
+mirror a model into your registry, load it onto your GPU, call it from a
+notebook, and unload it.
+
+Each step is done by asking Claude Code. Each is also a click in
+thinkube-control, under *AI Models* and *LLM Gateway*, if you prefer.
+
+== 1. Open code-server and start Claude
+
+Open code-server in your browser and log in.
 
 // SCREENSHOT: cp-dashboard (ref n2j0; mock — real capture in a follow-on spec)
 image::cp-dashboard.svg[ref n2j0 — thinkube-control dashboard right after login,role=mock-screenshot]
+
+Open a terminal and run:
+
+----
+claude
+----
+
+Ask it something that needs the platform:
+
+----
+› what's running?
+----
+
+You get back the list of services. That confirms the MCP tools are connected.
+
+== 2. Choose a model that fits
+
+----
+› which models in the catalogue would fit on my GPU?
+----
+
+Claude reads the catalogue and your GPU status and answers. For a first run,
+`Qwen/Qwen3.5-4B` is a reasonable choice: 4.7 billion parameters, BF16,
+served by vLLM.
+
+== 3. Mirror it
+
+----
+› mirror Qwen/Qwen3.5-4B
+----
+
+The download starts into your registry. How long it takes is your
+connection's; ask for the status and Claude reads it. When it finishes, the
+model is stored once and served from your machine from then on.
+
+== 4. Load it
+
+----
+› load Qwen/Qwen3.5-4B
+----
+
+Claude loads the model onto a GPU node with vLLM. It reports `loading`, then
+`available`. The LLM Gateway now exposes it.
+
+== 5. Call it
+
+Open Thinkube AI Lab and start a notebook in the `fine-tuning` environment,
+where `tk_llm` is available:
+
+[source,python]
+----
+from tk_llm import get_openai_client
+
+client = get_openai_client()
+response = client.chat.completions.create(
+    model="Qwen/Qwen3.5-4B",
+    messages=[{"role": "user", "content": "Hello"}],
+)
+print(response.choices[0].message.content)
+----
+
+The client is pre-configured for your gateway. The model name is the one the
+catalogue shows.
+
+== 6. Unload it
+
+----
+› unload Qwen/Qwen3.5-4B
+----
+
+The GPU memory comes back.
+
+== What you did
+
+You ran the *serve* stage of xref:start-here/the-loop.adoc[the AI loop] end
+to end: a model in your registry, served from your GPU, called from your
+notebook. From here:
+
+* xref:playbooks/index.adoc[Playbooks] — complete runs across every stage
+* xref:lifecycle/build-apps.adoc[Build an app] — put something in front of a model
+* xref:how-you-work/claude-code.adoc[Drive Thinkube from Claude Code] — everything else you can ask for

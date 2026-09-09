@@ -1,13 +1,66 @@
-= Components Catalog
+= Components catalog
 :page-type: reference
 
+_Every component, what provides it, and whether it stays running._
 
-_The core services and the optional components you can install._
+Core components are always present. Optional components are installed from
+thinkube-control under *Optional Components*, and each carries a toggle that
+scales it to zero — an installed component costs nothing until you use it.
+The LLM Gateway unloads models the same way.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+Where the platform shows a concept, this table gives the component behind it.
+That is the name to search for when something goes wrong.
 
-// SCREENSHOT: cp-components (ref jydt; mock — real capture in a follow-on spec)
-image::cp-components.svg[ref jydt — the optional-components / install screen,role=mock-screenshot]
+== Core
+
+[cols="1,1,2",options="header"]
+|===
+| Shown as | Component | What it does
+
+| Identity | Keycloak | One login across every service
+| Registry | Harbor | Container images, built here and mirrored from upstream
+| Git | Gitea | Your repositories, in-cluster
+| Builds | Argo Workflows | Builds images from your repositories
+| Deploys | ArgoCD | Deploys what Git says
+| Database | PostgreSQL | Relational storage for the platform and your apps
+| Object storage | SeaweedFS | S3-compatible; models and artifacts
+| Shared workspace | JuiceFS | The workspace shared by the three pillars, on SeaweedFS
+| Package index | DevPi | Private Python packages
+| Thinkube AI Lab | JupyterHub | Notebooks and environments
+| Thinkube Experiments | MLflow | Runs, registered models, the model registry
+| GPU | NVIDIA GPU Operator | Device access; four time-slice slots per GPU by default
+| Editor | code-server | With Claude Code installed
+| Control panel | thinkube-control | The web UI and the MCP endpoint
+| Cluster | kubeadm, Cilium | Unmodified upstream Kubernetes; Cilium as network and load balancer
+|===
+
+== Optional
+
+[cols="1,1,2,2",options="header"]
+|===
+| Component | Category | Needs | What it does
+
+| vLLM | ai | — | Inference backend for the LLM Gateway
+| TensorRT-LLM | ai | — | NVIDIA-optimised inference backend
+| Ollama | ai | Harbor | Inference backend for quantised GGUF models
+| text-embeddings | ai | — | Embedding backend (TEI)
+| LiteLLM | ai | Harbor, Keycloak, PostgreSQL, SeaweedFS | OpenAI-compatible proxy across backends
+| Langflow | ai | Keycloak, PostgreSQL | Visual builder for LLM applications
+| Langfuse | ai | PostgreSQL, Keycloak, ClickHouse, Valkey | Tracing and observability for LLM applications
+| Chroma | ai | Harbor | Vector store
+| Qdrant | ai | — | Vector store
+| Weaviate | ai | Harbor | Vector store
+| Argilla | ai | Harbor, Keycloak, OpenSearch, Valkey | Data labelling and curation
+| CVAT | ai | — | Image and video annotation
+| ClickHouse | data | — | Column-oriented analytics database
+| OpenSearch | data | — | Search and analytics
+| Valkey | data | — | Cache and key-value store (Redis-compatible)
+| pgAdmin | data | PostgreSQL, Keycloak | Web UI for PostgreSQL
+| Knative | infrastructure | — | Scale-to-zero serving
+| NATS | infrastructure | — | Messaging
+| Prometheus | monitoring | — | Metrics
+| Perses | monitoring | Keycloak, Prometheus | Dashboards
+|===
+
+Every optional component's needs resolve into the core. That is why
+installing one is a toggle rather than provisioning.
