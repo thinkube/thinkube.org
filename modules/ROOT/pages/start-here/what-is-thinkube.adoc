@@ -1,10 +1,81 @@
-= What Is Thinkube
+= What is Thinkube
 :page-type: concept
 
+_A way to develop and experiment with AI on machines you own, so the setup stops breaking and the work stops getting lost._
 
-_Single-user, self-hosted platform for the whole AI lifecycle on a CNCF-conformant Kubernetes._
+You have notebooks with real work in them. You can't always tell which run
+produced which checkpoint. You've installed one more package, broken the CUDA
+chain, and reformatted. And the thing you built a while ago is still a
+notebook, because turning it into something a colleague can open is a
+different job.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+Thinkube is the setup a company's platform team would give you, if you had
+one. It installs on your own hardware and gives you three things.
+
+== What it gives you
+
+*Your machine stops breaking.* Python environments are built from definitions
+and kept apart from each other and from the system. Installing one more thing
+into one of them cannot take the others down. If something does go wrong, every
+component can be removed again.
+
+*Every experiment is findable.* Models are pulled once and kept in a registry
+with their versions. Runs are tracked. The platform tells you what fits on your
+hardware before you download it.
+
+*There is a path from a notebook to something with an address.* Describe an
+application in about twenty lines of `thinkube.yaml` — containers, ports,
+routes — and it is built, deployed, and given a URL behind a login.
+xref:start-here/the-loop.adoc[The AI loop] walks the four stages: get a model,
+fine-tune, build, serve.
+
+You work through three pillars: code-server with Claude, Thinkube AI Lab
+(JupyterHub), and thinkube-control. xref:how-you-work/index.adoc[How you work]
+describes each.
+
+Underneath is Kubernetes, unmodified and certified. You don't have to learn
+it. When it does surface, Claude Code has the logs and the pod state through
+MCP tools, so you are not the one reading `kubectl` documentation at eleven at
+night.
+
+== What comes out is a repository
+
+Thinkube is not a no-code platform. The input is similar — describe what you
+want — but what comes out is a git repository, not a configuration inside
+someone else's runtime. Real code, a Dockerfile, tests, a standard image. If
+Thinkube disappeared tomorrow, that repository would still build and deploy
+anywhere Kubernetes runs.
+
+== What it is not
+
+*Not multi-user.* One GPU cannot serve two developers. Four time-slice slots, a
+30B model taking three of them, a fine-tune holding a card for six hours — two
+people on that is a queue with an argument attached. Thinkube is single-user
+and doesn't pretend otherwise.
+
+*Not multi-cluster.* Cross-cluster failure modes are a support surface one
+maintainer cannot carry.
+
+*Not a cloud service.* Owning the hardware is the point. The platform runs
+without any external service. The development half uses Claude Code, which is
+a paid service from Anthropic and a real dependency.
+
+== Alpha
+
+Two hardware configurations have run this:
+
+* DGX Spark (GB10, arm64), Ubuntu 24.04
+* An x86-64 workstation with RTX 3090s, Ubuntu 24.04
+
+Yours will be the third kind. A future version may require reinstalling from
+scratch, and there is no promised migration path.
+
+If you have a machine you can afford to reinstall and would write down what
+happened, xref:install:ROOT:overview.adoc[install it]. If this is your only
+machine and losing a week would hurt, wait.
+
+== Where next
+
+* xref:start-here/the-loop.adoc[The AI loop] — the four stages, in two minutes
+* xref:start-here/quickstart.adoc[Quickstart] — from a fresh install to a served model
+* xref:why/the-story.adoc[The story] — how it came to be built this way
