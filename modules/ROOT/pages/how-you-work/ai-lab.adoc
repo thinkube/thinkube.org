@@ -45,10 +45,12 @@ image::cp-jupyter-kernels.png[The Jupyter Kernels page of thinkube-control]
 
 == Find the example notebooks
 
-The first time a server starts, the example notebooks are copied into your workspace under `examples/`:
+The first time a server starts, the example notebooks are copied into the notebooks folder of the shared filesystem. In the file browser they are under `thinkube/notebooks/examples/`:
 
-* `examples/research-assistant/`: four notebooks, `00` to `03`, that build a retrieval assistant and a debate between agents;
-* `examples/zebra-grpo/`: one notebook that fine-tunes a model on solver-graded rewards, registers it and serves it, with `zebra_dataset.py` beside it.
+* `research-assistant/`: four notebooks, `00` to `03`, that build a retrieval assistant and a debate between agents;
+* `zebra-grpo/`: one notebook that fine-tunes a model on solver-graded rewards, registers it and serves it, with `zebra_dataset.py` beside it.
+
+The same folder is `~/thinkube-ai/notebooks/examples/` in a terminal of Thinkube IDE.
 
 xref:playbooks/index.adoc[Playbooks] describes each and reports what a run showed.
 

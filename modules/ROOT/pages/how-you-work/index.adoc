@@ -15,7 +15,7 @@ xref:how-you-work/claude-code.adoc[Drive Thinkube from Claude Code] shows what t
 
 == Thinkube Notebooks
 
-Thinkube Notebooks is JupyterHub, at `notebooks.<your domain>`. When you start a server you choose the node, the cores, the memory and the GPUs from a form that shows what each node has free. Two environments are built at install, `fine-tuning` and `agent-dev`; they appear as kernels. The example notebooks are in the workspace under `examples/`.
+Thinkube Notebooks is JupyterHub, at `notebooks.<your domain>`. When you start a server you choose the node, the cores, the memory and the GPUs from a form that shows what each node has free. Two environments are built at install, `fine-tuning` and `agent-dev`; they appear as kernels. The example notebooks are in the file browser under `thinkube/notebooks/examples/`.
 
 image::notebooks-spawn.png[The Server Options form of Thinkube Notebooks: node, CPU cores, memory and GPUs]
 

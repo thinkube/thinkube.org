@@ -1,126 +1,125 @@
 = Fine-tune a model on rewards a program can check
 :page-type: tutorial
 
-You will train a 4B model on your own GPU, register it, and call it through the
-LLM Gateway — the whole loop, ending with a model that did not exist when you
-started.
+_Train a 4B model on your own GPU without a labelled dataset, register it beside its run, serve it through the LLM Gateway and call it. Every number below is from the run recorded in the notebook, on one GB10._
 
-The task is a zebra puzzle: five houses, fifteen clues, fill in the grid. The
-twist is that *the model never solves it*. It translates each clue into a formal
-rule, and a constraint solver deduces the grid. That division is what makes the
-run possible without a labelled dataset: the solver grades every attempt, so the
-reward is a program's verdict rather than a human's.
+You will run `zebra_grpo.ipynb`, under `thinkube/notebooks/examples/zebra-grpo/` in Thinkube Notebooks. It takes a base model from the cluster's mirror, trains a LoRA adapter with GRPO, measures before and after on two sets of puzzles, merges and registers the result in Thinkube Experiments, loads it on vLLM and calls it through the gateway. The model you call at the end is one you trained.
+
+The task is a zebra puzzle: five houses, fifteen clues, fill in the grid. The model never solves the puzzle. It translates each clue into one formal rule, and a constraint solver deduces the grid from the rules. That division is what removes the need for labels: the solver grades every attempt, so the reward is a program's verdict.
 
 .What you need
-* The *Thinkube Notebooks* with the `fine-tuning` venv, on a node with a GPU
-* Roughly *20 GB* of free GPU memory
-* Thinkube Experiments and the LLM Gateway reachable — xref:lifecycle/get-models.adoc[Get a model] covers the first
-* *About 9.5 hours* at full scale. Set `FULL_RUN = False` for a one-hour run that
-  still shows the model learning.
+* Thinkube Notebooks with the `fine-tuning` kernel, on a node with a GPU with roughly 20 GB free.
+* `unsloth/Qwen3.5-4B` mirrored: it is the base model, and the notebook reads it from the mirror.
+* The LLM Gateway with the vLLM backend installed, for the last step.
+* Thinkube Experiments reachable, which it is from every notebook.
 
-== Step 1: Open the notebook
+.Two scales
+The notebook's `FULL_RUN` flag picks the scale. Full is the default: 2,000 training puzzles, 200 in each evaluation set, 250 steps. It is the run that produced the results below, and it is an overnight job on one GPU. `FULL_RUN = False` runs 500 training puzzles, 50 in each evaluation set and 60 steps; every stage runs the same way, and on the recorded run in-distribution accuracy went from 6% to 20%. Use the small scale to see the loop learn and to check your GPU, environment and gateway; use the full scale when you want the model.
 
-. In Thinkube Notebooks, open `examples/zebra-grpo/zebra_grpo.ipynb`.
-. Select the *fine-tuning* kernel.
-. Run the cells from the top with a fresh kernel — later sections read the
-  configuration set in section 2.
+== 1. Open the notebook with a fresh kernel
 
-== Step 2: Load the base model from the cluster's mirror
+In Thinkube Notebooks, start a server on a GPU node with one GPU, open `thinkube/notebooks/examples/zebra-grpo/zebra_grpo.ipynb`, and select the *fine-tuning* kernel. Run from the top: section 2 sets every value the later sections read, and a stale value from an earlier run is the easiest way to get a result that looks fine and is not.
 
-The notebook asks Thinkube Experiments where the model already is, and falls
-back to Hugging Face only if it is missing:
+The first code cell clears two debugging flags and sets `UNSLOTH_SKIP_TORCHVISION_CHECK=1`. The image ships a torchvision one minor version behind what its PyTorch asks for, and Unsloth says so on import. Do not fix that by installing torchvision: it pins an exact PyTorch, so pip would put a second PyTorch inside the environment and every compiled extension would stop loading. Nothing here uses torchvision.
 
-[source,text]
+== 2. Load the base model from the mirror
+
+The cell asks Thinkube Experiments where `unsloth/Qwen3.5-4B` is mirrored and loads it from that path on the shared filesystem. It prints `Loading from local MLflow mirror:` followed by the path, then the parameter count. If it prints `No local mirror; downloading from HuggingFace` instead, stop and mirror the model first, from *AI Models* or by asking Claude Code; a mirror is read by every GPU node and downloaded once.
+
+The model is loaded in bfloat16 with FlashAttention-2 and wrapped with a LoRA adapter of rank 16 on the attention and MLP projections. The notebook reports about 21 million trainable parameters, 0.47% of the model's 4.5 billion. That is what fits one GPU and what makes the result a 60 MB adapter rather than a second copy of the model.
+
+To check whose PyTorch you are running:
+
+[source,python]
 ----
-Loading from local MLflow mirror: /home/thinkube/thinkube/mlflow/artifacts/...
-Parameters: 4,560,499,200 total, 21,233,664 trainable (0.47%)
-----
-
-A mirrored model is read from shared storage by every GPU node, so nothing is
-downloaded per node. If you see `No local mirror; downloading from HuggingFace`,
-mirror it first — that is the subject of xref:lifecycle/get-models.adoc[Get a model].
-
-== Step 3: Generate puzzles and measure the starting point
-
-The generator starts *from* a solution and invents clues for it, so every puzzle
-arrives with its answer key. That is why no labelling is needed.
-
-The notebook then scores the untrained model twice: on its own puzzles, and on
-*ZebraLogic*, a public benchmark it never trains on. Expect roughly:
-
-[source,text]
-----
-In-dist    solved=8%   cell_acc=0.313  parse=99%
-ZebraLogic solved=28%  cell_acc=0.527  parse=97%
+import torch, os
+print(torch.__version__, os.path.dirname(torch.__file__))
 ----
 
-Note the parse rate. The model can already emit well-formed rules — what it gets
-wrong is *which* rule. That is what training fixes.
+A path under `/usr/local/lib/python3.12/dist-packages` is the image's build, which is what you want.
 
-== Step 4: Train
+== 3. Generate the puzzles
 
-GRPO writes eight answers per puzzle, scores all eight with the solver, and
-pushes the above-average ones up. There is no target answer to imitate.
+`zebra_dataset.py` starts from a solution, invents clues for it, and checks with the solver that exactly one arrangement satisfies them, so every puzzle carries its own answer key. Training uses seed 1 and evaluation seed 99, and the cell asserts the two sets share no solution before it prints `Train/eval disjoint: confirmed` with the two set sizes. An evaluation set the model trained on would measure memory, not learning, and the assertion is where you find that out.
 
-Reward climbs from about 0.17 to its ceiling of 1.30, reaching it around step
-190. Training is the long part: *6 h 54 min for 250 steps* on a GB10.
+Generation is CPU work; the solver rejects far more candidates than it keeps.
 
-== Step 5: Record the run
+== 4. Load the public benchmark
 
-Section 10b opens a run in Thinkube Experiments and replays the whole training
-history into it — around 6,000 metric points. It logs *after* training rather
-than streaming, because the platform's bearer token expires in minutes and this
-run lasts hours.
+The cell loads `WildEval/ZebraLogic` from Hugging Face, the ZebraLogic benchmark with its solutions intact, converts each row to the notebook's puzzle shape, and keeps the 5-house puzzles. Nothing here is trained on; it measures whether the skill transfers to clues written by other people in other words.
 
-This matters more than it sounds: if the browser tab dies, the reward curve
-survives.
+== 5. Measure the starting point
 
-== Step 6: Measure what changed
+The untrained model translates 200 of your puzzles and 200 ZebraLogic puzzles, sampling at the values Qwen's model card gives for non-thinking use. The result is cached to `eval_baseline_rules_200x200.json`, because training changes the model in place and the untrained numbers are otherwise unrecoverable. On the recorded run the untrained model solved 8% of its own puzzles, with a cell accuracy of 0.313 and 99% of answers parsing, and 28% of the ZebraLogic puzzles, with a cell accuracy of 0.527 and 97% parsing.
 
-[cols="1,1,1,1",options="header"]
+The parse rate is the thing to notice. The model already emits a well-formed JSON array of rules; what it gets wrong is which rule.
+
+== 6. Train
+
+GRPO writes eight answers per puzzle, scores all eight with the solver, and pushes the above-average ones up and the below-average ones down. There is no target answer to imitate. The reward is the fraction of the 25 grid cells the solver gets right from the translated rules, plus 0.05 for one rule per clue and 0.25 for a fully correct grid.
+
+Watch the reward, not the loss: in GRPO the loss says how far the policy moved, not how good the answers are. On the recorded run the reward reached its ceiling around step 190 and stayed flat for the last sixty steps; a shorter run would likely have reached the same place.
+
+Two failures at this stage look like your bug and are environment problems: a `FailOnRecompileLimitHit` at step 0 means Unsloth is older than the PyTorch it runs against; a compiled kernel complaining about a tensor without storage means an extension built against a different PyTorch.
+
+== 7. Record the run in Thinkube Experiments
+
+Section 10b opens a run in the `zebra-grpo` experiment, logs every value that shaped the run as a parameter, and replays the whole training history into it: every step's reward, loss and completion length. It logs after training rather than during it because the platform's bearer token expires while a run this long is still going; a live stream would fail quietly partway through. The cell prints the run id, the experiment id, how many metric points it logged, and the link to the run at `experiments.<your domain>`.
+
+If the browser tab dies during training, this is what keeps the curve.
+
+== 8. Measure what changed
+
+The same puzzles, the same sampling, the same grader; only the adapter changed. The recorded run:
+
+[cols="2,1,1,1",options="header"]
 |===
 | | baseline | trained | change
 
-| in-dist puzzles solved | 8% | *99%* | +92 points
-| ZebraLogic puzzles solved | 28% | *67%* | +39 points
-| ZebraLogic cell accuracy | 0.527 | *0.782* | +0.255
-| rules that parsed | 97–99% | *100%* | —
+| in-distribution puzzles solved | 8% | 99% | +92 points
+| in-distribution cell accuracy | 0.313 | 0.995 | +0.682
+| ZebraLogic puzzles solved | 28% | 67% | +39 points
+| ZebraLogic cell accuracy | 0.527 | 0.782 | +0.255
+| rules that parsed, both sets | 97–99% | 100% | —
 |===
 
-The row that matters is ZebraLogic. In-distribution accuracy can be reached by
-learning the generator's habits; a public benchmark written by other people
-cannot.
+The row that matters is ZebraLogic. In-distribution accuracy can be reached by learning the generator's habits; a benchmark written by other people cannot. The results are appended to the same run.
 
-== Step 7: Register and serve it
+Section 12 then prints one unseen puzzle clue by clue beside the rule the model wrote and the solver's grid, cell by cell against the truth. That is where the failures live: a `left_of` where the clue said right, an invented rule type the solver skipped, one contradictory rule that pushed the solver to a different grid.
 
-The notebook merges the adapter into the base weights, uploads them, and
-registers a version *against the training run* — so the model version walks back
-to the reward curve that produced it. Then it loads on vLLM and calls it exactly
-as any stock model:
+== 9. Register the model
+
+Section 14 merges the adapter into the base weights, writes an ordinary model directory to the staging area on the shared filesystem, uploads it through the same S3 gateway Thinkube Experiments uses, and creates a registered model version with `run_id` set to the training run. Open the version in Thinkube Experiments and it walks back to the reward curve and the parameters that produced it. The cell prints the registered name, the version number and the run it is linked to. A long upload can outlive the bearer token that started it, so the cell fetches a fresh token before it creates the version.
+
+Registering makes the model exist. Loading needs the catalogue too: `zebra-rules-qwen35-4b` is in `thinkube-metadata/models.json` with `is_finetuned: true` and `server_type: ["vllm"]`. A fine-tune of your own with another name needs its own entry, or `load_model` answers "not found".
+
+== 10. Serve it and call it
+
+The last cell asks the gateway which nodes could take the model, picks one with a free slot whose GPU metrics are readable, loads it, waits for `available`, and translates a fresh puzzle through the gateway:
 
 [source,python]
 ----
 from tk_llm import LLMClient, get_openai_client
 
 llm = LLMClient()
-llm.load_model("zebra-rules-qwen35-4b", node="tkspark")   # deployable → available
+opts = llm.get_load_options("zebra-rules-qwen35-4b")
+node = next(n.name for n in opts.gpu_nodes if n.available_slots > 0 and n.metrics_available)
+llm.load_model("zebra-rules-qwen35-4b", node=node)   # deployable → loading → available
 
 client = get_openai_client()
 client.chat.completions.create(model="zebra-rules-qwen35-4b", messages=[...])
 ----
 
-== What you have now
+The gateway returns rules; the solver in the notebook finishes the job locally. That is the deployed shape of the whole notebook: the model formalises, the machine deduces, and a solver cannot produce a grid that contradicts the rules it was given.
 
-A model you trained, versioned beside its experiment, served on your own
-hardware behind an OpenAI-compatible endpoint.
+When you are done, `llm.unload_model("zebra-rules-qwen35-4b")` gives the slot back. The model stays registered and loads again from the shared filesystem.
 
-Be precise about what it learned: *it translates better*. It does not reason
-better — the deduction was always the solver's, and nothing here measured the
-model solving puzzles without one. What the run demonstrates is that fine-tuning
-buys a large, verifiable accuracy gain on a bounded task.
+== What you have, and what it is not
 
-That is the shape worth reusing. Any task where a program can decide whether an
-output is right — text to SQL, documents to records, sentences to a knowledge
-graph — fits the same loop with the rule language and the solver swapped out.
+A model you trained, versioned beside its experiment, served on your own hardware behind the same endpoint as every stock model.
 
-Next: xref:lifecycle/serve.adoc[Serve a model] for the serving surface on its own.
+Be precise about what it learned: it translates better. It does not deduce; the deduction was always the solver's, and nothing here measured the model solving a puzzle without one. What the run shows is a large, verifiable accuracy gain on a bounded task, which is what fine-tuning is good for. The same loop applies wherever a program can decide whether an output is right — text to SQL, documents to records, sentences to a knowledge graph — with the rule language and the solver swapped out. Where the only judge is a person, reach for supervised fine-tuning or better prompts instead.
+
+== On the reference cluster
+
+This page is written from the run the notebook carries, made on one GB10 in a DGX Spark. The notebook has not been re-run at full scale for this page; the reference cluster's GPUs were holding the served models the other playbooks use while it was written.

@@ -3,16 +3,23 @@
 
 _Load a mirrored model onto a GPU, call it, and unload it when you're done._
 
-In thinkube-control this is *LLM Gateway*.
+In thinkube-control this is *LLM Gateway*. The inference engines are optional
+components; install vLLM, TensorRT-LLM, Ollama or text-embeddings from
+*Optional Components* first, and the gateway discovers them.
+
+image::cp-llm-serve.png[The LLM Gateway page of thinkube-control with two models loaded: a chat model on the DGX Spark through vLLM, an embedding model on the RTX 3090 node through text-embeddings]
 
 == Load it
 
 ----
-› load Qwen/Qwen3-8B
+› load Qwen/Qwen3.5-4B on the spark with a 32k context
 ----
 
-The LLM Gateway picks a backend and a node and loads the model. It reports
-`loading`, then `available`.
+The LLM Gateway picks a backend and, unless you name one, a node, and loads
+the model. It answers `loading` with the backend it chose, then `available`.
+On the reference cluster, `Qwen/Qwen3.5-4B` loaded through `vllm-tkspark`;
+the page then showed the model holding one of the Spark's four slots with an
+estimated 34.9 GB of its unified memory, and the backend healthy.
 
 == Choose how it loads
 
@@ -30,7 +37,7 @@ Loading takes options. Say them in words, or set them in thinkube-control:
   configuration, the draft depth.
 
 ----
-› load Qwen3-8B on the spark with a 16k context
+› load Qwen/Qwen3.5-4B on tkamd2 with a 16k context
 ----
 
 == See what's loaded
@@ -53,18 +60,28 @@ from tk_llm import get_openai_client
 
 client = get_openai_client()
 response = client.chat.completions.create(
-    model="Qwen/Qwen3-8B",
+    model="Qwen/Qwen3.5-4B",
     messages=[{"role": "user", "content": "Hello"}],
 )
 ----
 
 From anywhere else, any OpenAI client pointed at the gateway with a token
-from thinkube-control under *API Tokens*.
+from thinkube-control under *API Tokens*, sent as a bearer token or as
+`x-api-key`. The same call from a shell on the reference cluster, with
+"Say hello in one word." and thinking switched off, came back with
+`Hello!` and a usage of 18 prompt tokens and 3 completion tokens.
+
+Qwen3.5 is a reasoning model: it thinks before it answers, and the thinking
+is charged against `max_tokens`. With a small budget the visible answer is
+empty; the notebooks that call it either pass
+`extra_body={"chat_template_kwargs": {"enable_thinking": False}}` or leave
+room with `max_tokens=1024`. With a 20-token budget and thinking on, the
+first example notebook got no content back at all.
 
 == Unload it
 
 ----
-› unload Qwen/Qwen3-8B
+› unload Qwen/Qwen3.5-4B
 ----
 
 The slot and the memory come back. Loading it again is fast: the weights are

@@ -7,7 +7,7 @@ The rest of the documentation is organised by stage: get a model, fine-tune, bui
 
 A playbook crosses those seams in one run. Each one on this site was run on the reference cluster, and the page reports what appeared at each step, including the steps that failed and what was done about them. Nothing on these pages is a result the author hoped for.
 
-Two of the three ship as notebooks in Thinkube Notebooks, under `examples/`, so the page you read and the code you run are the same thing. The third is a walkthrough of Thinkube Tandem on a deployed application.
+Two of the three ship as notebooks in Thinkube Notebooks, under `thinkube/notebooks/examples/` in the file browser, so the page you read and the code you run are the same thing. The third is a walkthrough of Thinkube Tandem on a deployed application.
 
 == The three
 
