@@ -1,5 +1,6 @@
 .Start here
 * xref:start-here/what-is-thinkube.adoc[What is Thinkube]
+* xref:start-here/what-you-get.adoc[What you get]
 * xref:start-here/the-loop.adoc[The AI loop]
 * xref:start-here/quickstart.adoc[Quickstart]
 * xref:why/the-story.adoc[The story]
@@ -45,7 +46,7 @@
 .How it works
 * xref:how-it-works/architecture.adoc[Architecture]
 * xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop]
-* xref:how-it-works/certified-kubernetes.adoc[Certified Kubernetes]
+* xref:how-it-works/kubernetes-underneath.adoc[Kubernetes underneath]
 * xref:how-it-works/gpu-multiarch.adoc[GPU & multi-arch]
 * xref:how-it-works/mcp-operation-model.adoc[The MCP operation model]
 * xref:how-it-works/components.adoc[Platform components]

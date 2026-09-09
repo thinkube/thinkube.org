@@ -46,7 +46,7 @@ before the lifecycle, and peel down to *how it works* / *why* only if you want t
 * xref:control:ROOT:index.adoc[Control panel & MCP tools] — _reference (control)_
 
 .§7 — How it works
-* xref:how-it-works/architecture.adoc[Architecture] · xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop] · xref:how-it-works/certified-kubernetes.adoc[Certified Kubernetes] · xref:how-it-works/gpu-multiarch.adoc[GPU & multi-arch] · xref:how-it-works/mcp-operation-model.adoc[The MCP operation model] · xref:how-it-works/components.adoc[Platform components] — all _concept_
+* xref:how-it-works/architecture.adoc[Architecture] · xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop] · xref:how-it-works/kubernetes-underneath.adoc[Kubernetes underneath] · xref:how-it-works/gpu-multiarch.adoc[GPU & multi-arch] · xref:how-it-works/mcp-operation-model.adoc[The MCP operation model] · xref:how-it-works/components.adoc[Platform components] — all _concept_
 
 .§8 — Why it's built this way
 * xref:why/the-story.adoc[MicroK8s to kubeadm] · xref:why/opinions-on-a-standard.adoc[Opinions on a standard] · xref:why/single-user-by-design.adoc[Single-user by design] · xref:why/operated-by-conversation.adoc[Operated by conversation] — all _concept_

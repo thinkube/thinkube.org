@@ -38,7 +38,7 @@ store suits your retrieval problem, and it would be wrong to have one.
 == The standard underneath
 
 The Kubernetes under all of this is unmodified upstream, installed by
-kubeadm, and certified. Nothing is forked. So the opinions rest on a
+kubeadm, unmodified. Nothing is forked. So the opinions rest on a
 standard, and what you build on them — a git repository, a standard image —
 runs anywhere that standard runs. The opinions save you the setup; the
 standard means they don't trap you.

@@ -47,8 +47,8 @@ sample uses Docker, and giving that up wasn't an option. That needs two
 containerd instances, and k8s-snap's containerd configuration didn't allow
 it. So: kubeadm. The question that came with it — does including kubeadm make
 this a Kubernetes distribution? — has an answer now.
-xref:how-it-works/certified-kubernetes.adoc[It doesn't.] The cluster is
-unmodified upstream, and it's certified.
+xref:how-it-works/kubernetes-underneath.adoc[It doesn't.] The cluster is
+unmodified upstream Kubernetes, installed with kubeadm.
 
 == Then a real application
 

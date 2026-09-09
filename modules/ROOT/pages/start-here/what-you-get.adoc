@@ -1,0 +1,148 @@
+= What you get
+:page-type: reference
+
+_The inventory. Each line is something that is installed and running after the installer finishes, described as it is._
+
+== The installer
+
+* A desktop application for Linux and macOS. It runs on your laptop and
+  deploys to your Ubuntu machines over SSH. The laptop is the client, not a
+  node; when the install is done the tokens have moved to the control plane and
+  the laptop can be put away.
+* A wizard. It asks for accounts, not skills: a domain, a Cloudflare token, a
+  GitHub token, a Hugging Face token. You never create a DNS record, issue a
+  certificate, or write a renewal hook.
+* Before Kubernetes exists it prepares each machine: grows the root volume
+  Ubuntu leaves at 100 GB, sets up SSH between the nodes, checks the NVIDIA
+  driver, applies the unified-memory tuning on a DGX Spark (swap off, the
+  sysctls that stop a GB10 freezing instead of OOM-killing), and joins every
+  machine to your Tailscale network.
+* Everything it installs it can also remove, over SSH. A wipe script returns
+  the machine to Ubuntu, your account, sshd and the NVIDIA driver.
+* Docker is left alone. NVIDIA's playbooks keep running beside the platform;
+  the two share the GPU.
+
+== Infrastructure
+
+* Unmodified upstream Kubernetes, installed with kubeadm. Cilium is the network
+  and the load balancer; routes are Gateway API.
+* Multi-node and mixed-architecture: arm64 and x86-64 in one cluster, the
+  control plane on one machine and the GPU on another, or everything on one
+  Spark.
+* The cluster runs its own DNS for `*.yourdomain`, on your network. Every
+  service has a name and a Let's Encrypt certificate. No public DNS records are
+  created; nothing listens on the internet.
+* Tailscale. The same names reach the same services from anywhere, on a
+  private network, with no port forwarding and no public IP. The data stays
+  where the hardware is.
+* The machine can move. Every internal reference points at a stable virtual
+  IP; the one value tied to the physical network is rewritten at boot from the
+  default route. Different router, different country: plug in and boot.
+* One login. Thinkube Identity fronts every service — the IDE, the notebooks,
+  the registry, git, the experiment tracker, the control panel, and every
+  optional component that lists it.
+* Thinkube Storage, S3-compatible, with a shared filesystem on top of it that
+  the IDE, the notebooks and the control panel all mount. PostgreSQL for the
+  platform and for your applications. The shared filesystem lives outside the
+  cluster: rebuild the cluster and your work is still there.
+* 16 core components and a catalogue of 20 optional ones — vector databases
+  (Chroma, Qdrant, Weaviate), Langfuse, Langflow, LiteLLM, Argilla, Ollama,
+  Prometheus, pgAdmin and more. Installing one is one gesture: the dependencies
+  are declared and the substrate they need is already running and already
+  integrated with the login.
+* Every optional component has a switch that scales it to zero. On a machine
+  where GPU memory is host memory, nothing you are not using stays resident.
+* Autodiscovery. Every component, and every application you deploy, registers
+  itself with a name, a category, a URL and a health endpoint. The control
+  panel's dashboard is built from that: what is running, what is healthy, where
+  it is. Nothing is added to a list by hand.
+
+== Models
+
+* A catalogue of 66 models with parameters, quantisation, context length,
+  which backends can serve each one, stop tokens and licence. A model that is
+  not in it needs one entry.
+* What fits is computed before you download: compatible backends, which GPU
+  nodes have room, estimated memory, context length.
+* Mirror once. The weights land in Thinkube Storage and the registry entry in
+  Thinkube Experiments, versioned. Serving reads from there; Hugging Face is
+  never contacted again. Gated models work with the token you gave the
+  installer.
+* Fine-tuned models register into the same catalogue and serve the same way.
+* The LLM Gateway loads a model on a backend — vLLM, TensorRT-LLM, Ollama,
+  text-embeddings; the inference engines are components you install and the
+  gateway discovers — on the node you choose or the one it picks. It shows the
+  GPU budget, and unloading frees it for the next thing.
+* Every loaded model sits behind one endpoint at `llm.yourdomain`, with API
+  tokens, speaking both the OpenAI API (chat completions, embeddings, models)
+  and the Anthropic Messages API. Any client written for either works
+  unchanged. From a notebook, `get_openai_client()` takes no arguments.
+* The GPU is time-sliced, four slots by default. On a DGX Spark the budget
+  accounts for unified memory; on a workstation, for dedicated memory.
+
+== Notebooks
+
+* Thinkube Notebooks, powered by JupyterHub. When you start a server you pick
+  the node, the cores, the memory and the GPUs from a form that shows what each
+  node has free, capped at what that node has.
+* Environments are built from definitions: peft, trl, bitsandbytes, with the
+  CUDA and torch pins for each architecture already resolved. They appear as
+  kernels. You can define your own from a template and the platform builds it,
+  on every GPU node.
+* Notebooks, datasets, models and experiment artifacts are on the shared
+  filesystem at the same paths on every node. Start the server on another
+  machine and everything is where it was. Scratch is local, for speed.
+* Already logged in to Thinkube Experiments. Served models are reachable through
+  the gateway from any notebook.
+* Four playbook notebooks that build one research assistant, and a fifth that
+  fine-tunes with GRPO against a solver-graded reward, registers the result
+  and serves it through your own gateway.
+
+== Build and ship
+
+* Templates: a catalogue of applications you deploy in one step, from the
+  control panel or from Claude. A web app, a model UI, a file gateway, a
+  scale-to-zero service.
+* `thinkube.yaml`: about twenty lines — containers, ports, routes — is what
+  you write. The Deployment, the Service, the route, the secrets and the volume
+  are generated from it.
+* The loop: push to Thinkube Git, Argo Workflows builds the image for every
+  architecture in the cluster, Thinkube Registry stores it, ArgoCD deploys what
+  the repository says.
+* Every deployed application gets a name under your domain and a certificate,
+  automatically. It appears on the dashboard with its health, and it is
+  reachable over Tailscale like everything else. The web app template comes
+  with the login already integrated.
+* Turn what you built into a template. Knative for services that scale to
+  zero. Thinkube Packages for private Python packages. Custom images and
+  custom environments go through the same build.
+* What comes out is a git repository: source, a Dockerfile, tests, a standard
+  image. Delete Thinkube and it still builds and deploys anywhere Kubernetes
+  runs.
+
+== The IDE, and the method on top
+
+* Thinkube IDE — VS Code in the browser (code-server) — on your network by
+  its name and, over Tailscale, from anywhere.
+* It arrives configured. Claude Code is installed; the control panel is
+  reachable from it as MCP tools — 101 operations, the same ones the web UI
+  uses. Reads are free; changes happen only when you ask. Credentials are in
+  the shell, the platform SDKs are in a Python environment, git is connected
+  to GitHub and to Thinkube Git.
+* One workspace, three surfaces. The file you edit in the IDE is the file the
+  notebook sees and the file the control panel builds from. It outlives the
+  cluster.
+* The documentation is deployed inside the cluster and searchable from Claude
+  Code, without leaving your network.
+* Thinkube Tandem, an experimental intent-driven development methodology for
+  working with Claude Code, still changing. You state the intent — what will
+  be true when the work is done — and the work is checked against that, so
+  what you receive is the thing you asked for, not something that merely
+  passes its tests. It came out of building Thinkube, and it is still being
+  built.
+
+== Alpha
+
+Two hardware configurations have run this: a DGX Spark (GB10, arm64) and an
+x86-64 workstation with RTX 3090s, both on Ubuntu 24.04. A future version may
+require reinstalling from scratch; there is no promised migration path.

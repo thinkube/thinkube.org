@@ -1,0 +1,53 @@
+= Kubernetes underneath
+:page-type: concept
+
+_What the cluster is, why Thinkube is an installer rather than a distribution, and what that means for what you build._
+
+Thinkube installs unmodified upstream Kubernetes with kubeadm. The cluster it
+produces reports:
+
+----
+gitVersion:    v1.36.4
+gitCommit:     bb826b1d48562f110659e64e8ec444327433db95
+gitTreeState:  clean
+----
+
+That commit is the upstream release commit for v1.36.4. Nothing is patched,
+nothing is forked, and the version carries no vendor suffix.
+
+== Installer, not distribution
+
+A *distribution* patches the upstream codebase and ships its own build; k3s
+(`v1.36.0+k3s1`) and RKE2 (`v1.36.0+rke2r1`) are distributions. An
+*installer* downloads vanilla upstream Kubernetes and installs it. Thinkube is
+an installer.
+
+Bundling components on top does not change the category. Keycloak, Harbor,
+MLflow and the rest sit above Kubernetes; the codebase underneath is untouched.
+
+== What that means for what you build
+
+Anything you build on Thinkube targets standard Kubernetes. The images, the
+manifests and the descriptor that produced them run on any other standard
+cluster — a colleague's, a cloud provider's, a different installer's. Nothing
+is trapped by the layer you built it on.
+
+== What it does not cover
+
+Standard Kubernetes is the layer underneath. It says nothing about Thinkube
+Notebooks, the LLM Gateway or the templates; those are Thinkube's, and they
+are described on their own pages.
+
+== Which version
+
+Thinkube tracks Cilium, which supports a new Kubernetes minor a few months
+after it ships, so the installed version is usually one behind the newest.
+Today that is v1.36.4.
+
+== Check it yourself
+
+----
+kubectl version
+----
+
+The `gitCommit` and `gitTreeState` above are what an unmodified build reports.

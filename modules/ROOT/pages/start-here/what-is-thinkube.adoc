@@ -33,7 +33,7 @@ You work through three pillars: Thinkube IDE with Claude, Thinkube
 Notebooks, and thinkube-control. xref:how-you-work/index.adoc[How you work]
 describes each.
 
-Underneath is Kubernetes, unmodified and certified. You don't have to learn
+Underneath is Kubernetes, unmodified upstream. You don't have to learn
 it. When it does surface, Claude Code has the logs and the pod state through
 MCP tools, so you are not the one reading `kubectl` documentation at eleven at
 night.
