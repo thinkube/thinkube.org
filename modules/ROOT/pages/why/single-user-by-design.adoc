@@ -1,10 +1,42 @@
-= Single-user by Design
+= Single-user by design
 :page-type: concept
 
+_Why Thinkube serves one person, and why that is arithmetic rather than philosophy._
 
-_The single-user threat model and why effort is calibrated to it._
+One GPU cannot serve two developers.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+A physical GPU is split into four time-slice slots by default. A 30B model
+takes three of them. A fine-tune holds a card for hours. Put two people on that
+and you have a queue with an argument attached, and every complaint is "my job
+didn't get the GPU" — with no good answer from a platform that has one card to
+give.
+
+Thinkube is single-user because that is what the hardware supports honestly.
+The alternative is a scheduler, quotas, preemption and a support surface that
+one maintainer cannot carry.
+
+== What single-user buys you
+
+No scheduler, because there is nothing to arbitrate. No quotas. No queue. When
+you load a model, it loads; when you start a fine-tune, it starts. The GPU
+budget the platform tracks is yours entirely.
+
+The security model follows from the same decision. There is one login, one set
+of credentials, one person who can reach the machine. Effort goes into keeping
+that one person's data on that one machine, not into keeping users apart from
+each other.
+
+== When more than one person uses it anyway
+
+A lab with one machine and three people will share a login. That works, and
+three things follow from it:
+
+* The GPU is still one GPU. Whoever loads a 70B has taken the memory until
+  they unload it.
+* All git activity appears under one identity.
+* Notebooks share a workspace, so two people editing the same file will
+  overwrite each other.
+
+None of that is a bug. It is what single-user means when several people use
+it, and coordinating socially — "I'm on the GPU this afternoon" — is how
+shared lab equipment has always worked.
