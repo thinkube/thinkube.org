@@ -1,11 +1,11 @@
 /* Thinkube brand over the default Antora UI.
    Brand carried from the previous Starlight theme: Poppins + Noto Sans Mono,
-   teal primary, amber accent, sharp corners, the DGX Spark stamp. */
+   teal primary, Claude-orange accent, sharp corners, the DGX Spark stamp. */
 
 :root {
   --th-primary: #1a6b7c;
   --th-primary-light: #008ca8;
-  --th-accent: #c4a35a;
+  --th-accent: #d97757;
   --th-bg: #fdfcfa;
 
   /* Default-UI variable overrides (names from antora-ui-default) */
@@ -63,7 +63,7 @@ code, pre, kbd, .colist > table code {
   font-family: "Poppins", system-ui, sans-serif;
 }
 
-/* Amber accent for inline emphasis markers */
+/* Orange accent for inline emphasis markers */
 .doc .colist > table > tbody > tr > td:first-of-type i {
   color: var(--th-accent);
 }
