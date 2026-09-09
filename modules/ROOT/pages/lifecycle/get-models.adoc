@@ -1,16 +1,56 @@
-= Get a Model
+= Get a model
 :page-type: how-to
 
+_Find a model that fits your hardware, mirror it into your registry, and know where it went._
 
-_Mirror or download a model from Hugging Face; the model catalog and LLM registry._
+Models come from Hugging Face by way of the catalogue. You never download one
+straight onto a node: you mirror it once, it lands in Thinkube Storage, it is
+registered in Thinkube Experiments, and it is served from there. In
+thinkube-control this is *AI Models*.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+== Find one that fits
 
-// SCREENSHOT: cp-model-catalog (ref uazk; mock — real capture in a follow-on spec)
-image::cp-model-catalog.svg[ref uazk — the model catalog / browse,role=mock-screenshot]
+----
+› which models in the catalogue fit my GPU?
+----
 
-// SCREENSHOT: cp-model-mirror (ref 2pt6; mock — real capture in a follow-on spec)
-image::cp-model-mirror.svg[ref 2pt6 — mirroring a model + job status,role=mock-screenshot]
+The catalogue carries what each model needs — parameters, quantisation,
+context length, which backends can serve it, its stop tokens — so the answer
+is computed from your hardware, not guessed. For one model:
+
+----
+› would Qwen3-14B fit, and on which backend?
+----
+
+Claude reads the load options: compatible backends, GPU nodes with room,
+estimated memory, context length.
+
+== Mirror it
+
+----
+› mirror Qwen/Qwen3-8B
+----
+
+The download runs as a job. Ask for its status and Claude reads it. When it
+finishes, the model shows as mirrored in the catalogue and can be loaded.
+
+== Gated models
+
+Some models on Hugging Face require you to accept a licence first. Accept it
+there, and make sure the token you gave the installer has access —
+xref:install:ROOT:huggingface-token.adoc[Unlock AI models]. Otherwise the
+mirror fails at download.
+
+== A model that isn't in the catalogue
+
+The catalogue is a file — `models.json` in `thinkube-metadata` — with one
+entry per model: id, parameters, quantisation, context length, backends, stop
+tokens, licence. A model that isn't there needs an entry before it can be
+mirrored, because the entry is what tells the gateway how to serve it
+correctly.
+
+== Where it lives
+
+The weights are in Thinkube Storage. The registry entry — version, the run
+that produced it if you made it, metadata — is in Thinkube Experiments.
+Serving reads from those, and never from Hugging Face again.

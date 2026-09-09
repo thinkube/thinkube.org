@@ -1,16 +1,52 @@
-= Build an App
+= Build an app
 :page-type: tutorial
 
+_Deploy the web application template, open it, and see what you now have._
 
-_Scaffold from a template and deploy it onto the platform._
+You will deploy a template, get an address, and see the deploy loop run once
+end to end. In thinkube-control this is *Templates*.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+== 1. Deploy the template
 
-// SCREENSHOT: cockpit-scaffold (ref hd6b; mock — real capture in a follow-on spec)
-image::cockpit-scaffold.svg[ref hd6b — Claude scaffolding from tkt-webapp-vue-fastapi,role=mock-screenshot]
+----
+› deploy the web app template, call it notes
+----
 
-// SCREENSHOT: webapp-deployed (ref 6ma7; mock — real capture in a follow-on spec)
-image::webapp-deployed.svg[ref 6ma7 — the deployed Vue+FastAPI app,role=mock-screenshot]
+`deploy_template` queues the deployment. Claude polls the status until it
+reports `running`, then gives you the address: `notes.<your domain>`.
+
+Open it. You log in with the same identity as everything else.
+
+== 2. See what you have
+
+Behind that address: a React frontend, a FastAPI backend, a PostgreSQL
+database provisioned for it, tests that ran in the build, and a repository
+named `notes` in Thinkube Git holding all of it.
+
+== 3. Open the repository
+
+In Thinkube IDE, open `notes` from Thinkube Git. Two things are worth
+looking at.
+
+`thinkube.yaml` at the root is the whole description: two containers, two
+routes, one service. About twenty lines.
+
+`k8s/` holds the manifests the platform generated from it. You didn't write
+them; they're yours to read.
+
+== 4. Change it
+
+From here the loop is: edit, commit, push. The push triggers a build, and
+ArgoCD deploys the result. Ask Claude for the deployment status, or watch it
+under *Templates*, and reload the address when it reports running.
+
+xref:webapp-template:ROOT:develop.adoc[Change the app and ship it] walks a
+real change, and xref:webapp-template:ROOT:variables.adoc[How configuration
+reaches your app] explains the settings the template exposes.
+
+== What you did
+
+You ran the *build* stage of xref:start-here/the-loop.adoc[the AI loop]: a
+description became a running application with an address, a database and a
+repository. When it's something worth keeping,
+xref:webapp-template:ROOT:create-a-template.adoc[turn it into a template].

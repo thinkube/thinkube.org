@@ -1,19 +1,71 @@
-= Serve a Model
+= Serve a model
 :page-type: how-to
 
+_Load a mirrored model onto a GPU, call it, and unload it when you're done._
 
-_Serve with vLLM or TensorRT-LLM via the LLM Gateway; GPUs and Knative scale-to-zero._
+In thinkube-control this is *LLM Gateway*.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+== Load it
 
-// SCREENSHOT: cp-llm-serve (ref gfic; mock — real capture in a follow-on spec)
-image::cp-llm-serve.svg[ref gfic — the LLM load/serve UI,role=mock-screenshot]
+----
+› load Qwen/Qwen3-8B
+----
 
-// SCREENSHOT: cp-gpu (ref ysj1; mock — real capture in a follow-on spec)
-image::cp-gpu.svg[ref ysj1 — GPU status,role=mock-screenshot]
+The LLM Gateway picks a backend and a node and loads the model. It reports
+`loading`, then `available`.
 
-// SCREENSHOT: serve-gradio (ref 892o; mock — real capture in a follow-on spec)
-image::serve-gradio.svg[ref 892o — the served vLLM gradio app,role=mock-screenshot]
+== Choose how it loads
+
+Loading takes options. Say them in words, or set them in thinkube-control:
+
+* *tier* — `flexible` loads through Ollama when the model supports it:
+  quantised, quick to load, less memory. `performance` loads through vLLM or
+  TensorRT-LLM: full precision, higher throughput.
+* *backend* — name one: `vllm`, `tensorrt-llm`, `ollama`, `text-embeddings`.
+* *node* — which GPU node. The gateway chooses if you don't.
+* *max_context_length* — cap the context to save memory.
+* *keep_alive* — Ollama only: how long the model stays loaded after the last
+  request.
+* *num_speculative_tokens* — for models with a speculative-decoding
+  configuration, the draft depth.
+
+----
+› load Qwen3-8B on the spark with a 16k context
+----
+
+== See what's loaded
+
+----
+› what's on the GPUs?
+----
+
+Claude reads the GPU status: each node's slots, what holds them, memory used.
+On a DGX Spark it also shows the AI budget and the reserve.
+
+== Call it
+
+Every loaded model sits behind one OpenAI-compatible endpoint at
+`llm.<your domain>`. From a notebook:
+
+[source,python]
+----
+from tk_llm import get_openai_client
+
+client = get_openai_client()
+response = client.chat.completions.create(
+    model="Qwen/Qwen3-8B",
+    messages=[{"role": "user", "content": "Hello"}],
+)
+----
+
+From anywhere else, any OpenAI client pointed at the gateway with a token
+from thinkube-control under *API Tokens*.
+
+== Unload it
+
+----
+› unload Qwen/Qwen3-8B
+----
+
+The slot and the memory come back. Loading it again is fast: the weights are
+already in Thinkube Storage.
