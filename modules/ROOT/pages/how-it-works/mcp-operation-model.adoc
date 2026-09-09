@@ -20,7 +20,6 @@ without being asked. Among them:
 * `describe_pod`, `get_container_logs`
 * `get_cluster_resources`, `get_llm_gpu_status`
 * `get_model_catalog`, `get_llm_load_options`, `get_deployment_status`
-* `search_thinkube_docs`, `get_thinkube_doc`
 
 A resource answers a question. It changes nothing.
 
@@ -32,6 +31,7 @@ Endpoints that change state become tools — used only when you ask. Among them:
 * `submit_model_mirror`, `load_llm_model`, `unload_llm_model`
 * `create_jupyter_venv`, `build_jupyter_venv`
 * `toggle_service`, `restart_service`, `install_optional_component`
+* `search_thinkube_docs`, `get_thinkube_doc`
 
 A tool is an instruction. The assistant does not reach for one on its own.
 
@@ -44,10 +44,12 @@ you what it found. An assistant that could only act would have to guess.
 And nothing mutates without a request. The line between "look" and "do" is
 drawn in the API, not left to the assistant's judgement.
 
-== The documentation as a resource
+== The documentation
 
 `search_thinkube_docs` and `get_thinkube_doc` read the documentation site
-deployed inside the cluster. Until that deployment exists, the tool returns
+deployed inside the cluster. They are tools rather than resources: a search
+takes a query, so the assistant calls it rather than having the result in
+context. Until that deployment exists, the tool returns
 `docs_not_deployed` with the instruction to deploy it. Once it does, the
 assistant answers documentation questions from the pages themselves.
 
