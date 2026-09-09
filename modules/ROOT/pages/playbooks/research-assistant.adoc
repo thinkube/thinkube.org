@@ -11,7 +11,7 @@ platform is assembled rather than demonstrated: services, then models, then
 retrieval, then agents.
 
 .What you need
-* The *AI Lab* with the `agent-dev` venv
+* *Thinkube Notebooks* with the `agent-dev` venv
 * A GPU node with room for a chat model and an embedding model
 * Outbound access to arXiv for the paper fetch
 

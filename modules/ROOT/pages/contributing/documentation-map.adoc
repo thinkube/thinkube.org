@@ -24,7 +24,7 @@ before the lifecycle, and peel down to *how it works* / *why* only if you want t
 .§3 — How you work (the three pillars)
 * xref:how-you-work/index.adoc[The cockpit] — _concept_
 * xref:how-you-work/claude-code.adoc[Driving Thinkube from Claude] — _how-to_
-* xref:how-you-work/ai-lab.adoc[Thinkube AI Lab] — _how-to_
+* xref:how-you-work/ai-lab.adoc[Thinkube Notebooks] — _how-to_
 * xref:control:ROOT:index.adoc[thinkube-control] — _reference (control)_
 
 .§4 — The lifecycle

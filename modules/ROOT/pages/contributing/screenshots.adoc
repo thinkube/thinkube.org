@@ -21,8 +21,8 @@ land in a follow-on spec, swapping the mock by id.
 6+| *How you work*
 | `8ik1` | `cockpit-session` | The cockpit | code-server with a live Claude Code session | ✋ | mock
 | `nl8j` | `cockpit-mcp-call` | Driving Thinkube from Claude | a Claude+MCP action in the editor | ✋ | mock
-| `t3nf` | `lab-hub` | Thinkube AI Lab | the JupyterHub launcher/spawner | 🤖 | mock
-| `sca7` | `lab-notebook` | Thinkube AI Lab | a notebook with the Thinky assistant | ✋ | mock
+| `t3nf` | `lab-hub` | Thinkube Notebooks | the JupyterHub launcher/spawner | 🤖 | mock
+| `sca7` | `lab-notebook` | Thinkube Notebooks | a notebook with the Thinky assistant | ✋ | mock
 | `z0e3` | `cp-overview` | thinkube-control (control repo) | the control panel main view + tiles | 🤖 | needed
 6+| *The lifecycle*
 | `uazk` | `cp-model-catalog` | Get a model | the model catalog / browse | 🤖 | mock

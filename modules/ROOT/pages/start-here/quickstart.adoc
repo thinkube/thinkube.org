@@ -10,7 +10,7 @@ notebook, and unload it.
 Each step is done by asking Claude Code. Each is also a click in
 thinkube-control, under *AI Models* and *LLM Gateway*, if you prefer.
 
-== 1. Open code-server and start Claude
+== 1. Open Thinkube IDE and start Claude
 
 Open Thinkube IDE in your browser and log in.
 
