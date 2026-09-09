@@ -9,10 +9,11 @@
 
       <section class="hero">
         <p class="page-ref">ref crcf</p>
-        <p class="hero-eyebrow">Single-user · self-hosted · CNCF-conformant Kubernetes</p>
-        <h1 class="hero-title">Your own platform for the<br><span class="accent">entire AI lifecycle</span></h1>
-        <p class="hero-sub">Get a model, fine-tune it, build apps that consume it, and serve it — on
-          your own hardware, with the power of Kubernetes and none of the Kubernetes knowledge required.</p>
+        <p class="hero-eyebrow">Alpha · single-user · runs on DGX Spark and NVIDIA GPUs</p>
+        <h1 class="hero-title">Get a model, fine-tune, build, serve.<br><span class="accent">On hardware you own.</span></h1>
+        <p class="hero-sub">Thinkube installs on machines you own. It gives you Python environments
+          that build on aarch64, models that are stored once and served, and a path from a notebook
+          to something with an address. Certified Kubernetes underneath; you don't have to learn it.</p>
         <div class="hero-cta">
           <a class="btn btn-primary" href="../install/overview.html">Get started</a>
           <a class="btn btn-ghost" href="start-here/what-is-thinkube.html">What is Thinkube?</a>
@@ -30,10 +31,10 @@
         <div class="cockpit-copy">
           <span class="kicker">The cockpit</span>
           <h2 class="section-h">You operate it by talking to Claude</h2>
-          <p class="cockpit-lead">No dashboard to learn. You work in code-server, and Thinkube's whole
-            control plane is exposed to Claude as <strong>MCP tools</strong> — deploys, models, GPUs,
-            services. One conversation drives the platform; the GitOps loop does the rest in about a
-            minute and a half.</p>
+          <p class="cockpit-lead">You work in code-server with Claude Code. Thinkube's control plane is
+            exposed to it as <strong>MCP tools</strong> — deploys, models, GPUs, services, logs. What
+            the tools read, Claude can read; what they change, it changes only when you ask. Everything
+            here is also a click in thinkube-control.</p>
         </div>
         <div class="codewin" role="img"
              aria-label="A Claude Code session: deploy a template and load a model, driven by MCP tools.">
@@ -41,13 +42,17 @@
             <span class="codewin-dots"><i></i><i></i><i></i></span>
             <span class="codewin-title">code-server — claude</span>
           </div>
-<pre class="codewin-body" aria-hidden="true"><code><span class="c-prompt">›</span> <span class="c-user">deploy the vLLM template and load Llama-3.1-8B</span>
+<pre class="codewin-body" aria-hidden="true"><code><span class="c-prompt">›</span> <span class="c-user">deploy the vLLM template and load Qwen3.5-4B</span>
 
-<span class="c-claude">●</span> Deploying the template and loading the model.
-  <span class="c-ok">✓</span> <span class="c-tool">deploy_template</span><span class="c-paren">(</span>tkt-vllm-gradio<span class="c-paren">)</span>       <span class="c-dim">→ Gitea › Argo › Kaniko › Harbor › ArgoCD</span>
-  <span class="c-ok">✓</span> <span class="c-tool">load_llm_model</span><span class="c-paren">(</span>meta-llama/Llama-3.1-8B<span class="c-paren">)</span>  <span class="c-dim">→ served on GPU</span>
+<span class="c-claude">●</span> Deploying tkt-vllm-gradio.
+  <span class="c-ok">✓</span> <span class="c-tool">deploy_template</span><span class="c-paren">(</span>tkt-vllm-gradio<span class="c-paren">)</span>       <span class="c-dim">→ pending</span>
+  <span class="c-ok">✓</span> <span class="c-tool">get_deployment_status</span><span class="c-paren">(</span>…<span class="c-paren">)</span>              <span class="c-dim">→ building → running</span>
 
-  Your app is live at <span class="c-link">vllm-gradio.thinkube.com</span> <span class="c-dim">— ready in ~90s.</span></code></pre>
+<span class="c-claude">●</span> Loading the model.
+  <span class="c-ok">✓</span> <span class="c-tool">load_llm_model</span><span class="c-paren">(</span>Qwen/Qwen3.5-4B<span class="c-paren">)</span>         <span class="c-dim">→ loading · backend: vllm</span>
+  <span class="c-ok">✓</span> <span class="c-tool">get_llm_model_status</span><span class="c-paren">(</span>…<span class="c-paren">)</span>               <span class="c-dim">→ available</span>
+
+  Your app is at <span class="c-link">vllm-gradio.thinkube.com</span></code></pre>
         </div>
       </section>
 
@@ -60,7 +65,7 @@
             </span>
             <span class="card-kicker">Set up</span>
             <h3 class="card-title">Get Thinkube running</h3>
-            <p class="card-desc">Install on your own machines — discovery, SSH, GPUs, networking — then put the installer away for good.</p>
+            <p class="card-desc">What you need, what the installer does to your machine, and how long it takes.</p>
             <span class="card-arrow">Set up <em>→</em></span>
           </a>
           <a class="card" href="how-you-work/index.html">
@@ -69,17 +74,17 @@
             </span>
             <span class="card-kicker">How you work</span>
             <h3 class="card-title">code-server + Claude</h3>
-            <p class="card-desc">Operate the whole platform by talking to Claude in your editor — MCP drives the rest.</p>
-            <span class="card-arrow">Learn the cockpit <em>→</em></span>
+            <p class="card-desc">Drive the platform from your editor with MCP tools — what Claude Code can read, and what it can change.</p>
+            <span class="card-arrow">How you work <em>→</em></span>
           </a>
           <a class="card" href="lifecycle/index.html">
             <span class="card-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 8 16 8"/></svg>
             </span>
             <span class="card-kicker">The lifecycle</span>
-            <h3 class="card-title">Run the loop</h3>
-            <p class="card-desc">Models, fine-tuning, building apps, serving them — the full AI lifecycle, step by step.</p>
-            <span class="card-arrow">Start the loop <em>→</em></span>
+            <h3 class="card-title">Get a model, fine-tune, build, serve</h3>
+            <p class="card-desc">The four stages, one at a time, each ending with something working.</p>
+            <span class="card-arrow">The lifecycle <em>→</em></span>
           </a>
           <a class="card" href="reference/thinkube-yaml.html">
             <span class="card-icon" aria-hidden="true">
@@ -87,7 +92,7 @@
             </span>
             <span class="card-kicker">Reference</span>
             <h3 class="card-title">Look it up</h3>
-            <p class="card-desc">thinkube.yaml, the control panel, templates, components — precise and complete.</p>
+            <p class="card-desc"><code>thinkube.yaml</code>, thinkube-control, templates, components.</p>
             <span class="card-arrow">Browse reference <em>→</em></span>
           </a>
         </div>
