@@ -1,47 +1,49 @@
-= Gap Analysis
+= Gap analysis
 :page-type: reference
 
+_What the documentation does not yet say, and what each gap is waiting for._
 
-The worklist for content authoring: what each page in the
-xref:contributing/documentation-map.adoc[IA] still needs, ground-truth first.
-Status of the whole set today: the **structure is complete** (nav, 24 pages,
-templates, style guide, the screenshot inventory) and **mock screens** stand in
-for captures — but the **prose is not yet written**. Every page below is therefore
-"missing: body" until a tghabr authoring spec fills it from the real system.
+Every page on the site is written and was checked against the source of the thing it describes. The gaps below are the ones that remain, each with the fact or the act that closes it. This page is updated when one closes.
 
-== Cross-cutting
+== Facts only the maintainer can supply
 
-* *All §1/§3/§4/§6/§7 pages are typed stubs* — they carry a `:page-type:`, a
-  one-line purpose, and (where relevant) a mock screen, but **no authored prose**.
-  Each is authored against its page-type template, from ground truth + your guidance.
-* *Installer screenshots are stale* — the 17 in `thinkube-installer` are an old
-  installer version; the **whole walkthrough is recaptured** (see the
-  xref:contributing/screenshots.adoc[inventory], §2). Manual / desktop app.
-* *Real captures are mocked* — every screenshot slot shows a labelled mock; the
-  real captures land in a follow-on capture spec.
-* *Diagrams are not authored yet* — the loop exists; architecture, deploy-loop, and
-  the component map are still to be drawn (d2/kroki) in an authoring spec.
-* *Old prose is not a source* — the previous site (preserved at tag
-  `pre-antora-content` / `thinkube.bak`) is a **topic checklist only**, never copied.
-
-== Per section
-
-[cols="1,4",options="header"]
+[cols="2,3",options="header"]
 |===
-| Section | Gaps to fill
+| Gap | What closes it
 
-| §1 Start here | Write *What is Thinkube* (the positioning), *The AI loop*, and the *Quickstart*. The loop diagram exists; the quickstart needs the real fast-path + `cp-dashboard`.
-| §2 Set up | Content lives in `thinkube-installer` (live at `/install/`); **recapture the full walkthrough** against the current installer; re-verify each step's prose against the current flow.
-| §3 How you work | Author the cockpit (code-server + Claude + MCP), *Driving from Claude*, and *Thinkube Notebooks*; the control-panel reference is in the `control` repo and needs its tour written + `cp-overview`.
-| §4 The lifecycle | Author all five (loop, get-models, fine-tune, build, serve) from the real tools — the model catalog/mirror, JupyterHub+MLflow, `tkt-webapp-vue-fastapi`, the LLM Gateway/GPU/Knative. Heaviest capture load.
-| §5 Reference | Fill the *Templates* and *Components* catalogs from the live `list_templates` / components (9 templates, 13 core + 16 optional); `thinkube.yaml` reference exists (real include).
-| §6 How it works | Author the deep layer + draw the diagrams (architecture, deploy-loop, components). Quarantine volatile policy (the Agent-SDK credit specifics) into a single dated page here.
-| §7 Why | Author the story (MicroK8s→kubeadm, opinions-on-a-standard, single-user, operated-by-conversation) — narrative, no captures.
+| Whether an existing Python virtual environment, an Ollama install and its models survive the installer in practice
+| A statement from a machine where they were present before the install. The playbooks do not remove them and do not mention them; xref:install:overview.adoc[Install Thinkube] says only what they create.
+
+| What happens to a node six months on: `apt upgrade`, a kernel update, an NVIDIA driver update, and how a newer Thinkube is applied to a running cluster
+| The maintainer's account of an upgrade that was done, or the statement that none has been done yet. The alpha block already says a future version may require a reinstall.
+
+| Captures of the desktop installer's screens
+| The installer runs on a laptop, not in the cluster, so xref:contributing/screenshots.adoc[the capture tool] cannot take them. One capture per screen listed on xref:install:overview.adoc[Install Thinkube].
 |===
 
-== Discard / leftovers
+== Runs not yet completed on the reference cluster
 
-* The SP-tgicqj SL-2 proof pages (`concept`/`how-to`/`tutorial`/`components` demos)
-  are already retired into the real IA — nothing to carry forward from them.
-* No per-service dashboard docs (the SP-tgivi3 scope boundary) — don't author pages
-  for Gitea/Harbor/ArgoCD/MLflow/Keycloak/… as interfaces.
+[cols="2,3",options="header"]
+|===
+| Gap | What closes it
+
+| The research assistant playbook reports the outputs of notebooks `00` and `01` from a run on the reference cluster; `02` and `03` are reported from the outputs saved in the notebooks, with the corpus size and trace counts they carry
+| A run of `02` and `03` on the reference cluster with the optional components installed.
+
+| The fine-tune playbook reports the numbers the notebook's own saved run produced on a GB10
+| A second full-scale run on the reference cluster, which is an overnight job.
+|===
+
+== Known mismatches between pages and product
+
+These are documented as the product is, and listed here so a reader who finds them knows they are known.
+
+* The Thinkube Notebooks theme still shows the service's former name, the one that ends in "Lab", in its header and in the *Server Options* form. The service registers as Thinkube Notebooks and the pages use that name.
+* The installer's completion screen labels Thinkube IDE "Code Server" and prints `code.<your domain>`; the service registers at `ide.<your domain>`, which is the address the pages give.
+* thinkube-control's `install_optional_component` failed within two seconds for `vllm` and `text-embeddings` on the reference cluster, with no reason in the logs; deploying the same templates with `deploy_template` succeeded. The pages describe the path that worked.
+* Thinkube Tandem's MCP tools `read_space` and `read_run` report an empty space and no run for a space that the IDE shows populated and running; the pages describe what the IDE shows.
+* The three asynchronous notebook endpoints exist on thinkube-control's REST API and not as MCP tools; xref:control:notebooks.adoc[Notebook execution over MCP] says so.
+
+== Deliberately absent
+
+No page documents the interface of Gitea, Harbor, ArgoCD, MLflow, Keycloak or any optional component. xref:contributing/documentation-map.adoc[The documentation map] states that boundary.

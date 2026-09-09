@@ -28,7 +28,7 @@ Use these spellings exactly:
 | Thinkube              | thinkube, ThinKube
 | thinkube-control      | Thinkube Control, the control panel app
 | Thinkube IDE          | code-server, Code Server, VS Code
-| Thinkube Notebooks    | Thinkube AI Lab, JupyterHub, Jupyter, the notebook server
+| Thinkube Notebooks    | the lab name the JupyterHub theme still shows, JupyterHub, Jupyter, the notebook server
 | Thinkube Experiments  | MLflow, the tracking server
 | Thinkube Registry     | Harbor, the registry
 | Thinkube Git          | Gitea
@@ -42,9 +42,14 @@ Use these spellings exactly:
 * The branded names above are the `display_name` each service registers for the
   dashboard. Argo Workflows, ArgoCD, GPU Operator, JuiceFS and PostgreSQL keep
   their own names. Name the implementation once where a reader might need to
-  search for it — "Thinkube IDE, powered by code-server" — and use the
-  implementation's name where the implementation is the point: error messages,
-  logs, the components catalog.
+  search for it, in a form that says what it is — "Thinkube IDE — VS Code in
+  the browser (code-server)" — and use the implementation's name where the
+  implementation is the point: error messages, logs, the components catalog.
+* No time figures: not "takes N minutes", not "in an afternoon". The alpha runs
+  on two hardware configurations; the reader's is the third.
+* Make no claim that the Kubernetes underneath passed any test programme or
+  carries any mark. Say "unmodified upstream Kubernetes, installed with
+  kubeadm".
 * Call the three interfaces the **three pillars**: Thinkube IDE + Claude,
   Thinkube Notebooks, thinkube-control.
 * The four lifecycle stages are **get a model → fine-tune → build → serve**.
