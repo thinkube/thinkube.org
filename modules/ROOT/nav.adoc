@@ -55,7 +55,7 @@
 * xref:how-it-works/components.adoc[Platform components]
 
 .Why it's built this way
-* xref:why/the-story.adoc[MicroK8s to kubeadm]
+* xref:why/the-story.adoc[The story]
 * xref:why/opinions-on-a-standard.adoc[Opinions on a standard]
 * xref:why/single-user-by-design.adoc[Single-user by design]
 * xref:why/operated-by-conversation.adoc[Operated by conversation]

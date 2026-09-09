@@ -1,10 +1,65 @@
-= MicroK8s to kubeadm
+= The story
 :page-type: concept
 
+_Thinkube started as a fix for one person's setup. It became a platform when the fix turned out to be bigger than the problem._
 
-_The journey from MicroK8s to a certified kubeadm cluster._
+The problem was ordinary. A lot of Jupyter notebooks, some of them worth
+something. A disk nobody could find anything on. A server that got reinstalled
+every few months because one more package had broken the CUDA chain, and two
+or three days each time getting it back. And no way to turn a notebook that
+worked into something a colleague could open.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+Nothing that follows was planned. Each step was the next thing that broke.
+
+== A set of scripts
+
+The first version was a handful of fish scripts to redeploy PostgreSQL,
+code-server and Jupyter after a reinstall. Then containers, and docker
+compose — which made redeploying easier and did nothing about the mess.
+
+== Then Kubernetes
+
+MicroK8s, because it was a way in. Ansible, because scripts weren't enough
+once there were a dozen things to deploy. Then an installer, because Ansible
+needed orchestrating. Too many components at first; some came out. AWX was
+tried and was more than the job needed.
+
+== Then the assistant
+
+ChatGPT, then Claude Code, which was better than copying from a chat window.
+Then MCP: could the assistant run the workflows instead of the person clicking
+through them? It could.
+
+And then the limit. Ask for a list of things, and the assistant says it's
+done, and part of it is missing and parts are stubs. Solving that reframed the
+whole project. The method for directing machine workers so that what comes
+back is the thing you asked for became xref:tandem/reading-the-surface.adoc[Thinkube
+Tandem], and the platform became the thing it runs on.
+
+== Then the Spark
+
+The DGX Spark arrived. Everything deployed, and Calico was unstable. Cilium
+looked like the answer, and MicroK8s didn't support it well, so the cluster
+moved to k8s-snap.
+
+Docker and Kubernetes needed to coexist on the same machine — every NVIDIA
+sample uses Docker, and giving that up wasn't an option. That needs two
+containerd instances, and k8s-snap's containerd configuration didn't allow
+it. So: kubeadm. The question that came with it — does including kubeadm make
+this a Kubernetes distribution? — has an answer now.
+xref:how-it-works/certified-kubernetes.adoc[It doesn't.] The cluster is
+unmodified upstream, and it's certified.
+
+== Then a real application
+
+In April 2026 the platform was used to build a nine-service application. It
+wasn't ready. Five months went into making it ready, and most of what the
+documentation describes — the GPU memory budgeting, the rollback for every
+component, the environment definitions, the ARM builds — came out of that.
+
+Every opinion in here came from something that broke.
+
+== And then
+
+At some point the fix was bigger than the problem it fixed, and worth
+sharing. This is the alpha.
