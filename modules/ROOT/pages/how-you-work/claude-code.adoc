@@ -61,7 +61,8 @@ architecture. It appears in Thinkube Notebooks as a kernel.
 
 Claude reads `describe_pod`, `get_container_logs` and
 `get_service_health_history` for the service, and tells you what it found.
-If a restart is the fix, it asks before calling `restart_service`.
+`restart_service` is a tool, not a resource — it runs only when you ask for
+it.
 
 == Find it in the documentation
 
