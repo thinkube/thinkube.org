@@ -1,10 +1,9 @@
 = Screenshot Inventory & Capture Plan
 :page-type: reference
-:page-docref: tz49
 
 Every screen the docs need, by its **stable ref** (an opaque code that never
 changes when sections are added or removed) and its descriptive id. Reviews point
-at a ref — e.g. "ref gfic". Each page also carries its own ref badge under the title.
+at a ref — e.g. "ref gfic".
 Pages currently show a labelled **mock** (stamped with its ref); the real captures
 land in a follow-on spec, swapping the mock by id.
 

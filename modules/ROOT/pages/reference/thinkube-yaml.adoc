@@ -1,6 +1,5 @@
 = thinkube.yaml
 :page-type: reference
-:page-docref: 2b2s
 
 _The one file that says what a repository is: its containers and how each is built and tested, how it is deployed, and how its work is verified. Specification v1.0._
 

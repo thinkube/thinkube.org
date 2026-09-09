@@ -1,6 +1,5 @@
 = Fine-tune a model on rewards a program can check
 :page-type: tutorial
-:page-docref: 8sy2
 
 You will train a 4B model on your own GPU, register it, and call it through the
 LLM Gateway — the whole loop, ending with a model that did not exist when you

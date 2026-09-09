@@ -1,6 +1,5 @@
 = Certified Kubernetes
 :page-type: concept
-:page-docref: v2y6
 
 
 _kubeadm, CNCF-conformant, no lock-in._

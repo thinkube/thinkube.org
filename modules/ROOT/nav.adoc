@@ -1,9 +1,9 @@
-.Start here [.sec-ref]#i8ll#
+.Start here
 * xref:start-here/what-is-thinkube.adoc[What is Thinkube]
 * xref:start-here/the-loop.adoc[The AI loop]
 * xref:start-here/quickstart.adoc[Quickstart]
 
-.Set up [.sec-ref]#o2fw#
+.Set up
 * xref:install:ROOT:overview.adoc[Install Thinkube]
 * xref:install:ROOT:node-setup.adoc[Prepare your machines]
 * xref:install:ROOT:overlay-network.adoc[Connect from anywhere]
@@ -12,7 +12,7 @@
 * xref:install:ROOT:huggingface-token.adoc[Unlock AI models]
 * xref:install:ROOT:adding-nodes.adoc[Add more nodes]
 
-.How you work [.sec-ref]#9hd7#
+.How you work
 * xref:how-you-work/index.adoc[The cockpit]
 * xref:how-you-work/claude-code.adoc[Driving Thinkube from Claude]
 * xref:how-you-work/ai-lab.adoc[Thinkube AI Lab]
@@ -20,19 +20,19 @@
 * xref:tandem/the-todo-walkthrough.adoc[A worked example: the todo app]
 * xref:control:ROOT:index.adoc[thinkube-control]
 
-.The lifecycle [.sec-ref]#tm7y#
+.The lifecycle
 * xref:lifecycle/index.adoc[The loop]
 * xref:lifecycle/get-models.adoc[Get a model]
 * xref:lifecycle/fine-tune.adoc[Fine-tune]
 * xref:lifecycle/build-apps.adoc[Build an app]
 * xref:lifecycle/serve.adoc[Serve a model]
 
-.Playbooks [.sec-ref]#vk3d#
+.Playbooks
 * xref:playbooks/index.adoc[What a playbook is]
 * xref:playbooks/research-assistant.adoc[Build a research assistant]
 * xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards]
 
-.Building templates [.sec-ref]#c5re#
+.Building templates
 * xref:webapp-template:ROOT:index.adoc[The template round trip]
 * xref:webapp-template:ROOT:deploy.adoc[Deploy a template]
 * xref:webapp-template:ROOT:develop.adoc[Change the app and ship it]
@@ -40,13 +40,13 @@
 * xref:webapp-template:ROOT:variables.adoc[How configuration reaches your app]
 * xref:webapp-template:ROOT:anatomy.adoc[What is in the web app template]
 
-.Reference [.sec-ref]#wt1c#
+.Reference
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]
 * xref:reference/templates.adoc[Templates catalog]
 * xref:reference/components.adoc[Components catalog]
 * xref:control:ROOT:index.adoc[Control panel & MCP tools]
 
-.How it works [.sec-ref]#4xh3#
+.How it works
 * xref:how-it-works/architecture.adoc[Architecture]
 * xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop]
 * xref:how-it-works/certified-kubernetes.adoc[Certified Kubernetes]
@@ -54,13 +54,13 @@
 * xref:how-it-works/mcp-operation-model.adoc[The MCP operation model]
 * xref:how-it-works/components.adoc[Platform components]
 
-.Why it's built this way [.sec-ref]#z59y#
+.Why it's built this way
 * xref:why/the-story.adoc[MicroK8s to kubeadm]
 * xref:why/opinions-on-a-standard.adoc[Opinions on a standard]
 * xref:why/single-user-by-design.adoc[Single-user by design]
 * xref:why/operated-by-conversation.adoc[Operated by conversation]
 
-.Authoring [.sec-ref]#aa8q#
+.Authoring
 * xref:contributing/page-types.adoc[Page types]
 * xref:contributing/style-guide.adoc[Style guide]
 * xref:contributing/documentation-map.adoc[Documentation map]

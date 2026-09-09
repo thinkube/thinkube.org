@@ -1,6 +1,5 @@
 = The Loop
 :page-type: concept
-:page-docref: 8uuw
 
 
 _The four stages — get a model, fine-tune, build, serve — and how they chain._

@@ -1,6 +1,5 @@
 = The GitOps Deploy Loop
 :page-type: concept
-:page-docref: rxx8
 
 
 _Copier to Gitea to Argo Workflows/Kaniko to Harbor to ArgoCD, in about ninety seconds._

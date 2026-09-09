@@ -1,6 +1,5 @@
 = GPU and Multi-arch
 :page-type: concept
-:page-docref: jlju
 
 
 _arm64 (DGX Spark) and amd64; the GPU operator._

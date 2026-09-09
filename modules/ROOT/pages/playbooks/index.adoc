@@ -1,6 +1,5 @@
 = Playbooks
 :page-type: concept
-:page-docref: vk3d
 
 
 A playbook is a complete, opinionated run of the platform end to end: one task,

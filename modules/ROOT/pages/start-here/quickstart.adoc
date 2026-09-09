@@ -1,6 +1,5 @@
 = Quickstart
 :page-type: tutorial
-:page-docref: 1y1h
 
 
 _From a fresh install to your first served model._

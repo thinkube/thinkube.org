@@ -1,6 +1,5 @@
 = Build a research assistant over your own papers
 :page-type: tutorial
-:page-docref: r4qm
 
 You will stand up a retrieval-augmented assistant on your own hardware — index a
 corpus of papers, ask it questions it answers from them, then have two agents

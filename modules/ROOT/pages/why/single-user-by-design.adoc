@@ -1,6 +1,5 @@
 = Single-user by Design
 :page-type: concept
-:page-docref: pt99
 
 
 _The single-user threat model and why effort is calibrated to it._

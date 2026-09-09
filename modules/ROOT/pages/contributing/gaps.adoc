@@ -1,6 +1,5 @@
 = Gap Analysis
 :page-type: reference
-:page-docref: 010a
 
 
 The worklist for content authoring: what each page in the

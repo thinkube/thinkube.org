@@ -1,6 +1,5 @@
 = Templates Catalog
 :page-type: reference
-:page-docref: 4z68
 
 
 _The tkt-* templates — app, component, and knative deployment types._

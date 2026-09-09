@@ -1,6 +1,5 @@
 = Driving Thinkube from Claude
 :page-type: how-to
-:page-docref: t7lv
 
 
 _Deploy templates, load models, check GPUs, manage services — all via MCP from your editor._

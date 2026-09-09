@@ -1,6 +1,5 @@
 = Thinkube AI Lab
 :page-type: how-to
-:page-docref: tiss
 
 
 _JupyterHub notebooks and fine-tuning, with the Thinky assistant exposed over MCP._
