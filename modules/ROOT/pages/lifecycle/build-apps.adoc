@@ -20,7 +20,7 @@ Open it. You log in with the same identity as everything else.
 == 2. See what you have
 
 Behind that address: a React frontend, a FastAPI backend, a PostgreSQL
-database provisioned for it, tests that ran in the build, and a repository
+database provisioned for it, and a repository
 named `notes` in Thinkube Git holding all of it.
 
 == 3. Open the repository
