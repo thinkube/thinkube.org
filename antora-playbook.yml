@@ -24,9 +24,8 @@ content:
       branches: main
       start_path: docs
     # docs-with-code: Tandem's user docs live beside the extension code.
-    # Tracks v2/core until the v2 PR lands on main; then this moves to main.
     - url: https://github.com/thinkube/thinkube-tandem.git
-      branches: v2/core
+      branches: main
       start_path: docs
     # docs-with-code: the web app template teaches the template round trip, and
     # its pages live in the template they describe so they stay true to it.

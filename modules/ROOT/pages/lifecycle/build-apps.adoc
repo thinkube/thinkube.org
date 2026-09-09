@@ -40,8 +40,8 @@ From here the loop is: edit, commit, push. The push triggers a build, and
 ArgoCD deploys the result. Ask Claude for the deployment status, or watch it
 under *Templates*, and reload the address when it reports running.
 
-xref:webapp-template:ROOT:develop.adoc[Change the app and ship it] walks a
-real change, and xref:webapp-template:ROOT:variables.adoc[How configuration
+xref:webapp-template:develop.adoc[Change the app and ship it] walks a
+real change, and xref:webapp-template:variables.adoc[How configuration
 reaches your app] explains the settings the template exposes.
 
 == What you did
@@ -49,4 +49,4 @@ reaches your app] explains the settings the template exposes.
 You ran the *build* stage of xref:start-here/the-loop.adoc[the AI loop]: a
 description became a running application with an address, a database and a
 repository. When it's something worth keeping,
-xref:webapp-template:ROOT:create-a-template.adoc[turn it into a template].
+xref:webapp-template:create-a-template.adoc[turn it into a template].

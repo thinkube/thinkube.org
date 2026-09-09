@@ -52,5 +52,5 @@ special-cased.
 == Where the descriptor is documented
 
 xref:reference/thinkube-yaml.adoc[thinkube.yaml] is the full specification.
-xref:webapp-template:ROOT:index.adoc[The template round trip] walks the loop
+xref:webapp-template:index.adoc[The template round trip] walks the loop
 with a real application.

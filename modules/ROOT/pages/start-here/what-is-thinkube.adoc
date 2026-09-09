@@ -71,7 +71,7 @@ Yours will be the third kind. A future version may require reinstalling from
 scratch, and there is no promised migration path.
 
 If you have a machine you can afford to reinstall and would write down what
-happened, xref:install:ROOT:overview.adoc[install it]. If this is your only
+happened, xref:install:overview.adoc[install it]. If this is your only
 machine and losing a week would hurt, wait.
 
 == Where next

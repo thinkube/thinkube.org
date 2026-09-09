@@ -33,7 +33,7 @@ through them? It could.
 And then the limit. Ask for a list of things, and the assistant says it's
 done, and part of it is missing and parts are stubs. Solving that reframed the
 whole project. The method for directing machine workers so that what comes
-back is the thing you asked for became xref:tandem/reading-the-surface.adoc[Thinkube
+back is the thing you asked for became xref:tandem:index.adoc[Thinkube
 Tandem], and the platform became the thing it runs on.
 
 == Then the Spark

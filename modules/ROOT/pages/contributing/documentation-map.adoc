@@ -18,14 +18,14 @@ before the lifecycle, and peel down to *how it works* / *why* only if you want t
 * xref:start-here/quickstart.adoc[Quickstart] — _tutorial_
 
 .§2 — Set up _(installer)_
-* xref:install:ROOT:overview.adoc[Install Thinkube] — _tutorial_
+* xref:install:overview.adoc[Install Thinkube] — _tutorial_
 * Prepare your machines · Connect from anywhere · Set up your domain · Connect to GitHub · Unlock AI models · Add more nodes — _how-to_
 
 .§3 — How you work (the three pillars)
 * xref:how-you-work/index.adoc[The cockpit] — _concept_
 * xref:how-you-work/claude-code.adoc[Driving Thinkube from Claude] — _how-to_
 * xref:how-you-work/ai-lab.adoc[Thinkube Notebooks] — _how-to_
-* xref:control:ROOT:index.adoc[thinkube-control] — _reference (control)_
+* xref:control:index.adoc[thinkube-control] — _reference (control)_
 
 .§4 — The lifecycle
 * xref:lifecycle/index.adoc[The loop] — _concept_
@@ -43,7 +43,7 @@ before the lifecycle, and peel down to *how it works* / *why* only if you want t
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml] — _reference_
 * xref:reference/templates.adoc[Templates catalog] — _reference_
 * xref:reference/components.adoc[Components catalog] — _reference_
-* xref:control:ROOT:index.adoc[Control panel & MCP tools] — _reference (control)_
+* xref:control:index.adoc[Control panel & MCP tools] — _reference (control)_
 
 .§7 — How it works
 * xref:how-it-works/architecture.adoc[Architecture] · xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop] · xref:how-it-works/kubernetes-underneath.adoc[Kubernetes underneath] · xref:how-it-works/gpu-multiarch.adoc[GPU & multi-arch] · xref:how-it-works/mcp-operation-model.adoc[The MCP operation model] · xref:how-it-works/components.adoc[Platform components] — all _concept_

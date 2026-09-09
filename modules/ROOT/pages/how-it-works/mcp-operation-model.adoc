@@ -56,4 +56,4 @@ assistant answers documentation questions from the pages themselves.
 == Where to find them
 
 thinkube-control's own documentation lists every operation:
-xref:control:ROOT:index.adoc[Control panel & MCP tools].
+xref:control:index.adoc[Control panel & MCP tools].

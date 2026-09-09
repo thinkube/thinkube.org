@@ -22,7 +22,7 @@ zero, *component* has a fixed name and is managed by the LLM Gateway.
 |===
 
 Deploy one from thinkube-control under *Templates*, or ask Claude —
-`deploy the vLLM template`. xref:webapp-template:ROOT:index.adoc[The template
+`deploy the vLLM template`. xref:webapp-template:index.adoc[The template
 round trip] shows what happens after, and
-xref:webapp-template:ROOT:create-a-template.adoc[Turn your app into a
+xref:webapp-template:create-a-template.adoc[Turn your app into a
 template] shows how an application you built becomes one of these.
