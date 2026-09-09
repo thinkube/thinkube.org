@@ -87,7 +87,7 @@ code, pre, kbd, .colist > table code {
   text-transform: uppercase;
   text-align: center;
   transform: rotate(-12deg) scale(0.85);
-  opacity: 0.38;
+  opacity: 0.92;
   pointer-events: none;
   background: transparent;
   filter: url(#rough-edges);
@@ -138,7 +138,6 @@ body.home { background: var(--th-bg); }
 /* The "Runs on DGX Spark" stamp shows on the landing too — it's core identity
    (it was previously hidden here). Same fixed bottom-right corner as doc pages,
    a touch more present since it matters on the landing. */
-body.home #dgx-stamp { opacity: 0.5; }
 
 .hero {
   max-width: 1080px;

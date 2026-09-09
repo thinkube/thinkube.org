@@ -10,9 +10,10 @@
       <section class="hero">
         <p class="hero-eyebrow">Alpha · single-user · runs on DGX Spark and NVIDIA GPUs</p>
         <h1 class="hero-title">Get a model, fine-tune, build, serve.<br><span class="accent">On hardware you own.</span></h1>
-        <p class="hero-sub">Thinkube installs on machines you own. It gives you Python environments
-          that build on aarch64, models that are stored once and served, and a path from a notebook
-          to something with an address. Certified Kubernetes underneath; you don't have to learn it.</p>
+        <p class="hero-sub">The setup a company's platform team would give you, if you had one:
+          Python environments already built for this machine, models downloaded once and served from
+          where they are, experiment tracking already running, and a path from a notebook to something
+          with an address. Certified Kubernetes underneath; the intent is that you never touch it.</p>
         <div class="hero-cta">
           <a class="btn btn-primary" href="../install/overview.html">Get started</a>
           <a class="btn btn-ghost" href="start-here/what-is-thinkube.html">What is Thinkube?</a>
@@ -28,12 +29,13 @@
 
       <section class="cockpit">
         <div class="cockpit-copy">
-          <span class="kicker">The cockpit</span>
-          <h2 class="section-h">You operate it by talking to Claude</h2>
-          <p class="cockpit-lead">You work in Thinkube IDE with Claude Code. Thinkube's control plane is
-            exposed to it as <strong>MCP tools</strong> — deploys, models, GPUs, services, logs. What
-            the tools read, Claude can read; what they change, it changes only when you ask. Everything
-            here is also a click in thinkube-control.</p>
+          <span class="kicker">How you work</span>
+          <h2 class="section-h">You can run it from Claude Code</h2>
+          <p class="cockpit-lead">Thinkube IDE comes with Claude Code, and Claude Code can see the
+            platform: which models are loaded, what the GPU is holding, what a deploy is doing, what a
+            service logged. Ask it to deploy a template or load a model and it uses the same operations
+            the control panel uses — about a hundred of them. Nothing changes unless you ask. Everything
+            Claude can do here, you can also click in thinkube-control.</p>
         </div>
         <div class="codewin" role="img"
              aria-label="A Claude Code session: deploy a template and load a model, driven by MCP tools.">
