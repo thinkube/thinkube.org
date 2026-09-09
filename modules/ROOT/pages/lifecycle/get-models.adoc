@@ -8,6 +8,8 @@ straight onto a node: you mirror it once, it lands in Thinkube Storage, it is
 registered in Thinkube Experiments, and it is served from there. In
 thinkube-control this is *AI Models*.
 
+image::cp-model-catalog.png[The AI Models page of thinkube-control: the catalogue, with mirror controls]
+
 == Find one that fits
 
 ----

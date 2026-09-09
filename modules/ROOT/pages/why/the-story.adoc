@@ -40,12 +40,12 @@ Tandem], and the platform became the thing it runs on.
 
 The DGX Spark arrived. Everything deployed, and Calico was unstable. Cilium
 looked like the answer, and MicroK8s didn't support it well, so the cluster
-moved to k8s-snap.
+moved to a packaged Kubernetes distribution.
 
 Docker and Kubernetes needed to coexist on the same machine — every NVIDIA
 sample uses Docker, and giving that up wasn't an option. That needs two
-containerd instances, and k8s-snap's containerd configuration didn't allow
-it. So: kubeadm. The question that came with it — does including kubeadm make
+containerd instances, and the packaged distribution's containerd
+configuration didn't allow it. So: kubeadm. The question that came with it — does including kubeadm make
 this a Kubernetes distribution? — has an answer now.
 xref:how-it-works/kubernetes-underneath.adoc[It doesn't.] The cluster is
 unmodified upstream Kubernetes, installed with kubeadm.

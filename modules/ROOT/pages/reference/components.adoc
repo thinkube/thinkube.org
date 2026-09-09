@@ -12,6 +12,8 @@ The first column is the name the dashboard shows; the second is the component
 behind it.
 That is the name to search for when something goes wrong.
 
+image::cp-components.png[The Optional Components page of thinkube-control]
+
 == Core
 
 [cols="1,1,2",options="header"]

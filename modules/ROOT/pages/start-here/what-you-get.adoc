@@ -125,7 +125,7 @@ _The inventory. Each line is something that is installed and running after the i
 * Thinkube IDE — VS Code in the browser (code-server) — on your network by
   its name and, over Tailscale, from anywhere.
 * It arrives configured. Claude Code is installed; the control panel is
-  reachable from it as MCP tools — 101 operations, the same ones the web UI
+  reachable from it as MCP tools — 109 operations, the same ones the web UI
   uses. Reads are free; changes happen only when you ask. Credentials are in
   the shell, the platform SDKs are in a Python environment, git is connected
   to GitHub and to Thinkube Git.

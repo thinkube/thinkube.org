@@ -1,64 +1,65 @@
-= Documentation Map
+= Documentation map
 :page-type: reference
 
+_Every page of the site, where its source lives, and the type it is written as._
 
-The whole documentation set, by section and xref:contributing/page-types.adoc[page-type].
-This is the plan the content is written against. Pages marked
-_(installer)_ / _(control)_ live with their code in another repo and aggregate
-in via Antora (docs-with-code).
+The site is one Antora component, `thinkube-docs`, built from five repositories. Four of them keep their pages beside the code the pages describe and join the component as named modules; the site's own pages are the ROOT module. The sidebar is one file, `modules/ROOT/nav.adoc` in `thinkube.org`, and lists every page below once.
 
-== The eight-section peel
+[cols="1,2,2",options="header"]
+|===
+| Module | Repository | Pages
 
-The site is organised outside-in, **cockpit-first** — you meet *how you work*
-before the lifecycle, and peel down to *how it works* / *why* only if you want to.
+| ROOT | `thinkube/thinkube.org`, `modules/ROOT/` | Start here, Using it, Playbooks, Reference, How it works, Contributing
+| `install` | `thinkube/thinkube-installer`, `docs/` | Install
+| `control` | `thinkube/thinkube-control`, `docs/` | thinkube-control reference
+| `tandem` | `thinkube/thinkube-tandem`, `docs/` | Thinkube Tandem
+| `webapp-template` | `thinkube/tkt-webapp-react-fastapi`, `template-docs/` | Templates: the round trip
+|===
 
-.§1 — Start here
-* xref:start-here/what-is-thinkube.adoc[What is Thinkube] — _concept_
-* xref:start-here/the-loop.adoc[The AI loop] — _concept_
-* xref:start-here/quickstart.adoc[Quickstart] — _tutorial_
+A cross-module link names the module: `xref:install:overview.adoc[]`, `xref:control:index.adoc[]`, `xref:tandem:index.adoc[]`, `xref:webapp-template:deploy.adoc[]`. From a module back to the site's own pages: `xref:ROOT:reference/thinkube-yaml.adoc[]`.
 
-.§2 — Set up _(installer)_
-* xref:install:overview.adoc[Install Thinkube] — _tutorial_
-* Prepare your machines · Connect from anywhere · Set up your domain · Connect to GitHub · Unlock AI models · Add more nodes — _how-to_
+== The sections
 
-.§3 — How you work (the three pillars)
-* xref:how-you-work/index.adoc[The cockpit] — _concept_
-* xref:how-you-work/claude-code.adoc[Driving Thinkube from Claude] — _how-to_
-* xref:how-you-work/ai-lab.adoc[Thinkube Notebooks] — _how-to_
-* xref:control:index.adoc[thinkube-control] — _reference (control)_
+.Start here
+* xref:start-here/what-is-thinkube.adoc[What is Thinkube] — concept
+* xref:start-here/what-you-get.adoc[What you get] — reference
+* xref:start-here/the-loop.adoc[The AI loop] — concept
+* xref:start-here/quickstart.adoc[Quickstart] — tutorial
+* xref:why/the-story.adoc[The story] — concept
 
-.§4 — The lifecycle
-* xref:lifecycle/index.adoc[The loop] — _concept_
-* xref:lifecycle/get-models.adoc[Get a model] — _how-to_
-* xref:lifecycle/fine-tune.adoc[Fine-tune] — _tutorial_
-* xref:lifecycle/build-apps.adoc[Build an app] — _tutorial_
-* xref:lifecycle/serve.adoc[Serve a model] — _how-to_
+.Install (`install`)
+* xref:install:overview.adoc[Install Thinkube] — tutorial
+* xref:install:node-setup.adoc[Prepare your machines], xref:install:overlay-network.adoc[Connect from anywhere], xref:install:cloudflare-token.adoc[Set up your domain], xref:install:github-token.adoc[Connect to GitHub], xref:install:huggingface-token.adoc[Unlock AI models], xref:install:adding-nodes.adoc[Add more nodes] — how-to
 
-.§5 — Playbooks
-* xref:playbooks/index.adoc[What a playbook is] — _concept_
-* xref:playbooks/research-assistant.adoc[Build a research assistant] — _tutorial_
-* xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards] — _tutorial_
+.Using it
+* xref:how-you-work/index.adoc[The cockpit] — concept; xref:how-you-work/claude-code.adoc[Drive Thinkube from Claude Code], xref:how-you-work/ai-lab.adoc[Thinkube Notebooks] — how-to
+* xref:lifecycle/index.adoc[The four stages] — concept; xref:lifecycle/get-models.adoc[Get a model], xref:lifecycle/serve.adoc[Serve a model] — how-to; xref:lifecycle/fine-tune.adoc[Fine-tune] — concept; xref:lifecycle/build-apps.adoc[Build an app] — tutorial
+* `webapp-template`: xref:webapp-template:index.adoc[The template round trip], xref:webapp-template:variables.adoc[How configuration reaches your app] — concept; xref:webapp-template:deploy.adoc[Deploy a template] — tutorial; xref:webapp-template:develop.adoc[Change the app and ship it], xref:webapp-template:create-a-template.adoc[Turn your app into a template] — how-to; xref:webapp-template:anatomy.adoc[What is in the web app template] — reference
+* `tandem`: xref:tandem:index.adoc[What Tandem is], xref:tandem:the-space.adoc[The space], xref:tandem:identity.adoc[Projects and identity], xref:tandem:gates.adoc[The two gates], xref:tandem:the-run.adoc[The run] — concept; xref:tandem:getting-started.adoc[Getting started], xref:tandem:troubleshooting.adoc[When something goes wrong] — how-to; xref:tandem:end-to-end.adoc[The whole path, end to end], xref:tandem:reading-the-surface.adoc[Reading Tandem's pages], xref:tandem:configuration.adoc[Configuration and settings], xref:tandem:store.adoc[The store], xref:tandem:defects.adoc[The defect ledger] — reference
 
-.§6 — Reference
-* xref:reference/thinkube-yaml.adoc[thinkube.yaml] — _reference_
-* xref:reference/templates.adoc[Templates catalog] — _reference_
-* xref:reference/components.adoc[Components catalog] — _reference_
-* xref:control:index.adoc[Control panel & MCP tools] — _reference (control)_
+.Playbooks
+* xref:playbooks/index.adoc[What a playbook is] — concept
+* xref:playbooks/research-assistant.adoc[Build a research assistant], xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards], xref:playbooks/nine-sentences.adoc[Build an app from nine sentences] — tutorial
 
-.§7 — How it works
-* xref:how-it-works/architecture.adoc[Architecture] · xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop] · xref:how-it-works/kubernetes-underneath.adoc[Kubernetes underneath] · xref:how-it-works/gpu-multiarch.adoc[GPU & multi-arch] · xref:how-it-works/mcp-operation-model.adoc[The MCP operation model] · xref:how-it-works/components.adoc[Platform components] — all _concept_
+.Reference
+* xref:reference/thinkube-yaml.adoc[thinkube.yaml], xref:reference/templates.adoc[Templates catalog], xref:reference/components.adoc[Components catalog] — reference
+* `control`: xref:control:index.adoc[thinkube-control], xref:control:llm-serving.adoc[LLM serving and models], xref:control:notebooks.adoc[Notebook execution over MCP] — reference
 
-.§8 — Why it's built this way
-* xref:why/the-story.adoc[MicroK8s to kubeadm] · xref:why/opinions-on-a-standard.adoc[Opinions on a standard] · xref:why/single-user-by-design.adoc[Single-user by design] · xref:why/operated-by-conversation.adoc[Operated by conversation] — all _concept_
+.How it works
+* xref:how-it-works/architecture.adoc[Architecture], xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop], xref:how-it-works/kubernetes-underneath.adoc[Kubernetes underneath], xref:how-it-works/gpu-multiarch.adoc[GPU and multi-arch], xref:how-it-works/mcp-operation-model.adoc[The MCP operation model], xref:how-it-works/components.adoc[Platform components] — concept
+* Why it is built this way: xref:why/opinions-on-a-standard.adoc[Opinions on a standard], xref:why/single-user-by-design.adoc[Single-user by design], xref:why/operated-by-conversation.adoc[Operated by conversation] — concept
 
-== Scope boundary — what we do *not* document
+.Contributing
+* xref:contributing/page-types.adoc[Page types], xref:contributing/style-guide.adoc[Style guide], this page, xref:contributing/screenshots.adoc[Screenshot inventory], xref:contributing/gaps.adoc[Gap analysis] — reference
 
-Thinkube runs a lot of services — Gitea, Harbor, ArgoCD, MLflow, Keycloak,
-JuiceFS, SeaweedFS, PostgreSQL, DevPI, Argo Workflows and the optional
-components. **None of these get interface ("here's their dashboard") docs.**
+== What is not documented, on purpose
 
-* They appear only as **mechanism** in xref:how-it-works/components.adoc[§6 Platform components] —
-  what they are and how the platform uses them — not as places you operate.
-* Operationally you reach them through **Claude + MCP**, not their own UIs.
-* The documented interface surface is the **three pillars + the loop**. That is
-  the boundary; new service docs do not get added without revisiting this map.
+The services behind the branded names — Gitea, Harbor, ArgoCD, MLflow, Keycloak, JuiceFS, SeaweedFS, PostgreSQL, DevPI, Argo Workflows — and the optional components get no pages about their own interfaces. They appear as mechanism in xref:how-it-works/components.adoc[Platform components] and as entries in the xref:reference/components.adoc[components catalog]. The documented surface is the three surfaces of xref:how-you-work/index.adoc[the cockpit] and the four stages; a new page about a service's own dashboard needs a reason this map does not yet give.
+
+== Adding a page
+
+. Pick the type from xref:contributing/page-types.adoc[Page types] and copy its skeleton.
+. Put the file in the module whose repository holds the code it describes.
+. Add one line to `nav.adoc` in `thinkube.org`. A page not in the nav is not on the site.
+. Build locally with `npx --no-install antora --fetch antora-playbook.yml` in `thinkube.org`; the build must print no warnings.
+. Name the source file each factual sentence was checked against in the commit message.

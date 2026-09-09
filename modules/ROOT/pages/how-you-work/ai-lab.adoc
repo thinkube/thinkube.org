@@ -1,66 +1,82 @@
 = Thinkube Notebooks
 :page-type: how-to
 
-_Open a notebook, pick or build an environment, and find the playbooks._
+_Start a notebook server on the node you want, pick or build an environment, find the example notebooks, and call a served model._
 
-Thinkube Notebooks is JupyterHub, reachable from the dashboard. It shares its
-workspace with Thinkube IDE: a file you save in one is the same file in the
-other.
+Thinkube Notebooks is JupyterHub, at `notebooks.<your domain>` and on the thinkube-control dashboard. It shares its filesystem with Thinkube IDE: a file you save in one is the same file in the other.
 
-== Open it
+== Open it and start a server
 
-From the thinkube-control dashboard, open Thinkube Notebooks. You are already
-logged in — it uses the same identity as everything else.
+Open Thinkube Notebooks and choose *Sign in with Keycloak*. You are logged in with the same identity as everything else.
 
-// SCREENSHOT: lab-hub (ref t3nf; mock — real capture in a follow-on spec)
-image::lab-hub.svg[ref t3nf — the JupyterHub launcher/spawner,role=mock-screenshot]
-// SCREENSHOT: lab-notebook (ref sca7; mock — real capture in a follow-on spec)
-image::lab-notebook.svg[ref sca7 — a notebook with the Thinky assistant,role=mock-screenshot]
+image::notebooks-hub.png[The home page of Thinkube Notebooks after sign-in]
+
+The *Server Options* form asks where and how big:
+
+image::notebooks-spawn.png[The Server Options form: node, CPU cores, memory, number of GPUs]
+
+* *Select Node* lists every node with what it has free right now, for example `tkamd1 (0.0/16 CPUs, 0/62Gi, No GPU)`. Pick a GPU node for training or for a notebook that calls a served model through a large context.
+* *CPU Cores*, *Memory* and *Number of GPUs* are capped at what the chosen node has.
+
+Choose *Start*. The defaults the form opens with are set in thinkube-control under *JupyterHub Config*: default node, cores, memory and GPU count.
 
 == Pick an environment
 
-Environments appear as kernels. Two are ready:
+Environments are built from definitions and appear as kernels. Two are built at install:
 
-* `fine-tuning` — peft, trl, bitsandbytes, Unsloth, with the CUDA and torch
-  pins set for this hardware
-* `agent-dev` — LangChain, CrewAI, AG2
+* `fine-tuning`: bitsandbytes, peft, trl, Unsloth, flash-linear-attention and python-constraint on top of the base packages, with the CUDA and torch build for this hardware inherited from the image.
+* `agent-dev`: LangChain, LangGraph, AG2, OpenAI Agents, CrewAI and FAISS on top of the same base.
+
+The base every environment carries includes transformers, datasets, accelerate, mlflow, qdrant-client, langfuse, openai, arxiv, redis, nats-py, psycopg2 and boto3, so the example notebooks run without installing anything.
+
+Each environment inherits PyTorch from the container image rather than installing its own. Install a package that pins its own `torch` and pip puts a second PyTorch inside the environment, which shadows the image's build and breaks every compiled extension. Use `--no-deps` for such packages.
 
 == Build your own
 
-Ask Claude in Thinkube IDE:
+Ask Claude Code in Thinkube IDE:
 
 ----
 › make me a venv from agent-dev and add trackio and polars
 ----
 
-Or in thinkube-control, under *Jupyter Kernels*, start from a template and add
-packages. Either way the environment is built for your architecture and
-appears as a kernel when it finishes.
+Or in thinkube-control, under *Jupyter Kernels*, start from one of the two templates, add packages, and build. The environment is built for every GPU architecture in the cluster and appears as a kernel when the build finishes. If a build fails, ask Claude Code for the build log; it reads `get_venv_build_logs`.
 
-== Find the playbooks
+image::cp-jupyter-kernels.png[The Jupyter Kernels page of thinkube-control]
 
-The playbooks ship as notebooks in the workspace under `examples/`:
-`research-assistant/` and `zebra-grpo/`. xref:playbooks/index.adoc[Playbooks]
-describes each.
+== Find the example notebooks
+
+The first time a server starts, the example notebooks are copied into your workspace under `examples/`:
+
+* `examples/research-assistant/`: four notebooks, `00` to `03`, that build a retrieval assistant and a debate between agents;
+* `examples/zebra-grpo/`: one notebook that fine-tunes a model on solver-graded rewards, registers it and serves it, with `zebra_dataset.py` beside it.
+
+xref:playbooks/index.adoc[Playbooks] describes each and reports what a run showed.
 
 == Call a served model
 
-In any environment where `tk_llm` is available:
+In any environment, `tk_llm` is installed and configured for your gateway:
 
 [source,python]
 ----
-from tk_llm import get_openai_client
+from tk_llm import LLMClient, get_openai_client
 
-client = get_openai_client()
+llm = LLMClient()
+llm.list_models(state="available")        # what is loaded right now
+llm.gpu_status()                          # nodes, slots, memory
+
+client = get_openai_client()              # an OpenAI client pointed at llm.<your domain>
 response = client.chat.completions.create(
     model="Qwen/Qwen3.5-4B",
     messages=[{"role": "user", "content": "Hello"}],
 )
 ----
 
-The client is pre-configured for your LLM Gateway; the model name is the one
-the catalogue shows.
+The model name is the id the catalogue shows. `llm.load_model("Qwen/Qwen3.5-4B", node="tkspark")` and `llm.unload_model(...)` do from a cell what the LLM Gateway page does with a click.
 
-== Configure the hub
+== Let Claude Code run cells
 
-thinkube-control, under *JupyterHub Config*.
+When a server is running, Claude Code in Thinkube IDE can list, read, insert and execute cells of your notebooks through thinkube-control. xref:control:notebooks.adoc[Notebook execution over MCP] lists the operations and their limits.
+
+== Stop the server
+
+From the hub's *Home* page, *Stop My Server*. The GPU and memory the server held come back; your files stay on the shared filesystem.

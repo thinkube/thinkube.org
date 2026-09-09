@@ -1,10 +1,44 @@
-= The Loop
+= The four stages
 :page-type: concept
 
+_Get a model, fine-tune it, build on it, serve it. What each stage page is for, and which one to open for the thing you want to do._
 
-_The four stages — get a model, fine-tune, build, serve — and how they chain._
+Work on Thinkube is organised around four stages. Each has one page in this section, and each page ends with something you can point at: a model in the registry, a run in Thinkube Experiments, an application with an address, a model answering at the gateway.
 
-[NOTE]
-====
-Skeleton page: the structure is in place, the content is not yet written.
-====
+The pages are written for one stage at a time. That is the right shape when you know which step you need. When you want to see the whole thing work end to end, read a xref:playbooks/index.adoc[playbook] instead: a playbook crosses every stage in one run.
+
+== The stages
+
+[cols="1,2,2",options="header"]
+|===
+| Stage | You do | You end with
+
+| xref:lifecycle/get-models.adoc[Get a model]
+| Pick a model from the catalogue and mirror it from Hugging Face. Ask first what fits on your GPUs.
+| The weights in Thinkube Storage, the entry in Thinkube Experiments, the model marked `deployable`.
+
+| xref:lifecycle/fine-tune.adoc[Fine-tune]
+| Train in Thinkube Notebooks, in the `fine-tuning` environment, with the run tracked in Thinkube Experiments. Register the result.
+| A model of your own in the same catalogue, linked to the run that made it.
+
+| xref:lifecycle/build-apps.adoc[Build an app]
+| Deploy a template, open the repository it gave you, change it, push.
+| An application at `<name>.<your domain>`, behind the login, rebuilt on every push.
+
+| xref:lifecycle/serve.adoc[Serve a model]
+| Load a mirrored or fine-tuned model onto a GPU node through the LLM Gateway and call it.
+| One endpoint at `llm.<your domain>` that speaks the OpenAI API and the Anthropic Messages API.
+|===
+
+== Which page to open
+
+* You have not mirrored anything yet: xref:lifecycle/get-models.adoc[Get a model], then xref:lifecycle/serve.adoc[Serve a model]. The xref:start-here/quickstart.adoc[Quickstart] does both in six steps.
+* You have a notebook that trains something: xref:lifecycle/fine-tune.adoc[Fine-tune] says what the environment already has and how a checkpoint becomes a served model.
+* You want something a colleague can open: xref:lifecycle/build-apps.adoc[Build an app]. The xref:webapp-template:index.adoc[template pages] continue from there.
+* A model is mirrored and you want to call it: xref:lifecycle/serve.adoc[Serve a model].
+
+== Where the stages meet
+
+The interesting problems sit between stages: a fine-tune that has to be served, an application that needs a model that is not loaded yet, a model that fits on one node and not the other. Two things carry work across those seams. The registry in Thinkube Experiments is the same whether a model was mirrored or trained, so the serve stage does not care where a model came from. And the LLM Gateway is the same endpoint from a notebook, from an application and from outside, so what you tested in a cell is what the application calls.
+
+Every step on these pages is something you can ask Claude Code for in Thinkube IDE, and every one is also a click in thinkube-control. The pages show the ask and name the page.

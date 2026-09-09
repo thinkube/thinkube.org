@@ -22,12 +22,28 @@ Registering a model against its run is what turns a checkpoint on disk into
 an entry in the catalogue, with the run that produced it one click away. From
 there the LLM Gateway can load it.
 
+image::experiments-home.png[Thinkube Experiments, the experiments list]
+
+== Two halves of Thinkube Experiments
+
+Tracking holds experiments and runs: what you tried and what happened,
+identified by a run id. The model registry holds named, versioned models:
+what is deployable, identified by name and version. A model registered with
+its `run_id` links the two, so a version can be walked back to the reward
+curve and the parameters that produced it. A version registered without that
+link is a set of weights nobody can account for.
+
+Registering makes a model exist; the catalogue makes it loadable. A
+fine-tune also needs an entry in `models.json` in `thinkube-metadata` with
+`is_finetuned: true` and the backend that serves it, or `load_model` answers
+"not found" however healthy the registry entry looks.
+
 == One GPU or several
 
-Unsloth's open version runs on one GPU; its multi-GPU support is in paid
-tiers. TRL with PEFT and accelerate scales across GPUs under Apache-2.0. Both
-are in the environment. If you have more than one card and want them all in
-the run, TRL is the path.
+The environment carries Unsloth, and TRL with PEFT and accelerate. The
+example notebook trains with Unsloth on one GPU. TRL's trainers run across
+several GPUs with accelerate; if you have more than one card and want them
+all in one run, that is the path.
 
 == A complete run
 

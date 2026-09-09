@@ -12,10 +12,9 @@ thinkube-control, under *AI Models* and *LLM Gateway*, if you prefer.
 
 == 1. Open Thinkube IDE and start Claude
 
-Open Thinkube IDE in your browser and log in.
+Open Thinkube IDE at `ide.<your domain>` in your browser and log in.
 
-// SCREENSHOT: cp-dashboard (ref n2j0; mock — real capture in a follow-on spec)
-image::cp-dashboard.svg[ref n2j0 — thinkube-control dashboard right after login,role=mock-screenshot]
+image::ide-home.png[Thinkube IDE after login]
 
 Open a terminal and run:
 

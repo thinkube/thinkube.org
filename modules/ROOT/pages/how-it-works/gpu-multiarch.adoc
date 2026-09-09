@@ -52,6 +52,8 @@ One cluster can hold amd64 and arm64 nodes. Builds run once per architecture
 and produce a multi-arch image; notebook environments are built per
 architecture; the scheduler places each pod on a node that can run it.
 
+image::cp-nodes.png[The Cluster Nodes page of thinkube-control on the reference cluster: an amd64 control plane without a GPU, an amd64 worker with two RTX 3090s, and an arm64 DGX Spark, all on Kubernetes v1.36.4]
+
 The arm64 side is where the platform carries builds that don't exist upstream:
 vLLM compiled from source for the GB10's compute capability, and Harbor images
 with the x86 binaries that community builds still contain replaced.
