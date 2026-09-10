@@ -23,9 +23,9 @@ Two of the three ship as notebooks in Thinkube Notebooks, under `thinkube/notebo
 | The `fine-tuning` environment on a node with a GPU with roughly 20 GB free; the base model mirrored; the LLM Gateway.
 | A model you trained, registered in Thinkube Experiments beside its run, served on vLLM and answering at the gateway.
 
-| xref:playbooks/nine-sentences.adoc[Build an app from nine sentences]
+| xref:playbooks/nine-sentences.adoc[Improve a todo application with nine sentences]
 | A deployed web application from the template; Thinkube Tandem in Thinkube IDE; Claude Code.
-| Nine sentences of yours turned into promises, a run that built the first of them, and a delivery page that says what held and what did not.
+| A basic todo application, nine sentences about what it should do better, a run that delivered the first of them, and a delivery page that says what held and what did not.
 |===
 
 == Which one first

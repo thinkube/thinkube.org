@@ -39,7 +39,7 @@ A cross-module link names the module: `xref:install:overview.adoc[]`, `xref:cont
 
 .Playbooks
 * xref:playbooks/index.adoc[What a playbook is] — concept
-* xref:playbooks/research-assistant.adoc[Build a research assistant], xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards], xref:playbooks/nine-sentences.adoc[Build an app from nine sentences] — tutorial
+* xref:playbooks/research-assistant.adoc[Build a research assistant], xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards], xref:playbooks/nine-sentences.adoc[Improve a todo application with nine sentences] — tutorial
 
 .Reference
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml], xref:reference/templates.adoc[Templates catalog], xref:reference/components.adoc[Components catalog] — reference

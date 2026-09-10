@@ -46,7 +46,7 @@
 * xref:playbooks/index.adoc[What a playbook is]
 * xref:playbooks/research-assistant.adoc[Build a research assistant]
 * xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards]
-* xref:playbooks/nine-sentences.adoc[Build an app from nine sentences]
+* xref:playbooks/nine-sentences.adoc[Improve a todo application with nine sentences]
 
 .Reference
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]

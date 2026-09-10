@@ -1,18 +1,18 @@
-= Build an app from nine sentences
+= Improve a todo application with nine sentences
 :page-type: tutorial
 
-_Deploy the web application template, write nine sentences about what you wish it did, and follow Thinkube Tandem from those sentences to a delivery on the running application. Written from a run on the reference cluster, kept as it happened._
+_Deploy a basic todo application from the web application template, then improve it: write nine sentences about what you wish it did, and follow Thinkube Tandem from those sentences to the change delivered on the running application. Written from a run on the reference cluster, kept as it happened._
 
-An application deployed from a template does what the template does. Making it do what you want is the ordinary work of a week, and it is the work Thinkube Tandem is for. So this walkthrough starts where you would start: a fresh application from the web application template, and a list of things you wish it did.
+The application already exists before the method starts. It has code, tests, pages people use, and habits of its own; the nine sentences describe what should change in it, not what to build from nothing. That is the ordinary work of a week on any application you run, and it is the work Thinkube Tandem is for: reading a codebase that is already there, finding where each sentence lands, and changing it without breaking what already works.
 
 Nothing you type is in the language of software. There are no tickets, no acceptance criteria, no file names. Those are what the machine derives.
 
 .What you need
 * Thinkube IDE with Claude Code, which the platform installed.
 * Thinkube Tandem, installed in Thinkube IDE as an extension; its icon is in the activity bar.
-* The web application template deployed as an application. This run named it `tasks`.
+* A todo application to improve. This walkthrough deploys one from the web application template and names it `tasks`. If you already have one, start at section 2.
 
-== 1. Deploy the application
+== 1. Deploy the todo application
 
 Ask Claude Code in Thinkube IDE:
 
@@ -27,7 +27,7 @@ Claude calls Tandem's `new_app`. The platform creates the repository in Thinkube
 filed under Apps. It will be seen at https://tasks.thinkube.com
 ----
 
-The same deployment is *Templates* in thinkube-control; xref:webapp-template:deploy.adoc[Deploy a template] follows it phase by phase. When the pipeline finishes, `tasks.<your domain>` opens behind the login: a task list with a sidebar, cards, and a form to add a task.
+The same deployment is *Templates* in thinkube-control; xref:webapp-template:deploy.adoc[Deploy a template] follows it phase by phase. When the pipeline finishes, `tasks.<your domain>` opens behind the login: a working todo application with a sidebar, task cards, a form to add a task, and its own tests. This is the application the rest of the walkthrough improves.
 
 == 2. Write the nine sentences
 

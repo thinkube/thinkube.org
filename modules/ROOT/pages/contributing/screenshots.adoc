@@ -37,7 +37,7 @@ The Tandem captures on the nine-sentences playbook were taken from the thinking 
 | `experiments-home.png` | ROOT | Fine-tune | Thinkube Experiments, the experiments list
 | `control-dashboard-all.png` | control | thinkube-control | *All Services*
 | `control-models.png`, `control-templates.png`, `control-optional-components.png`, `control-nodes.png`, `control-harbor-images.png`, `control-jupyter-kernels.png`, `control-jupyterhub-config.png`, `control-secrets.png`, `control-api-tokens.png`, `control-knative-services.png`, `control-service-jupyterhub.png` | control | thinkube-control | One capture per page of the control panel
-| `tandem-*.png` | ROOT | Build an app from nine sentences | The thinking space at each step of the walkthrough
+| `tandem-*.png` | ROOT | Improve a todo application with nine sentences | The thinking space at each step of the walkthrough
 |===
 
 == Diagrams
