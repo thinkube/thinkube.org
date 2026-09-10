@@ -9,6 +9,7 @@ The four notebooks are under `thinkube/notebooks/examples/research-assistant/` i
 * Thinkube Notebooks with the `agent-dev` kernel. A node without a GPU is enough; the models run behind the LLM Gateway, not in the notebook.
 * The vLLM and text-embeddings backends installed from *Optional Components*, and a chat model and an embedding model mirrored. The run below used `Qwen/Qwen3.5-4B` and `Qwen/Qwen3-Embedding-0.6B`.
 * For notebooks `02` and `03`: the optional components Qdrant and Langfuse, and outbound access to arXiv. Langfuse needs ClickHouse and Valkey, which *Optional Components* lists as its requirements.
+* For notebook `03`: a chat model the catalogue marks for tool use, served with a tool-call parser that matches the model's call format. Section 4 says what happened on the reference cluster without one.
 * For the caching and messaging cells of `00`: Valkey and NATS.
 
 Notebook `00` runs with whatever is present and says what is missing, so run it first even when you are confident.
@@ -136,7 +137,13 @@ The notebook prefers a model whose serving stack advertises tool support, becaus
 
 Rebuttals are what make it a debate rather than two monologues: each side reads the other's opening and answers it. Re-run it with a different seed, or after adding papers. A verdict that flips is telling you the evidence is thin, which is itself worth knowing.
 
-This notebook was not re-run for this page either; it needs the index from `02`.
+*What the run on the reference cluster showed.* The notebook was run twice.
+
+With `Qwen/Qwen3.5-4B`, the only chat model loaded, the first advocate's turn failed at the gateway: `"auto" tool choice requires --enable-auto-tool-choice and --tool-call-parser to be set`. The vLLM server adds those flags only for models the catalogue marks for tool use, and Qwen3.5-4B is not one of them. That is the notebook's own warning made concrete: without tool calling there is no debate.
+
+`Qwen/Qwen3-8B` is the smallest vLLM model the catalogue marks for tool use. Mirrored and loaded, it replaced Qwen3.5-4B on the backend, and its server started with `--enable-auto-tool-choice --tool-call-parser qwen3_coder`. The notebook picked it, connected to the collection, found the 431 vectors and 146 papers, and ran its own check of `search_papers`, which returned four papers. Then the debate ran to the end without a single search reaching the index. Each advocate answered its prompt with the text of a call, `<tool_call>{"name": "search_papers", …}</tool_call>`, the moderator returned an empty turn, and the advocate sent the same call again until its turn limit. The judge did the same with four calls at once. The results cell reports four arguments of between 123 and 150 characters, all of them unparsed calls, and *Code generation returned empty*.
+
+The cause is on the serving side, and the server's own source says where: it maps the `qwen3` reasoning format to vLLM's `qwen3_coder` parser, which reads the XML call format, and notes that a Qwen3 model that emits JSON calls in the Hermes style needs `TOOL_CALL_PARSER=hermes` set for it. Qwen3-8B emits the Hermes style, and the catalogue entry does not set the override. Until it does, this notebook on this cluster produces the transcript above. The record is honest about it: xref:contributing/gaps.adoc[Known gaps] lists it.
 
 == What you have now
 

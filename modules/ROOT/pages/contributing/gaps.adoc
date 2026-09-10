@@ -27,8 +27,8 @@ Every page on the site is written and was checked against the source of the thin
 |===
 | Gap | What closes it
 
-| The research assistant playbook reports the outputs of notebooks `00` and `01` from a run on the reference cluster; `02` and `03` are reported from the outputs saved in the notebooks, with the corpus size and trace counts they carry
-| A run of `02` and `03` on the reference cluster with the optional components installed.
+| The research assistant playbook reports notebook `03` as it ran on the reference cluster: the debate never reached the index, because the vLLM server's tool-call parser for `Qwen/Qwen3-8B` (`qwen3_coder`) does not read the Hermes-style JSON calls that model emits
+| A catalogue entry for the model that sets `TOOL_CALL_PARSER=hermes`, or a tool-use model whose call format matches the parser chosen for it, then a rerun of `03`.
 
 | The fine-tune playbook reports the numbers the notebook's own saved run produced on a GB10
 | A second full-scale run on the reference cluster, which is an overnight job.
@@ -43,6 +43,9 @@ These are documented as the product is, and listed here so a reader who finds th
 * thinkube-control's `install_optional_component` failed within two seconds for `vllm` and `text-embeddings` on the reference cluster, with no reason in the logs; deploying the same templates with `deploy_template` succeeded. The pages describe the path that worked.
 * Thinkube Tandem's MCP tools `read_space` and `read_run` report an empty space and no run for a space that the IDE shows populated and running; the pages describe what the IDE shows.
 * In the walkthrough run recorded on xref:playbooks/nine-sentences.adoc[Nine sentences], Thinkube Tandem's live phase reported *the platform never finished building it* while the application was already built and answering at its address; *Ask the platform again* settled it. The four units that judge the running product were never reached, and the page says so.
+* thinkube-control's `build_jupyter_venv` for `agent-dev` failed on the reference cluster after fifteen seconds, at the playbook task *Get all cluster nodes*, with *Separator is found, but chunk is longer than limit*; nothing was rebuilt. The venv on disk dates from before its template and carries `ag2` 1.0.2, which has no `autogen` module, where the template pins `ag2[openai]==0.10.2`. The pinned version was installed into the venv by hand on the node running the notebook server so that `03-multi-agent.ipynb` could import it.
+* `jupyter_execute_all_cells` executes through the notebook's collaborative document, so it needs the notebook open in a JupyterLab tab. When the tab closes mid-run, the remaining cells do not run and the outputs of the cell in flight are not saved.
+* Loading a second model on the vLLM backend replaced the first: after `Qwen/Qwen3-8B` was loaded on `vllm-tkspark`, the backend listed only that model, while the registry still showed `Qwen/Qwen3.5-4B` as *available* on the same backend. The gateway's `/v1/models` returned an empty list throughout.
 * The three asynchronous notebook endpoints exist on thinkube-control's REST API and not as MCP tools; xref:control:notebooks.adoc[Notebook execution over MCP] says so.
 
 == Deliberately absent
