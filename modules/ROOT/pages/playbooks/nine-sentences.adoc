@@ -1,15 +1,37 @@
-= A worked example: the todo app
-:description: The nine sentences a person wrote, and what Thinkube Tandem did with them, from an empty application to accepted work.
+= Build an app from nine sentences
+:page-type: tutorial
 
-_A walkthrough, written from a real run and kept as it happened. The sentences below are the whole input: nothing else was typed._
+_Deploy the web application template, write nine sentences about what you wish it did, and follow Thinkube Tandem from those sentences to a delivery on the running application. Written from a run on the reference cluster, kept as it happened._
 
-== Why this example
+An application deployed from a template does what the template does. Making it do what you want is the ordinary work of a week, and it is the work Thinkube Tandem is for. So this walkthrough starts where you would start: a fresh application from the web application template, and a list of things you wish it did.
 
-An application deployed from a template does what the template does. Making it do what *you* want is the ordinary work of a week, and it is the work Tandem is for. So the example starts where you would start: a fresh application from a template, and a list of things you wish it did.
+Nothing you type is in the language of software. There are no tickets, no acceptance criteria, no file names. Those are what the machine derives.
 
-Nothing here is written in the language of software. There are no tickets, no acceptance criteria, no file names. Those are what the machine derives; they are not what you say.
+.What you need
+* Thinkube IDE with Claude Code, which the platform installed.
+* Thinkube Tandem, installed in Thinkube IDE as an extension; its icon is in the activity bar.
+* The web application template deployed as an application. This run named it `tasks`.
 
-== The nine sentences
+== 1. Deploy the application
+
+Ask Claude Code in Thinkube IDE:
+
+----
+› make a new app called tasks from the web app template, filed under Apps
+----
+
+Claude calls Tandem's `new_app`. The platform creates the repository in Thinkube Git with its build, deploys it, and clones it to `apps/tasks` in the workspace. The tool waits for the platform to finish and answers:
+
+----
+"tasks" exists on the forge, is cloned to /home/thinkube/apps/tasks, and is
+filed under Apps. It will be seen at https://tasks.thinkube.com
+----
+
+The same deployment is *Templates* in thinkube-control; xref:webapp-template:deploy.adoc[Deploy a template] follows it phase by phase. When the pipeline finishes, `tasks.<your domain>` opens behind the login: a task list with a sidebar, cards, and a form to add a task.
+
+== 2. Write the nine sentences
+
+Open the thinking space of the new application: *Tandem: Open Thinking Space* in the command palette, pick `tasks`, then a space name. Type into the box, one line per sentence:
 
 [source,text]
 ----
@@ -35,29 +57,138 @@ If I try to save a task with no title it tells me, instead of doing nothing.
 Deleting a task asks me first, because one mis-click should not lose work.
 ----
 
-Read them again and notice what they are not. They do not say which file to
-change, which component holds the list, or how a task is stored. They say what
-a person wants to be true when they open the page.
+Claude Code can put the lines in the box for you with Tandem's `save_draft`. It cannot press anything after that: keeping, choosing, signing and accepting are yours, and Tandem's tools refuse them to a machine.
 
-== What the machine made of them
+The page reads *9 lines written, none read* and offers one button, *Read these 9*. Reading costs one round of the model and records nothing.
 
-Nine sentences became three *things worth building on their own*:
+image::tandem-01-read.png[The thinking space after Read these 9: each sentence split into a subject and a claim, grouped under three subjects]
 
-[cols="1,3"]
+== 3. Read them
+
+*Read these 9* came back with each sentence split into the thing it is about and what must become true of it, and three subjects:
+
+----
+S1 my tasks · 5 claims
+S2 the new-task box · 3 claims
+S3 deleting a task · 1 claim
+----
+
+Sentences 7 and 8 never name their subject; the reading marks them `[the new-task box]` in brackets, the subject a sentence never names. Nothing is recorded yet; the page says *9 sentences read, not kept*.
+
+== 4. Keep them
+
+*Keep these 9* records the sentences as asks, word for word. They are the only thing in the store that is yours rather than derived. The page now shows the nine numbered, each with a pencil to change its words, and one button: *Group into things to build*.
+
+image::tandem-02-keep.png[The nine kept sentences, each with a pencil]
+
+== 5. Group them
+
+*Group into things to build* proposed three things, in a suggested order:
+
+[cols="1,3,1",options="header"]
 |===
-| I can see at a glance what still needs doing | the first five sentences
-| I can add a task without leaving the keyboard | the next three
-| I never delete a task by accident | the last one
+| Order | Thing to build | Sentences
+
+| First | I can see at a glance what needs doing first | 1 to 5
+| Then | I can add a task without leaving the keyboard | 6 to 8
+| Later | I never delete a task by accident | 9
 |===
 
-That grouping is a proposal, not a decision. A person picks the thing to build,
-one at a time, and the delivery that comes back is about that thing alone.
+Proposing decides nothing. The page offers *Build the first*.
 
-== What comes next
+image::tandem-03-group.png[The nine sentences became three things: first, then, later]
 
-The rest of this walkthrough — what each thing became, what the run did, what
-the delivery report said, and what happened when the work turned out wrong
-after it was merged — is written as the example is walked again on the current
-templates. It is kept here rather than in a private note because the method is
-the product: a person reading this should be able to type these nine sentences
-into their own application and watch the same thing happen.
+== 6. Work the first one out
+
+*Build the first* worked out what "I can see at a glance what needs doing first" means in this repository. The page said *working out what to build — deriving the changes*, then *0 of 3 subjects done*; it works every subject out, and the work page opens by itself when the last one finishes. When it did, the first thing carried *5 of your sentences · 5 promises* and a line, *20 things I decided for you*: the questions the sentences left open, each answered with a recommendation you can replace.
+
+*what it will do* opens the work page. Each promise is one sentence, the files it lands in, and the lines that must become true, each saying where it stands:
+
+* *The task list arrives in a fixed, sensible order: soonest due first, tasks with no due date after those that have one, and high priority above low when two tasks fall on the same day.* Lands in `backend/app/api/tasks.py`, `backend/app/models/task.py` and `backend/tests/test_tasks.py`. Four lines, each *checked when it is built*.
+* *A task whose due date has passed is marked on its card with a loud overdue badge that is visible without reading the date.* Lands in `frontend/src/lib/taskView.ts`, `TaskCard.tsx`, the three locale files and a test. Three lines checked when built, one *judged by a reviewer at delivery*: that the label reads as ordinary language in English, Spanish and Catalan.
+* *Finished tasks are kept out of the list by default, with a control that brings them back when the person wants to see them.* Three lines, checked when built.
+* *The tasks page states how many tasks it is showing, so nobody has to count cards.* Three lines checked when built, and one *only you can see this*: after adding a task, the number stated is one higher than before. Only the running product can show that; the person certifies it on the delivery.
+* *The person can narrow the page to high priority tasks only, and widen it again.* Three lines, checked when built.
+
+A sixth promise was added by the machine: a page at `docs/i-can-see-at-a-glance-what-needs-doing-first.md` that says in plain words what the thing does. Documentation is part of every delivery unless you press *Not needed*.
+
+image::tandem-06-work-page.png[The work page: promises, the files they land in, and each acceptance line with where it stands]
+
+== 7. Sign
+
+*Build the first* again opens the cut review, headed *6 promises, not started*, with the whole list above it and, at the bottom, what pressing the button does:
+
+----
+signs this work and locks the 5 sentences behind it — from then on they change only by amendment
+records the machine's own answer to 4 open questions — answering first replaces it with yours
+starts the workers on 6 promises — this is what spends
+pushes a branch; nothing is merged until you accept the delivery
+Lands documentation: docs/i-can-see-at-a-glance-what-needs-doing-first.md
+----
+
+*Build these 6* signs. It minted `TEP-cmxela-1`, and the page changed to *building* with the orchestration graph: *0 of 11 workers done · 0 of 4 judged on the running product*, and a *Stop* button.
+
+image::tandem-07-cut-review.png[The cut review, with Build these 6 at the top right]
+
+== 8. Watch it build
+
+The graph has one card per unit, titled with the promise it keeps, with a state word and a log count. What the run wrote, in order:
+
+*The door.* The run took a worktree on a branch `tandem/tasks-5f5c4b/TEP-cmxela-1`, provisioned it, proved that the untouched tree builds and that each part's single-test command runs, and found that the repository has no whole-suite command, so the tree would be judged by its product build and by the backend and frontend suites.
+
+*The workers.* Four coders, four probe authors and three units that bring existing tests under the new behaviour, up to four at a time. The probe authors wrote their checks blind, in a snapshot where the implementation did not exist, and recorded every choice the criteria forced: that "finished" means `status === 'done'`, that "the order they arrived in" means the order the list came back from the server, which priority ranks above which.
+
+*A failure that was not the code's.* The four backend checks for the ordering promise never went green: the audit reported *0 of 4 checks of SL-1 passed*, round after round. The coder read the runner's own error, `fe_sendauth: no password supplied`: the checks run `run_tests.sh`, which expects the database credentials the platform hands a test container, and the check environment had none. It proved the ordering directly against the same SQLAlchemy query and enum the endpoint uses, wrote that down, and declined to weaken the checks to reach green. It also found, on the way, a real defect the missing database had been masking: SQLAlchemy was comparing the priority enum by its name, `HIGH`, while the model stores lowercase values, and SQLite in the sandbox had hidden the difference.
+
+*A slice that would have broken something else.* The overdue-badge coder ran the whole frontend suite rather than only its three checks and found that its change broke the build and 24 standing tests. It fixed that before committing, and wrote: *the run was one commit away from shipping a slice that broke an unrelated, already-working feature.* It left three findings on the delivery, among them that the *To Do* status badge and the *Low* priority badge render identical classes, which its own criterion did not require it to fix.
+
+The other three frontend slices went green and were committed on the branch; the units that bring standing tests under the new behaviour followed.
+
+image::tandem-09-run.png[The run and logs page: the graph of units with their states and log counts]
+
+*The gate.* The closing gate built the delivered tree, ran all 16 checks on it, and ran the two parts' suites. Four backend checks were still red for the one reason above. *After the authors' repairs, 4 promises are still unkept*, and the closer took them with full sight. It found that `backend/.env.test` named `test_webapp`, the template's generic placeholder, which matches no database in this app, and corrected it to `test_tasks`, the name the platform's build gives this app's test database. It could not give the checks a database from inside a worker, said so, and stopped: *the fix is provisioning, not code*. The honesty scan then flagged one line of `backend/app/api/tasks.py` as a confessed deferral, `status: TaskStatus = TaskStatus.TODO`; that is the enum's own value, not a promise left for later, and it rides the delivery for a person to weigh.
+
+== 9. The delivery
+
+At 23:14 the run wrote *merged and pushed — the platform is building it*. The delivery record carries:
+
+* 19 green proofs, including the product build and the frontend checks of the overdue badge, the finished-tasks control, the task count and the high-priority filter;
+* 3 undelivered lines: the backend ordering checks, *0 of 4, for the same environmental reason*; the note that they stayed red after two attempts and the closer; and the honesty scan's line about `TaskStatus.TODO`;
+* 1 observation for the person: *after adding one task, the number stated on the page is one higher than before*.
+
+The merge is the hand-over: this is a development platform, so the work is not held waiting for approval. The platform built the merged commit, and what came back to the page was not "may I merge" but the application running with the change.
+
+== 10. Where it stopped, and why
+
+The run did not reach the end of its own plan, and the record says so plainly. Four units named `on-the-product-1` to `on-the-product-4` were waiting for the application to come up with the change, so that reviewers could drive it and judge the four acceptance lines that only a running product can show. Before that happened, the browser tab holding the IDE was reloaded, and the log wrote:
+
+----
+the editor window is closing or reloading — this run ends here, unfinished.
+Run again resumes what was committed.
+----
+
+A run lives in the Thinkube IDE session that started it. Close or reload that window while it is building and the run ends; what was already committed on the branch stays.
+
+*Run it again* resumed it. The door took the same branch back, merged the three commits that had reached `main` in the meantime, provisioned the worktree afresh and kept the sixteen recorded checks at their addresses. The units that had finished were left standing. The ordering unit ran again, found the code already in place and wrote the documentation page it still owed; and this time its four backend checks, red for the whole first pass for want of a database, came back *4 of 4 pass*: the door's proof of the backend's single-test command held, with the closer's `.env.test` correction now on the branch. The closing gate ran again, two criteria were read by a fresh reviewer, and the run merged and pushed a second time. The delivery record was rewritten by the resumed run: 19 green proofs, none undelivered, the one observation for the person.
+
+Then the live phase waited. *nothing has moved for 9 minutes*, it wrote, listing the four on-the-product units as *ready (waits on live)*; then *it did not go live: the platform never finished building it*, and one repair attempt that *changed nothing — there is nothing new for the platform to build*. The application had in fact been built and was answering at its address, so the page's *Ask the platform again* was pressed, and the space settled on *coded, checked and merged into the project · 18 checks passed*.
+
+The four on-the-product lines were never judged. The report does not hide that: the observation the person must certify is shown under *nobody could settle these — they are yours to check*, and the *Run and logs* page says the run ended with the window. Tandem is experimental and still changing; this is one of the places where it is.
+
+image::tandem-13-report.png[The report: five sentences done, one line for the person to check, four not started, and the three buttons]
+
+== 11. What the person sees
+
+The report lists what was asked for and what happened. The five sentences of the first thing are *done*; the four sentences of the later things are *not started*; between them is the one line no check and no reviewer could drive, *after adding one task, the number stated on the page is one higher than before*, marked *declared at signing as something no check and no reviewer can drive*.
+
+The application at `tasks.<domain>` shows the change: a *Show completed* switch, a *High priority only* switch, and a task count in place of a wall of cards.
+
+image::tasks-app.png[The tasks application after the merge, with the Show completed and High priority only switches]
+
+Three buttons close the loop, and they belong to the person, not to the machine:
+
+* *Go on to the next* closes this thing and moves to what is left to build: the second group, then the third.
+* *Take it back out* reverts the merge.
+* *Run it again* resumes the run from what was committed.
+
+Nothing here was accepted on the person's behalf. What the run did is on the branch and in the record under `~/thinkube-tandem-store/`; what it could not do is written in its own words on the page. That is the shape of the method: the platform builds and reports, and the person keeps, takes back out, or goes on.

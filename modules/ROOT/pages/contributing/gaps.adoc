@@ -42,6 +42,7 @@ These are documented as the product is, and listed here so a reader who finds th
 * The installer's completion screen labels Thinkube IDE "Code Server" and prints `code.<your domain>`; the service registers at `ide.<your domain>`, which is the address the pages give.
 * thinkube-control's `install_optional_component` failed within two seconds for `vllm` and `text-embeddings` on the reference cluster, with no reason in the logs; deploying the same templates with `deploy_template` succeeded. The pages describe the path that worked.
 * Thinkube Tandem's MCP tools `read_space` and `read_run` report an empty space and no run for a space that the IDE shows populated and running; the pages describe what the IDE shows.
+* In the walkthrough run recorded on xref:playbooks/nine-sentences.adoc[Nine sentences], Thinkube Tandem's live phase reported *the platform never finished building it* while the application was already built and answering at its address; *Ask the platform again* settled it. The four units that judge the running product were never reached, and the page says so.
 * The three asynchronous notebook endpoints exist on thinkube-control's REST API and not as MCP tools; xref:control:notebooks.adoc[Notebook execution over MCP] says so.
 
 == Deliberately absent
