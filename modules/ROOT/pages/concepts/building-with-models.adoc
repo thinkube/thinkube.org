@@ -44,4 +44,4 @@ An AI application is a model plus four ordinary pieces of software: a way to fin
 
 *Why it matters to you.* You operate a Kubernetes cluster without learning it. Every page on this site opens with the sentence you say to Claude, because that sentence is a real operation with a real result, not a shortcut around the platform.
 
-*Where you meet it.* xref:how-you-work/claude-code.adoc[Drive Thinkube from Claude Code], and the operations that matter on xref:control:index.adoc[thinkube-control].
+*Where you meet it.* xref:apps/claude-code.adoc[What Claude can do for you], and the operations that matter on xref:control:index.adoc[thinkube-control].

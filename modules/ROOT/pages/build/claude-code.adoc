@@ -1,0 +1,80 @@
+= What Claude can do for you
+:page-type: how-to
+
+_The sentences you say to Claude Code in Thinkube IDE, and the operation each one runs. Twelve cover the site; Claude knows the rest._
+
+.TL;DR
+Open a terminal in Thinkube IDE and run `claude`. It is already connected to the platform. Say what you want in a sentence; Claude reads the platform's state and calls the operation the control panel's button would call. Everything below is also a click in thinkube-control.
+
+== Why this is one sentence
+
+Thinkube exposes its whole control surface through MCP, the protocol by which an assistant is given tools: what is running, the models, the templates, the notebooks, the components. Reading is free: Claude consults state whenever it needs to. Changing is a tool call, and Claude makes one only when you ask. So a sentence is not a shortcut around the platform; it is the platform, operated by the same code the panel uses. xref:concepts/building-with-models.adoc#_mcp_and_what_it_means_that_claude_operates_the_platform[Concepts] explains MCP; xref:how-it-works/mcp-operation-model.adoc[The MCP operation model] explains the read and change split.
+
+== The twelve sentences
+
+[cols="2,1,2",options="header"]
+|===
+| You say | Claude calls | What you get
+
+| "make an app called notes from the web app template"
+| `deploy_template`
+| A repository, a build, a deploy, an address behind your login. Claude polls the status until it reports `running`.
+
+| "redeploy notes"
+| `redeploy_template`
+| The same app rebuilt from its repository, keeping its name and data.
+
+| "is notes up?" / "show me notes' build log"
+| `get_deployment_status`, `get_deployment_logs`
+| The state of the last deployment and its log, phase by phase.
+
+| "what's running?"
+| `list_services_minimal`
+| Every service, healthy or not, with its address.
+
+| "which models could I get?" / "which would fit my GPU?"
+| `get_model_catalog`
+| The catalogue with sizes and quantizations, and what fits your hardware.
+
+| "get Qwen/Qwen3-8B"
+| `submit_model_mirror`
+| A download into your registry, once; ask for its status any time.
+
+| "load it on the spark"
+| `load_llm_model`
+| `loading`, then `available` at `llm.<your domain>`.
+
+| "unload it"
+| `unload_llm_model`
+| The GPU memory back; the weights stay in the registry.
+
+| "install Qdrant and Langfuse"
+| `install_optional_component`
+| The components installed with their requirements, each with an address and a login.
+
+| "run the zebra notebook"
+| `jupyter_execute_all_cells`
+| The notebook's cells executed in order in Thinkube Notebooks, with the outputs saved in it.
+
+| "give my app a token for the gateway"
+| `create_token`
+| An API token to send as a bearer token or as `x-api-key`.
+
+| "how do I add a node?"
+| `search_thinkube_docs`
+| The matching pages of this site, read from the copy deployed in your cluster.
+|===
+
+== When something is wrong
+
+----
+› jupyterhub isn't loading, what's going on?
+----
+
+Claude reads the service's pod state, its logs and its health history, and tells you what it found. Restarting is a change, so it asks before it restarts.
+
+== Limits
+
+* Claude changes nothing unless you ask; a question is answered from state, not acted on.
+* Some operations reach thinkube-control's REST API only and not MCP; the pages that need them say so.
+* Tandem's own acts, keeping, choosing, signing and accepting, are yours; its tools refuse them to Claude by design.

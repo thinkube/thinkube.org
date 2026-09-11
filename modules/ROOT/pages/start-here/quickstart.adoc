@@ -35,7 +35,7 @@ Ask it something only the platform can answer:
 › what's running?
 ----
 
-You get the list of services. If you do instead get a question about MCP servers, Claude is not connected; xref:how-you-work/claude-code.adoc[Drive Thinkube from Claude Code] says how to fix that.
+You get the list of services. If you do instead get a question about MCP servers, Claude is not connected; xref:apps/claude-code.adoc[What Claude can do for you] says how to fix that.
 
 image::ide-home.png[Thinkube IDE after login]
 
@@ -103,7 +103,7 @@ An unloaded model keeps its weights in the registry and gives up its GPU memory.
 A model in your registry, served from your GPU behind your own address, called from your notebook, and unloaded again. You have also seen the shape of everything else on this site: a sentence to Claude, and the platform doing the operating.
 
 * xref:lifecycle/index.adoc[Models]: get, serve and measure models, in depth.
-* xref:webapp-template:deploy.adoc[Build an app]: put something with an address in front of the model.
+* xref:apps/index.adoc[Build an app]: put something with an address in front of the model.
 * xref:lifecycle/fine-tune.adoc[Fine-tune]: when the prompt is not enough.
 
 == Limits

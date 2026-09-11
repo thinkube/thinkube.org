@@ -3,6 +3,13 @@
 
 _Start a notebook server on the node you want, pick or build an environment, find the example notebooks, and call a served model._
 
+.TL;DR
+Open `notebooks.<your domain>`, sign in, pick a node and *Start*. Two environments are ready, `fine-tuning` and `agent-dev`, and `tk_llm` in either calls any served model with three lines. For a new environment, ask Claude: "make me a venv from agent-dev and add polars".
+
+== Why this is one sentence
+
+Notebooks are where the model work is Python: exploring, training, evaluating. The platform builds the environments for your hardware from a definition and shares one filesystem with Thinkube IDE, so nothing is installed by hand and nothing you save is in only one place.
+
 Thinkube Notebooks is JupyterHub, at `notebooks.<your domain>` and on the thinkube-control dashboard. It shares its filesystem with Thinkube IDE: a file you save in one is the same file in the other.
 
 == Open it and start a server
@@ -52,7 +59,7 @@ The first time a server starts, the example notebooks are copied into the notebo
 
 The same folder is `~/thinkube-ai/notebooks/examples/` in a terminal of Thinkube IDE.
 
-xref:playbooks/index.adoc[Playbooks] describes each and reports what a run showed.
+The playbooks in the sidebar describe each and report what a run showed.
 
 == Call a served model
 
@@ -82,3 +89,9 @@ When a server is running, Claude Code in Thinkube IDE can list, read, insert and
 == Stop the server
 
 From the hub's *Home* page, *Stop My Server*. The GPU and memory the server held come back; your files stay on the shared filesystem.
+
+== Limits
+
+* Environments inherit PyTorch from the image; a package that pins its own `torch` must be installed with `--no-deps`.
+* A notebook server runs on one node at a time; stop it to move it to another.
+* Running cells through Claude needs the notebook open in JupyterLab with a kernel.

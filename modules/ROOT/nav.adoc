@@ -20,21 +20,24 @@
 * xref:install:huggingface-token.adoc[Unlock AI models]
 * xref:install:adding-nodes.adoc[Add more nodes]
 
-.Using it
-* xref:how-you-work/index.adoc[The cockpit]
-** xref:how-you-work/claude-code.adoc[Drive Thinkube from Claude Code]
-** xref:how-you-work/ai-lab.adoc[Thinkube Notebooks]
-* xref:lifecycle/index.adoc[The four stages]
-** xref:lifecycle/get-models.adoc[Get a model]
-** xref:lifecycle/fine-tune.adoc[Fine-tune]
-** xref:lifecycle/build-apps.adoc[Build an app]
-** xref:lifecycle/serve.adoc[Serve a model]
-* xref:webapp-template:index.adoc[Templates: the round trip]
+.Build an app
+* xref:apps/index.adoc[Build an app]
+* xref:apps/claude-code.adoc[What Claude can do for you]
+* xref:webapp-template:index.adoc[The template round trip]
 ** xref:webapp-template:deploy.adoc[Deploy a template]
 ** xref:webapp-template:develop.adoc[Change the app and ship it]
 ** xref:webapp-template:create-a-template.adoc[Turn your app into a template]
 ** xref:webapp-template:variables.adoc[How configuration reaches your app]
 ** xref:webapp-template:anatomy.adoc[What is in the web app template]
+
+.Models
+* xref:lifecycle/index.adoc[Models]
+* xref:lifecycle/get-models.adoc[Get a model]
+* xref:lifecycle/serve.adoc[Serve a model]
+* xref:lifecycle/notebooks.adoc[Thinkube Notebooks]
+* xref:lifecycle/fine-tune.adoc[Fine-tune]
+
+.Tandem
 * xref:tandem:index.adoc[Thinkube Tandem]
 ** xref:tandem:getting-started.adoc[Getting started]
 ** xref:tandem:the-space.adoc[The space]

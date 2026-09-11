@@ -3,6 +3,13 @@
 
 _Load a mirrored model onto a GPU, call it, and unload it when you're done._
 
+.TL;DR
+Ask Claude: "load Qwen/Qwen3.5-4B on the spark". It answers `loading` with the backend it chose, then `available`, and from then on the model answers at `llm.<your domain>` behind your login, through the OpenAI or Anthropic API your code already speaks. "unload it" gives the GPU back.
+
+== Why this is one sentence
+
+Serving is a system, not a command: a process holding the weights, batching requests through the GPU, an address with a certificate, a login, a token, and one API for every model. The LLM Gateway is that system, built once, so loading a model is the only step left for you, and the application you write against the gateway does not change when the model does.
+
 In thinkube-control this is *LLM Gateway*. The inference engines are optional
 components; install vLLM, TensorRT-LLM, Ollama or text-embeddings from
 *Optional Components* first, and the gateway discovers them.
@@ -86,3 +93,9 @@ first example notebook got no content back at all.
 
 The slot and the memory come back. Loading it again is fast: the weights are
 already in Thinkube Storage.
+
+== Limits
+
+* A vLLM backend serves one model per node; loading another on the same node replaces it.
+* A reasoning model spends `max_tokens` on thinking first; give it room or switch thinking off, as the call below shows.
+* Tool calling needs a model the catalogue marks for it, served with a parser that matches the model's call format.

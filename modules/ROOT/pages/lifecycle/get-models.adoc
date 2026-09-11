@@ -3,6 +3,13 @@
 
 _Find a model that fits your hardware, mirror it into your registry, and know where it went._
 
+.TL;DR
+Ask Claude: "which models fit my GPU?" then "mirror Qwen/Qwen3-8B". The catalogue knows what each model needs, so the answer is computed from your hardware; the mirror runs as a job into your own registry, once. Ask for its status whenever you like.
+
+== Why this is one sentence
+
+Every model in the catalogue carries the facts serving needs, its size, quantization, context length, backends and stop tokens, so the platform can say what fits and configure the server from the entry instead of from a guess. That is the decision behind the single sentence: the catalogue is the source of truth, and the registry keeps the weights once, on your storage.
+
 Models come from Hugging Face by way of the catalogue. You never download one
 straight onto a node: you mirror it once, it lands in Thinkube Storage, it is
 registered in Thinkube Experiments, and it is served from there. In
@@ -56,3 +63,8 @@ correctly.
 The weights are in Thinkube Storage. The registry entry — version, the run
 that produced it if you made it, metadata — is in Thinkube Experiments.
 Serving reads from those, and never from Hugging Face again.
+
+== Limits
+
+* A model that is not in the catalogue needs an entry before it can be mirrored; the entry is what tells the gateway how to serve it.
+* A gated model needs its licence accepted on Hugging Face with the account your token belongs to.

@@ -29,8 +29,8 @@ A cross-module link names the module: `xref:install:overview.adoc[]`, `xref:cont
 * xref:install:node-setup.adoc[Prepare your machines], xref:install:overlay-network.adoc[Connect from anywhere], xref:install:cloudflare-token.adoc[Set up your domain], xref:install:github-token.adoc[Connect to GitHub], xref:install:huggingface-token.adoc[Unlock AI models], xref:install:adding-nodes.adoc[Add more nodes] — how-to
 
 .Using it
-* xref:how-you-work/index.adoc[The cockpit] — concept; xref:how-you-work/claude-code.adoc[Drive Thinkube from Claude Code], xref:how-you-work/ai-lab.adoc[Thinkube Notebooks] — how-to
-* xref:lifecycle/index.adoc[The four stages] — concept; xref:lifecycle/get-models.adoc[Get a model], xref:lifecycle/serve.adoc[Serve a model] — how-to; xref:lifecycle/fine-tune.adoc[Fine-tune] — concept; xref:lifecycle/build-apps.adoc[Build an app] — tutorial
+* xref:apps/index.adoc[Build an app] — concept; xref:apps/claude-code.adoc[What Claude can do for you] — how-to
+* xref:lifecycle/index.adoc[Models] — concept; xref:lifecycle/get-models.adoc[Get a model], xref:lifecycle/serve.adoc[Serve a model], xref:lifecycle/notebooks.adoc[Thinkube Notebooks] — how-to; xref:lifecycle/fine-tune.adoc[Fine-tune] — concept
 * `webapp-template`: xref:webapp-template:index.adoc[The template round trip], xref:webapp-template:variables.adoc[How configuration reaches your app] — concept; xref:webapp-template:deploy.adoc[Deploy a template] — tutorial; xref:webapp-template:develop.adoc[Change the app and ship it], xref:webapp-template:create-a-template.adoc[Turn your app into a template] — how-to; xref:webapp-template:anatomy.adoc[What is in the web app template] — reference
 * `tandem`: xref:tandem:index.adoc[What Tandem is], xref:tandem:the-space.adoc[The space], xref:tandem:identity.adoc[Projects and identity], xref:tandem:gates.adoc[The two gates], xref:tandem:the-run.adoc[The run] — concept; xref:tandem:getting-started.adoc[Getting started], xref:tandem:troubleshooting.adoc[When something goes wrong] — how-to; xref:tandem:end-to-end.adoc[The whole path, end to end], xref:tandem:reading-the-surface.adoc[Reading Tandem's pages], xref:tandem:configuration.adoc[Configuration and settings], xref:tandem:store.adoc[The store], xref:tandem:defects.adoc[The defect ledger] — reference
 
@@ -51,7 +51,7 @@ A cross-module link names the module: `xref:install:overview.adoc[]`, `xref:cont
 
 == What is not documented, on purpose
 
-The services behind the branded names — Gitea, Harbor, ArgoCD, MLflow, Keycloak, JuiceFS, SeaweedFS, PostgreSQL, DevPI, Argo Workflows — and the optional components get no pages about their own interfaces. They appear as mechanism in xref:how-it-works/components.adoc[Platform components] and as entries in the xref:reference/components.adoc[components catalog]. The documented surface is the three surfaces of xref:how-you-work/index.adoc[the cockpit] and the four stages; a new page about a service's own dashboard needs a reason this map does not yet give.
+The services behind the branded names — Gitea, Harbor, ArgoCD, MLflow, Keycloak, JuiceFS, SeaweedFS, PostgreSQL, DevPI, Argo Workflows — and the optional components get no pages about their own interfaces. They appear as mechanism in xref:how-it-works/components.adoc[Platform components] and as entries in the xref:reference/components.adoc[components catalog]. The documented surface is the three surfaces of xref:start-here/what-is-thinkube.adoc[What Thinkube is] and the four stages; a new page about a service's own dashboard needs a reason this map does not yet give.
 
 == Adding a page
 

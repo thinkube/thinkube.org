@@ -1,0 +1,34 @@
+= Build an app
+:page-type: concept
+
+_An application goes from a template to production with one push, and the assistant does the operating. What that rests on, what it saves you, and where each part is explained._
+
+.TL;DR
+Ask Claude: "make an app called notes from the web app template". A repository named `notes` appears in Thinkube Git, is built, deployed and given `notes.<your domain>` behind your login, with a PostgreSQL database of its own, and is checked out under `apps/notes` in your workspace. Edit it and push; the push builds and deploys. That is the whole build story; the pages below are its parts.
+
+== The decision
+
+Production is a system, not a script. An application needs an address with a certificate, a login, a build that repeats, a rollback, a database, and a way to reach a model, and all of that already exists in Kubernetes. So Thinkube does not ask you to describe any of it. You describe the application in about twenty lines of `thinkube.yaml`, containers, ports, routes, services, and the platform generates the Kubernetes manifests, builds the images, deploys them, and puts the login and the certificate in front. A template is an application that already runs, which you copy and change; every arrow in that loop is a copy, so what you publish back is a template again.
+
+== What it saves you
+
+* *No manifests.* `k8s/` is generated from `thinkube.yaml`; you read it, you never write it.
+* *No pipeline.* A push builds and deploys. Ask Claude for the status, or watch it under *Templates* in thinkube-control.
+* *No plumbing to the model.* The app calls the LLM Gateway with a token; the model behind it can change without the app changing.
+* *No lock-in.* What comes out is a git repository with real code, tests and a standard image. It builds and deploys anywhere Kubernetes runs.
+
+== Where it shows up
+
+* xref:webapp-template:deploy.adoc[Deploy the template]: from the sentence to the running app, step by step.
+* xref:webapp-template:develop.adoc[Change the app and ship it]: the day-to-day loop, a page added, an endpoint added, a change shipped.
+* xref:webapp-template:variables.adoc[How configuration reaches your app]: the four channels, and why the browser sees only what you allow.
+* xref:webapp-template:anatomy.adoc[What is in the web app template]: the file-by-file tour.
+* xref:webapp-template:create-a-template.adoc[Turn your app into a template]: publish it, and someone else's sentence starts from your work.
+* xref:webapp-template:index.adoc[The template round trip]: why nothing is rendered on the way in or out.
+* xref:apps/claude-code.adoc[What Claude can do for you]: the operations behind the sentences, in one page.
+* xref:tandem:index.adoc[Thinkube Tandem]: when the change you want is a sentence rather than code. Experimental, and still changing.
+
+== Limits
+
+* The web app template is React and FastAPI with PostgreSQL; other stacks are templates you write or publish yourself.
+* Login on a deployed app is the platform's; it is not automatic at the route, the app asks for it.
