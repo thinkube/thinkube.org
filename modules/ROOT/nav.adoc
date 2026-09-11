@@ -40,17 +40,20 @@
 
 .Tandem
 * xref:tandem:index.adoc[Thinkube Tandem]
-** xref:tandem:getting-started.adoc[Getting started]
-** xref:tandem:the-space.adoc[The space]
-** xref:tandem:identity.adoc[Projects and identity]
-** xref:tandem:gates.adoc[The two gates]
-** xref:tandem:the-run.adoc[The run]
-** xref:tandem:end-to-end.adoc[The whole path, end to end]
-** xref:tandem:reading-the-surface.adoc[Reading Tandem's pages]
+* Using Tandem
+** xref:tandem:getting-started.adoc[Using the space]
+** xref:tandem:reading-the-surface.adoc[Every word on Tandem's pages]
+** xref:tandem:defect-ledger.adoc[The defect ledger]
 ** xref:tandem:configuration.adoc[Configuration and settings]
-** xref:tandem:store.adoc[The store]
-** xref:tandem:defects.adoc[The defect ledger]
 ** xref:tandem:troubleshooting.adoc[When something goes wrong]
+* Underneath
+** xref:tandem:the-space.adoc[What happens to a sentence]
+** xref:tandem:gates.adoc[The two gates]
+** xref:tandem:the-run.adoc[How the machine builds]
+** xref:tandem:end-to-end.adoc[The whole path, end to end]
+** xref:tandem:identity.adoc[Projects and identity]
+** xref:tandem:store.adoc[The store]
+** xref:tandem:defects.adoc[The defect ledger, reference]
 
 .Reference
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]
