@@ -2,7 +2,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Mono:wght@400;500;600;700&display=swap">
 <link rel="icon" href="{{{uiRootPath}}}/img/logo.svg" type="image/svg+xml">
-<link rel="stylesheet" href="{{{uiRootPath}}}/css/thinkube.css?v=14">
+<link rel="stylesheet" href="{{{uiRootPath}}}/css/thinkube.css?v=15">
 <script>
 /* Set the theme before paint to avoid a flash of the wrong theme. */
 (function () {
@@ -33,6 +33,21 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
     host.appendChild(btn);
+  });
+  /* Click a capture to see it at full size; click again or press Escape to close. */
+  document.querySelectorAll('.doc .imageblock img').forEach(function (img) {
+    img.addEventListener('click', function () {
+      var box = document.createElement('div');
+      box.className = 'tk-lightbox';
+      var big = document.createElement('img');
+      big.src = img.currentSrc || img.src; big.alt = img.alt;
+      box.appendChild(big);
+      function close() { box.remove(); document.removeEventListener('keydown', onKey); }
+      function onKey(e) { if (e.key === 'Escape') close(); }
+      box.addEventListener('click', close);
+      document.addEventListener('keydown', onKey);
+      document.body.appendChild(box);
+    });
   });
 });
 </script>

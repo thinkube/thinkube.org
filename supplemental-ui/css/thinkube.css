@@ -432,3 +432,12 @@ html[data-theme="dark"] .nav-list .nav-item[data-depth="0"] > .nav-text { color:
 
 /* Stable opaque review ref — a per-page / per-screen serial (SP-tgiy46).
    Auto-derived from the item, so adding/removing content never renumbers. */
+
+/* ===== Captures: click to see at full size ================================ */
+.doc .imageblock img { cursor: zoom-in; }
+.tk-lightbox {
+  position: fixed; inset: 0; z-index: 1000; padding: 2rem;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(10, 20, 24, .92); cursor: zoom-out;
+}
+.tk-lightbox img { max-width: 100%; max-height: 100%; width: auto; height: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, .5); }
