@@ -21,8 +21,9 @@ function thinkubeToggleTheme() {
 document.addEventListener('DOMContentLoaded', function () {
   /* Copy button on every code block. */
   document.querySelectorAll('.doc .listingblock pre, .doc pre.highlight').forEach(function (pre) {
-    if (pre.querySelector('.copy-btn')) return;
-    pre.style.position = 'relative';
+    var host = pre.parentElement && pre.parentElement.classList.contains('content') ? pre.parentElement : pre;
+    if (host.querySelector('.copy-btn')) return;
+    host.style.position = 'relative';
     var btn = document.createElement('button');
     btn.type = 'button'; btn.className = 'copy-btn'; btn.textContent = 'Copy';
     btn.addEventListener('click', function () {
@@ -31,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
       });
     });
-    pre.appendChild(btn);
+    host.appendChild(btn);
   });
 });
 </script>
