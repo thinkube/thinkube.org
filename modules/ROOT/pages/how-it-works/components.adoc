@@ -24,7 +24,7 @@ arrived.
 
 Where the platform has no business having an opinion, it offers a choice and
 makes none. Three vector stores. Four inference backends. Those are your
-architecture. xref:why/opinions-on-a-standard.adoc[Opinions on a standard]
+architecture. xref:why/index.adoc[Why Thinkube]
 is the reasoning.
 
 == Nothing has to stay resident

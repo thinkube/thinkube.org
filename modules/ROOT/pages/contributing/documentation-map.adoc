@@ -25,7 +25,6 @@ A cross-module link names the module: `xref:install:overview.adoc[]`, `xref:cont
 * xref:start-here/what-you-get.adoc[What you get] — reference
 * xref:start-here/the-loop.adoc[The AI loop] — concept
 * xref:start-here/quickstart.adoc[Quickstart] — tutorial
-* xref:why/the-story.adoc[The story] — concept
 
 .Install (`install`)
 * xref:install:overview.adoc[Install Thinkube] — tutorial
@@ -47,7 +46,7 @@ A cross-module link names the module: `xref:install:overview.adoc[]`, `xref:cont
 
 .How it works
 * xref:how-it-works/architecture.adoc[Architecture], xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop], xref:how-it-works/kubernetes-underneath.adoc[Kubernetes underneath], xref:how-it-works/gpu-multiarch.adoc[GPU and multi-arch], xref:how-it-works/mcp-operation-model.adoc[The MCP operation model], xref:how-it-works/components.adoc[Platform components] — concept
-* Why it is built this way: xref:why/opinions-on-a-standard.adoc[Opinions on a standard], xref:why/single-user-by-design.adoc[Single-user by design], xref:why/operated-by-conversation.adoc[Operated by conversation] — concept
+* Why: xref:why/index.adoc[Why Thinkube] — concept
 
 .Contributing
 * xref:contributing/page-types.adoc[Page types], xref:contributing/style-guide.adoc[Style guide], this page, xref:contributing/screenshots.adoc[Screenshot inventory], xref:contributing/gaps.adoc[Gap analysis] — reference

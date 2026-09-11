@@ -1,0 +1,47 @@
+= Concepts: building with models
+:page-type: concept
+
+_The pieces an application puts around a model: embeddings and a vector store, retrieval, agents and tools, tracing, and MCP, which is how Claude Code operates this platform. Explained once, in the same shape: what it is, why it matters to you, where you meet it on Thinkube._
+
+.TL;DR
+An AI application is a model plus four ordinary pieces of software: a way to find the right documents, a way to let the model act, a record of what happened, and a place to run. Thinkube installs the four with one sentence to Claude and wires them to the model.
+
+== Embeddings and a vector store
+
+*What it is.* An embedding is a list of numbers that represents the meaning of a piece of text, produced by a small model made for that purpose. Texts with similar meaning get nearby numbers. A vector store is a database that keeps those lists and finds, for a query's embedding, the stored texts nearest to it.
+
+*Why it matters to you.* It is how a program searches by meaning instead of by keyword: "how do I reset it" finds "restoring factory settings".
+
+*Where you meet it.* The text-embeddings backend serves the embedding model; Qdrant, Chroma and Weaviate are the vector stores in xref:reference/components.adoc[Optional Components]; the research assistant playbook builds one.
+
+== Retrieval-augmented generation
+
+*What it is.* RAG: before asking the model a question, find the documents most relevant to it in the vector store and put them in the prompt. The model answers from what it was shown and can cite it. The model's own knowledge stays general; your documents supply the specifics.
+
+*Why it matters to you.* It is the cheapest way to make a model answer about your things, it works with any model, and it updates when the documents do, with no training.
+
+*Where you meet it.* xref:playbooks/research-assistant.adoc[Build a research assistant] indexes a corpus of papers and asks it questions with sources.
+
+== An agent and tool calling
+
+*What it is.* Tool calling lets a model ask for a function to be run, search this, read that, save this, and receive the result before it answers. An agent is a loop around that: the model decides what to do, calls a tool, reads the result, and continues until the task is done. Several agents can be given roles and made to work together.
+
+*Why it matters to you.* It is the difference between a model that talks about your data and a program that does something with it. It also needs a model that can emit a well-formed call, which not every model can; the catalogue says which.
+
+*Where you meet it.* The research assistant playbook's third notebook runs a debate between agents that can only cite what a search tool returns.
+
+== Tracing
+
+*What it is.* Recording every call to the model: the prompt, the documents retrieved, the tools called, the answer, how long each step took and what it cost. A trace is one request end to end; a session is all the traces of one conversation.
+
+*Why it matters to you.* When an answer is wrong, the trace shows which step went wrong. When latency is high, it shows which step is slow. And the traces are the record you fine-tune from next.
+
+*Where you meet it.* Langfuse, in xref:reference/components.adoc[Optional Components]; the example notebooks send their traces to it when it is installed.
+
+== MCP, and what it means that Claude operates the platform
+
+*What it is.* The Model Context Protocol is a standard way for an assistant such as Claude Code to be given tools and information by a program. Thinkube exposes its whole control surface, what is running, the models, the templates, the notebooks, the components, through MCP. So when you say "load Qwen3-8B on the spark", Claude reads the same information the control panel shows and calls the same operation the control panel's button calls.
+
+*Why it matters to you.* You operate a Kubernetes cluster without learning it. Every page on this site opens with the sentence you say to Claude, because that sentence is a real operation with a real result, not a shortcut around the platform.
+
+*Where you meet it.* xref:how-you-work/claude-code.adoc[Drive Thinkube from Claude Code], and the operations that matter on xref:control:index.adoc[thinkube-control].

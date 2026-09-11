@@ -78,4 +78,4 @@ machine and losing a week would hurt, wait.
 
 * xref:start-here/the-loop.adoc[The AI loop] — the four stages, in two minutes
 * xref:start-here/quickstart.adoc[Quickstart] — from a fresh install to a served model
-* xref:why/the-story.adoc[The story] — how it came to be built this way
+* xref:why/index.adoc[Why Thinkube] — the three decisions behind it

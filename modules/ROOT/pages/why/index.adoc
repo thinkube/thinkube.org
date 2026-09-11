@@ -1,0 +1,54 @@
+= Why Thinkube
+:page-type: concept
+
+_Most AI projects die between the demo and production. Thinkube exists so that one person can cross that gap in an afternoon, on machines they own, and cross it again every morning after._
+
+.TL;DR
+You have an idea, a model that answers correctly in a notebook, and no operations team. On Thinkube you say to Claude Code, in Thinkube IDE, "make an app from the web app template and put the model behind it", and an hour later the app is running at your own address, behind your own login, calling a model on your own GPU, with every request traced. The rest of this page is why that is possible, and why it was built this way.
+
+== The gap
+
+A demo proves the model can answer. Production asks a different question: can that answer be served to many people at once, every day, by a system nobody is babysitting. Between the two sits everything the demo never needed: an address and a certificate, a login, a build that repeats, a rollback, a GPU shared without hand-scheduling, a database and a vector store on the same network, traces of what was asked and what came back, and a way to put a better model behind the same address without the app noticing.
+
+None of that is AI work. All of it is required. In most companies it belongs to another team with another backlog, and the pilot waits in that queue until the budget moves on. A widely quoted MIT study of 2025 put the share of enterprise generative AI pilots that never showed a measurable return at about 95%; its method is disputed, its diagnosis is not: the tools never learned from use, because they never got used.
+
+Thinkube is built on three decisions, each made to shorten that gap for one developer.
+
+== Production is a system, not a script, so use the one that exists
+
+Everything listed above already exists in Kubernetes, agreed on by the whole industry and maintained by thousands of people. The alternative is to write an orchestrator yourself, badly, one script at a time. So Thinkube installs unmodified upstream Kubernetes with kubeadm and builds on it without forking it. What you build targets that standard: a git repository, a standard image, a standard manifest. It runs anywhere Kubernetes runs, and nothing about it depends on Thinkube.
+
+The objection is fair: Kubernetes is hard to operate alone. That is why the assistant operates it. Claude Code sees the platform through the same interface as the control panel, reads what is running, and does the deploying, loading, installing and restarting for you. You describe what you want; the platform does the part you would otherwise have to learn.
+
+Under the application, Thinkube decides so you do not have to: identity is Keycloak, the registry is Harbor, the database is PostgreSQL, storage is SeaweedFS, git is Gitea, builds and deploys are Argo. They are wired together before you log in, and each was chosen so it cannot be relicensed against you. Above the application, Thinkube has no opinion: three vector stores, four inference backends, observability, search and messaging are yours to pick from the catalogue and switch off when you do not need them.
+
+== A model you own beats a model you rent
+
+Small open models became good enough for most production work, and they are the only kind you can own. The best open-weight models closed most of the distance to the best closed ones in a year, and a fine-tuned 7B model beats a frontier model on the narrow task it was tuned for. Most of the calls an application makes in production are exactly that kind of narrow task. A frontier model per call pays for capability the task never uses.
+
+Owning the model changes what you can promise. The weights on your disk are the same weights tomorrow; a rented model drifts, gets deprecated, or changes price, and you cannot pin it. Nothing you send it leaves the machine, which for medical, legal and financial work decides whether the project can exist at all. And once the GPU is bought, every experiment is free: you can try, compare and discard models as many times as it takes, without a bill per token and without asking anyone.
+
+Thinkube serves any open model through one gateway that speaks the OpenAI and Anthropic APIs, so the app you write against it does not change when the model does.
+
+== Your data becomes capability, not context
+
+Prompting has a ceiling. Format, vocabulary, tool calls, tone and refusals can be approximated in a prompt and will fail under load; fine-tuning encodes them, and the long system prompt disappears along with most of the cost and latency of every call.
+
+Fine-tuning is also where your data turns into an advantage nobody else has. Everyone has the same base models; only you have your traces, your documents and your checkers. If a program can verify an answer, a model can learn the task from that program alone, with no labelled data. If a frontier model can produce the answers, you can pay it once and keep the small model it teaches forever. And the traces your app produces today are the training set for tomorrow's model, which goes behind the same address, is compared against yesterday's, and is kept or rolled back.
+
+That loop, from production back to a better model, is what the failed pilots never had, and it is impossible with a model you rent. On Thinkube it fits in one GPU and one evening.
+
+== One person
+
+Thinkube serves one person, because that is what the hardware supports honestly. One GPU cannot be shared between two developers without a scheduler, quotas, a queue and an argument. With one person there is nothing to arbitrate: when you load a model, it loads; when you start a fine-tune, it starts. One login, one set of credentials, one machine. A lab that shares a login works the way shared lab equipment always has: by saying who has the GPU this afternoon.
+
+== Where to go next
+
+xref:concepts/running-software.adoc[Concepts] explains the words this site uses, once. xref:start-here/what-is-thinkube.adoc[Start here] takes you from install to a model answering behind your own address. The three claims above are each cited once, here:
+
+* MIT NANDA, _The GenAI Divide: State of AI in Business 2025_ (August 2025).
+* Stanford HAI, https://hai.stanford.edu/ai-index/2025-ai-index-report[_AI Index Report 2025_].
+* Belcak et al., https://arxiv.org/abs/2506.02153[_Small Language Models are the Future of Agentic AI_] (2025).
+* Zhao et al., https://arxiv.org/abs/2405.00732[_LoRA Land: 310 Fine-tuned LLMs that Rival GPT-4_] (2024).
+* Chen, Zaharia and Zou, https://arxiv.org/abs/2307.09009[_How Is ChatGPT's Behavior Changing over Time?_] (2023).
+* DeepSeek-AI, https://arxiv.org/abs/2501.12948[_DeepSeek-R1_] (2025), on learning from verifiable rewards and distilling the result into small models.

@@ -1,0 +1,47 @@
+= Concepts: improving a model
+:page-type: concept
+
+_What it means to make a model better at your task: fine-tuning, LoRA, learning from a checker, distillation, and knowing that it worked. Explained once, in the same shape: what it is, why it matters to you, where you meet it on Thinkube._
+
+.TL;DR
+When the prompt is not enough, you change the model instead. On Thinkube that is a notebook, one GPU and an evening, and the result goes behind the same address the old model had.
+
+== Fine-tuning
+
+*What it is.* Training an existing model a little further on your own examples, so that it answers the way your examples do. The base model already knows the language and the world; fine-tuning teaches it your format, your vocabulary, your tools, your tone, and what to refuse. It needs hundreds to a few thousand examples, not millions.
+
+*Why it matters to you.* Prompts have a ceiling: a long system prompt approximates the behaviour and fails under load. Fine-tuning encodes it, and the long prompt goes away, along with most of the cost and latency of every call. It is also how your data, which nobody else has, becomes a capability nobody else has.
+
+*Where you meet it.* xref:lifecycle/fine-tune.adoc[Fine-tune], and the notebooks under Thinkube Notebooks.
+
+== LoRA
+
+*What it is.* Low-rank adaptation: instead of changing all of a model's weights, fine-tuning adds a small set of extra weights beside them and trains only those. The adapter is a few hundred megabytes for a model of many gigabytes, trains on one GPU in hours, and can be merged into the model or swapped in and out.
+
+*Why it matters to you.* It is why fine-tuning fits a single card and an evening. It is also why you can keep several adapters for one base model, one per task.
+
+*Where you meet it.* The fine-tuning environment on Thinkube Notebooks ships the libraries for it; the zebra playbook trains one.
+
+== Learning from a checker
+
+*What it is.* Reinforcement learning with verifiable rewards. Instead of showing the model correct answers, you give it a program that can check an answer: does the code run, does the number match, does the rule hold. The model tries, the checker scores, and the model is nudged toward what scored. No labelled data is needed, only a checker. This is the method behind the reasoning models of 2025.
+
+*Why it matters to you.* Most businesses have checkable tasks and no labelled datasets. If you can write the check, you can train the model.
+
+*Where you meet it.* xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards] does exactly this, on logic puzzles a program can verify.
+
+== Distillation
+
+*What it is.* Using a large model to teach a small one: the large model produces answers, or full reasoning traces, for many prompts, and the small model is fine-tuned on them. The small model ends up much closer to the large one on those tasks than its size suggests.
+
+*Why it matters to you.* You pay the large model once, for the teaching, and own the small model forever, on your own GPU, at your own cost.
+
+*Where you meet it.* The distilled reasoning models in the xref:lifecycle/get-models.adoc[catalogue] were made this way; the research assistant playbook debates when it beats training directly.
+
+== Knowing it got better
+
+*What it is.* An evaluation is a fixed set of prompts with a way to score the answers, run before and after a change. An experiment tracker records every run, its settings, its scores and the model it produced, so that two runs can be compared and the better one found again.
+
+*Why it matters to you.* Without it you are guessing. With it, "the new model is better" is a number, and the model behind that number is one click from being served.
+
+*Where you meet it.* Thinkube Experiments records every training run and registers the model beside it; xref:lifecycle/fine-tune.adoc[Fine-tune] shows both halves.

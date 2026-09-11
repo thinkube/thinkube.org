@@ -1,0 +1,55 @@
+= Concepts: models
+:page-type: concept
+
+_What a model is and is not, what decides which ones you can run, and what "serving" means. Explained once, in the same shape: what it is, why it matters to you, where you meet it on Thinkube._
+
+.TL;DR
+A model is a file of numbers that turns text into more text. Everything you experience as a product, the chat window, the memory of the conversation, the speed, the fact that it is there at 3 a.m., is the system around it. Thinkube gives you the system; you pick the model.
+
+== What a model is
+
+*What it is.* A language model is a very large set of numbers, its weights, learned from text. Given a sequence of tokens, pieces of words, it predicts the next one, and by repeating that it writes. Its size is counted in parameters, the number of weights: a 4B model has four billion. Its context window is how many tokens it can look at at once, prompt and answer together.
+
+*Why it matters to you.* Size decides what hardware it needs and how well it reasons. The context window decides how much you can show it in one call: a page, a document, a whole codebase.
+
+*Where you meet it.* The xref:lifecycle/get-models.adoc[model catalogue] lists each model with its size, its context window and what it is good for.
+
+== A model is not a chatbot
+
+*What it is.* A model answers one prompt and forgets it. A chatbot is an application around the model: it keeps the conversation and sends it back each turn, adds instructions, calls tools, handles many people at once, and stays up. Change the application and the same model behaves differently; change the model and the application does not have to.
+
+*Why it matters to you.* When you build something, most of the work is the application, and it is ordinary software. When you evaluate something, you must know which of the two you are judging.
+
+*Where you meet it.* The xref:webapp-template:index.adoc[web app template] is the application side; the xref:control:llm-serving.adoc[LLM Gateway] is where it meets the model.
+
+== Inference and training
+
+*What it is.* Inference is using a model: send a prompt, get an answer. Training is changing its weights so it answers differently. Inference takes a fraction of a second on one GPU; training the same model from scratch takes thousands of GPUs and months, which is why nobody does it, and why fine-tuning, which changes only a little, exists.
+
+*Why it matters to you.* You will do inference a million times and fine-tuning a few times. The hardware for the first is much smaller than for the second.
+
+*Where you meet it.* xref:lifecycle/serve.adoc[Serve a model] is inference; xref:lifecycle/fine-tune.adoc[Fine-tune] is the small amount of training you will do.
+
+== Quantization
+
+*What it is.* Storing each weight with fewer bits. A model trained in 16-bit numbers can be stored in 8 or 4 bits with a small loss of quality and a large gain in size: a 4-bit copy takes a quarter of the memory and runs faster. The catalogue names the quantization beside the model: BF16 is the full model, FP8 and FP4 and Q4_K_M are smaller copies.
+
+*Why it matters to you.* It is the difference between a model fitting your GPU or not. A 27B model does not fit a 24 GB card at 16 bits; at 4 bits it does.
+
+*Where you meet it.* Every entry in the xref:lifecycle/get-models.adoc[model catalogue] carries a quantization and a size.
+
+== Why GPU memory decides what you can run
+
+*What it is.* A model's weights must sit in the GPU's memory to run, all at once, plus room for the context. Roughly, a model at 16 bits needs two gigabytes per billion parameters; at 4 bits, half a gigabyte. A 24 GB card holds an 8B model at 16 bits; a 128 GB machine with shared memory holds a 30B one at 16 bits, or a 70B one at 4 bits.
+
+*Why it matters to you.* This is the single number that decides which models are yours to run and how many at once. Thinkube shows it to you and refuses a load that will not fit, rather than letting it fail.
+
+*Where you meet it.* xref:how-it-works/gpu-multiarch.adoc[GPU and multi-arch] explains how Thinkube shares a GPU and counts its memory; the load page shows the budget before you press load.
+
+== Serving
+
+*What it is.* Running a model as a service: a process that holds the weights in GPU memory, accepts requests over HTTP, batches many requests through the GPU together, and returns answers. A serving backend such as vLLM does this for one model on one GPU. A gateway in front of it gives every model the same address and the same API, so the application does not change when the model does.
+
+*Why it matters to you.* One process serving a 4B model handles hundreds of concurrent requests; that is the capacity you own, not a rate limit you rent. And with one gateway you write your app once, against the OpenAI or Anthropic API you already know.
+
+*Where you meet it.* xref:lifecycle/serve.adoc[Serve a model] and the xref:control:llm-serving.adoc[LLM Gateway].

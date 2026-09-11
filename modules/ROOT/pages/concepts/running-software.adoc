@@ -1,0 +1,47 @@
+= Concepts: running software
+:page-type: concept
+
+_Five words the rest of this site uses when it talks about running things: container, cloud native, Kubernetes, a deploy from a push, and a Knative service. Each is explained once here, in the same shape: what it is, why it matters to you, where you meet it on Thinkube._
+
+.TL;DR
+You never have to operate any of this by hand. Claude Code does the deploying, the platform does the keeping-alive. But when a page says "the container failed" or "the service scaled to zero", this is what it means.
+
+== Container and image
+
+*What it is.* A container is a process that runs with its own copy of everything it needs, the libraries, the runtime, the configuration, packed into an image, a file that can be started anywhere. Two containers on the same machine do not see each other's files. An image is built once, from a recipe, and started many times.
+
+*Why it matters to you.* "It works on my machine" stops being a sentence. The image that ran your tests is the image that runs in production, byte for byte.
+
+*Where you meet it.* Every app on Thinkube is one or more containers, built from the repository by xref:how-it-works/deploy-loop.adoc[the deploy loop] and kept in Thinkube Registry.
+
+== Cloud native
+
+*What it is.* A way of building software that assumes it will run as containers, in many copies, on machines that can fail and be replaced. Configuration comes from the environment, not from files edited by hand; state lives in a database or a volume, not inside the process; anything can be restarted at any time without losing work.
+
+*Why it matters to you.* An app built this way survives the things that happen to real machines: a reboot, a full disk, a node that dies. And it is portable between anyone's cluster, including a cloud's.
+
+*Where you meet it.* The xref:webapp-template:index.adoc[web app template] is built this way, so what it produces is.
+
+== What Kubernetes solves
+
+*What it is.* Kubernetes is the system that runs containers across a set of machines. You tell it what should be running, it keeps that true: it starts a container, restarts it when it dies, moves it when a machine goes away, gives it a stable address, attaches its storage, and hands it a GPU when it asks for one. It is the standard for this; every cloud runs it.
+
+*Why it matters to you.* Everything a production service needs, the address, the certificate, the restart, the rollback, the shared GPU, is already solved, once, by people whose whole job that is. You do not write it, and you do not maintain it.
+
+*Where you meet it.* Under everything. Thinkube installs xref:how-it-works/kubernetes-underneath.adoc[unmodified upstream Kubernetes] and never asks you to type its commands; Claude Code and the control panel do.
+
+== A deploy from a push
+
+*What it is.* The way software reaches the cluster: you push a commit to a git repository, a build turns the repository into an image, and the cluster is told to run that image. Nothing is copied by hand, and the repository is the only source of truth, so the same commit can be deployed again, or rolled back to, at any time.
+
+*Why it matters to you.* Shipping is a push. A rollback is another push. What is running is always a commit you can read.
+
+*Where you meet it.* xref:webapp-template:deploy.adoc[Deploy a template] and xref:webapp-template:develop.adoc[Change the app and ship it]; the mechanism is xref:how-it-works/deploy-loop.adoc[the GitOps deploy loop].
+
+== A Knative service
+
+*What it is.* A container that Kubernetes runs only while requests are arriving. When traffic stops it scales to zero and costs nothing; when a request comes it starts again. It is the right shape for anything that is called occasionally: a processing step, a webhook, a small API.
+
+*Why it matters to you.* A GPU or a few gigabytes of memory are not held by something that answers twice a day.
+
+*Where you meet it.* The xref:reference/thinkube-yaml.adoc[thinkube.yaml reference] shows how an app declares one.
