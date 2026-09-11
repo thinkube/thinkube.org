@@ -46,7 +46,7 @@ reaches your app] explains the settings the template exposes.
 
 == What you did
 
-You ran the *build* stage of xref:start-here/the-loop.adoc[the AI loop]: a
+You ran the *build* turn of the loop described in xref:start-here/what-is-thinkube.adoc[What Thinkube is]: a
 description became a running application with an address, a database and a
 repository. When it's something worth keeping,
 xref:webapp-template:create-a-template.adoc[turn it into a template].

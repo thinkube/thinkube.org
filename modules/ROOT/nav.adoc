@@ -9,8 +9,6 @@
 
 .Start here
 * xref:start-here/what-is-thinkube.adoc[What is Thinkube]
-* xref:start-here/what-you-get.adoc[What you get]
-* xref:start-here/the-loop.adoc[The AI loop]
 * xref:start-here/quickstart.adoc[Quickstart]
 
 .Install

@@ -8,13 +8,14 @@
     <main class="home-main">
 
       <section class="hero">
-        <p class="hero-eyebrow">Alpha · single-user · self-hosted · Kubernetes</p>
-        <h1 class="hero-title">Your own platform for the<br><span class="accent">entire AI lifecycle</span></h1>
-        <p class="hero-sub">Get a model, fine-tune it, build apps that consume it, and serve it — on
-          your own hardware, on Kubernetes, without having to learn it.</p>
+        <p class="hero-eyebrow">One person · your own machines · standard Kubernetes</p>
+        <h1 class="hero-title">From an idea to a running product<br><span class="accent">in an afternoon</span></h1>
+        <p class="hero-sub">Most AI projects die between the demo and production, because the system around
+          the model never gets built. Thinkube is that system, on hardware you own, operated by Claude Code:
+          get a model, serve it, build an app on it, fine-tune it, and make it better every morning after.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="install/overview.html">Get started</a>
-          <a class="btn btn-ghost" href="start-here/what-you-get.html">What you get</a>
+          <a class="btn btn-primary" href="start-here/what-is-thinkube.html">Start here</a>
+          <a class="btn btn-ghost" href="why/index.html">Why Thinkube</a>
         </div>
 
         <ol class="loop" aria-label="The Thinkube AI loop">
@@ -28,12 +29,12 @@
       <section class="cockpit">
         <div class="cockpit-copy">
           <span class="kicker">How you work</span>
-          <h2 class="section-h">You can run it from Claude Code</h2>
-          <p class="cockpit-lead">Thinkube IDE comes with Claude Code, and Claude Code can see the
-            platform: which models are loaded, what the GPU is holding, what a deploy is doing, what a
-            service logged. Ask it to deploy a template or load a model and it uses the same operations
-            the control panel uses — about a hundred of them. Nothing changes unless you ask. Everything
-            Claude can do here, you can also click in thinkube-control.</p>
+          <h2 class="section-h">Every task is a sentence to Claude</h2>
+          <p class="cockpit-lead">Thinkube IDE comes with Claude Code, and Claude Code sees the platform:
+            which models are loaded, what the GPU is holding, what a deploy is doing, what a service
+            logged. Ask it to deploy a template or load a model and it calls the same operation the
+            control panel's button calls. Nothing changes unless you ask. Every page on this site opens
+            with the sentence you say.</p>
         </div>
         <div class="codewin" role="img"
              aria-label="A Claude Code session: deploy a template and load a model, driven by MCP tools.">
@@ -58,41 +59,29 @@
       <section class="journeys">
         <h2 class="section-h">Where to next</h2>
         <div class="card-grid">
-          <a class="card" href="install/overview.html">
-            <span class="card-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><line x1="7" y1="7" x2="7" y2="7"/><line x1="7" y1="17" x2="7" y2="17"/></svg>
-            </span>
-            <span class="card-kicker">Set up</span>
-            <h3 class="card-title">Get Thinkube running</h3>
-            <p class="card-desc">What you need, what the installer does to your machines, and how to get out again.</p>
-            <span class="card-arrow">Set up <em>→</em></span>
+          <a class="card" href="start-here/quickstart.html">
+            <span class="card-kicker">Start here</span>
+            <h3 class="card-title">A model at your own address</h3>
+            <p class="card-desc">Install, then mirror a model, load it and call it from a notebook, one sentence at a time.</p>
+            <span class="card-arrow">Start here <em>→</em></span>
           </a>
-          <a class="card" href="how-you-work/index.html">
-            <span class="card-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="1.5"/><polyline points="7 9 10 12 7 15"/><line x1="13" y1="15" x2="17" y2="15"/></svg>
-            </span>
-            <span class="card-kicker">How you work</span>
-            <h3 class="card-title">Thinkube IDE + Claude</h3>
-            <p class="card-desc">Drive the platform from your editor with MCP tools — what Claude Code can read, and what it can change.</p>
-            <span class="card-arrow">How you work <em>→</em></span>
+          <a class="card" href="webapp-template/deploy.html">
+            <span class="card-kicker">Build</span>
+            <h3 class="card-title">An app in production with one push</h3>
+            <p class="card-desc">From a template to a running application behind your login, and back to a change shipped.</p>
+            <span class="card-arrow">Build an app <em>→</em></span>
           </a>
           <a class="card" href="lifecycle/index.html">
-            <span class="card-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 8 16 8"/></svg>
-            </span>
-            <span class="card-kicker">The lifecycle</span>
-            <h3 class="card-title">Get a model, fine-tune, build, serve</h3>
-            <p class="card-desc">The four stages, one at a time, each ending with something working.</p>
-            <span class="card-arrow">The lifecycle <em>→</em></span>
+            <span class="card-kicker">Models</span>
+            <h3 class="card-title">Get, serve, fine-tune, measure</h3>
+            <p class="card-desc">Open models you own, behind one gateway, improved with your data and your checks.</p>
+            <span class="card-arrow">Models <em>→</em></span>
           </a>
-          <a class="card" href="reference/thinkube-yaml.html">
-            <span class="card-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H20v14H5.5A1.5 1.5 0 0 0 4 19.5z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="11.5" x2="13" y2="11.5"/></svg>
-            </span>
-            <span class="card-kicker">Reference</span>
-            <h3 class="card-title">Look it up</h3>
-            <p class="card-desc"><code>thinkube.yaml</code>, thinkube-control, templates, components.</p>
-            <span class="card-arrow">Browse reference <em>→</em></span>
+          <a class="card" href="concepts/running-software.html">
+            <span class="card-kicker">Concepts</span>
+            <h3 class="card-title">The words, explained once</h3>
+            <p class="card-desc">Containers, Kubernetes, models, quantization, fine-tuning, RAG, MCP: what each is and why it matters to you.</p>
+            <span class="card-arrow">Concepts <em>→</em></span>
           </a>
         </div>
       </section>

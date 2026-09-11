@@ -1,68 +1,79 @@
 = Quickstart
 :page-type: tutorial
 
-_From a fresh install to your first served model._
+_From a fresh install to a model answering at your own address, by asking Claude Code._
 
-You have installed Thinkube and can open Thinkube IDE at its address. You will
-mirror a model into Thinkube Registry, load it onto your GPU, call it from a
-notebook, and unload it.
+.TL;DR
+In Thinkube IDE, start Claude and say: "mirror Qwen/Qwen3.5-4B, load it, and give me a Python call I can run against it". Claude mirrors the model into your registry, loads it on a GPU node, and answers with a working call. Run the call in a notebook. That is the whole quickstart; the steps below do it one sentence at a time so you see what each one does.
 
-Each step is done by asking Claude Code. Each is also a click in
-thinkube-control, under *AI Models* and *LLM Gateway*, if you prefer.
+== What you will learn
 
-== 1. Open Thinkube IDE and start Claude
+* How Claude Code operates the platform, and how to check it is connected.
+* Where a model lives once it is yours, and what "loaded" means.
+* How every model is called through one address, the LLM Gateway.
+* How to give the GPU back.
 
-Open Thinkube IDE at `ide.<your domain>` in your browser and log in.
+== What you need
 
-image::ide-home.png[Thinkube IDE after login]
+* Thinkube installed, and Thinkube IDE open at `ide.<your domain>` in your browser.
+* A GPU node with room for a 4B model; about 10 GB free is enough.
+* An hour, most of it the download.
 
-Open a terminal and run:
+== 1. Start Claude and check it sees the platform
+
+Claude Code operates Thinkube through xref:concepts/building-with-models.adoc#_mcp_and_what_it_means_that_claude_operates_the_platform[MCP]: it reads what the control panel shows and calls what the control panel's buttons call. The first thing to do is confirm that connection.
+
+Open a terminal in Thinkube IDE and run:
 
 ----
 claude
 ----
 
-Ask it something that needs the platform:
+Ask it something only the platform can answer:
 
 ----
 › what's running?
 ----
 
-You get back the list of services. That confirms the MCP tools are connected.
+You get the list of services. If you do instead get a question about MCP servers, Claude is not connected; xref:how-you-work/claude-code.adoc[Drive Thinkube from Claude Code] says how to fix that.
+
+image::ide-home.png[Thinkube IDE after login]
 
 == 2. Choose a model that fits
+
+A model must fit in your GPU's memory, weights and context together, and the platform knows how much each model needs before you download it. Ask, rather than guess:
 
 ----
 › which models in the catalogue would fit on my GPU?
 ----
 
-Claude reads the catalogue and your GPU status and answers. For a first run,
-`Qwen/Qwen3.5-4B` is a reasonable choice: 4.7 billion parameters, BF16,
-served by vLLM.
+Claude reads the catalogue and your GPU budget and answers. For a first run, `Qwen/Qwen3.5-4B` is a reasonable choice: 4.7 billion parameters, full precision, about 9 GB, served by vLLM. xref:concepts/models.adoc[Concepts: models] explains the numbers.
 
 == 3. Mirror it
+
+A model is downloaded once, from Hugging Face into Thinkube Registry, and served from your own storage from then on. Nothing is fetched again.
 
 ----
 › mirror Qwen/Qwen3.5-4B
 ----
 
-The download starts into Thinkube Registry. How long it takes is your
-connection's; ask for the status and Claude reads it. When it finishes, the
-model is stored once and served from your machine from then on.
+The download runs in the background. Ask for its status whenever you like; Claude reads it. When it finishes, the model is yours.
 
 == 4. Load it
+
+Loading puts the weights into a GPU's memory and starts a serving process in front of them, so requests can be answered. The platform picks the node and the memory settings from what the catalogue says the model needs.
 
 ----
 › load Qwen/Qwen3.5-4B
 ----
 
-Claude loads the model onto a GPU node with vLLM. It reports `loading`, then
-`available`. The LLM Gateway now exposes it.
+Claude reports `loading`, then `available`. From this moment the model answers at the LLM Gateway, `llm.<your domain>`, behind your login.
 
 == 5. Call it
 
-Open Thinkube Notebooks and start a new notebook in the `fine-tuning` environment,
-where `tk_llm` is available:
+Every served model has the same address and the same API, so the code you write now works unchanged when you serve a different model later.
+
+Open Thinkube Notebooks, start a notebook in the `fine-tuning` environment, and run:
 
 [source,python]
 ----
@@ -72,27 +83,30 @@ client = get_openai_client()
 response = client.chat.completions.create(
     model="Qwen/Qwen3.5-4B",
     messages=[{"role": "user", "content": "Hello"}],
+    max_tokens=256,
 )
 print(response.choices[0].message.content)
 ----
 
-The client is pre-configured for your gateway. The model name is the one the
-catalogue shows.
+The client is already configured for your gateway and your token. The model name is the one the catalogue shows. Qwen3.5 is a reasoning model and thinks before it answers; a small `max_tokens` would be spent on the thinking and leave the answer empty, which is why the call gives it room.
 
-== 6. Unload it
+== 6. Give the GPU back
+
+An unloaded model keeps its weights in the registry and gives up its GPU memory. Load it again whenever you need it.
 
 ----
 › unload Qwen/Qwen3.5-4B
 ----
 
-The GPU memory comes back.
+== What you have now
 
-== What you did
+A model in your registry, served from your GPU behind your own address, called from your notebook, and unloaded again. You have also seen the shape of everything else on this site: a sentence to Claude, and the platform doing the operating.
 
-You ran the *serve* stage of xref:start-here/the-loop.adoc[the AI loop] end
-to end: a model in Thinkube Registry, served from your GPU, called from your
-notebook. From here:
+* xref:lifecycle/index.adoc[Models]: get, serve and measure models, in depth.
+* xref:webapp-template:deploy.adoc[Build an app]: put something with an address in front of the model.
+* xref:lifecycle/fine-tune.adoc[Fine-tune]: when the prompt is not enough.
 
-* xref:playbooks/index.adoc[Playbooks] — complete runs across every stage
-* xref:lifecycle/build-apps.adoc[Build an app] — put something in front of a model
-* xref:how-you-work/claude-code.adoc[Drive Thinkube from Claude Code] — everything else you can ask for
+== Limits
+
+* The vLLM backend serves one model at a time per node; loading a second replaces the first.
+* A gated model on Hugging Face needs its licence accepted with your Hugging Face token before it can be mirrored.

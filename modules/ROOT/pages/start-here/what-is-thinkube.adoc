@@ -1,81 +1,51 @@
-= What is Thinkube
+= What Thinkube is
 :page-type: concept
 
-_A way to develop and experiment with AI on machines you own, so the setup stops breaking and the work stops getting lost._
+_A platform for one developer, on machines you own, that takes an idea to a running product in an afternoon: models, notebooks, apps, serving and tracing, operated by Claude Code._
 
-You have notebooks with real work in them. You can't always tell which run
-produced which checkpoint. You've installed one more package, broken the CUDA
-chain, and reformatted. And the thing you built a while ago is still a
-notebook, because turning it into something a colleague can open is a
-different job.
+.TL;DR
+Install it on one to a few Ubuntu machines. Open Thinkube IDE in your browser, start Claude Code, and say what you want: "get Qwen3.5-4B and serve it", "make an app from the web app template", "install Qdrant". An hour after install you have a model answering behind your own address and a notebook beside it. The rest of this page says what is there and what is not.
 
-Thinkube is the setup a company's platform team would give you, if you had
-one. It installs on your own hardware and gives you three things.
+== The decision it rests on
 
-== What it gives you
+Everything a production AI service needs besides the model, the address, the login, the build, the rollback, the shared GPU, the storage, the traces, already exists in standard Kubernetes. Thinkube installs that standard unchanged, decides the infrastructure above it so you never configure it, and puts an assistant on top so you never operate it by hand. xref:why/index.adoc[Why Thinkube] makes the argument; this page is the result.
 
-*Your machine stops breaking.* Python environments are built from definitions
-and kept apart from each other and from the system. Installing one more thing
-into one of them cannot take the others down. If something does go wrong, every
-component can be removed again.
+== What it saves you
 
-*Every experiment is findable.* Models are pulled once and kept in a registry
-with their versions. Runs are tracked. The platform tells you what fits on your
-hardware before you download it.
+*Your machine stops breaking.* Python environments are built from definitions and kept apart from each other and from the system. Installing one more package into one cannot take the others down. Every component can be removed again.
 
-*There is a path from a notebook to something with an address.* Describe an
-application in about twenty lines of `thinkube.yaml` — containers, ports,
-routes — and it is built, deployed, and given a URL behind a login.
-xref:start-here/the-loop.adoc[The AI loop] walks the four stages: get a model,
-fine-tune, build, serve.
+*Every experiment is findable.* Models are pulled once into Thinkube Registry and versioned. Every training run is tracked in Thinkube Experiments, and the model it produced is registered beside it. The platform tells you what fits your GPU before you download anything.
 
-You work through three pillars: Thinkube IDE with Claude, Thinkube
-Notebooks, and thinkube-control. xref:how-you-work/index.adoc[How you work]
-describes each.
+*There is a path from a notebook to something with an address.* Describe an application in about twenty lines of `thinkube.yaml`, or start from a template, and it is built, deployed, given a URL with a certificate, and put behind a login.
 
-Underneath is Kubernetes, unmodified upstream. You don't have to learn
-it. When it does surface, Claude Code has the logs and the pod state through
-MCP tools, so you are not the one reading `kubectl` documentation at eleven at
-night.
+*You do not learn Kubernetes.* Claude Code sees the platform through the same operations the control panel uses. Ask it to deploy, load, install or restart, and it does; ask it what is running, and it reads. When something breaks, it has the logs.
+
+== What you work with
+
+* *Thinkube IDE*, VS Code in the browser with Claude Code installed and connected to the platform. This is where you say things.
+* *Thinkube Notebooks*, JupyterLab with ready environments: `fine-tuning` with the training libraries pinned for your hardware, `agent-dev` with LangChain, CrewAI and AG2. Add packages, or define your own.
+* *thinkube-control*, the control panel: models, the gateway, templates, components, nodes, tokens. Everything Claude can do, you can click here.
+* *The LLM Gateway*, one address for every served model, speaking the OpenAI and Anthropic APIs.
+* *Optional components* you install with one sentence: vector stores, tracing, search, messaging, caches.
+
+xref:reference/components.adoc[The components catalogue] lists everything by name.
+
+== The loop you will run
+
+Get a model from the catalogue, mirrored once into your registry. Serve it behind the gateway. Build an app that calls it, from a template, shipped with a push. When the prompt is not enough, fine-tune the model in a notebook on one GPU, register the result, and put it behind the same address. Compare, keep or roll back, repeat. Each of the sections that follow is one turn of that loop.
 
 == What comes out is a repository
 
-Thinkube is not a no-code platform. The input is similar — describe what you
-want — but what comes out is a git repository, not a configuration inside
-someone else's runtime. Real code, a Dockerfile, tests, a standard image. If
-Thinkube disappeared tomorrow, that repository would still build and deploy
-anywhere Kubernetes runs.
+Thinkube is not a no-code platform. What you build is a git repository with real code, a Dockerfile, tests and a standard image. If Thinkube disappeared tomorrow, that repository would still build and deploy anywhere Kubernetes runs.
 
 == What it is not
 
-*Not multi-user.* One GPU cannot serve two developers. Four time-slice slots, a
-30B model taking three of them, a fine-tune holding a card for six hours — two
-people on that is a queue with an argument attached. Thinkube is single-user
-and doesn't pretend otherwise.
-
-*Not multi-cluster.* Cross-cluster failure modes are a support surface one
-maintainer cannot carry.
-
-*Not a cloud service.* Owning the hardware is the point. The platform runs
-without any external service. The development half uses Claude Code, which is
-a paid service from Anthropic and a real dependency.
-
-== Alpha
-
-Two hardware configurations have run this:
-
-* DGX Spark (GB10, arm64), Ubuntu 24.04
-* An x86-64 workstation with RTX 3090s, Ubuntu 24.04
-
-Yours will be the third kind. A future version may require reinstalling from
-scratch, and there is no promised migration path.
-
-If you have a machine you can afford to reinstall and would write down what
-happened, xref:install:overview.adoc[install it]. If this is your only
-machine and losing a week would hurt, wait.
+* *Not multi-user.* One GPU cannot be shared between two developers without a queue and an argument. One person, one login.
+* *Not a cloud service.* Owning the hardware is the point. The platform runs without any external service; Claude Code is a paid service from Anthropic and a real dependency.
+* *Not finished.* Thinkube is alpha software. It has run on a DGX Spark and on an x86-64 workstation with RTX 3090s, both on Ubuntu 24.04. A future version may require reinstalling from scratch. Install it on a machine you can afford to reinstall.
 
 == Where next
 
-* xref:start-here/the-loop.adoc[The AI loop] — the four stages, in two minutes
-* xref:start-here/quickstart.adoc[Quickstart] — from a fresh install to a served model
-* xref:why/index.adoc[Why Thinkube] — the three decisions behind it
+* xref:start-here/quickstart.adoc[Quickstart]: from a fresh install to a model answering at your address.
+* xref:concepts/running-software.adoc[Concepts]: the words this site uses, explained once.
+* xref:install:overview.adoc[Install Thinkube]: what you need and what the installer does.

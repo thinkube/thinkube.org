@@ -22,8 +22,6 @@ A cross-module link names the module: `xref:install:overview.adoc[]`, `xref:cont
 
 .Start here
 * xref:start-here/what-is-thinkube.adoc[What is Thinkube] — concept
-* xref:start-here/what-you-get.adoc[What you get] — reference
-* xref:start-here/the-loop.adoc[The AI loop] — concept
 * xref:start-here/quickstart.adoc[Quickstart] — tutorial
 
 .Install (`install`)
