@@ -3,6 +3,9 @@
 
 _Every component, what provides it, and whether it stays running._
 
+.TL;DR
+Ask Claude: "install Qdrant and Langfuse". Core components are always present and never configured by you; optional ones install with their requirements and cost nothing while switched off. This page is the full list, with what each provides.
+
 Core components are always present. Optional components are installed from
 thinkube-control under *Optional Components*, and each carries a toggle that
 scales it to zero — an installed component costs nothing until you use it.

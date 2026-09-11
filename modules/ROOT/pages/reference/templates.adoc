@@ -3,6 +3,9 @@
 
 _Every template in the platform catalogue, what it deploys, and what it needs._
 
+.TL;DR
+Ask Claude: "which templates can I deploy?", then "make an app called notes from the web app template". Each template is a repository with a `thinkube.yaml`; deploying one gives you a running application and a copy of the repository that is yours. This page is the catalogue as it stands.
+
 A template is a repository with a `thinkube.yaml` and a Copier configuration. Deploying one gives you a running application and a git repository you own in Thinkube Git. The catalogue is `repositories.json` in `thinkube-metadata`; entries of type `application_template` are what *Templates* in thinkube-control lists. Each entry's `deployment_type` comes from its descriptor: *app* is always on, *knative* scales to zero, *component* has a fixed name and its pods are created by the LLM Gateway when a model is loaded.
 
 image::cp-templates.png[The Templates page of thinkube-control]
