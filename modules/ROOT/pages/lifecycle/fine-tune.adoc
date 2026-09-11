@@ -1,7 +1,14 @@
 = Fine-tune a model
 :page-type: concept
 
-_What fine-tuning looks like on Thinkube, and what to reach for._
+_When the prompt is not enough, your data and your checker train the next model, on one GPU, and it goes behind the same address. What that rests on, what it saves you, and where it happens._
+
+.TL;DR
+Open Thinkube Notebooks with the `fine-tuning` environment, train with the notebook of your choice, and the run is tracked in Thinkube Experiments as it goes. When the result is worth keeping, register it against its run; it joins the catalogue as a model of your own, and "load it" serves it at `llm.<your domain>` like any other.
+
+== The decision
+
+Prompting has a ceiling, and your data is the one thing nobody else has. So the platform makes the training loop as cheap as calling a model: an environment already built for your hardware, tracking that costs nothing to switch on, a registry that ties every model to the run that produced it, and a gateway that serves the result without a new address. Fine-tuning becomes something you do on a Tuesday evening, not a project.
 
 You fine-tune in Thinkube Notebooks, in an environment that is already built
 for your hardware, and the run is tracked in Thinkube Experiments. When the
@@ -51,3 +58,8 @@ xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards] is the whole
 loop: mirror a base model, train with GRPO against a program that grades each
 attempt, evaluate before and after, register, serve, call. The notebook and
 the page are the same thing.
+
+== Limits
+
+* A fine-tuned model is loadable only once it has a catalogue entry with `is_finetuned: true` and the backend that serves it; the registry entry alone is not enough.
+* The example notebook trains on one GPU; several GPUs in one run go through TRL with accelerate, not Unsloth.
