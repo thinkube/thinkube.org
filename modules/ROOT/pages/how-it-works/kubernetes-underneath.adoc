@@ -3,6 +3,9 @@
 
 _What the cluster is, why Thinkube is an installer rather than a distribution, and what that means for what you build._
 
+.TL;DR
+Thinkube installs upstream Kubernetes with kubeadm and changes nothing in it. Everything you build targets that standard and runs anywhere it runs; nothing about your application depends on Thinkube.
+
 Thinkube installs unmodified upstream Kubernetes with kubeadm. The cluster it
 produces reports:
 

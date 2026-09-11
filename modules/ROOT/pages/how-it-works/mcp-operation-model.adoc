@@ -3,6 +3,9 @@
 
 _How thinkube-control's API becomes resources and tools for an assistant, and why the split matters._
 
+.TL;DR
+thinkube-control's API is one codebase exposed twice: to the browser, and to Claude Code through MCP at `/mcp`. Reading state is a resource Claude consults freely; changing state is a tool it uses only when you ask.
+
 thinkube-control is a FastAPI application. Every endpoint carries an
 `operation_id`, and the application is wrapped with `ExtendedFastApiMCP` and
 mounted at `/mcp` alongside the web UI. One codebase serves both; there is no

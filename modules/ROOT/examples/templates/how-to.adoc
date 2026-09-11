@@ -1,9 +1,19 @@
-= How to <accomplish the task>
+= <The task, as a verb phrase>
 :page-type: how-to
 
-// HOW-TO — task-oriented recipe. Assumes the reader knows what they want and
-// just needs the steps. No teaching, no background. Imperative, numbered.
+_<One sentence: the task and what it leaves you with.>_
 
-. First step.
-. Second step.
-. The result, and a xref: to anything that comes next.
+.TL;DR
+<The task as a sentence to Claude Code, what Claude calls, and the result. Run on the reference cluster exactly as written before publishing.>
+
+== Why this is one sentence
+
+<The architectural decision that makes the task this small, and what it saves the developer. One paragraph.>
+
+== By hand, and what is happening underneath
+
+<The control panel path, the operations, the states, the settings that matter. Short sections, one per sub-task, named by what they achieve.>
+
+== Limits
+
+* <One line each.>

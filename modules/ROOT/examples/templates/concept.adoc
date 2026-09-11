@@ -1,7 +1,23 @@
-= Title
+= <The idea, as a noun phrase>
 :page-type: concept
 
-// CONCEPT — understanding-oriented. Builds the mental model: the "what" and the
-// "why", not the "how" (link to the how-to/tutorial for steps). Prose is fine.
+_<One sentence: what the idea lets the reader do.>_
 
-Explain the idea and why it matters.
+.TL;DR
+<What the idea lets you do on Thinkube, in two or three sentences, with the sentence you would say to Claude where there is one.>
+
+== The decision
+
+<What was decided, and the reason. One or two paragraphs; one worked example.>
+
+== What it saves you
+
+* <Three to five lines, each a thing the reader no longer does.>
+
+== Where it shows up
+
+* xref:<page>[<Page>]: <what of this idea that page covers.>
+
+== Limits
+
+* <One line each.>

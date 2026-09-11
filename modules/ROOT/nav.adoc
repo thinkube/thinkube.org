@@ -36,6 +36,7 @@
 * xref:lifecycle/serve.adoc[Serve a model]
 * xref:lifecycle/notebooks.adoc[Thinkube Notebooks]
 * xref:lifecycle/fine-tune.adoc[Fine-tune]
+** xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards, end to end]
 
 .Tandem
 * xref:tandem:index.adoc[Thinkube Tandem]
@@ -51,16 +52,11 @@
 ** xref:tandem:defects.adoc[The defect ledger]
 ** xref:tandem:troubleshooting.adoc[When something goes wrong]
 
-.Playbooks
-* xref:playbooks/index.adoc[What a playbook is]
-* xref:playbooks/research-assistant.adoc[Build a research assistant]
-* xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards]
-* xref:playbooks/nine-sentences.adoc[Improve a todo application with nine sentences]
-
 .Reference
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]
 * xref:reference/templates.adoc[Templates catalog]
 * xref:reference/components.adoc[Components catalog]
+* xref:how-it-works/mcp-operation-model.adoc[The MCP operation model]
 * xref:control:index.adoc[thinkube-control]
 ** xref:control:llm-serving.adoc[LLM serving and models]
 ** xref:control:notebooks.adoc[Notebook execution over MCP]
@@ -70,12 +66,8 @@
 * xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop]
 * xref:how-it-works/kubernetes-underneath.adoc[Kubernetes underneath]
 * xref:how-it-works/gpu-multiarch.adoc[GPU and multi-arch]
-* xref:how-it-works/mcp-operation-model.adoc[The MCP operation model]
-* xref:how-it-works/components.adoc[Platform components]
 
 .Contributing
 * xref:contributing/page-types.adoc[Page types]
 * xref:contributing/style-guide.adoc[Style guide]
 * xref:contributing/documentation-map.adoc[Documentation map]
-* xref:contributing/screenshots.adoc[Screenshot inventory]
-* xref:contributing/gaps.adoc[Gap analysis]

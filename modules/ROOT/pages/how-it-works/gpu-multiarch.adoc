@@ -3,6 +3,9 @@
 
 _How GPUs are shared, how memory is budgeted on unified-memory hardware, and how one cluster runs amd64 and arm64 together._
 
+.TL;DR
+One GPU is shared as four slots so a served model, a fine-tune and an embedding server can run on one card. The platform counts memory per node, differently on a card and on unified-memory hardware, and refuses a load that will not fit. One cluster can mix amd64 and arm64 nodes; images are built for both.
+
 == Time-slicing
 
 The NVIDIA GPU Operator exposes each physical GPU as four slots by default.

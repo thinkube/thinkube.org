@@ -25,7 +25,7 @@ modules/ROOT/nav.adoc    # the one sidebar; every page of every module is listed
 modules/ROOT/pages/      # the site's own pages
 modules/ROOT/images/     # captures and diagrams
 supplemental-ui/         # branding over the default Antora UI; layouts/home.hbs is the home page
-tools/capture.mjs        # takes the screen captures (see contributing/screenshots.adoc)
+tools/capture.mjs        # takes the screen captures (DOMAIN_NAME=<domain> node tools/capture.mjs out/ [names])
 Dockerfile               # builds the site and serves it on nginx :8080 inside the cluster
 ```
 
@@ -43,4 +43,4 @@ The site is deployed inside the cluster as the application `docs` and read by th
 
 ## Writing rules
 
-The rules the pages follow are on the site itself: `contributing/style-guide.adoc` (voice and names), `contributing/page-types.adoc` (one Diátaxis type per page), `contributing/documentation-map.adoc` (where a page goes). In short: second person, present tense, describe rather than characterise, branded names as the services register them, no time figures, no certification claims, and every factual sentence checked against the source file named in the commit message.
+The rules the pages follow are on the site itself: `contributing/style-guide.adoc` (voice, names, and the shape every page has), `contributing/page-types.adoc` (one type per page, one section order per type), `contributing/documentation-map.adoc` (where a page goes). In short: every page opens with a TL;DR that does the task through Claude Code; every page names the decision it rests on and what it saves the developer; limits are one line each at the end; clarity over coverage; branded names as the services register them; no time figures, no certification claims; and every factual sentence checked against the source file named in the commit message. A process that fails on the reference cluster is not documented; it is fixed first. The plan behind the structure is `thinkube-release/DOCS-PLAN.md`.

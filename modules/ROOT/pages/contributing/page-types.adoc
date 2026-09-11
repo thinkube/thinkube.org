@@ -1,54 +1,69 @@
-= Page Types
+= Page types
 :page-type: reference
 
+_Every page is one of four types, and every page of a type has the same section order. The type is declared with `:page-type:` under the title and shown as a badge._
 
-Every Thinkube documentation page is exactly **one** of four Diátaxis
-page-types, declared with a `:page-type:` attribute under the title. The type
-is shown as a badge on the page and decides the page's shape.
+.TL;DR
+Copy the skeleton for the type below and fill it in order. Every type opens with a TL;DR that does the task through Claude Code and closes with Limits. A page that cannot follow its type's order is a different type, or two pages.
 
-[IMPORTANT]
-====
-**One type per page — no mixing.** A page that needs to both teach a concept and
-walk through a task is two pages: a concept and a tutorial/how-to that links to
-it. Mixing types is what made the old docs read as amateur.
-====
+== The four types and their shape
 
 [cols="1,2,3",options="header"]
 |===
-| Type | Orientation | Use it for
+| Type | Use it for | Section order
 
-| `tutorial`  | Learning   | A start-to-finish walkthrough that ends with something working.
-| `how-to`    | Task       | A recipe for a reader who already knows what they want.
-| `reference` | Information| Dry, complete, scannable lookup material.
-| `concept`   | Understanding | The "what" and "why" — the mental model, no steps.
+| `tutorial`
+| A start-to-finish path that ends with something working, for a reader who is learning.
+| TL;DR · What you will learn · What you need · numbered steps, each "why, then how" · What you have now · Limits
+
+| `how-to`
+| A task for a reader who knows what they want.
+| TL;DR · Why this is one sentence · By hand, and what is happening underneath · Limits
+
+| `concept`
+| An idea, a decision, or a mechanism, for a reader who wants to understand.
+| TL;DR · The decision · What it saves you · Where it shows up · Limits
+
+| `reference`
+| Exact lookup material: fields, operations, catalogues.
+| TL;DR · one section per thing, tables preferred · Limits
 |===
 
-To start a page, copy the matching skeleton below.
+Two rules apply to every type:
 
-== tutorial
+* *One type per page.* A page that teaches a concept and walks through a task is two pages that link to each other.
+* *Concepts are linked, not re-explained.* A word from the xref:concepts/running-software.adoc[Concepts] pages is linked the first time a page uses it and is not defined again.
+
+== Skeletons
+
+=== tutorial
 
 [source,asciidoc]
 ----
 include::example$templates/tutorial.adoc[]
 ----
 
-== how-to
+=== how-to
 
 [source,asciidoc]
 ----
 include::example$templates/how-to.adoc[]
 ----
 
-== reference
+=== concept
+
+[source,asciidoc]
+----
+include::example$templates/concept.adoc[]
+----
+
+=== reference
 
 [source,asciidoc]
 ----
 include::example$templates/reference.adoc[]
 ----
 
-== concept
+== Limits
 
-[source,asciidoc]
-----
-include::example$templates/concept.adoc[]
-----
+* Pages of the other four repositories (install, control, tandem, webapp-template) follow the same shapes; their skeletons are these.

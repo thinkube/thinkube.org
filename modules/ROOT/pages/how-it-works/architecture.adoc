@@ -3,6 +3,9 @@
 
 _What is on the machine after an install, layer by layer._
 
+.TL;DR
+Under everything is unmodified Kubernetes on your machines. On it, a fixed set of core components you never configure: identity, registry, git, builds, storage, the database, the control panel. Above them, the optional components you install with a sentence, and your applications. This page is the map, layer by layer.
+
 == Before the cluster
 
 The installer runs on your laptop and deploys over SSH. Before Kubernetes
@@ -59,6 +62,46 @@ thinkube-control is the web UI and the MCP endpoint, one application. It
 reads the catalogues — models, optional components, images — from
 `thinkube-metadata`, and it ships through the same deploy loop as your
 applications.
+
+== Core and optional components
+
+=== Core is the substrate
+
+Every optional component's requirements resolve into the core. Six need
+Thinkube Identity, five need PostgreSQL, five need Thinkube Registry. That
+substrate is what makes installing an optional component a single toggle
+rather than an afternoon of provisioning three datastores and registering an
+OIDC client. It is already running, already wired, already logged in.
+
+=== Optional is yours
+
+The catalogue has four categories — ai, data, infrastructure, monitoring —
+and each entry declares what it needs and carries three playbooks: install,
+test, uninstall. Every optional component can be removed the same way it
+arrived.
+
+Where the platform has no business having an opinion, it offers a choice and
+makes none. Three vector stores. Four inference backends. Those are your
+architecture. xref:why/index.adoc[Why Thinkube]
+is the reasoning.
+
+=== Nothing has to stay resident
+
+Every optional component has a toggle that scales it to zero. The LLM Gateway
+unloads models. What is running on your machine is what you are using.
+
+On a DGX Spark, where GPU memory is host RAM, that is not housekeeping —
+every running component is AI capacity spent. Twenty components on a 128 GB
+machine would be absurd if they all had to run. They don't.
+
+=== The catalogue is data
+
+The lists live in `thinkube-metadata` — `optional_components.json`,
+`models.json`, `mirror_images.json` — as a repository of their own.
+thinkube-control reads them. Adding a model or a component is a data change
+that ships independently of the platform.
+
+xref:reference/components.adoc[The components catalog] lists every entry.
 
 == What survives what
 

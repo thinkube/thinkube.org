@@ -3,6 +3,9 @@
 
 _How `thinkube.yaml` becomes a running application, and why the manifests you never write are still in your repository._
 
+.TL;DR
+You push a commit; the platform builds the image, pushes it to your registry, and deploys it. `k8s/` is generated from `thinkube.yaml` and committed beside your code so that what runs is always a commit you can read and roll back to.
+
 ----
 thinkube.yaml
   → thinkube-control generates k8s/

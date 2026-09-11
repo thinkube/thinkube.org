@@ -1,7 +1,10 @@
 = thinkube.yaml
 :page-type: reference
 
-_The one file that says what a repository is: its containers and how each is built and tested, how it is deployed, and how its work is verified. Specification v1.0._
+_The one file that says what your application is: its containers and how each is built and tested, how it is deployed, and how its work is verified. Two shapes are covered here, an application and a Knative service. Specification v1.0._
+
+.TL;DR
+You rarely write this file from scratch: a template comes with one, and Claude edits it when you say "add a second container" or "expose port 8080 at /api". Read this page when you want to know what a line means. About twenty lines describe a whole application; the manifests under `k8s/` are generated from them.
 
 `thinkube.yaml` sits at the root of a repository. thinkube-control reads it to build and deploy an application. Thinkube Tandem reads it to know where a repository's tests live, how one of them runs, how the repository is made live when the platform does not do it, and where its documentation lands. Both read the file where it is; nothing copies it.
 
@@ -137,25 +140,6 @@ Optional. Defaults to `type: app`.
 === Knative portability
 
 Knative services are meant to be portable to cloud serverless platforms. When `type: knative`, the schema enforces: a single container; no `gpu`, `mounts`, `migrations`, `schedule` or `capabilities`; no `storage` service; `timeoutSeconds` at most 900. Work that needs any of these uses `app` or `component`.
-
-=== Components
-
-Components have no constraints beyond `app`. The differences are the fixed name and, with `replicas: 0`, the pod lifecycle.
-
-[cols="1,1,1,1"]
-|===
-| | `app` | `component` | `component` with `replicas: 0`
-
-| Deployment name | Yours, at deploy time | Fixed in the file | Fixed in the file
-| Pods | 1 replica | 1 replica | 0 at deploy; created at runtime by the LLM Gateway
-| CI/CD | Full | Full | Full
-| Redeployment | You choose to overwrite | Overwrites the same name | Overwrites the same name
-| Kubernetes label | `thinkube.io/service-type: user_app` | `component` | `component`
-|===
-
-=== Repositories the platform does not deploy
-
-`type: none` says the platform builds and deploys nothing here. It is for repositories Thinkube Tandem works on that are made live some other way: an editor extension installed by a script, a set of playbooks applied to the cluster, an installer packaged for a desktop. Such a file has no `containers`; it declares its trees under `spec.parts`, how it is made live under `spec.deploy`, and, when its work is declarative, how it converges under `spec.verify`.
 
 == spec.containers
 
@@ -417,84 +401,6 @@ spec:
       to: aligner
 ----
 
-=== A gateway-managed inference server
-
-[source,yaml]
-----
-apiVersion: thinkube.io/v1
-kind: ThinkubeDeployment
-
-spec:
-  deployment:
-    type: component
-    name: vllm
-    replicas: 0
-
-  containers:
-    - name: inference
-      build: .
-      port: 7860
-      size: xlarge
-      health: /health
-      gpu:
-        count: 1
-        memory: "20Gi"
-
-  routes:
-    - path: /
-      to: inference
-----
-
-This component always deploys as `vllm`. With `replicas: 0`, the pipeline builds the image and creates the namespace and the ArgoCD application, and no pod starts. The LLM Gateway creates pods at runtime, each on the node and GPU you choose, each serving one model.
-
-=== An editor extension the platform does not deploy
-
-[source,yaml]
-----
-apiVersion: thinkube.io/v1
-kind: ThinkubeDeployment
-
-spec:
-  deployment:
-    type: none
-
-  parts:
-    - name: extension
-      root: .
-      test:
-        enabled: true
-        command: "npm test"
-        one: "node --test <file>"
-
-  deploy:
-    run: bash scripts/deploy.sh
-----
-
-=== A set of playbooks
-
-[source,yaml]
-----
-apiVersion: thinkube.io/v1
-kind: ThinkubeDeployment
-
-spec:
-  deployment:
-    type: none
-
-  parts:
-    - name: playbooks
-      root: ./ansible
-
-  verify:
-    still:
-      - "ansible-lint ansible/"
-      - "ansible-playbook --syntax-check <playbook>"
-      - "ansible-playbook --check --diff <playbook>"
-    apply: "ansible-playbook <playbook>"
-    ask: "ansible-playbook <playbook>"
-    settled: "changed=0"
-----
-
 == What the file does not say
 
 Conditional logic, Kubernetes resources, cloud-specific settings, deployment strategies, service meshes, command overrides and multi-region deployment. Container-specific configuration belongs in the Dockerfile; orchestration belongs to thinkube-control; cloud specifics to the future cloud bridge.
@@ -502,3 +408,7 @@ Conditional logic, Kubernetes resources, cloud-specific settings, deployment str
 == Version
 
 v1.0. A static descriptor with one to many containers; routing, services, dependencies and configurable variables, with a per-container allow-list of the variables a browser application may read; Knative scaling; components with a fixed name and gateway-managed pods; health endpoints; per-container tests with the whole suite and one file; parts, deploy, verify and docs for repositories the platform does not deploy.
+
+== Limits
+
+* This page covers applications and Knative services. The same file also describes the platform's own components and repositories the platform does not deploy; those uses are for platform development and are not documented here.

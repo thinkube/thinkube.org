@@ -3,6 +3,16 @@
 
 _Train a 4B model on your own GPU without a labelled dataset, register it beside its run, serve it through the LLM Gateway and call it. Every number below is from the run recorded in the notebook, on one GB10._
 
+.TL;DR
+In Thinkube Notebooks, open `thinkube/notebooks/examples/zebra-grpo/zebra_grpo.ipynb` with the `fine-tuning` kernel on a GPU node and run it from the top. It trains a LoRA adapter on `unsloth/Qwen3.5-4B` with rewards a constraint solver computes, measures before and after, registers the merged model in Thinkube Experiments and loads it at the LLM Gateway. Then "call zebra-rules-qwen35-4b" from any notebook.
+
+== What you will learn
+
+* How a program that checks answers replaces a labelled dataset: learning from a checker.
+* What a LoRA adapter is in practice: what is trained, how big it is, how it is merged.
+* How a training run is tracked and its result registered so that it can be served like any other model.
+* How to read a before-and-after evaluation and know whether the model got better.
+
 You will run `zebra_grpo.ipynb`, under `thinkube/notebooks/examples/zebra-grpo/` in Thinkube Notebooks. It takes a base model from the cluster's mirror, trains a LoRA adapter with GRPO, measures before and after on two sets of puzzles, merges and registers the result in Thinkube Experiments, loads it on vLLM and calls it through the gateway. The model you call at the end is one you trained.
 
 The task is a zebra puzzle: five houses, fifteen clues, fill in the grid. The model never solves the puzzle. It translates each clue into one formal rule, and a constraint solver deduces the grid from the rules. That division is what removes the need for labels: the solver grades every attempt, so the reward is a program's verdict.
@@ -14,7 +24,7 @@ The task is a zebra puzzle: five houses, fifteen clues, fill in the grid. The mo
 * Thinkube Experiments reachable, which it is from every notebook.
 
 .Two scales
-The notebook's `FULL_RUN` flag picks the scale. Full is the default: 2,000 training puzzles, 200 in each evaluation set, 250 steps. It is the run that produced the results below, and it is an overnight job on one GPU. `FULL_RUN = False` runs 500 training puzzles, 50 in each evaluation set and 60 steps; every stage runs the same way, and on the recorded run in-distribution accuracy went from 6% to 20%. Use the small scale to see the loop learn and to check your GPU, environment and gateway; use the full scale when you want the model.
+The notebook's `FULL_RUN` flag picks the scale. Full is the default: 2,000 training puzzles, 200 in each evaluation set, 250 steps. It is the run that produced the results below, on one GPU. `FULL_RUN = False` runs 500 training puzzles, 50 in each evaluation set and 60 steps; every stage runs the same way, and on the recorded run in-distribution accuracy went from 6% to 20%. Use the small scale to see the loop learn and to check your GPU, environment and gateway; use the full scale when you want the model.
 
 == 1. Open the notebook with a fresh kernel
 

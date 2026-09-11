@@ -1,18 +1,35 @@
-= Title — a thing the reader will accomplish
+= <What the reader will be able to do>
 :page-type: tutorial
 
-// TUTORIAL — learning-oriented. The reader follows it start to finish and ends
-// with something working. One happy path, concrete not abstract, no detours
-// into reference or "why" (link out for those).
+_<One sentence: what you end with, and why it matters.>_
 
-A sentence on what you will build and what must already be in place.
+.TL;DR
+<The whole task as one or two sentences to Claude Code in Thinkube IDE, what Claude calls, and what you have afterwards. Run on the reference cluster exactly as written before publishing.>
 
-== Step 1: <do the first thing>
-. Action.
-. Action, with the result they should see.
+== What you will learn
 
-== Step 2: <do the next thing>
-. Action.
+* <Three to five outcomes, each something the reader can do afterwards.>
+
+== What you need
+
+* <Installed things, access, hardware, in that order.>
+
+== 1. <First step, named by what it achieves>
+
+<One or two sentences: why this step exists, what it does underneath.>
+
+----
+› <the sentence to Claude, or the command>
+----
+
+<What the reader sees, in the tool's own words.>
+
+== 2. <Next step>
 
 == What you have now
-A one-line recap and a xref: to the next step.
+
+<One paragraph: what exists now that did not before, and where to go next.>
+
+== Limits
+
+* <One line each. What this does not do, or needs, stated once.>

@@ -1,25 +1,41 @@
-= Style Guide
+= Style guide
 :page-type: reference
 
+_How the pages sound, what they are called, and the shape every one of them has._
 
-How Thinkube documentation sounds and reads, so it stays consistent across
-authors and pages.
+.TL;DR
+Open with the sentence the reader says to Claude and what they get. Name the decision the page rests on and what it saves them. Then the details. Then the limits, one line each. Say each thing once, link the rest, and check every fact against the source file you name in the commit.
+
+== The thread through every page
+
+Nearly every architectural decision in Thinkube was made to make the developer's life easy. Every page says which decision it rests on and what that saves the reader, in its first section. A page that cannot say that is describing something the reader does not need to know.
+
+== The shape
+
+* *TL;DR first.* Two to five lines before anything else: the task as a sentence to Claude Code in Thinkube IDE, what Claude calls, what you have afterwards. Every TL;DR is run on the reference cluster exactly as written before it is published. A task that cannot be done in one sentence to Claude is a product finding, not a longer TL;DR.
+* *One section order per type.* xref:contributing/page-types.adoc[Page types] fixes it. Follow it.
+* *Why before what.* The first section after the TL;DR names the decision and what it saves. Steps come after.
+* *Teach, then show.* In a tutorial, one sentence on why a step exists before the command. In a concept page, one worked example.
+* *Strength first, limits once.* Describe what a thing does. Its limits go in the Limits block at the end, one line each. No failure narratives on product pages.
+* *Clarity over coverage.* Explain a few things well; Claude sees the whole API and can be asked for the rest. No page lists an API in full.
+* *Concepts once.* The xref:concepts/running-software.adoc[Concepts] pages define the vocabulary. Link a term the first time a page uses it; never define it again.
+* *A process that fails is not documented.* If a documented path fails on the reference cluster, the page is not published. The defect goes to the board, gets fixed, the path is rerun, then the page is written.
 
 == Voice
 
-* **Second person, present tense.** "You deploy a template", not "the user will
-  deploy" or "we deploy".
-* **Direct and calm.** Short sentences. Say the thing; skip the throat-clearing
-  ("In order to…", "It is important to note that…").
-* **Show, don't sell.** No marketing adjectives ("powerful", "seamless",
-  "blazing-fast"). Let the capability speak.
-* **The reader is capable, not expert.** Assume intelligence, not prior
-  Kubernetes knowledge. Explain the platform's own terms; don't explain general
-  computing.
+* Second person, present tense. "You deploy a template", not "the user will deploy".
+* Short sentences, common words, one point per sentence. No throat-clearing, no idioms that do not translate.
+* Describe rather than characterise. No "powerful", "seamless", "simple". Let the capability speak.
+* The reader is capable, not expert. Explain the platform's own terms once, in Concepts; do not explain general computing on every page.
+* No time figures: not "takes N minutes", not "in a few seconds". State what happens, not how long.
+* No claim that the Kubernetes underneath passed any test programme or carries any mark. Say "unmodified upstream Kubernetes, installed with kubeadm".
+* Alpha status is stated once, on xref:start-here/what-is-thinkube.adoc[What Thinkube is]. Nowhere else.
+* Thinkube Tandem is "an experimental intent-driven development methodology for working with Claude Code, still changing", stated once on its index page.
+* Nothing about where a page's source lives. That is a maintainer fact and belongs to xref:contributing/documentation-map.adoc[the documentation map] only.
 
-== Terminology
+== Names
 
-Use these spellings exactly:
+Use these exactly:
 
 [cols="1,2",options="header"]
 |===
@@ -35,58 +51,28 @@ Use these spellings exactly:
 | Thinkube Storage      | SeaweedFS, S3
 | Thinkube Identity     | Keycloak, SSO
 | Thinkube Packages     | DevPI, the package index
-| MCP tools             | MCP functions, the API
+| LLM Gateway           | the gateway, the inference endpoint
+| Claude Code           | Claude, the assistant (except in a sentence the reader says: "Ask Claude: …")
 | `thinkube.yaml`       | the manifest file, the config
 |===
 
-* The branded names above are the `display_name` each service registers for the
-  dashboard. Argo Workflows, ArgoCD, GPU Operator, JuiceFS and PostgreSQL keep
-  their own names. Name the implementation once where a reader might need to
-  search for it, in a form that says what it is — "Thinkube IDE — VS Code in
-  the browser (code-server)" — and use the implementation's name where the
-  implementation is the point: error messages, logs, the components catalog.
-* No time figures: not "takes N minutes", not "in an afternoon". The alpha runs
-  on two hardware configurations; the reader's is the third.
-* Make no claim that the Kubernetes underneath passed any test programme or
-  carries any mark. Say "unmodified upstream Kubernetes, installed with
-  kubeadm".
-* Call the three interfaces the **three pillars**: Thinkube IDE + Claude,
-  Thinkube Notebooks, thinkube-control.
-* The four lifecycle stages are **get a model → fine-tune → build → serve**.
+The branded names are the `display_name` each service registers for the dashboard. Argo Workflows, ArgoCD, GPU Operator, JuiceFS and PostgreSQL keep their own names. Name the implementation once where a reader might need to search for it, in a form that says what it is, "Thinkube IDE, VS Code in the browser", and use the implementation's name where the implementation is the point: error messages, logs, the components catalogue.
+
+Section names are plain: "Build an app", "Models", "Fine-tune". No invented vocabulary for the site's own structure.
 
 == Headings
 
 * Sentence case: "Set up your domain", not "Set Up Your Domain".
-* Headings are a scannable outline — a reader skimming only the headings should
-  get the gist. No "Introduction" / "Overview" filler headings.
+* A heading names what the section achieves or what it is. No "Introduction", no "Overview".
+
+== Facts
+
+Every factual sentence is checked against the source that makes it true, and the commit message names that file. A number that cannot be checked is not written. A behaviour that was observed on the reference cluster is written as observed, in the tool's own words when it is a message.
 
 == Admonitions
 
-Use sparingly — overused, they stop meaning anything.
+Rare. A NOTE is an aside the reader can skip. An IMPORTANT is something they must get right or the task fails. A WARNING is an action that can lose data. Anything else is prose.
 
-[NOTE]
-====
-A useful aside the reader can skip without breaking anything.
-====
+== Limits
 
-[TIP]
-====
-A shortcut or a better way to do what they're already doing.
-====
-
-[IMPORTANT]
-====
-Something they must get right or the task fails.
-====
-
-[WARNING]
-====
-An action that can lose data or break the platform.
-====
-
-== Page-types and structure
-
-Every page is one Diátaxis type — see xref:contributing/page-types.adoc[Page
-types]. Don't mix teaching and reference on one page; link between them instead.
-Volatile policy (e.g. credit/quota specifics) lives in one dated page in §6 How
-it works, never smeared through tutorials.
+* The four other repositories' pages follow this guide; their maintainers are the ones who change them.

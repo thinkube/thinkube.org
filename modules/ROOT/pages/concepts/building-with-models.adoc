@@ -20,7 +20,7 @@ An AI application is a model plus four ordinary pieces of software: a way to fin
 
 *Why it matters to you.* It is the cheapest way to make a model answer about your things, it works with any model, and it updates when the documents do, with no training.
 
-*Where you meet it.* xref:playbooks/research-assistant.adoc[Build a research assistant] indexes a corpus of papers and asks it questions with sources.
+*Where you meet it.* The research assistant notebooks under `thinkube/notebooks/examples/research-assistant/` in Thinkube Notebooks index a corpus of papers and ask it questions with sources.
 
 == An agent and tool calling
 
