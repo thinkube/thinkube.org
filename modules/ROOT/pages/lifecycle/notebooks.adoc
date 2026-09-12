@@ -61,7 +61,7 @@ The first time a server starts, the example notebooks are copied into the notebo
 
 The same folder is `~/thinkube-ai/notebooks/examples/` in a terminal of Thinkube IDE.
 
-The playbooks in the sidebar describe each and report what a run showed.
+Two playbooks walk them through and report what a run showed: xref:playbooks/research-assistant.adoc[Build a research assistant, end to end] and xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards, end to end].
 
 == Call a served model
 
