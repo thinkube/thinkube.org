@@ -52,9 +52,9 @@ Thinkube exposes its whole control surface through MCP, the protocol by which an
 | `install_optional_component`
 | The components installed with their requirements, each with an address and a login.
 
-| "run the zebra notebook"
-| `jupyter_execute_all_cells`
-| The notebook's cells executed in order in Thinkube Notebooks, with the outputs saved in it.
+| "start a notebook server on the spark with one GPU and run the zebra notebook"
+| `start_notebook_server`, `jupyter_use_notebook`, `jupyter_execute_all_cells`
+| A server on that node with that GPU, the notebook opened with its kernel, and every cell run in order with the outputs saved in it. No JupyterLab tab is needed; open one to watch.
 
 | "give my app a token for the gateway"
 | `create_token`

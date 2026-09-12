@@ -27,6 +27,8 @@ image::notebooks-spawn.png[The Server Options form: node, CPU cores, memory, num
 
 Choose *Start*. The defaults the form opens with are set in thinkube-control under *JupyterHub Config*: default node, cores, memory and GPU count.
 
+Claude can make the same choice: "start a notebook server on tkspark with one GPU" calls `start_notebook_server`, which checks the ask against the node and its free GPU slots and waits until the server answers.
+
 == Pick an environment
 
 Environments are built from definitions and appear as kernels. Two are built at install:
@@ -82,16 +84,16 @@ response = client.chat.completions.create(
 
 The model name is the id the catalogue shows. `llm.load_model("Qwen/Qwen3.5-4B", node="tkspark")` and `llm.unload_model(...)` do from a cell what the LLM Gateway page does with a click.
 
-== Let Claude Code run cells
+== Let Claude Code run notebooks
 
-When a server is running, Claude Code in Thinkube IDE can list, read, insert and execute cells of your notebooks through thinkube-control. xref:control:notebooks.adoc[Notebook execution over MCP] lists the operations and their limits.
+Claude Code in Thinkube IDE works on your notebooks through thinkube-control: it opens a notebook with a kernel, edits and runs cells, runs a whole notebook in the background, and restarts or interrupts the kernel. No tab needs to be open. A tab opened during a run shows the same cells and the outputs as they arrive, because Claude edits the same shared document the tab does. "run the zebra notebook unattended on the spark with one GPU" gives the run a server of its own that stops when it ends. xref:control:notebooks.adoc[Notebook execution over MCP] lists the operations and their limits.
 
 == Stop the server
 
-From the hub's *Home* page, *Stop My Server*. The GPU and memory the server held come back; your files stay on the shared filesystem.
+From the hub's *Home* page, *Stop My Server*, or "stop the notebook server" to Claude. The GPU and memory the server held come back; your files stay on the shared filesystem.
 
 == Limits
 
 * Environments inherit PyTorch from the image; a package that pins its own `torch` must be installed with `--no-deps`.
 * A notebook server runs on one node at a time; stop it to move it to another.
-* Running cells through Claude needs the notebook open in JupyterLab with a kernel.
+* A notebook has one kernel: a cell started from a tab and one started by Claude wait for each other.
