@@ -1,0 +1,118 @@
+= Build a research assistant over your own papers
+:page-type: tutorial
+
+_Index a corpus of papers in your own vector store, ask it questions that come back with sources, then let two agents argue from it. Four notebooks, run in order, each leaving something the next one uses._
+
+.TL;DR
+Ask Claude: "install Qdrant and Langfuse, then run the research assistant notebooks 00 to 03 with the agent-dev kernel". Notebook 00 checks every service, 01 makes sure a chat model and an embedding model are served, 02 fetches 146 papers from arXiv, embeds them into Qdrant and answers three questions with sources, and 03 has two agents argue from that index. Everything runs on your models, your vector store and your traces. This page follows the four notebooks one at a time and shows what each one printed on the reference cluster.
+
+== What you will learn
+
+* How a notebook reaches every platform service, and what each one is for.
+* How a model goes from mirrored to served, and how every model is called through one address.
+* How a corpus becomes an index: fetch, chunk, embed, store, and the two settings that decide whether retrieval works at all.
+* How agents that can only cite what a search returns argue, and what tool calling needs from the model.
+
+== What you need
+
+* Thinkube Notebooks with the `agent-dev` kernel. A node without a GPU is enough; the models run behind the LLM Gateway, not in the notebook.
+* A chat model the catalogue marks for tool use and an embedding model, mirrored and served. The run below used `Qwen/Qwen3-8B` with a 32k context and `Qwen/Qwen3-Embedding-0.6B`.
+* The optional components Qdrant and Langfuse, which "install Qdrant and Langfuse" brings with their requirements, ClickHouse and Valkey.
+* Outbound access to arXiv.
+
+The notebooks are under `thinkube/notebooks/examples/research-assistant/` in Thinkube Notebooks. xref:concepts/building-with-models.adoc[Concepts: building with models] explains embeddings, retrieval, agents and tracing once; this page uses the words.
+
+== 1. Check the services are there
+
+Every later notebook assumes the platform's services answer, so the first one asks each of them and says what it found. `00-platform-validation.ipynb` tries seven in turn: the LLM Gateway, Qdrant, Langfuse, Thinkube Experiments, PostgreSQL, Valkey and NATS. A green line is a service it reached, a grey line one it is not configured for, a red line one that answered with an error.
+
+On the reference cluster it printed:
+
+----
+✅ Connected to LLM Gateway
+ℹ️  Chat models loaded: Qwen/Qwen3-8B
+ℹ️  Embedding models loaded: Qwen/Qwen3-Embedding-0.6B
+ℹ️  GPU: tkamd2 — NVIDIA-GeForce-RTX-3090-SHARED — 3/4 slots free — 46GB available
+ℹ️  GPU: tkspark — NVIDIA-GB10-SHARED — 3/4 slots free — 66GB available
+✅ Chat test passed: Hello.
+✅ Embedding test passed: 1024 dimensions
+✅ Connected to Qdrant at https://qdrant.thinkube.com
+✅ Connected to Langfuse at https://langfuse.thinkube.com
+✅ Connected to MLflow at https://experiments.thinkube.com
+✅ Connected to PostgreSQL at postgres.thinkube.com
+✅ Connected to Valkey at valkey.thinkube.com
+----
+
+The Thinkube Experiments cell created the `research-assistant-validation` experiment with a run named `platform-test` and printed the link. NATS was not installed on the reference cluster, so its cell reported a connection error; nothing later depends on it.
+
+== 2. Make sure the models are served
+
+`01-register-litellm.ipynb` is about model management from Python: what the registry holds, what your GPUs have room for, and how a model goes from `deployable` to `loading` to `available`. It uses `tk_llm`, the platform's client, which is configured for your gateway in every environment:
+
+[source,python]
+----
+from tk_llm import LLMClient, get_openai_client
+
+llm = LLMClient()
+llm.list_models()                     # registry and state
+llm.gpu_status()                      # nodes, slots, memory
+llm.load_model("<model>", node="<node>", max_context_length=32768)
+----
+
+The load cells pick the smallest deployable chat model and the smallest embedding model when nothing is loaded, choose the node with the most free memory, and ask for a 32k context, because the retrieval and the debate in the next notebooks carry several thousand tokens of evidence per turn. When both models are already loaded, as they were on the reference cluster, the cells say so and move on.
+
+The chat test asks what LoRA fine-tuning is, in two sentences, with `max_tokens=1024`. On the reference cluster the answer cost 973 completion tokens: the model reasoned for about four thousand characters before its two sentences. That reasoning is billed against the token budget, which is why every later call either gives the model room or switches thinking off.
+
+The embeddings test embeds three sentences and compares them:
+
+----
+✅ Embeddings with Qwen/Qwen3-Embedding-0.6B — 1024 dimensions
+📐 Semantic Similarity:
+  LoRA ↔ QLoRA:    0.833  (related topics)
+  LoRA ↔ Weather:  0.289  (unrelated)
+  QLoRA ↔ Weather: 0.260  (unrelated)
+----
+
+That is the property the next notebook builds on: closeness in meaning becomes closeness in space. Leave the models loaded; the unload cell at the end is commented out on purpose.
+
+== 3. Index a corpus and ask it questions
+
+`02-langchain-rag.ipynb` builds the retrieval pipeline over the 2025–2026 literature on reasoning post-training: fetch papers from arXiv, chunk them, embed the chunks through the gateway, store them in Qdrant with a payload you can filter on, and wire a chain that answers from what it retrieved, with Langfuse tracing every query. The run below left `FETCH_FULL_TEXT` at its default, off.
+
+*Fetch.* Three anchor papers are fetched by identifier, because keyword search cannot reach a field's founding paper, then three keyword searches of 50 results each, one per side of the debate plus background. The run fetched DeepSeekMath, DeepSeek-R1 and _Does Reinforcement Learning Really Incentivize Reasoning Capacity_ as anchors, then 50 GRPO papers, 50 distillation papers and 43 general reasoning papers after deduplication: 146 papers, 215 thousand characters of abstract. With full text switched on the notebook also downloads each paper's LaTeX source, which carries its own licence, and extracts algorithms, results tables and equations; the notebook says why that is a decision to make knowingly. Fetching is rate-limited to one request per three seconds, as arXiv asks.
+
+*Chunk.* Pieces of about 1,000 characters with 200 of overlap, each tagged with its content type. The run produced 431 chunks, all abstracts, three per paper on average. The cache cell saves papers, chunks and embeddings beside the notebook so a second run skips the fetch.
+
+*Embed.* Batches of 32, because Text Embeddings Inference rejects a larger batch with a bare 422 that reaches the notebook as a 503 from the gateway. Items can come back out of order and are re-sorted by index. The run embedded all 431 chunks with `Qwen/Qwen3-Embedding-0.6B` at 1,024 dimensions and sent one embedding trace to Langfuse.
+
+*Store.* A Qdrant collection with the embedding's dimension and cosine distance, uploaded in batches of 500 because a single request is capped at 32 MB. The run recreated `rl_reasoning_papers` and uploaded the 431 vectors in one batch, each carrying the plain text, the raw text, its content type and the side of the debate it belongs to.
+
+*Ask.* Two settings decide whether the chain works at all, and both were found by reading answers rather than exit codes. `check_embedding_ctx_length=False`, because LangChain otherwise pre-tokenises the query with OpenAI's tokenizer and sends integers, which a non-OpenAI embedding server embeds as if they were words; measured on this notebook, the query vector's similarity to the same sentence sent as text was 0.30 with the default and 1.0 with the flag. And `enable_thinking: False`, because a reasoning model's thinking is billed against `max_tokens` and leaves nothing for the answer. The retriever reserves four prose chunks and two evidence chunks per question, so a conceptual question is answered with an argument rather than a benchmark grid.
+
+The run asked its three questions and each came back with an answer and four cited sources. Asked what GRPO is and how it differs from PPO, the model answered that GRPO drops the value network and compares a group of candidates the model generated itself, citing the GRPO-SG, CoDistill-GRPO and GRPO-VPS papers. Asked whether verifiable-reward training creates new reasoning ability or sharpens what the base model has, it answered "primarily a sharpening mechanism", citing among others the anchor paper that asks that question. Asked when distilling a teacher's traces beats running reinforcement learning on a small model, it answered that curated traces win on sample efficiency, citing NaturalThoughts and RLKD. Each answer is only as good as the abstracts under it; the point of the cell is that you can see which ones.
+
+*Trace.* Langfuse's callback records each retrieval and each generation. The trace cell fetched 8 traces, left out 2 that were newer than its 30 second ingestion window because their latency was not final yet, and summarised the 6 that remained: 4 retrieval-and-answer and 2 embedding runs. It plots latency per trace type, because pooling the two produces a mean that describes neither.
+
+The last cell lists the 146 indexed papers with their identifiers and dates, so you can see what your assistant knows.
+
+== 4. Put the index to work in an argument
+
+`03-multi-agent.ipynb` reads the collection `02` built and hands it to three AG2 agents. Two advocates argue opposite sides of a question the literature has not settled: whether to post-train a small model with reinforcement learning on verifiable rewards or by distilling a larger model's reasoning traces. Each can only cite what `search_papers` returns from your index. A judge is asked to score both on five criteria, declare a winner and call `generate_code`, which retrieves algorithm chunks for the winning approach and writes an implementation grounded in them, checked for syntax but never run.
+
+Tool calling is what makes this work: the model must emit a call the server can parse, and the server must be started with a parser that matches the model's format. The catalogue records that per model, and the run below used `Qwen/Qwen3-8B`, served with the Hermes parser. Every advocate prompt says "search once, then argue" and ends every turn with a marker, because without the first an agent keeps searching and without the second the proxy cannot tell the turn is over.
+
+On the reference cluster the two rounds ran as designed. Each advocate made one search and argued from what came back. Pro-GRPO opened with GRAIL, the generalisation-bounds paper for verifiable rewards and DeepSeek-R1; Pro-Distillation opened with dynamic pruning with knowledge distillation, feedback-driven distillation for small models, and chain-of-thought distillation. Each rebuttal quoted the other side's evidence back and searched again for papers that challenge it. Seven searches reached the index in all, every one answered with four papers and their relevance scores.
+
+The judge did not deliver its verdict in this run. Given its four-part instruction, it went straight to `generate_code`, called it eleven times alternating between the two approaches, and never wrote its scores; the results cell says "Judge verdict not captured". The code it produced is a GRPO training loop grounded in three retrieved papers. The debate is the part that shows what the index can do; the verdict is what a stronger judge model, or a judge prompt split into two turns, would add.
+
+== What you have now
+
+A retrieval assistant over a corpus you chose, running on your own hardware: your models, your vector store, your traces. Swap arXiv for your own documents and the same steps hold, with Qdrant, the gateway and Langfuse unchanged. Every question and every agent turn is in Langfuse, which is the record you would fine-tune from next.
+
+If the argument leaves you wanting to run the winner rather than read about it, xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards] trains a model with reinforcement learning on rewards a program checks and serves it through the same gateway.
+
+== Limits
+
+* Notebook 03 needs a chat model the catalogue marks for tool use, served with a 32k context; with an 8k context the debate stops on the model's maximum context length.
+* On the reference cluster an 8B judge produced no verdict, only code; the notebook reports it as "Judge verdict not captured".
+* NATS is used only by one cell of notebook 00; without it that cell reports a connection error and nothing else changes.

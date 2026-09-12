@@ -35,6 +35,7 @@
 * xref:lifecycle/get-models.adoc[Get a model]
 * xref:lifecycle/serve.adoc[Serve a model]
 * xref:lifecycle/notebooks.adoc[Thinkube Notebooks]
+** xref:playbooks/research-assistant.adoc[Build a research assistant, end to end]
 * xref:lifecycle/fine-tune.adoc[Fine-tune]
 ** xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards, end to end]
 
