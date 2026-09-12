@@ -86,7 +86,7 @@ The model name is the id the catalogue shows. `llm.load_model("Qwen/Qwen3.5-4B",
 
 == Let Claude Code run notebooks
 
-Claude Code in Thinkube IDE works on your notebooks through thinkube-control: it opens a notebook with a kernel, edits and runs cells, runs a whole notebook in the background, and restarts or interrupts the kernel. No tab needs to be open. A tab opened during a run shows the same cells and the outputs as they arrive, because Claude edits the same shared document the tab does. "run the zebra notebook unattended on the spark with one GPU" gives the run a server of its own that stops when it ends. xref:control:notebooks.adoc[Notebook execution over MCP] lists the operations and their limits.
+Claude Code in Thinkube IDE works on your notebooks through thinkube-control: it opens a notebook with a kernel, edits and runs cells, runs a whole notebook in the background, and restarts or interrupts the kernel. No tab needs to be open. Ask to see the notebook and Claude shows it in a tab of Thinkube IDE, JupyterLab's own page, where the outputs arrive as they happen, because Claude edits the same shared document the page shows. "run the zebra notebook unattended on the spark with one GPU" gives the run a server of its own that stops when it ends. xref:control:notebooks.adoc[Notebook execution over MCP] lists the operations and their limits.
 
 == Stop the server
 
