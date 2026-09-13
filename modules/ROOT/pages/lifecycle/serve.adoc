@@ -35,9 +35,9 @@ Loading takes options. Say them in words, or set them in thinkube-control:
 * *tier* — `flexible` loads through Ollama when the model supports it:
   quantised, quick to load, less memory. `performance` loads through vLLM or
   TensorRT-LLM: full precision, higher throughput.
-* *backend* — name one: `vllm`, `tensorrt-llm`, `ollama`, `text-embeddings`.
-* *node* — which GPU node. The gateway chooses if you don't.
-* *max_context_length* — cap the context to save memory.
+* *backend* — a type, `vllm`, `tensorrt-llm`, `ollama`, `text-embeddings`, or a backend by name, such as `vllm-tkspark`, which also names its node.
+* *node* — which GPU node. Without it, the node with the most GPU memory left takes the model.
+* *max_context_length* — cap the context to save memory. Without it the model gets the largest of 32k, 16k and 8k tokens that it allows and the node has memory for; the answer says which.
 * *keep_alive* — Ollama only: how long the model stays loaded after the last
   request.
 * *num_speculative_tokens* — for models with a speculative-decoding
@@ -46,6 +46,8 @@ Loading takes options. Say them in words, or set them in thinkube-control:
 ----
 › load Qwen/Qwen3.5-4B on tkamd2 with a 16k context
 ----
+
+A vLLM, TensorRT-LLM or embeddings pod serves one model. Asking for a second model on a node whose pod already serves one is refused with the model's name: unload it, or choose another node. Ollama's pod holds several.
 
 == See what's loaded
 
