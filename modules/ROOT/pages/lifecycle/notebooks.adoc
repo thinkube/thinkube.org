@@ -48,7 +48,7 @@ Ask Claude Code in Thinkube IDE:
 › make me a venv from agent-dev and add trackio and polars
 ----
 
-Claude creates the definition and starts the build; the call answers at once and the build runs on a GPU node for some minutes, so Claude polls its status and tells you when it is done. Or in thinkube-control, under *Jupyter Kernels*, start from one of the two templates, add packages, and build. The environment is built for every GPU architecture in the cluster and appears as a kernel when the build finishes. If a build fails, ask Claude Code for the build log; it reads `get_venv_build_logs`.
+Claude creates the definition and starts the build; the call answers at once and the build runs on a GPU node for some minutes, so Claude polls its status and tells you when it is done. Building one of the two templates themselves rebuilds that built-in environment in place on every node, from its package list, and the kernel keeps its name; a custom environment cannot take a template's name. Or in thinkube-control, under *Jupyter Kernels*, start from one of the two templates, add packages, and build. The environment is built for every GPU architecture in the cluster and appears as a kernel when the build finishes. If a build fails, ask Claude Code for the build log; it reads `get_venv_build_logs`.
 
 image::cp-jupyter-kernels.png[The Jupyter Kernels page of thinkube-control]
 
