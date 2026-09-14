@@ -44,16 +44,15 @@
 .Tandem
 * xref:tandem:index.adoc[Thinkube Tandem]
 * Using Tandem
-** xref:tandem:getting-started.adoc[Using the space]
-** xref:tandem:reading-the-surface.adoc[Every word on Tandem's pages]
+** xref:tandem:getting-started.adoc[Your first thing built]
+** xref:tandem:what-the-work-noticed.adoc[Taking up what the work noticed]
+** xref:tandem:the-run.adoc[While it builds]
+** xref:tandem:the-report.adoc[Reading the report and deciding]
+** xref:tandem:words-on-the-page.adoc[The words on the page]
 ** xref:tandem:defect-ledger.adoc[The defect ledger]
 ** xref:tandem:configuration.adoc[Configuration and settings]
 ** xref:tandem:troubleshooting.adoc[When something goes wrong]
-* Underneath
-** xref:tandem:the-space.adoc[What happens to a sentence]
-** xref:tandem:gates.adoc[The two gates]
-** xref:tandem:the-run.adoc[How the machine builds]
-** xref:tandem:end-to-end.adoc[The whole path, end to end]
+* Reference
 ** xref:tandem:identity.adoc[Projects and identity]
 ** xref:tandem:store.adoc[The store]
 ** xref:tandem:defects.adoc[The defect ledger, reference]

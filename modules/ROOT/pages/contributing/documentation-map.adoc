@@ -15,7 +15,7 @@ The site is one Antora component assembled from five repositories. A page about 
 | ROOT | `thinkube/thinkube.org`, `.` | Why, Concepts, Start here, Build an app, Models, the site's reference and How it works pages, Contributing
 | `install` | `thinkube/thinkube-installer`, `docs` | The seven Install pages
 | `control` | `thinkube/thinkube-control`, `docs` | thinkube-control, LLM serving and models, Notebook execution over MCP
-| `tandem` | `thinkube/thinkube-tandem`, `docs` | Thinkube Tandem and its eleven pages
+| `tandem` | `thinkube/thinkube-tandem`, `docs` | Thinkube Tandem and its twelve pages
 | `webapp-template` | `thinkube/tkt-webapp-react-fastapi`, `template-docs` | The template round trip and its five pages
 |===
 
@@ -28,7 +28,7 @@ The site is one Antora component assembled from five repositories. A page about 
 * *Build an app.* xref:apps/index.adoc[Build an app], concept; xref:apps/claude-code.adoc[What Claude can do for you], how-to; xref:webapp-template:index.adoc[The template round trip], concept, with xref:webapp-template:deploy.adoc[Deploy a template] (tutorial), xref:webapp-template:develop.adoc[Change the app and ship it], xref:webapp-template:create-a-template.adoc[Turn your app into a template], xref:webapp-template:variables.adoc[How configuration reaches your app], xref:webapp-template:anatomy.adoc[What is in the web app template].
 * *Models.* xref:lifecycle/index.adoc[Models], concept; xref:lifecycle/get-models.adoc[Get a model], xref:lifecycle/serve.adoc[Serve a model], xref:lifecycle/notebooks.adoc[Thinkube Notebooks], how-to; xref:lifecycle/fine-tune.adoc[Fine-tune], concept.
 * *Playbooks.* xref:playbooks/research-assistant.adoc[Build a research assistant, end to end] and xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards, end to end], both tutorial: a whole process run on the reference cluster, with what each step showed.
-* *Tandem.* xref:tandem:index.adoc[Thinkube Tandem], concept, and its eleven pages.
+* *Tandem.* xref:tandem:index.adoc[Thinkube Tandem], concept, and its twelve pages.
 * *Reference.* xref:reference/thinkube-yaml.adoc[thinkube.yaml], xref:reference/templates.adoc[Templates catalog], xref:reference/components.adoc[Components catalog], xref:how-it-works/mcp-operation-model.adoc[The MCP operation model], xref:control:index.adoc[thinkube-control], xref:control:llm-serving.adoc[LLM serving and models], xref:control:notebooks.adoc[Notebook execution over MCP].
 * *How it works.* xref:how-it-works/architecture.adoc[Architecture], xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop], xref:how-it-works/kubernetes-underneath.adoc[Kubernetes underneath], xref:how-it-works/gpu-multiarch.adoc[GPU and multi-arch], all concept.
 * *Contributing.* xref:contributing/page-types.adoc[Page types], xref:contributing/style-guide.adoc[Style guide], this page.
