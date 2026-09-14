@@ -10,7 +10,7 @@ Open a terminal in Thinkube IDE and run `claude`. It is already connected to the
 
 Thinkube exposes its whole control surface through MCP, the protocol by which an assistant is given tools: what is running, the models, the templates, the notebooks, the components. Reading is free: Claude consults state whenever it needs to. Changing is a tool call, and Claude makes one only when you ask. So a sentence is not a shortcut around the platform; it is the platform, operated by the same code the panel uses. xref:concepts/building-with-models.adoc#_mcp_and_what_it_means_that_claude_operates_the_platform[Concepts] explains MCP; xref:how-it-works/mcp-operation-model.adoc[The MCP operation model] explains the read and change split.
 
-== The twelve sentences
+== The fourteen sentences
 
 [cols="2,1,2",options="header"]
 |===
@@ -59,6 +59,14 @@ Thinkube exposes its whole control surface through MCP, the protocol by which an
 | "give my app a token for the gateway"
 | `create_token`
 | An API token to send as a bearer token or as `x-api-key`.
+
+| "add a secret called NCBI_API_KEY"
+| `create_secret`
+| The value in the Secrets store. An app that declares the name in its `manifest.yaml` receives it as a variable.
+
+| "which apps use SECRETS_CHECK_TOKEN?"
+| `list_secrets`, `get_secret_apps`
+| The apps that receive the secret, and so restart when its value changes.
 
 | "how do I add a node?"
 | `search_thinkube_docs`
