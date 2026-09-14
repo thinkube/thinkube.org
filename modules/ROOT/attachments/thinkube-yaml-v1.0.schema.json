@@ -142,6 +142,11 @@
           "minimum": 0,
           "description": "Initial replica count. Set to 0 for gateway-managed components."
         },
+        "gateway_managed": {
+          "type": "boolean",
+          "default": false,
+          "description": "An external controller creates this component's pods at runtime, as the LLM gateway does per GPU. Its resting state is zero replicas, which is idle rather than disabled."
+        },
         "minScale": {
           "type": "integer",
           "minimum": 0,
@@ -393,13 +398,20 @@
     "deploy": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "run"
-      ],
       "properties": {
         "run": {
-          "type": "string",
-          "description": "The command that makes the repository live."
+          "description": "The command that makes the repository live, or several to run in order. Absent when the merge itself made it live and only \"at\" is worth saying.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
         },
         "in": {
           "type": "string",
@@ -417,11 +429,18 @@
       "additionalProperties": false,
       "properties": {
         "still": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Commands that change nothing."
+          "description": "Commands that change nothing: a lint, a syntax check, a dry run. One or several.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
         },
         "apply": {
           "type": "string",

@@ -39,6 +39,7 @@ spec:
     type: string            # "app" (default), "knative", "component", or "none"
     name: string            # Component only: fixed deployment name
     replicas: number        # Initial replica count (default 1; 0 for gateway-managed components)
+    gateway_managed: boolean  # An external controller creates the pods (default false)
     minScale: number        # Knative: minimum pods (default 0)
     maxScale: number        # Knative: maximum pods (default 5)
     containerConcurrency: number  # Knative: concurrent requests per pod (default 0 = unlimited)
@@ -79,13 +80,12 @@ spec:
         one: string
 
   deploy:                   # How this repository is made live when the platform does not do it
-    run: string             # The command
+    run: string | list      # The command, or several in order (optional)
     in: string              # The directory it runs in, when it lives in another repository (optional)
     at: string              # Where the result can be seen (optional)
 
   verify:                   # For declarative work: how its own tool says the work holds
-    still:                  # Commands that change nothing
-      - string
+    still: string | list    # Commands that change nothing
     apply: string           # The command that does the work
     ask: string             # What reports whether anything is left to do
     settled: string         # What that report must say, e.g. "changed=0"
@@ -131,6 +131,7 @@ Optional. Defaults to `type: app`.
 | `type` | string | `app`: an always-on Deployment, Service and HTTPRoute, named by you at deploy time. `knative`: a Knative Service that scales to zero. `component`: the same resources as `app` with a fixed name from `deployment.name`, for platform infrastructure that goes through the pipeline. `none`: the platform does not deploy this repository; see `spec.deploy`.
 | `name` | string | Component only, and required there. Lowercase alphanumeric with hyphens. It becomes the namespace, the service name, the domain prefix, the Gitea repository name and the ArgoCD application name.
 | `replicas` | number | Initial replica count, default `1`. `0` for components whose pods an external controller creates at runtime, such as the LLM Gateway placing inference pods per GPU. Forbidden for `knative`.
+| `gateway_managed` | boolean | Default `false`. An external controller creates this component's pods at runtime. Its resting state is zero replicas, so the platform reports it as idle rather than scaled down, and keeps it listed as enabled.
 | `minScale` | number | Knative only. Default `0`.
 | `maxScale` | number | Knative only. Default `5`.
 | `containerConcurrency` | number | Knative only. Default `0`, unlimited. `1` for CPU-heavy work, one request per pod.
@@ -216,13 +217,13 @@ Only for a repository with `deployment.type: none`. Each part is a tree with its
 
 == spec.deploy
 
-How the repository is made live when the platform does not do it. For an application this block is absent: the platform deploys it from `containers`.
+How the repository is made live when the platform does not do it. An application usually omits this block: the platform deploys it from `containers`. It may still carry `at` on its own, to say where the result can be seen.
 
 [cols="1,1,3"]
 |===
 | Field | Type | Description
 
-| `run` | string | The command that makes it live.
+| `run` | string or list | The command that makes it live, or several to run in order, stopping at the first that fails. Optional: no `run` means the merge itself made it live.
 | `in` | string | The directory to run it in, when the command lives in another repository. Optional.
 | `at` | string | Where the result can be seen, a URL. Optional. Thinkube Tandem opens it to look at what was delivered.
 |===
@@ -235,7 +236,7 @@ For repositories whose work is declarative, such as playbooks. A test that asser
 |===
 | Field | Type | Description
 
-| `still` | list | Commands that change nothing: lint, syntax check, a dry run with a diff. Run before anything is merged.
+| `still` | string or list | Commands that change nothing: lint, syntax check, a dry run with a diff. One or several. Run before anything is merged.
 | `apply` | string | The command that does the work. It is the deployment, and runs only after a person approves it.
 | `ask` | string | The command that reports whether anything is left to do, run after `apply`.
 | `settled` | string | What that report must say for the work to be settled, for example `changed=0`. A second run that still changes something is a defect.

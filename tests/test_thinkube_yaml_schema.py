@@ -196,6 +196,91 @@ def test_an_app_without_a_deployment_block_needs_no_component_name():
     assert not errors_for(document)
 
 
+# --- spec.deploy matches what Tandem accepts ---------------------------------
+#
+# Tandem reads this block through lines(), which takes one command or a list
+# and yields [] when there is none. makeLive treats an empty run as "the merge
+# already made it live" and still reports "at".
+
+
+def repo_with(deploy=None, verify=None):
+    spec = {"deployment": {"type": "none"}}
+    if deploy is not None:
+        spec["deploy"] = deploy
+    if verify is not None:
+        spec["verify"] = verify
+    return {
+        "apiVersion": "thinkube.io/v1",
+        "kind": "ThinkubeDeployment",
+        "metadata": {"name": "demo"},
+        "spec": spec,
+    }
+
+
+def test_deploy_accepts_one_command():
+    assert not errors_for(repo_with(deploy={"run": "bash scripts/deploy.sh"}))
+
+
+def test_deploy_accepts_several_commands_in_order():
+    assert not errors_for(repo_with(deploy={"run": ["first", "second", "third"]}))
+
+
+def test_deploy_may_name_only_where_the_result_can_be_seen():
+    """An app is live because it was pushed; it still says where to look."""
+    document = {
+        "apiVersion": "thinkube.io/v1",
+        "kind": "ThinkubeDeployment",
+        "metadata": {"name": "todo"},
+        "spec": {
+            "deployment": {"type": "app"},
+            "containers": [
+                {"name": "backend", "build": "./backend", "port": 8000, "health": "/health"}
+            ],
+            "deploy": {"at": "https://todo.thinkube.com"},
+        },
+    }
+    found = errors_for(document)
+    assert not found, "; ".join(e.message for e in found)
+
+
+def test_deploy_still_refuses_an_unknown_field():
+    assert errors_for(repo_with(deploy={"run": "x", "when": "friday"}))
+
+
+def test_verify_still_accepts_one_command_or_several():
+    assert not errors_for(repo_with(verify={"still": "make lint"}))
+    assert not errors_for(repo_with(verify={"still": ["make lint", "make check"]}))
+
+
+# --- gateway-managed components ----------------------------------------------
+
+
+def component(**deployment):
+    base = {"type": "component", "name": "vllm"}
+    base.update(deployment)
+    return {
+        "apiVersion": "thinkube.io/v1",
+        "kind": "ThinkubeDeployment",
+        "metadata": {"name": "vllm"},
+        "spec": {
+            "deployment": base,
+            "containers": [
+                {"name": "server", "build": ".", "port": 8000, "health": "/health"}
+            ],
+        },
+    }
+
+
+def test_a_component_may_declare_gateway_managed():
+    """thinkube-control reads this field to know that zero replicas is idle."""
+    found = errors_for(component(replicas=0, gateway_managed=True))
+    assert not found, "; ".join(e.message for e in found)
+
+
+def test_gateway_managed_must_be_a_boolean():
+    assert errors_for(component(gateway_managed="yes"))
+
+
 # --- the page and the schema say the same thing ------------------------------
 
 
