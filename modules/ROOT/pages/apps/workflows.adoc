@@ -168,7 +168,7 @@ read_token = Container(
 )
 ----
 
-The namespace and the app have the same name, so `f"{namespace}-secrets"` is the app's Secret. The step receives every secret the app declares and the store holds.
+The namespace and the app have the same name, so `+f"{namespace}-secrets"+` is the app's Secret. The step receives every secret the app declares and the store holds.
 
 On the reference cluster, with `wf-check` declaring `SECRETS_CHECK_TOKEN`, the step printed:
 
