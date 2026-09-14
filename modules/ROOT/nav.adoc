@@ -23,6 +23,7 @@
 .Build an app
 * xref:apps/index.adoc[Build an app]
 * xref:apps/claude-code.adoc[What Claude can do for you]
+* xref:apps/workflows.adoc[Run a pipeline from your app]
 * xref:webapp-template:index.adoc[The template round trip]
 ** xref:webapp-template:deploy.adoc[Deploy a template]
 ** xref:webapp-template:develop.adoc[Change the app and ship it]

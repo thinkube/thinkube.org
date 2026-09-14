@@ -284,6 +284,10 @@ Platform services the application needs. Each declared service injects variables
 
 `workflows` is refused for `deployment.type: knative`. See <<Knative portability>>.
 
+=== Workflows
+
+`workflows` gives the application its own access to Argo Workflows, in its own namespace. The platform creates a ServiceAccount `<app>-workflows` that every pod runs as, a Role allowing it to manage workflows in that namespace, and a default artifact repository in Thinkube Storage under the prefix `<app>/`. Steps run in the application's own images, named by `CONTAINER_IMAGE_<NAME>`, and count against the namespace's ResourceQuota. See xref:apps/workflows.adoc[Run a pipeline from your app].
+
 == spec.dependencies
 
 Other deployed services this application needs. At deploy time thinkube-control resolves each to the running service's cluster URL and injects it as the named variable. If the dependency is not deployed, the deployment fails and says which one.
@@ -415,6 +419,59 @@ spec:
   routes:
     - path: /
       to: aligner
+----
+
+=== A web application with a pipeline
+
+The verification application of xref:apps/workflows.adoc[Run a pipeline from your app]: the web app template with `workflows` added to its services.
+
+[source,yaml]
+----
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+
+spec:
+  deployment:
+    type: app
+
+  containers:
+    - name: backend
+      build: ./backend
+      port: 8000
+      size: medium
+      health: /health
+      test:
+        enabled: true
+        image: "python-base:3.12-slim"
+        command: "./run_tests.sh"
+        one: "./run_tests.sh <file>"
+      migrations:
+        tool: alembic
+        auto: true
+
+    - name: frontend
+      build: ./frontend
+      port: 80
+      size: small
+      health: /health
+      publicEnv:
+        - APP_TITLE
+      test:
+        enabled: true
+        # node-base carries git, which npm needs to install thinkube-style
+        image: "node-base:22-alpine"
+        command: "./run_tests.sh"
+        one: "./run_tests.sh <file>"
+
+  routes:
+    - path: /api
+      to: backend
+    - path: /
+      to: frontend
+
+  services:
+    - database
+    - workflows
 ----
 
 == What the file does not say

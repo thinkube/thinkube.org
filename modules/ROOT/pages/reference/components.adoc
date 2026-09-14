@@ -26,7 +26,7 @@ image::cp-components.png[The Optional Components page of thinkube-control]
 | Thinkube Identity | Keycloak | One login across every service
 | Thinkube Registry | Harbor | Container images, built here and mirrored from upstream
 | Thinkube Git | Gitea | Your repositories, in-cluster
-| Argo Workflows | Argo Workflows | Builds images from your repositories
+| Argo Workflows | Argo Workflows | Builds images from your repositories and runs your applications' pipelines
 | ArgoCD | ArgoCD | Deploys what Git says
 | PostgreSQL | PostgreSQL | Relational storage for the platform and your apps
 | Thinkube Storage | SeaweedFS | S3-compatible; models and artifacts
