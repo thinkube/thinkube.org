@@ -151,6 +151,37 @@ The file travelled through Thinkube Storage under the app's prefix:
 wf-check/wf-check-pipeline-lk4hc/wf-check-pipeline-lk4hc-produce-56862374/message.tgz
 ----
 
+== Give a step the app's secrets
+
+The secrets an app declares in its `manifest.yaml` reach the app's own containers. A step does not receive them unless it asks for them: add `env_from` with the Secret `<app>-secrets` to the step. In the script above, a step that reads a secret is defined like this:
+
+[source,python]
+----
+from hera.workflows import Container, SecretEnvFrom
+
+read_token = Container(
+    name="read-token",
+    image=os.environ["CONTAINER_IMAGE_BACKEND"],
+    command=["sh", "-c"],
+    args=['echo "SECRETS_CHECK_TOKEN has ${#SECRETS_CHECK_TOKEN} characters"'],
+    env_from=[SecretEnvFrom(name=f"{namespace}-secrets")],
+)
+----
+
+The namespace and the app have the same name, so `f"{namespace}-secrets"` is the app's Secret. The step receives every secret the app declares and the store holds.
+
+On the reference cluster, with `wf-check` declaring `SECRETS_CHECK_TOKEN`, the step printed:
+
+----
+SECRETS_CHECK_TOKEN has 33 characters
+----
+
+The same step without `env_from` printed:
+
+----
+SECRETS_CHECK_TOKEN has 0 characters
+----
+
 == Watch it
 
 Open the address in `WORKFLOWS_UI_URL`: the Argo UI for the app's namespace, with each run, its steps, their logs and their artifacts. From a terminal:
