@@ -37,6 +37,14 @@ npx --no-install antora --fetch antora-playbook.yml   # output in build/site
 
 The build must print no warnings. `--fetch` pulls the other four repositories from GitHub, so a change in one of them is seen here only after it is pushed. To build from local working trees, write a playbook that points each source at its local path with `branches: HEAD`.
 
+## Tests
+
+```bash
+pytest tests/          # needs pytest, pyyaml and jsonschema
+```
+
+`tests/test_thinkube_yaml_schema.py` validates every example printed under `== Examples` on `reference/thinkube-yaml.adoc` against the schema attached beside it, `modules/ROOT/attachments/thinkube-yaml-v1.0.schema.json`. A change to the page or the schema that is not made in the other fails there.
+
 ## Deploy
 
 The site is deployed inside the cluster as the application `docs` and read by thinkube-control's documentation search. After pushing, redeploy with the MCP tool `redeploy_template` (`template_url: https://github.com/thinkube/thinkube.org`, `template_name: docs`), wait for the build, and check the served pages at `https://docs.<domain>/thinkube-docs/`.

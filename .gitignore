@@ -34,3 +34,7 @@ pnpm-debug.log*
 .claude/*.local.json
 .claude/scheduled_tasks.lock
 .claude/.bundle-version.json
+
+# Python test caches
+__pycache__/
+.pytest_cache/

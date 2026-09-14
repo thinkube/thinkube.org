@@ -98,7 +98,7 @@ spec:
       to: string            # A container name
 
   services:                 # Platform services (optional)
-    - string                # "database", "cache", "storage", "queue", or "type:name"
+    - string                # "database", "cache", "storage", "queue", "workflows", or "type:name"
 
   dependencies:             # Other deployed services this one needs (optional)
     - name: string
@@ -139,7 +139,7 @@ Optional. Defaults to `type: app`.
 
 === Knative portability
 
-Knative services are meant to be portable to cloud serverless platforms. When `type: knative`, the schema enforces: a single container; no `gpu`, `mounts`, `migrations`, `schedule` or `capabilities`; no `storage` service; `timeoutSeconds` at most 900. Work that needs any of these uses `app` or `component`.
+Knative services are meant to be portable to cloud serverless platforms. When `type: knative`, the schema enforces: a single container; no `gpu`, `mounts`, `migrations`, `schedule` or `capabilities`; no `storage` or `workflows` service; `timeoutSeconds` at most 900. Work that needs any of these uses `app` or `component`.
 
 == spec.containers
 
@@ -266,7 +266,22 @@ HTTP routes, implemented as Gateway API HTTPRoute resources with the platform's 
 
 == spec.services
 
-Platform services the application needs: `database`, `cache`, `storage`, `queue`, or `type:name` for a named instance such as `storage:uploads`. Each declared service injects a variable into every container: `DATABASE_URL`, `CACHE_URL`, `STORAGE_<NAME>_URL`, `QUEUE_URL`.
+Platform services the application needs. Each declared service injects variables into every container.
+
+[cols="1,3"]
+|===
+| Service | Variables injected into every container
+
+| `database` | `DATABASE_URL`
+| `cache` | `CACHE_URL`
+| `storage` | `STORAGE_<NAME>_URL`
+| `queue` | `QUEUE_URL`
+| `workflows` | `WORKFLOWS_NAMESPACE`, `WORKFLOWS_SERVER_URL`, `WORKFLOWS_SERVICE_ACCOUNT`, `WORKFLOWS_UI_URL`, and one `CONTAINER_IMAGE_<NAME>` for each container in this file
+|===
+
+`database`, `cache`, `storage` and `queue` take an optional `type:name` suffix for a named instance, such as `storage:uploads`. `workflows` does not: an application has one.
+
+`workflows` is refused for `deployment.type: knative`. See <<Knative portability>>.
 
 == spec.dependencies
 
@@ -407,7 +422,7 @@ Conditional logic, Kubernetes resources, cloud-specific settings, deployment str
 
 == Version
 
-v1.0. A static descriptor with one to many containers; routing, services, dependencies and configurable variables, with a per-container allow-list of the variables a browser application may read; Knative scaling; components with a fixed name and gateway-managed pods; health endpoints; per-container tests with the whole suite and one file; parts, deploy, verify and docs for repositories the platform does not deploy.
+v1.0. A static descriptor with one to many containers; routing; the `database`, `cache`, `storage`, `queue` and `workflows` services; dependencies and configurable variables, with a per-container allow-list of the variables a browser application may read; Knative scaling; components with a fixed name and gateway-managed pods; health endpoints; per-container tests with the whole suite and one file; parts, deploy, verify and docs for repositories the platform does not deploy.
 
 == Limits
 

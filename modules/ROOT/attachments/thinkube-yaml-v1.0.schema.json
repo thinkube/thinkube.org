@@ -60,9 +60,10 @@
         },
         "services": {
           "type": "array",
+          "description": "Platform services the application needs. \"database\", \"cache\", \"storage\" and \"queue\" take an optional \":name\" suffix for a named instance; \"workflows\" does not, as an application has one.",
           "items": {
             "type": "string",
-            "pattern": "^(database|cache|storage|queue)(:[a-z0-9-]+)?$"
+            "pattern": "^((database|cache|storage|queue)(:[a-z0-9-]+)?|workflows)$"
           }
         },
         "dependencies": {
@@ -451,8 +452,14 @@
   "allOf": [
     {
       "if": {
+        "required": [
+          "spec"
+        ],
         "properties": {
           "spec": {
+            "required": [
+              "deployment"
+            ],
             "properties": {
               "deployment": {
                 "properties": {
@@ -507,6 +514,7 @@
                 }
               },
               "services": {
+                "description": "Knative services keep a narrower set for cloud portability: \"storage\" and \"workflows\" are refused here.",
                 "items": {
                   "type": "string",
                   "pattern": "^(database|cache|queue)(:[a-z0-9-]+)?$"
@@ -519,8 +527,14 @@
     },
     {
       "if": {
+        "required": [
+          "spec"
+        ],
         "properties": {
           "spec": {
+            "required": [
+              "deployment"
+            ],
             "properties": {
               "deployment": {
                 "properties": {
@@ -552,8 +566,14 @@
     },
     {
       "if": {
+        "required": [
+          "spec"
+        ],
         "properties": {
           "spec": {
+            "required": [
+              "deployment"
+            ],
             "properties": {
               "deployment": {
                 "properties": {
