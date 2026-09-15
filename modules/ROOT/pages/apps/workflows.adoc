@@ -60,7 +60,7 @@ In every container:
 | `WORKFLOWS_SERVER_URL` | `http://argo-workflows-server.argo.svc.cluster.local:2746`
 | `WORKFLOWS_SERVICE_ACCOUNT` | `<app>-workflows`
 | `WORKFLOWS_UI_URL` | `https://argo.<your domain>/workflows/<namespace>`
-| `CONTAINER_IMAGE_<NAME>` | One per container in `thinkube.yaml`, such as `CONTAINER_IMAGE_BACKEND`: the image the build pushes, `registry.<your domain>/thinkube/<app>-<container>:latest`.
+| `CONTAINER_IMAGE_<NAME>` | One per container in `thinkube.yaml`, such as `CONTAINER_IMAGE_BACKEND`: the image that container's deployment runs, `registry.<your domain>/thinkube/<app>-<container>:<build tag>`. The value follows the deployed build, so a step runs the same code as the app that submitted it, and a rollback of the app rolls back its steps.
 |===
 
 == Submit a pipeline
