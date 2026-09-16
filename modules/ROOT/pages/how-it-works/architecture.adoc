@@ -97,17 +97,17 @@ Where the platform has no business having an opinion, it offers a choice and mak
 
 === What survives what
 
-[cols="2,1,1,1",options="header"]
+[cols="2,1,1",options="header"]
 |===
-| | Pod restart | Cluster rebuild | `thinkube-wipe.sh`
+| | Pod restart | Cluster rebuild
 
-| The shared filesystem | kept | data kept, index removed | removed
-| Data in Thinkube Storage | kept | kept | removed
-| Git, Registry, Identity and PostgreSQL volumes | kept | removed | removed
-| Ubuntu, your account, sshd, the NVIDIA driver | kept | kept | kept
+| The shared filesystem | kept | data kept, index removed
+| Data in Thinkube Storage | kept | kept
+| Git, Registry, Identity and PostgreSQL volumes | kept | removed
+| Ubuntu, your account, sshd, the NVIDIA driver | kept | kept
 |===
 
-A cluster rebuild is `19_rollback_control.yaml` followed by a fresh install: the data in Thinkube Storage stays, the platform's databases start over, and with PostgreSQL goes the shared filesystem's index of names and folders. xref:kubernetes/keeping-it-running.adoc[Keeping it running] says what that means for your files. The wipe script returns the machine to as close to a fresh Ubuntu Server as it can, home directory included.
+A cluster rebuild is `19_rollback_control.yaml` followed by a fresh install: the data in Thinkube Storage stays, the platform's databases start over, and with PostgreSQL goes the shared filesystem's index of names and folders. xref:kubernetes/keeping-it-running.adoc[Keeping it running] says what that means for your files.
 
 == Limits
 

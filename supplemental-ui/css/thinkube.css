@@ -104,10 +104,19 @@ code, pre, kbd, .colist > table code {
   #dgx-stamp { display: none; }
 }
 
-/* ---- Page-type treatment (SL-2) -------------------------------------------
-   Each page declares :page-type:; article.hbs adds a `doc--<type>` class and a
-   badge. Each type gets a distinct accent + label so the four are visibly
-   different layouts. */
+/* ---- Page types and areas --------------------------------------------------
+   Every page declares :page-type:; article.hbs adds `doc--<type>`. A playbook
+   also declares :page-area:, which adds `area-<area>` and sets --area, the one
+   colour its header, card and tabs are drawn in. */
+.area-kubernetes { --area: #326ce5; }
+.area-gitops     { --area: #b3561a; }
+.area-models     { --area: #1b7a50; }
+.area-tandem     { --area: #7a4fb0; }
+html[data-theme="dark"] .area-kubernetes { --area: #80a6f4; }
+html[data-theme="dark"] .area-gitops     { --area: #e58a47; }
+html[data-theme="dark"] .area-models     { --area: #4cc28c; }
+html[data-theme="dark"] .area-tandem     { --area: #b896df; }
+
 .page-type-badge {
   display: inline-block;
   font: 700 0.7rem/1 "Poppins", sans-serif;
@@ -116,22 +125,70 @@ code, pre, kbd, .colist > table code {
   padding: 0.4rem 0.75rem;
   margin-bottom: 1.25rem;
   color: #ffffff;
+  background: var(--th-primary);
 }
-.doc--tutorial,
-.doc--how-to,
-.doc--reference,
-.doc--concept {
+.doc--concept, .doc--reference, .doc--tutorial, .doc--how-to {
   padding-top: 1rem;
   border-top: 4px solid var(--th-primary);
 }
-.doc--tutorial  { border-top-color: #1a6b7c; }
-.doc--how-to    { border-top-color: #c4a35a; }
-.doc--reference { border-top-color: #4a5e8c; }
-.doc--concept   { border-top-color: #6b4a7c; }
-.doc--tutorial  .page-type-badge { background: #1a6b7c; }
-.doc--how-to    .page-type-badge { background: #c4a35a; }
-.doc--reference .page-type-badge { background: #4a5e8c; }
-.doc--concept   .page-type-badge { background: #6b4a7c; }
+
+/* Playbook page header */
+.doc--playbook { padding-top: 1rem; border-top: 4px solid var(--area); }
+.playbook-head { margin-bottom: 1.5rem; }
+.playbook-meta { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; margin-bottom: .9rem; }
+.area-chip {
+  font: 700 .7rem/1 "Poppins", sans-serif; letter-spacing: .1em; text-transform: uppercase;
+  padding: .42rem .7rem; background: var(--area); color: #fff;
+}
+.badge {
+  font: 600 .68rem/1 "Poppins", sans-serif; letter-spacing: .06em; text-transform: uppercase;
+  padding: .36rem .55rem; border: 1px solid #d9d4cc; color: #4a4a4a; background: #fff;
+}
+.badge-time::before { content: "◷ "; }
+.doc--playbook h1.page { margin-top: .2rem; }
+.playbook-tagline { font-size: 1.1rem; color: #4a4a4a; margin: .3rem 0 .7rem; }
+.playbook-tags { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; margin: 0; }
+.tag { font-size: .75rem; padding: .2rem .5rem; background: #f1ede6; color: #555; }
+.playbook-updated { margin-left: auto; font-size: .78rem; color: #8a8a8a; }
+
+/* Playbook tabs: head-meta.hbs turns the three sections into tabs */
+.playbook-tabs { display: flex; gap: 0; margin: 1.25rem 0 0; border-bottom: 2px solid #e6e2dc; }
+.playbook-tab {
+  font: 600 .95rem/1 "Poppins", sans-serif; padding: .8rem 1.2rem; cursor: pointer;
+  background: transparent; border: none; border-bottom: 3px solid transparent;
+  margin-bottom: -2px; color: #555;
+}
+.playbook-tab[aria-selected="true"] { color: var(--area); border-bottom-color: var(--area); }
+.doc--playbook.has-tabs .sect1[hidden] { display: none; }
+.doc--playbook.has-tabs .sect1 > h2 { position: absolute; left: -9999px; }
+
+/* Playbook cards */
+.card.area-kubernetes, .card.area-gitops, .card.area-models, .card.area-tandem { border-top-color: var(--area); }
+.card.area-kubernetes .card-kicker, .card.area-gitops .card-kicker,
+.card.area-models .card-kicker, .card.area-tandem .card-kicker { color: var(--area); }
+.card.area-kubernetes:hover, .card.area-gitops:hover,
+.card.area-models:hover, .card.area-tandem:hover { border-top-color: var(--area); }
+.card[class*="area-"]:hover::after { border-color: transparent var(--area) transparent transparent; }
+.playbook-card .card-badges { display: flex; gap: .35rem; margin: .7rem 0 0; }
+.playbook-card .card-title { margin-top: .6rem; }
+.playbook-card .card-desc {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: 0 0 auto;
+}
+.playbook-card .card-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: auto; }
+.playbook-card .card-updated { font-size: .74rem; color: #8a8a8a; margin-top: .8rem; }
+.playbook-grid { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+.playbook-card[hidden] { display: none; }
+
+/* Area filter */
+.area-filter { display: flex; flex-wrap: wrap; gap: .5rem; margin: -0.5rem 0 1.4rem; }
+.filter-chip {
+  font: 600 .8rem/1 "Poppins", sans-serif; padding: .55rem .85rem; cursor: pointer;
+  background: #fff; color: #4a4a4a; border: 1px solid #d9d4cc; border-left: 4px solid var(--area, var(--th-primary));
+}
+.filter-chip.is-active { background: var(--area, var(--th-primary)); border-color: var(--area, var(--th-primary)); color: #fff; }
+
+/* Area pages list their playbooks after their text */
+.area-catalog { margin-top: 2.5rem; }
 
 /* ===== Landing page (home layout) ========================================== */
 body.home { background: var(--th-bg); }
@@ -390,6 +447,18 @@ html[data-theme="dark"] .card-icon {
   background: linear-gradient(135deg, rgba(0,140,168,.22), rgba(0,140,168,.06)); color: var(--th-primary-light);
 }
 html[data-theme="dark"] .cockpit-lead strong { color: var(--th-primary-light); }
+html[data-theme="dark"] .badge, html[data-theme="dark"] .filter-chip {
+  background: var(--th-surface); color: var(--th-text); border-color: var(--th-border);
+}
+html[data-theme="dark"] .filter-chip { border-left-color: var(--area, var(--th-primary-light)); }
+html[data-theme="dark"] .filter-chip.is-active,
+html[data-theme="dark"] .area-chip { background: var(--area, var(--th-primary-light)); color: #0e1b1f; border-color: var(--area, var(--th-primary-light)); }
+html[data-theme="dark"] .tag { background: #2a434b; color: var(--th-text); }
+html[data-theme="dark"] .playbook-tagline { color: var(--th-muted); }
+html[data-theme="dark"] .playbook-tabs { border-bottom-color: var(--th-border); }
+html[data-theme="dark"] .playbook-tab { color: var(--th-muted); }
+html[data-theme="dark"] .playbook-tab[aria-selected="true"] { color: var(--area); }
+html[data-theme="dark"] .playbook-updated, html[data-theme="dark"] .playbook-card .card-updated { color: var(--th-muted); }
 html[data-theme="dark"] .doc pre, html[data-theme="dark"] .listingblock pre,
 html[data-theme="dark"] .doc :not(pre) > code { background: #0e1b1f; color: #e6eef0; }
 html[data-theme="dark"] table, html[data-theme="dark"] th, html[data-theme="dark"] td {

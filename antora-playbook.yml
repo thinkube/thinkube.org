@@ -54,6 +54,9 @@ antora:
   extensions:
     - require: '@antora/lunr-extension'
       index_latest_only: true
+    # Every :page-type: playbook page must carry its card attributes and the
+    # Overview / Instructions / Troubleshooting shape, or the build fails.
+    - require: ./lib/playbook-check.js
 
 runtime:
   fetch: true

@@ -38,7 +38,7 @@
 ** xref:webapp-template:anatomy.adoc[What is in the web app template]
 * xref:apps/workflows.adoc[Run a pipeline from your app]
 * Recipes
-** xref:recipes/knative-demo.adoc[A service that scales to zero]
+** xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a service that scales to zero]
 ** xref:recipes/seaweedfs.adoc[A file gateway over Thinkube Storage]
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]
 * xref:reference/templates.adoc[Templates catalog]

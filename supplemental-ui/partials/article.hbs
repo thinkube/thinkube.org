@@ -1,10 +1,36 @@
-<article class="doc{{#with page.attributes.type}} doc--{{this}}{{/with}}">
+<article class="doc{{#with page.attributes.type}} doc--{{this}}{{/with}}{{#with page.attributes.area}} area-{{this}}{{/with}}">
+{{#if (eq page.attributes.type 'playbook')}}
+<header class="playbook-head">
+  <div class="playbook-meta">
+    <span class="area-chip">{{area-name page.attributes.area}}</span>
+    <span class="badge">{{page.attributes.difficulty}}</span>
+    <span class="badge badge-time" title="Measured on the reference cluster">{{page.attributes.time}}{{#with page.attributes.time-note}} · {{this}}{{/with}}</span>
+    <span class="badge badge-risk">risk: {{page.attributes.risk}}</span>
+  </div>
+{{#with page.title}}
+  <h1 class="page">{{{this}}}</h1>
+{{/with}}
+  <p class="playbook-tagline">{{page.attributes.tagline}}</p>
+  <p class="playbook-tags">{{#each (split page.attributes.tags)}}<span class="tag">{{this}}</span>{{/each}}<span class="playbook-updated">Updated {{page.attributes.updated}}</span></p>
+</header>
+{{else}}
 {{#with page.attributes.type}}
 <div class="page-type-badge" data-type="{{this}}">{{this}}</div>
 {{/with}}
 {{#with page.title}}
 <h1 class="page">{{{this}}}</h1>
 {{/with}}
+{{/if}}
 {{{page.contents}}}
+{{#if (eq page.layout 'area')}}
+<section class="catalog area-catalog" id="playbooks">
+  <h2>Playbooks</h2>
+  <div class="card-grid playbook-grid">
+{{#each (playbooks area=page.attributes.area)}}
+{{> playbook-card}}
+{{/each}}
+  </div>
+</section>
+{{/if}}
 {{> pagination}}
 </article>

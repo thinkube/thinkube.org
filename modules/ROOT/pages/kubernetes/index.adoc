@@ -50,7 +50,7 @@ xref:how-it-works/architecture.adoc[Architecture] draws the base and the lines b
 | What you need, and the installer from the first screen to a running cluster.
 
 | xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines]
-| Packages, users, directories, firewall ports and system settings, per machine, and what the wipe removes.
+| Packages, accounts, directories, firewall ports and system settings, per machine.
 
 | xref:kubernetes/networking.adoc[Networking and names]
 | How `<service>.<your domain>` reaches the cluster from any device, how names resolve inside it, and why the cluster survives a move to another network.

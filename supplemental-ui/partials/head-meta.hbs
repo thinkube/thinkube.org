@@ -2,7 +2,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Mono:wght@400;500;600;700&display=swap">
 <link rel="icon" href="{{{uiRootPath}}}/img/logo.svg" type="image/svg+xml">
-<link rel="stylesheet" href="{{{uiRootPath}}}/css/thinkube.css?v=15">
+<link rel="stylesheet" href="{{{uiRootPath}}}/css/thinkube.css?v=17">
 <script>
 /* Set the theme before paint to avoid a flash of the wrong theme. */
 (function () {
@@ -34,6 +34,60 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     host.appendChild(btn);
   });
+  /* Area filter on the playbook catalog. */
+  var chips = document.querySelectorAll('.area-filter .filter-chip');
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      var area = chip.getAttribute('data-filter');
+      chips.forEach(function (c) {
+        var on = c === chip;
+        c.classList.toggle('is-active', on);
+        c.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      document.querySelectorAll('#playbook-grid .playbook-card').forEach(function (card) {
+        card.hidden = area !== 'all' && card.getAttribute('data-area') !== area;
+      });
+    });
+  });
+  /* A playbook's Overview, Instructions and Troubleshooting sections become tabs;
+     the address's #fragment picks the tab, and a link to a heading inside a
+     section opens that section's tab. */
+  var playbook = document.querySelector('article.doc--playbook');
+  if (playbook) {
+    var sections = Array.prototype.slice.call(playbook.querySelectorAll(':scope > .sect1'));
+    if (sections.length) {
+      var bar = document.createElement('div');
+      bar.className = 'playbook-tabs'; bar.setAttribute('role', 'tablist');
+      var tabs = sections.map(function (section) {
+        var h2 = section.querySelector(':scope > h2');
+        var tab = document.createElement('button');
+        tab.type = 'button'; tab.className = 'playbook-tab'; tab.setAttribute('role', 'tab');
+        tab.textContent = h2.textContent;
+        tab.addEventListener('click', function () { show(section, true); });
+        bar.appendChild(tab);
+        return tab;
+      });
+      sections[0].parentNode.insertBefore(bar, sections[0]);
+      playbook.classList.add('has-tabs');
+      function show (section, setHash) {
+        sections.forEach(function (s, i) {
+          var on = s === section;
+          s.hidden = !on;
+          tabs[i].setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        if (setHash) history.replaceState(null, '', '#' + section.querySelector(':scope > h2').id.replace(/^_/, ''));
+      }
+      function fromHash () {
+        var key = decodeURIComponent(location.hash.slice(1));
+        var target = key && (document.getElementById(key) || document.getElementById('_' + key));
+        var section = target && sections.filter(function (s) { return s.contains(target); })[0];
+        show(section || sections[0], false);
+        if (target && section && target !== section.querySelector(':scope > h2')) target.scrollIntoView();
+      }
+      window.addEventListener('hashchange', fromHash);
+      fromHash();
+    }
+  }
   /* Click a capture to see it at full size; click again or press Escape to close. */
   document.querySelectorAll('.doc .imageblock img').forEach(function (img) {
     img.addEventListener('click', function () {

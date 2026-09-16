@@ -1,7 +1,7 @@
 = Keeping it running
 :page-type: how-to
 
-_Check what is healthy, restart what is not, and know what a reboot, a system update, a cluster rebuild and the wipe script do to the platform and to your data._
+_Check what is healthy, restart what is not, and know what a reboot, a system update, and a cluster rebuild do to the platform and to your data._
 
 .TL;DR
 Ask Claude: "is NATS healthy?". Claude calls `get_service_details` and answers with the latest health check of each of the service's addresses, the error of any that failed, and its pods. "restart NATS" calls `restart_service`, which restarts its pods in place. The rest of this page is what happens to the platform when the machines themselves change.
@@ -97,34 +97,28 @@ Use the package name `apt list --installed | grep nvidia-driver` shows on that m
 
 == What survives what
 
-[cols="2,1,1,1",options="header"]
+[cols="2,1,1",options="header"]
 |===
-| | Pod restart | Cluster rebuild | `thinkube-wipe.sh`
+| | Pod restart | Cluster rebuild
 
 | Your files on the shared filesystem
 | kept
 | data kept on disk, index removed
-| removed
 
 | Data in Thinkube Storage
 | kept
 | kept
-| removed
 
 | Thinkube Git, Registry, Identity, PostgreSQL
 | kept
-| removed
 | removed
 
 | Ubuntu, your account, sshd, the NVIDIA driver
 | kept
 | kept
-| kept
 |===
 
 A cluster rebuild is the Kubernetes rollback playbook followed by a fresh install. The shared filesystem keeps its file contents in Thinkube Storage, which a rebuild does not touch, but its index of names and folders lives in PostgreSQL, which a rebuild deletes. Copy out what you need before you rebuild.
-
-xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines] lists what the wipe script removes and what it leaves.
 
 == Backups
 

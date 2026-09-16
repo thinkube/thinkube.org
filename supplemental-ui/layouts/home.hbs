@@ -10,11 +10,11 @@
       <section class="hero">
         <p class="hero-eyebrow">One person · your own machines · standard Kubernetes</p>
         <h1 class="hero-title">From an idea to a running product<br><span class="accent">in an afternoon</span></h1>
-        <p class="hero-sub">Most AI projects die between the demo and production, because the system around
-          the model never gets built. Thinkube is that system, on hardware you own, operated by Claude Code:
-          get a model, serve it, build an app on it, fine-tune it, and make it better every morning after.</p>
+        <p class="hero-sub">Thinkube is the system around the model that takes an AI project from the demo to
+          production, on hardware you own, operated by Claude Code: get a model, serve it, build an app on it,
+          fine-tune it, and make it better every morning after.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="start-here/what-is-thinkube.html">Start here</a>
+          <a class="btn btn-primary" href="#playbooks">Start here</a>
           <a class="btn btn-ghost" href="why/index.html">Why Thinkube</a>
         </div>
 
@@ -59,30 +59,59 @@
       <section class="journeys">
         <h2 class="section-h">Four areas, one platform</h2>
         <div class="card-grid">
-          <a class="card" href="kubernetes/index.html">
+          <a class="card area-kubernetes" href="kubernetes/index.html">
             <span class="card-kicker">Thinkube Kubernetes</span>
             <h3 class="card-title">The base, ready and signed in</h3>
             <p class="card-desc">Unmodified upstream Kubernetes on your machines, with identity, storage, registry, database and GPUs ready, driven from Claude Code.</p>
             <span class="card-arrow">Thinkube Kubernetes <em>→</em></span>
           </a>
-          <a class="card" href="apps/index.html">
+          <a class="card area-gitops" href="apps/index.html">
             <span class="card-kicker">Thinkube GitOps</span>
             <h3 class="card-title">Push to git, and it runs</h3>
             <p class="card-desc">From a template to an application at its own address behind your login, and every change after that a push.</p>
             <span class="card-arrow">Thinkube GitOps <em>→</em></span>
           </a>
-          <a class="card" href="lifecycle/index.html">
+          <a class="card area-models" href="lifecycle/index.html">
             <span class="card-kicker">Thinkube Models</span>
             <h3 class="card-title">Serve, fine-tune, track</h3>
             <p class="card-desc">Open models on your own GPUs, from a notebook to one address every app calls.</p>
             <span class="card-arrow">Thinkube Models <em>→</em></span>
           </a>
-          <a class="card" href="tandem/index.html">
+          <a class="card area-tandem" href="tandem/index.html">
             <span class="card-kicker">Thinkube Tandem</span>
             <h3 class="card-title">A sentence to a running change</h3>
             <p class="card-desc">Say what you want; it is built under checks, deployed and judged on the running product, and you decide.</p>
             <span class="card-arrow">Thinkube Tandem <em>→</em></span>
           </a>
+        </div>
+      </section>
+
+{{#with (playbooks featured=true)}}
+{{#if length}}
+      <section class="journeys catalog" id="first-time">
+        <h2 class="section-h">First time here?</h2>
+        <div class="card-grid playbook-grid">
+{{#each this}}
+{{> playbook-card}}
+{{/each}}
+        </div>
+      </section>
+{{/if}}
+{{/with}}
+
+      <section class="journeys catalog" id="playbooks">
+        <h2 class="section-h">All playbooks</h2>
+        <div class="area-filter" role="group" aria-label="Show playbooks of one area">
+          <button type="button" class="filter-chip is-active" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" class="filter-chip area-kubernetes" data-filter="kubernetes" aria-pressed="false">Thinkube Kubernetes</button>
+          <button type="button" class="filter-chip area-gitops" data-filter="gitops" aria-pressed="false">Thinkube GitOps</button>
+          <button type="button" class="filter-chip area-models" data-filter="models" aria-pressed="false">Thinkube Models</button>
+          <button type="button" class="filter-chip area-tandem" data-filter="tandem" aria-pressed="false">Thinkube Tandem</button>
+        </div>
+        <div class="card-grid playbook-grid" id="playbook-grid">
+{{#each (playbooks)}}
+{{> playbook-card}}
+{{/each}}
         </div>
       </section>
 
