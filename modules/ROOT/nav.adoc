@@ -33,7 +33,7 @@
 * xref:webapp-template:index.adoc[The template round trip]
 ** xref:webapp-template:build-a-web-app.adoc[Build a web app from the template]
 ** xref:webapp-template:change-your-app.adoc[Change your app and ship it]
-** xref:webapp-template:create-a-template.adoc[Turn your app into a template]
+** xref:webapp-template:publish-your-app-as-a-template.adoc[Publish your app as a template]
 ** xref:webapp-template:variables.adoc[How configuration reaches your app]
 ** xref:webapp-template:anatomy.adoc[What is in the web app template]
 * xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app]

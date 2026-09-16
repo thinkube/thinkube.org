@@ -62,7 +62,7 @@ A template is an application that already runs, which you copy and change; what 
 | xref:webapp-template:anatomy.adoc[What is in the web app template]
 | The file-by-file tour.
 
-| xref:webapp-template:create-a-template.adoc[Turn your app into a template]
+| xref:webapp-template:publish-your-app-as-a-template.adoc[Publish your app as a template]
 | Publish it, and someone else's sentence starts from your work.
 
 | xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app]
