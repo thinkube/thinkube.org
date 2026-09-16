@@ -1,0 +1,248 @@
+= Call your models from an app or a script
+:page-type: playbook
+:page-area: models
+:page-tagline: Point the OpenAI or Anthropic client you already use at your gateway, with a Thinkube API token
+:page-difficulty: beginner
+:page-time: 5 min
+:page-risk: low
+:page-tags: LLM Gateway, OpenAI API, Anthropic API, API tokens
+:page-order: 30
+:page-updated: 2026-09-16
+
+== Overview
+
+=== Basic idea
+
+Every model you load answers at one address, `https://llm.<your domain>`. The gateway speaks two APIs, so the client libraries you use for cloud models work unchanged:
+
+* *OpenAI API.* `/v1/chat/completions`, `/v1/embeddings` and `/v1/models`, for the `openai` client and everything built on it.
+* *Anthropic Messages API.* `/v1/messages`, for the `anthropic` client.
+* *One token.* A thinkube-control API token, which starts with `tk_`, is accepted as `Authorization: Bearer` and as `x-api-key`, so each client sends it the way it always does.
+
+Changing the model is changing one string. The code stays the same.
+
+=== What you'll accomplish
+
+You create an API token, call a loaded model with the `openai` client and with the `anthropic` client, stream an answer, and unload the model.
+
+=== What to know before starting
+
+*Required*
+
+* xref:playbooks/serve-your-first-model.adoc[Serve your first model]: load and unload a model.
+* Python, and one of the two client libraries.
+
+*Optional*
+
+* xref:control:llm-serving.adoc[LLM serving and models]: routes, authentication and routing.
+* xref:webapp-template:variables.adoc[How configuration reaches your app]: keep the token as a secret in a deployed app.
+
+=== Supported hardware
+
+[cols="1,1,1,2",options="header"]
+|===
+| Node | Architecture | GPU | On the reference run
+
+| tkamd1 | amd64 | none | the notebook server that ran the calls
+| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | `Qwen/Qwen3.5-4B`, served by vLLM with a 16k context
+| tkspark | arm64 | GB10, 121.7 GB unified | —
+|===
+
+The calls run anywhere that reaches `llm.<your domain>`: a notebook, Thinkube IDE, an app on the cluster, or a computer on your tailnet.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
+* `Qwen/Qwen3.5-4B` mirrored. Ask Claude: _"is Qwen/Qwen3.5-4B mirrored?"_ If it is not, ask _"mirror Qwen/Qwen3.5-4B"_.
+* A notebook server, for the reference run's calls. Ask Claude: _"start a notebook server on tkamd1"_.
+
+*Components*
+
+* The optional component vLLM. Ask Claude: _"is vLLM installed?"_ If it is not, ask _"install vLLM"_.
+
+=== Time & risk
+
+* *Estimated time:* 5 min. On the reference run the vLLM engine was ready 2 min 3 s after the load request, and the model was `available` about a minute later. The first call answered in 1.4 s, and the unload answered at once.
+* *Risk level:* Low. The calls only read from the model.
+* *Rollback:* Unload the model, and delete the token under *API Tokens* when you no longer use it.
+* *Last updated:* 2026-09-16. Measured on one load, one set of calls and one unload.
+
+== Instructions
+
+=== Step 1. Load a model
+
+Ask Claude:
+
+----
+› load Qwen/Qwen3.5-4B on tkamd2 with a 16k context
+----
+
+Claude calls `load_llm_model` and follows `get_llm_model_status` until the state is `available`.
+
+Expected output:
+
+----
+state: loading
+message: Loading on tkamd2 with a 16384 token context; this takes some minutes
+backend_id: vllm-tkamd2
+----
+
+and then `state: available`. xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose] covers the choices.
+
+=== Step 2. Get a token
+
+A script or an app outside the platform's own tools authenticates with an API token.
+
+In thinkube-control open *API Tokens*. Under *Create New Token* type a *Token Name*, leave *Expires in (days)* empty for a token with no expiry or give a number of days, and choose *Create Token*. Copy the token from *Token Created Successfully*.
+
+Keep the address and the token in two variables, the names notebook servers already have:
+
+[source,bash]
+----
+export LLM_GATEWAY_URL=https://llm.<your domain>
+export THINKUBE_API_TOKEN=tk_...
+----
+
+In Thinkube Notebooks both are set for you. Both notebook environments have the `openai` and `anthropic` clients installed.
+
+=== Step 3. Call it with the OpenAI client
+
+The OpenAI client takes the gateway address with `/v1`.
+
+[source,python]
+----
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url=os.environ["LLM_GATEWAY_URL"] + "/v1",
+    api_key=os.environ["THINKUBE_API_TOKEN"],
+)
+
+print([m.id for m in client.models.list().data])
+
+response = client.chat.completions.create(
+    model="Qwen/Qwen3.5-4B",
+    messages=[{"role": "user", "content": "Name the capital of France in one word."}],
+    max_tokens=1024,
+    extra_body={"chat_template_kwargs": {"enable_thinking": False}},
+)
+print(response.choices[0].message.content)
+print(response.usage)
+----
+
+Or ask Claude: _"call Qwen/Qwen3.5-4B through the gateway with the OpenAI client from a notebook on tkamd1"_.
+
+Expected output, from the reference run:
+
+----
+['Qwen/Qwen3-8B', 'Qwen/Qwen3.5-4B', 'unsloth/Qwen3.6-27B-NVFP4', 'Qwen/Qwen3-Embedding-0.6B']
+Paris
+CompletionUsage(completion_tokens=2, prompt_tokens=21, total_tokens=23, ...)
+----
+
+`/v1/models` lists the models you can call by name: the loaded ones and the mirrored ones. `extra_body` switches Qwen3.5's thinking off, so the answer is the whole completion.
+
+=== Step 4. Stream the answer
+
+An app shows the answer as it is written by asking for a stream.
+
+[source,python]
+----
+stream = client.chat.completions.create(
+    model="Qwen/Qwen3.5-4B",
+    messages=[{"role": "user", "content": "Count from 1 to 5, separated by commas."}],
+    max_tokens=1024,
+    stream=True,
+    extra_body={"chat_template_kwargs": {"enable_thinking": False}},
+)
+for chunk in stream:
+    if chunk.choices and chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end="", flush=True)
+----
+
+Expected output, from the reference run, in 13 chunks:
+
+----
+1, 2, 3, 4, 5
+----
+
+=== Step 5. Call it with the Anthropic client
+
+The Anthropic client takes the gateway address without `/v1`, and sends the token as `x-api-key`.
+
+[source,python]
+----
+import os
+from anthropic import Anthropic
+
+client = Anthropic(
+    base_url=os.environ["LLM_GATEWAY_URL"],
+    api_key=os.environ["THINKUBE_API_TOKEN"],
+)
+
+message = client.messages.create(
+    model="Qwen/Qwen3.5-4B",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Name the capital of France in one word."}],
+)
+for block in message.content:
+    print(block.type)
+print("".join(b.text for b in message.content if b.type == "text").strip())
+print(message.usage.input_tokens, message.usage.output_tokens)
+----
+
+Expected output, from the reference run:
+
+----
+thinking
+text
+Paris
+19 105
+----
+
+The model's thinking arrives as its own `thinking` block, before the `text` block with the answer, as it does from Claude.
+
+=== Step 6. Unload the model
+
+Ask Claude:
+
+----
+› unload Qwen/Qwen3.5-4B
+----
+
+Or by hand: in *LLM Gateway*, choose *Unload* on the model.
+
+Expected output:
+
+----
+state: deployable
+message: Model unloaded successfully
+----
+
+=== Step 7. Next steps
+
+* xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: serve the model your app needs where it fits.
+* xref:webapp-template:variables.adoc[How configuration reaches your app]: give a deployed app the token as a secret.
+* xref:playbooks/research-assistant.adoc[Build a research assistant, end to end]: a served model answering over your own documents.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| `AuthenticationError: Error code: 401 - {'error': {'message': 'Invalid authentication token', 'type': 'authentication_error', 'code': 'invalid_token'}}`
+| The token is not a valid thinkube-control API token or Thinkube Identity token
+| Copy the token again from *API Tokens*, or create a new one.
+
+| `NotFoundError: Error code: 404 - {'error': {'message': "Model 'Qwen/Qwen9-1B' not found", ...}}`
+| The name is not a model in the catalogue
+| Use a name from `client.models.list()`.
+
+| `InternalServerError: Error code: 502 - {'error': {'message': 'Backend request failed', 'type': 'backend_error', 'code': 'backend_error'}}`
+| The model is mirrored and listed, and not loaded
+| Load it, and call it once its state is `available`.
+|===

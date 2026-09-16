@@ -1,0 +1,216 @@
+= Run notebooks from Claude, watched or unattended
+:page-type: playbook
+:page-area: models
+:page-tagline: Have Claude run a notebook while you watch it in a Thinkube IDE tab, or on a server of its own that stops when the run ends
+:page-difficulty: beginner
+:page-time: 5 min
+:page-risk: low
+:page-tags: Notebooks, MCP, Unattended runs
+:page-order: 50
+:page-updated: 2026-09-16
+
+== Overview
+
+=== Basic idea
+
+A notebook runs in a notebook server: one pod on one node, with the CPU, memory and GPUs chosen when it starts. Claude works in that server through the notebook operations, with no JupyterLab tab needed.
+
+* *Watched.* Claude opens the notebook on your server and shows it in a Thinkube IDE tab. The outputs and the progress bar appear there as the cells run.
+* *Unattended.* Claude starts a server of its own on the node you name, runs the notebook top to bottom, and stops the server when the run ends. Your own server and its tabs stay as they are.
+* *Outputs stay in the file.* Either way the notebook file keeps every output, so you can read the run afterwards.
+
+=== What you'll accomplish
+
+You create a two-cell notebook, run it while you watch it in a Thinkube IDE tab, and run it again unattended on another node.
+
+=== What to know before starting
+
+*Required*
+
+* Asking Claude Code in Thinkube IDE to do things on the platform.
+
+*Optional*
+
+* xref:control:notebooks.adoc[Notebook execution over MCP]: every notebook operation and what it answers.
+* xref:lifecycle/notebooks.adoc[Thinkube Notebooks]: the environments and the servers.
+
+=== Supported hardware
+
+[cols="1,1,1,2",options="header"]
+|===
+| Node | Architecture | GPU | On the reference run
+
+| tkamd1 | amd64 | none | the watched run, on the node's notebook server
+| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | the unattended run, on a server of its own with no GPU
+| tkspark | arm64 | GB10, 121.7 GB unified | —
+|===
+
+This notebook needs no GPU. A notebook that trains or runs a model in the kernel asks for one when its server starts: say _"with one GPU"_.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
+* A notebook server on tkamd1, for the watched run. Ask Claude: _"start a notebook server on tkamd1"_. The first start on a node downloads the notebook environments, so it takes longer than later starts.
+
+*Components*
+
+* None beyond the base platform.
+
+=== Time & risk
+
+* *Estimated time:* 5 min. On the reference run the watched run took 30 s. The unattended run took 69 s from the request to its end: 30 s of cells, and the rest starting its server and kernel.
+* *Risk level:* Low. The unattended run uses a server of its own, and the watched run uses only the notebook's kernel.
+* *Rollback:* Delete the notebook file.
+* *Last updated:* 2026-09-16. Measured on one watched run and one unattended run.
+
+== Instructions
+
+=== Step 1. Create a notebook
+
+Ask Claude:
+
+----
+› create watch-a-run.ipynb on tkamd1: one cell that prints the server name and the cores, one that counts 30 seconds with a tqdm progress bar
+----
+
+Claude calls `jupyter_create_notebook`. The notebook it wrote on the reference run:
+
+[source,python]
+----
+import os, platform
+print(f"node: {os.environ.get('JUPYTERHUB_SERVER_NAME') or platform.node()}, cores: {os.cpu_count()}")
+----
+
+[source,python]
+----
+import time
+from tqdm import tqdm
+
+total = 0
+for i in tqdm(range(30)):
+    time.sleep(1)
+    total += i
+print(f"sum: {total}")
+----
+
+`from tqdm import tqdm` is the text form of the progress bar, which moves in the tab while the cell runs.
+
+=== Step 2. Open it in a Thinkube IDE tab
+
+Ask Claude:
+
+----
+› open watch-a-run.ipynb with agent-dev and show it to me
+----
+
+Claude calls `jupyter_use_notebook` with `kernel_name: agent-dev`, then runs the command it answers with in the terminal:
+
+----
+tk-notebook-open --node tkamd1 watch-a-run.ipynb
+----
+
+Or by hand: run that command in a Thinkube IDE terminal.
+
+Expected output:
+
+----
+{"opened":"https://notebooks.<your domain>/user/<you>/tkamd1/notebooks/thinkube/notebooks/watch-a-run.ipynb","node":"tkamd1",...}
+----
+
+The tab takes a few seconds to attach. Claude waits until `jupyter_kernel_status` reports `connections: 1` before it runs anything, so you see the run from its first line.
+
+=== Step 3. Run it while you watch
+
+Ask Claude:
+
+----
+› run all the cells
+----
+
+Claude calls `jupyter_execute_all_cells`, which answers at once with an `execution_id`, and follows `jupyter_check_all_cells_status` until the run ends. The tab shows the progress bar move.
+
+Expected output, from the reference run:
+
+----
+status: completed
+started_at: 23:43:19   finished_at: 23:43:49
+cell 0: node: tkamd1, cores: 16
+cell 1: 100%|██████████| 30/30 [00:30<00:00,  1.00s/it]
+        sum: 435
+----
+
+`os.cpu_count()` counts the node's cores; the server itself has the 4 cores it started with.
+
+=== Step 4. Close the notebook
+
+The kernel holds memory on the server until the notebook is closed.
+
+Ask Claude:
+
+----
+› close watch-a-run.ipynb
+----
+
+Claude calls `jupyter_close_notebook`.
+
+Expected output:
+
+----
+saved: true
+kernel_shut_down: true
+----
+
+=== Step 5. Run it unattended on another node
+
+An unattended run suits a notebook that runs for a long time, or one that needs a GPU on a node where you have no server.
+
+Ask Claude:
+
+----
+› run watch-a-run.ipynb unattended on tkamd2 with agent-dev and no GPU
+----
+
+Claude calls `run_notebook_job` with `node: tkamd2`, `gpus: 0` and `kernel_name: agent-dev`, and follows `notebook_job_status`.
+
+Expected output, from the reference run:
+
+----
+job_id: 117bf693-67b7-4a54-a21c-fb3301433386
+server_name: job-651a370f
+status: starting
+----
+
+then `running` with the cells done of the total, and at the end:
+
+----
+status: completed
+completed_cells: 2 of 2
+cell 0: node: job-651a370f, cores: 32
+cell 1: sum: 435
+created_at: 23:43:21   finished_at: 23:44:30
+----
+
+The server `job-651a370f` stopped when the run ended, and `jupyter_notebook_status` listed no other servers.
+
+=== Step 6. Next steps
+
+* xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script]: call a served model from a notebook cell.
+* xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards, end to end]: a long run on a GPU, a good fit for an unattended run.
+* xref:control:notebooks.adoc[Notebook execution over MCP]: editing cells, long single cells, and large outputs.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| `jupyter_list_kernels` answers `Notebook servers are running on tkamd1, tkamd2, tkspark; say which with node.`
+| More than one notebook server is running, and the request did not name its node
+| Name the node: _"list the kernels on tkamd1"_.
+
+| A cell stays busy and its output repeats `nats: empty response from server when expecting INFO message`
+| The cell's client cannot reach NATS, and it retries the connection
+| Ask Claude to interrupt the kernel, then _"is NATS healthy?"_. `jupyter_interrupt_kernel` stops the cell, as Ctrl-C does.
+|===

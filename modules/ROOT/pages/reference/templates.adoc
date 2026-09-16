@@ -25,6 +25,6 @@ image::cp-templates.png[The Templates page of thinkube-control]
 | `thinkube.org` | app | — | This documentation site, deployed inside the cluster so Claude Code can search it
 |===
 
-The three *component* templates are not listed under *Templates*. They are the entries of the optional-components catalogue named `vllm`, `tensorrt` and `text-embeddings`: install them there, or ask Claude "install vllm". Installing the component deploys the template with no pods; loading a model creates them, and xref:lifecycle/serve.adoc[Serve a model] is how.
+The three *component* templates are not listed under *Templates*. They are the entries of the optional-components catalogue named `vllm`, `tensorrt` and `text-embeddings`: install them there, or ask Claude "install vllm". Installing the component deploys the template with no pods; loading a model creates them, and xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose] is how.
 
 Deploy one from thinkube-control under *Templates*, by name or from a GitHub URL, or ask Claude Code: `deploy the web app template, call it notes`. xref:webapp-template:build-a-web-app.adoc[Build a web app from the template] follows one deployment step by step, and xref:webapp-template:publish-your-app-as-a-template.adoc[Publish your app as a template] shows how an application you built becomes an entry in your own catalogue.

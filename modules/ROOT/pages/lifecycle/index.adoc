@@ -47,9 +47,9 @@ experiments -> gateway: "load"
 | Ask what fits, mirror it.
 | The weights in your registry, the model marked ready to load.
 
-| xref:lifecycle/serve.adoc[Serve a model]
-| Load it on a GPU node, call it, unload it.
-| A model answering at `llm.<your domain>`.
+| xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]
+| Choose the node, the backend and the context for a load.
+| A model served where you want it, with the memory you chose.
 
 | xref:control:llm-serving.adoc[LLM serving and models]
 | Read how the gateway picks a backend and sizes a load.

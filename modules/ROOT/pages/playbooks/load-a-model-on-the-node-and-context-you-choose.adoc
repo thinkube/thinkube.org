@@ -1,0 +1,197 @@
+= Load a model on the node and context you choose
+:page-type: playbook
+:page-area: models
+:page-tagline: Pick the GPU node, the backend and the context length for a load, and see how a node already serving a model answers
+:page-difficulty: intermediate
+:page-time: 5 min
+:page-risk: low
+:page-tags: LLM Gateway, vLLM, Context length
+:page-order: 20
+:page-updated: 2026-09-16
+:page-aliases: lifecycle/serve.adoc
+
+== Overview
+
+=== Basic idea
+
+A load has a few choices. Left out, the platform makes them for you. Stated, they decide where the model runs and how much memory it takes.
+
+* *Node.* The GPU node that serves the model. Without it, the node with the most AI memory left and a free slot takes it.
+* *Backend.* A type (`vllm`, `tensorrt-llm`, `text-embeddings`, `ollama`) or the id of a running backend, such as `vllm-tkspark`, which also names its node.
+* *Tier.* `performance` loads through vLLM or TensorRT-LLM. `flexible` loads through Ollama, for models the catalogue lists with an Ollama entry.
+* *Context length.* The longest prompt plus answer the model accepts. Memory for the KV cache grows with it, so a smaller context lets a larger model fit a GPU. Without it, the load takes the largest of 32k, 16k and 8k tokens that the model allows and the node has memory for.
+* *One model per engine.* A vLLM, TensorRT-LLM or text-embeddings engine serves one model on its node. Ollama's engine holds several.
+
+=== What you'll accomplish
+
+You load `Qwen/Qwen3-8B` on tkamd2 with a 16k context, see a second model on the same node refused with the name of the one it serves, and unload the model.
+
+=== What to know before starting
+
+*Required*
+
+* xref:playbooks/serve-your-first-model.adoc[Serve your first model]: the mirror, load, call and unload cycle.
+
+*Optional*
+
+* xref:control:llm-serving.adoc[LLM serving and models]: how a load is sized, and the options `keep_alive` and `num_speculative_tokens`.
+* xref:concepts/models.adoc[Models]: parameters, quantization and context.
+
+=== Supported hardware
+
+[cols="1,1,1,2",options="header"]
+|===
+| Node | Architecture | GPU | On the reference run
+
+| tkamd1 | amd64 | none | —
+| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | `Qwen/Qwen3-8B` on one GPU, served by vLLM
+| tkspark | arm64 | GB10, 121.7 GB unified | serving `unsloth/Qwen3.6-27B-NVFP4` throughout, untouched
+|===
+
+`Qwen/Qwen3-8B` is 15.3 GiB of weights in BF16. The load options estimate 21.5 GB with a 32k context, close to the 24 GB of one RTX 3090. With a 16k context, vLLM on the reference run had 5.85 GiB left for the KV cache: 42,560 tokens, room for 2.6 requests of full length at once.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
+* `Qwen/Qwen3-8B` mirrored. Ask Claude: _"is Qwen/Qwen3-8B mirrored?"_ If it is not, ask _"mirror Qwen/Qwen3-8B"_.
+
+*Components*
+
+* The optional component vLLM. Ask Claude: _"is vLLM installed?"_ If it is not, ask _"install vLLM"_.
+
+=== Time & risk
+
+* *Estimated time:* 5 min. On the reference run the vLLM engine was ready 4 min 33 s after the load request, 3 min 39 s of it reading the weights, and the model was `available` about a minute later. The refused loads and the unload answered at once.
+* *Risk level:* Low. A load that does not fit, or that asks for a node whose engine serves another model, is refused before anything starts.
+* *Rollback:* Unload the model. The weights stay in your storage for the next load.
+* *Last updated:* 2026-09-16. Measured on one load and one unload.
+
+== Instructions
+
+=== Step 1. Read the load options
+
+Before a load, the platform tells you how much memory the model needs and what each GPU node has left.
+
+Ask Claude:
+
+----
+› what are the load options for Qwen/Qwen3-8B?
+----
+
+Claude calls `get_llm_load_options`.
+
+Expected output, from the reference run:
+
+----
+Qwen/Qwen3-8B: about 21.5 GB with a 32k context; the model allows 131072
+tkamd2: 45.5 GB left of 48 GB, 3 of 4 slots free, text-embeddings serving Qwen/Qwen3-Embedding-0.6B
+tkspark: 26.1 GB left of its 96 GB budget, 3 of 4 slots free, vllm-tkspark serving unsloth/Qwen3.6-27B-NVFP4
+----
+
+tkamd2 has room and no vLLM engine, so the load creates one there. tkspark's vLLM engine already serves a model.
+
+=== Step 2. Load it on the node and context you choose
+
+Name the node and the context. Here `vllm` is named as the backend type as well; for this model it is the only one.
+
+Ask Claude:
+
+----
+› load Qwen/Qwen3-8B on tkamd2 with vllm and a 16k context
+----
+
+Claude calls `load_llm_model` with `node: tkamd2`, `backend: vllm` and `max_context_length: 16384`, and follows `get_llm_model_status` until the state is `available`.
+
+Or by hand: in thinkube-control open *LLM Gateway* and choose *Load* on the model. In the dialog pick tkamd2 under *Target GPU Node* and 16K under *Context Length*, then choose *Load Model*. The dialog shows *Backend Type* for models the catalogue lists with more than one.
+
+Expected output:
+
+----
+state: loading
+message: Loading on tkamd2 with a 16384 token context; this takes some minutes
+backend_id: vllm-tkamd2
+----
+
+and then:
+
+----
+state: available
+backend_id: vllm-tkamd2
+----
+
+The engine's log on the reference run showed the context in use:
+
+----
+Maximum concurrency for 16,384 tokens per request: 2.60x
+----
+
+The model turns `available` when the platform next checks its backends, which it does every minute, so it can lag the engine's log by up to a minute.
+
+=== Step 3. Ask for a second model on the same node
+
+The vLLM engine on tkamd2 now serves `Qwen/Qwen3-8B`. A load of another vLLM model on tkamd2 is refused and names the model in the way. Nothing that runs is changed.
+
+Ask Claude:
+
+----
+› load Qwen/Qwen3.5-4B on tkamd2
+----
+
+Expected output, from the reference run:
+
+----
+state: deployable
+message: vllm-tkamd2 already serves Qwen/Qwen3-8B (available); unload it, or choose another node
+----
+
+The same load with `backend: vllm-tkamd2` gives the same answer. While the first model is still loading, the message says `(loading)`.
+
+To serve both, load the second model on another node with room, or unload the first.
+
+=== Step 4. Unload it
+
+The model holds most of a 24 GB GPU until you unload it.
+
+Ask Claude:
+
+----
+› unload Qwen/Qwen3-8B
+----
+
+Or by hand: in *LLM Gateway*, choose *Unload* on the model.
+
+Expected output:
+
+----
+state: deployable
+message: Model unloaded successfully
+----
+
+On the reference run the vLLM engine on tkamd2 was removed at once, since it served no other model.
+
+=== Step 5. Next steps
+
+* xref:playbooks/serve-your-first-model.adoc[Serve your first model]: call a loaded model from a notebook.
+* xref:control:llm-serving.adoc[LLM serving and models]: sizing, speculative decoding and routing.
+* xref:playbooks/research-assistant.adoc[Build a research assistant, end to end]: a served model answering over your own documents.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| `vllm-tkamd2 already serves Qwen/Qwen3-8B (available); unload it, or choose another node`
+| The vLLM engine on that node serves one model, and it serves another
+| Load on another node with room, or unload the model it names.
+
+| `backend 'vllm-tkamd2' is neither a backend type (vllm, tensorrt-llm, text-embeddings, ollama) nor a known backend id (text-embeddings-tkamd2, vllm-tkspark)`
+| A backend id names an engine that runs now; `vllm-tkamd2` exists only once a load has started its engine
+| Name the type and the node instead: `backend: vllm`, `node: tkamd2`. `get_llm_load_options` lists the running backends.
+
+| `No supported backend for model 'Qwen/Qwen3.5-4B' with server_type=['vllm']`
+| `tier: flexible` loads through Ollama, and the model's catalogue entry lists only vLLM
+| Leave the tier out, or ask for `performance`.
+|===

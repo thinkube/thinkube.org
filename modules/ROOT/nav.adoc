@@ -45,8 +45,10 @@
 .Thinkube Models
 * xref:lifecycle/index.adoc[Thinkube Models]
 * xref:playbooks/serve-your-first-model.adoc[Serve your first model]
-* xref:lifecycle/serve.adoc[Serve a model]
+* xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]
 ** xref:control:llm-serving.adoc[LLM serving and models]
+* xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script]
+* xref:playbooks/run-notebooks-from-claude.adoc[Run notebooks from Claude, watched or unattended]
 * xref:lifecycle/notebooks.adoc[Thinkube Notebooks]
 ** xref:control:notebooks.adoc[Notebook execution over MCP]
 ** xref:lifecycle/example-notebooks.adoc[The example notebooks]
