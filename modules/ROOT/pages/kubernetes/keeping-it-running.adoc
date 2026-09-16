@@ -122,7 +122,7 @@ A cluster rebuild is the Kubernetes rollback playbook followed by a fresh instal
 
 == Backups
 
-The platform backs up one thing: the certificate and its key, encrypted with your sudo password and pushed to a private repository `thinkube-certificates` in your GitHub organisation, so a reinstall does not have to ask Let's Encrypt again. Nothing else is backed up. Your application repositories are safe when they are pushed somewhere outside the cluster; the rest, databases, registry, experiments, is on the machines.
+The platform backs up one thing: the certificate and its key, encrypted with your sudo password and pushed to a private repository `thinkube-certificates` in your GitHub account, so a reinstall does not have to ask Let's Encrypt again. Nothing else is backed up. Your application repositories are safe when they are pushed somewhere outside the cluster; the rest, databases, registry, experiments, is on the machines.
 
 == Upgrading Thinkube
 
