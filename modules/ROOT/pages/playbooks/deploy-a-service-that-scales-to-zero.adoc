@@ -1,12 +1,12 @@
-= Deploy a service that scales to zero
+= Deploy a serverless service
 :page-type: playbook
 :page-area: gitops
-:page-tagline: A service that runs pods only while requests arrive, from the Knative demo template
+:page-tagline: A service that runs only while it is being called, like AWS Lambda, on your own machines
 :page-difficulty: beginner
 :page-time: 5 min
 :page-time-note: plus about 5 min to install Knative the first time
 :page-risk: low
-:page-tags: Knative, Scale to zero, Templates
+:page-tags: Serverless, Knative, Templates
 :page-order: 60
 :page-updated: 2026-09-16
 :page-aliases: recipes/knative-demo.adoc
@@ -15,15 +15,13 @@
 
 === Basic idea
 
-A Knative service holds no pods while nobody calls it. The first request starts one, a burst of requests starts more, and when the requests stop the service returns to no pods. It suits what you call now and then: a webhook, a small API, a tool for one person. On a DGX Spark the memory an idle pod would hold is also GPU memory, so it stays free for models.
+A normal service runs all the time, waiting for requests, and holds memory and CPU even when nobody calls it. A serverless service runs only while requests arrive: the first request starts it, more copies start when traffic grows, and it stops when the requests stop. Cloud architectures use serverless, such as AWS Lambda or Google Cloud Run, for the parts that are called now and then, because an idle service consumes nothing and costs nothing.
 
-* *Scale to zero.* An idle service costs no memory and no CPU.
-* *Scale on load.* Knative adds a pod each time the running pods are full, up to the limit you set.
-* *Same pipeline as every app.* The service is a repository in Thinkube Git, built by the platform and deployed at its own address under your domain.
+On Thinkube, Knative gives you the same behaviour on your own machines. An idle service frees its memory for other work; on a DGX Spark that memory is also GPU memory, so it goes to your models. What you deploy is a small web service, as on Cloud Run.
 
 === What you'll accomplish
 
-You deploy `knative-demo` from the Knative demo template, call it from zero pods, send a burst of requests that starts more pods, and watch it return to zero.
+You deploy `knative-demo`, a serverless service, from a template. You call it while it is stopped, send a burst of requests that starts more copies, watch it stop again, and ship a change to it.
 
 === What to know before starting
 
@@ -44,10 +42,10 @@ You deploy `knative-demo` from the Knative demo template, call it from zero pods
 
 | tkamd1 | amd64 | none | control plane
 | tkamd2 | amd64 | 2 × RTX 3090 | the Knative gateway
-| tkspark | arm64 | GB10 | the service's pods
+| tkspark | arm64 | GB10 | the service's running copies
 |===
 
-The template's image is built for amd64 and arm64, so its pods run on any node. It needs no GPU.
+The template's image is built for amd64 and arm64, so the service runs on any node. It needs no GPU.
 
 === Prerequisites
 
@@ -62,7 +60,7 @@ The template's image is built for amd64 and arm64, so its pods run on any node. 
 === Time & risk
 
 * *Estimated time:* 5 min. The deploy took 97 and 108 seconds on two runs, a pushed change was live 93 seconds after the push, and the calls take seconds.
-* *Risk level:* Low. The service lives in its own namespace, `knative-demo`, and changes nothing else.
+* *Risk level:* Low. The service is isolated in its own namespace, `knative-demo`, and changes nothing else.
 * *Rollback:* Deploy the template again. A deploy of the same name overwrites the service; nothing is lost that you need.
 * *Last updated:* 2026-09-16. Measured on two deploys, one scaling run and one pushed change.
 
@@ -113,16 +111,16 @@ spec:
     timeoutSeconds: 30
 ----
 
-`minScale: 0` lets the service go to no pods. `containerConcurrency: 5` is how many requests one pod takes before Knative starts another. `maxScale: 3` caps the pods.
+`minScale: 0` lets the service stop completely. `containerConcurrency: 5` is how many requests one copy takes before Knative starts another. `maxScale: 3` caps the copies.
 
-=== Step 3. Call it from zero pods
+=== Step 3. Call it while it is stopped
 
-When nothing has called the service for a while, it has no pods. The first request starts one and waits for it.
+When nothing has called the service for a while, no copy of it is running. The first request starts one and waits for it. Kubernetes calls each running copy a _pod_.
 
 Ask Claude:
 
 ----
-› how many pods does knative-demo have? then call it and time the call
+› is knative-demo running? then call it and time the call
 ----
 
 Expected output, from the reference run:
@@ -143,12 +141,12 @@ The service answers at `https://knative-demo.<your domain>/`. Besides `/`, it an
 
 === Step 4. Send a burst and watch it scale
 
-Thirty requests at once are more than one pod takes, so Knative starts more pods, up to three.
+Thirty requests at once are more than one copy takes, so Knative starts more, up to three.
 
 Ask Claude:
 
 ----
-› send 30 requests at once to knative-demo's /scale-test and list its pods
+› send 30 requests at once to knative-demo's /scale-test and show how many copies run
 ----
 
 Expected output:
@@ -159,21 +157,21 @@ knative-demo-00002-deployment-6bb6bd7d8c-q7h2x   1/2   Running   3s
 knative-demo-00002-deployment-6bb6bd7d8c-wcjvb   1/2   Running   3s
 ----
 
-*Knative Services* in thinkube-control shows each service with its pod range, its requests per pod and its timeout:
+*Knative Services* in thinkube-control shows each service with its range of copies, its requests per copy and its timeout:
 
 image::cp-knative-services.png[The Knative Services page of thinkube-control, with knative-demo active and its limits: 0 to 3 pods, 5 requests per pod, 30 second timeout]
 
 === Step 5. Watch it return to zero
 
-With no requests, Knative removes the pods again.
+With no requests, Knative stops the copies again.
 
 Ask Claude:
 
 ----
-› tell me when knative-demo is back to zero pods
+› tell me when knative-demo has stopped
 ----
 
-Expected output: on the reference run the service had no pods 71 seconds after the last request.
+Expected output: on the reference run no copy was running 71 seconds after the last request.
 
 === Step 6. Change the greeting and ship it
 
@@ -200,11 +198,11 @@ Expected output: 93 seconds after the push, the call answers with `"message": "H
 | Symptom | Cause | Fix
 
 | The first call takes over a second; the next ones take a tenth of that
-| The service had no pods, and the call waited for one to start
-| Expected. Set `minScale: 1` in `thinkube.yaml` if the first call must be fast; the service then keeps one pod.
+| No copy was running, and the call waited for one to start
+| Expected. Set `minScale: 1` in `thinkube.yaml` if the first call must be fast; one copy then keeps running.
 
 | Pods show `1/2 Running` while a burst is served
-| New pods are starting; requests queue until they are ready
+| New copies are starting; requests queue until they are ready
 | Expected. Wait for `2/2`.
 
 | `git push` is rejected with `! [rejected] main -> main (non-fast-forward)`

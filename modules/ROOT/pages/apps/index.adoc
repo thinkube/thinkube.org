@@ -68,7 +68,7 @@ A template is an application that already runs, which you copy and change; what 
 | xref:apps/workflows.adoc[Run a pipeline from your app]
 | Argo Workflows for your app, in its own namespace, with its own images.
 
-| xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a service that scales to zero]
+| xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service]
 | The Knative template: a service that runs only while requests arrive.
 
 | xref:recipes/seaweedfs.adoc[A file gateway over Thinkube Storage]
