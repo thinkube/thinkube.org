@@ -43,7 +43,7 @@ experiments -> gateway: "load"
 |===
 | Page | You do | You end with
 
-| xref:lifecycle/get-models.adoc[Get a model]
+| xref:playbooks/serve-your-first-model.adoc[Serve your first model]
 | Ask what fits, mirror it.
 | The weights in your registry, the model marked ready to load.
 

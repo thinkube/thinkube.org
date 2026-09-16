@@ -69,6 +69,6 @@ Thinkube is not a no-code platform. What you build is a git repository with real
 
 == Where next
 
-* xref:start-here/quickstart.adoc[Quickstart]: from a fresh install to a model answering at your address.
+* xref:playbooks/serve-your-first-model.adoc[Serve your first model]: from a fresh install to a model answering at your address.
 * xref:concepts/running-software.adoc[Concepts]: the words this site uses, explained once.
 * xref:install:overview.adoc[Install Thinkube]: what you need and what the installer does.

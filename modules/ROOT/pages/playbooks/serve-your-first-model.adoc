@@ -1,0 +1,224 @@
+= Serve your first model
+:page-type: playbook
+:page-area: models
+:page-tagline: Load an open model on your own GPU and call it from a notebook, as you would call a cloud API
+:page-difficulty: beginner
+:page-time: 5 min
+:page-time-note: plus the download the first time, 7 min 40 s for this 9 GB model
+:page-risk: low
+:page-tags: LLM Gateway, vLLM, Notebooks
+:page-order: 10
+:page-featured: true
+:page-updated: 2026-09-16
+:page-aliases: start-here/quickstart.adoc, lifecycle/get-models.adoc
+
+== Overview
+
+=== Basic idea
+
+A cloud model is an address and a key: you send a request and an answer comes back. Serving your own model gives you the same address and the same API, with the weights on your storage and the work on your GPU. Nothing you send leaves your machines, and you choose the model.
+
+On Thinkube a model goes through three states:
+
+* *Mirrored.* The weights are downloaded once from Hugging Face into your own storage. Every later load reads them from there.
+* *Loaded.* A serving engine, vLLM for this model, holds the weights in a GPU's memory and answers requests.
+* *Called.* Every loaded model answers at one address, the LLM Gateway at `llm.<your domain>`, through the OpenAI API, so the same code calls any model you load.
+
+=== What you'll accomplish
+
+You load `Qwen/Qwen3.5-4B` on a GPU node, call it from a notebook, and unload it to give the GPU back.
+
+=== What to know before starting
+
+*Required*
+
+* Asking Claude Code in Thinkube IDE to do things on the platform.
+
+*Optional*
+
+* xref:concepts/models.adoc[Models]: parameters, quantization and context, the numbers that decide what fits.
+* xref:control:llm-serving.adoc[LLM serving and models]: how the gateway routes, authenticates and sizes a load.
+
+=== Supported hardware
+
+[cols="1,1,1,2",options="header"]
+|===
+| Node | Architecture | GPU | On the reference run
+
+| tkamd1 | amd64 | none | the notebook server that made the call
+| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | the model, served by vLLM
+| tkspark | arm64 | GB10, 121.7 GB unified | —
+|===
+
+The model needs about 14 GB of GPU memory with its default context, so it fits one RTX 3090 or the DGX Spark.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
+* A notebook server. Ask Claude: _"start a notebook server on tkamd1"_. The first start on a node downloads the notebook environments, so it takes longer than later starts.
+
+*Components*
+
+* The optional component vLLM. Ask Claude: _"is vLLM installed?"_ If it is not, ask _"install vLLM"_.
+
+=== Time & risk
+
+* *Estimated time:* 5 min. On the reference run the engine was ready 108 seconds after the load request, the call answered in seconds, and the unload took under 5 seconds.
+* *Download:* the first time only, 7 min 40 s for the 9 GB of this model on the reference cluster's connection.
+* *Risk level:* Low. A vLLM engine serves one model per node, so a node that already serves a model is refused, and nothing running is replaced.
+* *Rollback:* Unload the model. The weights stay in your storage for the next load.
+* *Last updated:* 2026-09-16. Measured on one load, one call and one unload; the download on 2026-09-09.
+
+== Instructions
+
+=== Step 1. Check the model fits
+
+Before anything is downloaded, the platform knows how much memory a model needs and how much each GPU node has free.
+
+Ask Claude:
+
+----
+› how much GPU memory does Qwen/Qwen3.5-4B need, and which node has room?
+----
+
+Claude calls `get_llm_load_options` and `get_llm_gpu_status`.
+
+Expected output, from the reference run:
+
+----
+Qwen/Qwen3.5-4B: about 13.6 GB with its default context
+tkamd2: 45.5 GB free across 2 × RTX 3090, 3 of 4 slots free
+tkspark: 26.1 GB left of its 96 GB budget, 3 of 4 slots free
+----
+
+=== Step 2. Mirror it
+
+The download runs as a job in the background, from Hugging Face into your storage.
+
+Ask Claude:
+
+----
+› mirror Qwen/Qwen3.5-4B
+----
+
+Claude calls `submit_model_mirror` and follows `get_mirror_status`.
+
+Or by hand: in thinkube-control open *AI Models* and choose *Mirror* on the model.
+
+Expected output, from the reference run:
+
+----
+model_id: Qwen/Qwen3.5-4B
+status: succeeded
+created_at: 22:03:22   updated_at: 22:11:02
+----
+
+A model already mirrored shows `is_downloaded: true` in the catalogue; skip to the next step.
+
+=== Step 3. Load it
+
+Loading starts a vLLM engine on the node you name, puts the weights in its GPU memory and registers the model with the gateway.
+
+Ask Claude:
+
+----
+› load Qwen/Qwen3.5-4B on tkamd2
+----
+
+Claude calls `load_llm_model` and follows `get_llm_model_status` until the state is `available`.
+
+Or by hand: in thinkube-control open *LLM Gateway*, choose *Load* on the model, pick the node in the dialog and choose *Load Model*.
+
+Expected output:
+
+----
+state: loading
+message: Loading on tkamd2 with a 32768 token context; this takes some minutes
+backend_id: vllm-tkamd2
+----
+
+and then, once the engine is ready:
+
+----
+state: available
+backend_id: vllm-tkamd2
+----
+
+=== Step 4. Call it from a notebook
+
+`tk_llm` is installed in both notebook environments and reads the gateway address and your token from the notebook server, so the call needs no configuration.
+
+In Thinkube Notebooks, create a notebook with the `fine-tuning` kernel and run:
+
+[source,python]
+----
+from tk_llm import get_openai_client
+
+client = get_openai_client()
+response = client.chat.completions.create(
+    model="Qwen/Qwen3.5-4B",
+    messages=[{"role": "user", "content": "Hello"}],
+    max_tokens=1024,
+)
+print(response.choices[0].message.content)
+print(response.usage)
+----
+
+Or ask Claude: _"create first-model.ipynb on tkamd1 with a fine-tuning kernel, call Qwen/Qwen3.5-4B with Hello, and run it"_.
+
+Expected output, from the reference run:
+
+----
+Hello! 👋 How's your day going? Is there anything I can help you with today? Whether it's solving a problem, answering questions, or just chatting, I'm here to assist! 😊
+CompletionUsage(completion_tokens=160, prompt_tokens=11, total_tokens=171, ...)
+----
+
+Qwen3.5 thinks before it answers, and the thinking counts against `max_tokens`: 160 completion tokens for a two-line answer. Give it room, as here.
+
+=== Step 5. Unload it
+
+A loaded model holds its GPU memory until you unload it.
+
+Ask Claude:
+
+----
+› unload Qwen/Qwen3.5-4B
+----
+
+Or by hand: in *LLM Gateway*, choose *Unload* on the model.
+
+Expected output:
+
+----
+state: deployable
+message: Model unloaded successfully
+----
+
+The vLLM engine on tkamd2 stopped at once, and the node's free memory returned to 45.5 GB.
+
+=== Step 6. Next steps
+
+* xref:lifecycle/serve.adoc[Serve a model]: choose the backend, the context length and the node for each load.
+* xref:lifecycle/notebooks.adoc[Thinkube Notebooks]: the environments and how to build your own.
+* xref:playbooks/research-assistant.adoc[Build a research assistant, end to end]: a served model answering over your own documents.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| The call answers with empty content
+| The model spent `max_tokens` on thinking before it wrote the answer; a 20-token budget left nothing
+| Raise `max_tokens`, for example to 1024, or pass `extra_body={"chat_template_kwargs": {"enable_thinking": False}}`.
+
+| The call fails with `APIConnectionError: Connection error.` and `[Errno -2] Name or service not known`
+| The notebook server started without `LLM_GATEWAY_URL`, so `tk_llm` could not find the gateway
+| Stop and start the notebook server; it reads the gateway address when it starts.
+
+| The call fails with `ImportError: openai package required. Install with: pip install tk-llm[openai]`
+| The notebook environments on the node are from an older release that lacked `openai`
+| Stop the notebook server, remove `/var/lib/jupyterhub-venvs/<arch>/.version` on that node, and start the server; it downloads the current environments.
+|===

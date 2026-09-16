@@ -12,7 +12,7 @@ A model is a file of numbers that turns text into more text. Everything you expe
 
 *Why it matters to you.* Size decides what hardware it needs and how well it reasons. The context window decides how much you can show it in one call: a page, a document, a whole codebase.
 
-*Where you meet it.* The xref:lifecycle/get-models.adoc[model catalogue] lists each model with its size, its context window and what it is good for.
+*Where you meet it.* The xref:control:llm-serving.adoc[model catalogue] lists each model with its size, its context window and what it is good for.
 
 == A model is not a chatbot
 
@@ -36,7 +36,7 @@ A model is a file of numbers that turns text into more text. Everything you expe
 
 *Why it matters to you.* It is the difference between a model fitting your GPU or not. A 27B model does not fit a 24 GB card at 16 bits; at 4 bits it does.
 
-*Where you meet it.* Every entry in the xref:lifecycle/get-models.adoc[model catalogue] carries a quantization and a size.
+*Where you meet it.* Every entry in the xref:control:llm-serving.adoc[model catalogue] carries a quantization and a size.
 
 == Why GPU memory decides what you can run
 

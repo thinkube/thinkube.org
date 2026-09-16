@@ -36,7 +36,7 @@ When the prompt is not enough, you change the model instead. On Thinkube that is
 
 *Why it matters to you.* You pay the large model once, for the teaching, and own the small model forever, on your own GPU, at your own cost.
 
-*Where you meet it.* The distilled reasoning models in the xref:lifecycle/get-models.adoc[catalogue] were made this way; the research assistant playbook debates when it beats training directly.
+*Where you meet it.* The distilled reasoning models in the xref:control:llm-serving.adoc[catalogue] were made this way; the research assistant playbook debates when it beats training directly.
 
 == Knowing it got better
 

@@ -3,7 +3,6 @@
 
 .Start here
 * xref:start-here/what-is-thinkube.adoc[What is Thinkube]
-* xref:start-here/quickstart.adoc[Quickstart]
 
 .Thinkube Kubernetes
 * xref:kubernetes/index.adoc[Thinkube Kubernetes]
@@ -45,7 +44,7 @@
 
 .Thinkube Models
 * xref:lifecycle/index.adoc[Thinkube Models]
-* xref:lifecycle/get-models.adoc[Get a model]
+* xref:playbooks/serve-your-first-model.adoc[Serve your first model]
 * xref:lifecycle/serve.adoc[Serve a model]
 ** xref:control:llm-serving.adoc[LLM serving and models]
 * xref:lifecycle/notebooks.adoc[Thinkube Notebooks]
