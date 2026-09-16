@@ -1,12 +1,12 @@
 = What the install changes on your machines
 :page-type: reference
 
-_Every package, account setting, file, firewall rule and system setting the installer puts on your laptop, the control plane, the workers and the GPU nodes, and what the wipe script takes away again._
+_Every package, account setting, file, firewall rule and system setting the installer puts on the machine you install from, the control plane, the workers and the GPU nodes, and what the wipe script takes away again._
 
 .TL;DR
 Ask Claude: "what did the install change on tkamd2?". Claude reads the machine over SSH and answers with what this page lists: `containerd.io`, `kubeadm`, `kubelet` and `kubectl` installed and held at their versions, the node-IP and link-watchdog timers running, the firewall enabled, and name resolution for your domain pointed at the cluster. Read this page before you install on a machine that already does other work.
 
-The installer runs on your laptop and changes the other machines over SSH. It creates no users and no groups on any of them. It does not change the hostname or `/etc/hosts`, it does not change GRUB, and it installs no snaps.
+The installer runs on a machine with Ubuntu 24.04 and changes the other machines over SSH. It creates no users and no groups on any of them. It does not change the hostname or `/etc/hosts`, it does not change GRUB, and it installs no snaps.
 
 == The machines
 
@@ -14,8 +14,8 @@ The installer runs on your laptop and changes the other machines over SSH. It cr
 |===
 | Machine | What it is
 
-| Laptop
-| The machine the installer runs on. It joins your tailnet and gets a few tools. If you run the installer on one of the servers, that server plays this role too.
+| Install machine
+| The machine the installer runs on. It must run Ubuntu 24.04; it can be one of the servers or a separate machine. It joins your tailnet and gets a few tools. When it is one of the servers, that server gets both sets of changes.
 
 | Control plane
 | The one server that runs the Kubernetes control plane. It carries most of the platform's host-side tools.
@@ -33,14 +33,14 @@ The installer runs on your laptop and changes the other machines over SSH. It cr
 |===
 | Where | Check
 
-| Laptop
+| Install machine
 | Ubuntu 24.04, not running as root, OpenSSH server installed and running, a connection to `archive.ubuntu.com`, at least 10 GB free in your home directory. The installer does not continue until all five pass.
 
 | Every server
 | Found by the network scan only if its SSH banner is Ubuntu's. Hardware detection must report CPUs, memory and disk.
 
 | Control plane
-| Exactly one. At least 16 CPU cores and 64 GB of memory; the installer does not offer a smaller machine for the role, and the Kubernetes install stops on one, and on anything but Ubuntu 24.04.
+| Exactly one. At least 16 CPU cores and 64 GB of memory; the installer does not offer a smaller machine for the role, and the Kubernetes install stops on one, and on anything but Ubuntu 24.04. With a DGX Spark and other machines, choose another machine, so the Spark's shared memory stays for AI work.
 
 | GPU node
 | NVIDIA driver 580 or newer. A GPU older than Volta is reported as unsupported.
@@ -54,7 +54,7 @@ Nothing checks for a clean machine. An existing Docker Engine, containerd or Pyt
 |===
 | Machine | Installed
 
-| Laptop
+| Install machine
 | From apt: `python3-venv`, `python3-full`, `curl`, `gnupg`, `apt-transport-https`, `ca-certificates`, `software-properties-common`, `git`, `sshpass`, `expect`, `nmap`, and `micro`, `zsh` and `fish` if missing. `gh` from GitHub's apt repository if missing, and `s3cmd`. Tailscale, from its install script. Ansible into `~/.venv`.
 
 | Every server
@@ -94,12 +94,12 @@ Two apt repositories are added on the control plane and the workers, Docker's an
 | Machine | Change
 
 | Every server
-| Your user is added to `sudo` and gets passwordless sudo in `/etc/sudoers.d/<user>`. sshd gets `PasswordAuthentication yes`, `UseDNS no` and `GSSAPIAuthentication no`. A fresh ed25519 key `~/.ssh/thinkube_cluster_key` is generated, and every server's key and the laptop's key are put in every server's `authorized_keys`. A block marked `BEGIN-THINKUBE-BAREMETAL` is written in `~/.ssh/config`, after a backup of the old file.
+| Your user is added to `sudo` and gets passwordless sudo in `/etc/sudoers.d/<user>`. sshd gets `PasswordAuthentication yes`, `UseDNS no` and `GSSAPIAuthentication no`. A fresh ed25519 key `~/.ssh/thinkube_cluster_key` is generated, and every server's key and the install machine's key are put in every server's `authorized_keys`. A block marked `BEGIN-THINKUBE-BAREMETAL` is written in `~/.ssh/config`, after a backup of the old file.
 
 | Control plane
 | Your user joins `systemd-journal`, lingering is enabled, and `/etc/subuid` and `/etc/subgid` get a range for rootless containers. SSH keys for Thinkube IDE are made in `~/shared-code/.ssh/`. A regular file `~/.ssh/github_ed25519` is replaced by a link into that folder.
 
-| Laptop
+| Install machine
 | `~/.ssh/thinkube_cluster_key` is regenerated, every key is removed from the SSH agent and the new key is loaded, and one `Host` block per worker is added to `~/.ssh/config`.
 |===
 
@@ -109,7 +109,7 @@ Two apt repositories are added on the control plane and the workers, Docker's an
 |===
 | Machine | Created or changed
 
-| Laptop
+| Install machine
 | `~/.thinkube-installer/`, the installer's own environment. `~/.env`, rewritten by the installer with your tokens, sorted, without comments, mode 600. `~/.bashrc`, `~/.zshrc` and the fish configuration get lines that activate `~/.venv` and load `~/.env`. `~/.config/gh/`. A clone of the platform repository under `/tmp`.
 
 | Control plane
@@ -137,7 +137,7 @@ Nothing is created under `/opt`. The shared filesystem is mounted inside the clu
 | `overlay` and `br_netfilter`, loaded at boot from `/etc/modules-load.d/thinkube-k8s.conf`.
 
 | sysctl
-| Bridged traffic through iptables, IP forwarding, and higher inotify limits, in `/etc/sysctl.d/99-thinkube-k8s.conf`. IP forwarding is also turned on on the laptop, for Tailscale.
+| Bridged traffic through iptables, IP forwarding, and higher inotify limits, in `/etc/sysctl.d/99-thinkube-k8s.conf`. IP forwarding is also turned on on the install machine, for Tailscale.
 
 | DGX Spark
 | `vm.swappiness = 1` and a limit on dirty pages, in `/etc/sysctl.d/99-thinkube-dgx-spark.conf`, and every swap unit disabled.
@@ -146,7 +146,7 @@ Nothing is created under `/opt`. The shared filesystem is mounted inside the clu
 | On a server whose root is an LVM volume with more than 10 GB unallocated, the volume is grown to fill the group. This cannot be undone.
 
 | Name resolution
-| `/etc/systemd/resolved.conf.d/10-thinkube.conf` sends lookups for your domain to the cluster's DNS server, on every machine including the laptop. `/etc/systemd/resolved.conf.d/dns.conf` is deleted. LLMNR is turned on on the control plane and the workers.
+| `/etc/systemd/resolved.conf.d/10-thinkube.conf` sends lookups for your domain to the cluster's DNS server, on every machine including the install machine. `/etc/systemd/resolved.conf.d/dns.conf` is deleted. LLMNR is turned on on the control plane and the workers.
 
 | containerd
 | `/etc/containerd/config.toml` is replaced.
@@ -172,8 +172,8 @@ The firewall is turned on on the control plane and the workers, and the forward 
 | Worker
 | SSH 22, kubelet 10250, 6443 for the local API proxy, Cilium health 4240, VXLAN 8472/udp, Cilium metrics 9962, LLMNR 5355/udp. All traffic on `cilium_host`.
 
-| Every machine on the tailnet, laptop included
-| Tailscale 41641/udp and all traffic on the Tailscale interface. On the laptop these rules are added but the firewall is not turned on.
+| Every machine on the tailnet, the install machine included
+| Tailscale 41641/udp and all traffic on the Tailscale interface. On a separate install machine these rules are added but the firewall is not turned on.
 |===
 
 The optional Prometheus component adds 9100 for node metrics on every node.
@@ -221,7 +221,7 @@ The optional Prometheus component adds 9100 for node metrics on every node.
 | `~/.venv` on a server
 | Kept, but Ansible and the Kubernetes Python client are installed into it at the versions the platform needs, which can change what was there.
 
-| `~/.venv` on the laptop
+| `~/.venv` on the install machine
 | Kept, and Ansible is installed into it; your shells are set to activate it.
 
 | pip configuration on the control plane
@@ -233,7 +233,7 @@ The optional Prometheus component adds 9100 for node metrics on every node.
 
 == What the wipe script removes
 
-`thinkube-wipe.sh` in the `thinkube` repository returns the control plane to as close to a fresh Ubuntu Server as it can. It is written for the control plane: it does nothing on the workers or the laptop. It refuses to run while a repository under `~/shared-code` has work that is not pushed.
+`thinkube-wipe.sh` in the `thinkube` repository returns the control plane to as close to a fresh Ubuntu Server as it can. It is written for the control plane: it does nothing on the workers or a separate install machine. It refuses to run while a repository under `~/shared-code` has work that is not pushed.
 
 [cols="1,3",options="header"]
 |===
@@ -248,5 +248,5 @@ It does not undo: the sshd settings, the firewall forward policy, the commented 
 == Limits
 
 * The requirements for workers are not checked by the installer; a worker smaller than the control plane joins.
-* The GitHub CLI repository on the laptop and the Argo CLI on the control plane are set for amd64 only; the reference cluster's laptop and control plane are amd64.
+* The GitHub CLI repository on the install machine and the Argo CLI on the control plane are set for amd64 only; on the reference cluster both are amd64.
 * The wipe script is for the control plane. A worker is cleaned by hand, or reinstalled.

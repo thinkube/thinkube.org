@@ -1,7 +1,7 @@
 = Networking and names
 :page-type: concept
 
-_How `<service>.<your domain>` reaches the cluster from your laptop or your phone, with a real certificate and nothing open to the internet; how names resolve inside the cluster; and why the cluster keeps working when a machine gets a new address._
+_How `<service>.<your domain>` reaches the cluster from your computer or your phone, with a real certificate and nothing open to the internet; how names resolve inside the cluster; and why the cluster keeps working when a machine gets a new address._
 
 .TL;DR
 Ask Claude: "trace how control.<your domain> reaches the cluster". Claude resolves the name to a Tailscale address, finds the gateway service that owns that address, and reads the certificate the gateway presents: on the reference cluster, `100.111.173.33`, the Envoy gateway exposed as `thinkube-gw` on the tailnet, and a Let's Encrypt certificate for `*.thinkube.com`. Every service of the platform and every app you deploy is reached the same way.
@@ -14,16 +14,16 @@ Inside, the cluster refers to itself by one address that never changes, so a mac
 
 == One request, from your browser to the service
 
-[d2,alt="The laptop asks Tailscale DNS for control.<your domain>; split DNS sends the question to the cluster's DNS server on the tailnet, which answers with the gateway's tailnet address; the browser connects to the gateway over the tailnet; the gateway terminates TLS with the wildcard certificate and routes by hostname to the service"]
+[d2,alt="Your device asks Tailscale DNS for control.<your domain>; split DNS sends the question to the cluster's DNS server on the tailnet, which answers with the gateway's tailnet address; the browser connects to the gateway over the tailnet; the gateway terminates TLS with the wildcard certificate and routes by hostname to the service"]
 ....
 direction: right
-laptop: "Your browser\non the tailnet"
+device: "Your browser\non the tailnet"
 dns: "Cluster DNS\nthinkube-dns\nanswers every name\nwith the gateway"
 gateway: "Gateway\nthinkube-gw\ncertificate for\n*.<your domain>"
 service: "The service\nor your app"
-laptop -> dns: "1. control.<your domain>?\nsplit DNS"
-dns -> laptop: "2. the gateway's\ntailnet address"
-laptop -> gateway: "3. HTTPS over the tailnet"
+device -> dns: "1. control.<your domain>?\nsplit DNS"
+dns -> device: "2. the gateway's\ntailnet address"
+device -> gateway: "3. HTTPS over the tailnet"
 gateway -> service: "4. route by hostname"
 ....
 
@@ -55,7 +55,7 @@ The certificate is renewed on the control plane by `acme.sh`, from a scheduled j
 
 == Names inside the cluster
 
-A pod asks CoreDNS, the cluster's own DNS. Names under `cluster.local`, the services and pods, are answered by CoreDNS. Every other name, your domain and the internet alike, is forwarded to the cluster's DNS server on the tailnet, so a pod reaches `control.<your domain>` by the same path your laptop does.
+A pod asks CoreDNS, the cluster's own DNS. Names under `cluster.local`, the services and pods, are answered by CoreDNS. Every other name, your domain and the internet alike, is forwarded to the cluster's DNS server on the tailnet, so a pod reaches `control.<your domain>` by the same path your browser does.
 
 Each machine is set up the same way: lookups for your domain go to the cluster's DNS server, everything else to the resolver the machine already had.
 

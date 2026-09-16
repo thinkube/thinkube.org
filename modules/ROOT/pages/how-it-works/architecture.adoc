@@ -75,7 +75,7 @@ xref:playbooks/research-assistant.adoc[Build a research assistant, end to end] w
 
 === The base, layer by layer
 
-*Before the cluster.* The installer runs on your laptop and deploys over SSH. Before Kubernetes exists it prepares each machine: grows the root volume Ubuntu leaves at 100 GB, sets up SSH between nodes, checks the NVIDIA driver, and on a DGX Spark applies the unified-memory tuning. It joins the machines to your Tailscale network. Then it moves the tokens you entered onto the control-plane host, so the machine you ran the installer from can be put away.
+*Before the cluster.* The installer runs on an Ubuntu 24.04 machine, one of the servers or another, and deploys over SSH. Before Kubernetes exists it prepares each machine: grows the root volume Ubuntu leaves at 100 GB, sets up SSH between nodes, checks the NVIDIA driver, and on a DGX Spark applies the unified-memory tuning. It joins the machines to your Tailscale network. Then it moves the tokens you entered onto the control-plane host, so the machine you ran the installer from can be put away.
 
 *The cluster.* kubeadm installs unmodified upstream Kubernetes. Cilium is the network and the load balancer. Routes are Gateway API. The cluster runs its own DNS, and certificates come from Let's Encrypt through your Cloudflare token. Every internal reference points at a stable virtual IP, and the one value tied to the physical network, the kubelet's node IP, is rewritten at boot from the default route. Move the machine to a different router and it comes back up. xref:how-it-works/kubernetes-underneath.adoc[Kubernetes underneath] is the detail.
 

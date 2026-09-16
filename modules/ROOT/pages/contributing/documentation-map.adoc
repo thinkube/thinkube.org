@@ -47,4 +47,4 @@ The site is one Antora component assembled from five repositories. A page about 
 
 == Limits
 
-* Screen captures are taken with `tools/capture.mjs` in `thinkube.org`; the installer's own screens run on a laptop and cannot be captured by it.
+* Screen captures are taken with `tools/capture.mjs` in `thinkube.org`; the installer's own screens run in a desktop application and cannot be captured by it.
