@@ -1,0 +1,189 @@
+= Store and fetch files with the file gateway
+:page-type: playbook
+:page-area: gitops
+:page-tagline: Upload, list, download and delete files in Thinkube Storage over a REST API and a web page
+:page-difficulty: beginner
+:page-time: 5 min
+:page-risk: low
+:page-tags: Object storage, REST API, Templates
+:page-order: 70
+:page-updated: 2026-09-16
+:page-aliases: recipes/seaweedfs.adoc
+
+== Overview
+
+=== Basic idea
+
+Applications keep files such as uploads, documents and generated results in object storage: a service that stores each file under a name and hands it back on request, with no disk to manage. In the cloud this is Amazon S3 or Google Cloud Storage. On Thinkube it is Thinkube Storage, which speaks the same S3 API.
+
+The file gateway template puts a small service in front of it, so an app stores and fetches files with plain HTTP calls instead of carrying a storage client and credentials.
+
+* *REST API.* Upload, list, download and delete, with a reference for each file.
+* *Web page.* Upload forms and a file browser, for people.
+* *One bucket per tenant.* Files are grouped by a name you choose, such as a project or a customer.
+
+=== What you'll accomplish
+
+You deploy the file gateway as `files`, store a file through the API and through the web page, list it, fetch it and delete it.
+
+=== What to know before starting
+
+*Required*
+
+* Asking Claude Code in Thinkube IDE to do things on the platform.
+
+*Optional*
+
+* xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop], to see how the template becomes a running app.
+
+=== Supported hardware
+
+[cols="1,1,1,2",options="header"]
+|===
+| Node | Architecture | GPU | On the reference run
+
+| tkamd1 | amd64 | none | control plane
+| tkamd2 | amd64 | 2 × RTX 3090 | —
+| tkspark | arm64 | GB10 | —
+|===
+
+The gateway needs no GPU and its image is built for amd64 and arm64.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_ Thinkube Storage is part of every installation.
+
+*Components*
+
+* None.
+
+=== Time & risk
+
+* *Estimated time:* 5 min. The deploy took 155 seconds on one run; each call takes under a second.
+* *Risk level:* Low. The app is isolated in its own namespace, `files`, and writes only to the buckets it creates.
+* *Rollback:* Deploy the template again; a deploy of the same name overwrites the app. Stored files stay in Thinkube Storage.
+* *Last updated:* 2026-09-16. Measured on one deploy.
+
+== Instructions
+
+=== Step 1. Deploy the template
+
+Deploying the template creates your own repository and builds and deploys the gateway at `files.<your domain>`.
+
+Ask Claude:
+
+----
+› make an app called files from the SeaweedFS template
+----
+
+Claude calls `deploy_template` with `https://github.com/thinkube/tkt-seaweedfs` and follows `get_deployment_status` until it reports `success`.
+
+Or by hand: in thinkube-control open *Templates*, choose *tkt-seaweedfs*, name it `files` and deploy.
+
+Expected output:
+
+----
+status: success
+output: Deployment completed successfully
+duration: 155.3
+----
+
+=== Step 2. Check it reaches Thinkube Storage
+
+Ask Claude:
+
+----
+› check files' health
+----
+
+Expected output:
+
+----
+{"status":"healthy","seaweedfs":"connected"}
+----
+
+=== Step 3. Store and fetch a file through the API
+
+Each tenant gets its own bucket, `tenant-<tenant>`. An upload answers with a `full_ref`, the reference you store in your app to fetch or delete the file later. `+{doc_id}+` in the prefix groups the files of one upload under a new id.
+
+Ask Claude:
+
+----
+› upload a note to files for tenant docs under documents/{doc_id}/, list it, fetch it and delete it
+----
+
+Expected output, from the reference run:
+
+----
+$ curl -F tenant=docs -F 'key_prefix=documents/{doc_id}/' -F files=@note.txt https://files.thinkube.com/api/upload
+{"doc_id":"7bfa298d-…","files":[{"bucket":"tenant-docs",
+  "full_ref":"tenant-docs/documents/7bfa298d-…/note.txt","size":20,"content_type":"text/plain"}]}
+
+$ curl https://files.thinkube.com/api/download/tenant-docs/documents/7bfa298d-…/note.txt
+hello from the docs
+
+$ curl -X DELETE https://files.thinkube.com/api/tenant-docs/documents/7bfa298d-…/note.txt
+{"deleted":"tenant-docs/documents/7bfa298d-…/note.txt"}
+----
+
+The calls:
+
+[cols="1,2",options="header"]
+|===
+| Call | Does
+
+| `POST /api/upload` with `files`, `tenant`, `key_prefix`, `doc_id`
+| Stores the files and answers with each one's `full_ref`.
+
+| `GET /api/list?tenant=…&prefix=…`
+| Lists the tenant's files, with size and last change.
+
+| `GET /api/download/<full_ref>`
+| Returns the file.
+
+| `DELETE /api/<full_ref>`
+| Removes the file.
+
+| `POST /api/buckets` with `tenant`
+| Creates the tenant's bucket ahead of time. An upload creates it too.
+
+| `GET /api/health`
+| Checks the connection to Thinkube Storage.
+|===
+
+=== Step 4. Store a file through the web page
+
+Open `https://files.<your domain>/`. The page lists sample upload forms. Choose *File Upload*, type the tenant `docs`, add a file and press *Upload*. The page answers with the document id and the file's reference.
+
+image::files-upload.png[The File Upload form of the file gateway after an upload: tenant docs, and Upload Complete with the document id and the reference tenant-docs//contract.pdf]
+
+=== Step 5. Find it in Browse
+
+Choose *Browse*, type the tenant `docs` and press *Search*. Each file has a download and a delete button.
+
+image::files-browse.png[The Browse Files page of the file gateway listing contract.pdf in tenant-docs, with download and delete buttons]
+
+=== Step 6. Next steps
+
+* xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service]: a service that runs only while it is being called.
+* xref:webapp-template:deploy.adoc[Build a web app from the template]: a full-stack app with a database and a login.
+* xref:reference/templates.adoc[Templates catalog]: every template you can deploy.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| Opening `https://files.<your domain>/upload` or `/browse` directly answers `{"detail":"Not Found"}`
+| The server serves those pages only when you reach them from inside the app
+| Open `https://files.<your domain>/` and use *Samples* or *Browse*.
+
+| After an upload the reference reads `tenant-docs//contract.pdf`
+| The *Storage prefix* field was empty, so the name starts with an empty folder
+| Fill *Storage prefix*, for example `documents`. The file is stored and fetched correctly either way.
+|===
+
+The gateway answers anyone on your tailnet without a login, so store only files every device on your tailnet may read.

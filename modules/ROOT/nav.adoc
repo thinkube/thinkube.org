@@ -36,10 +36,10 @@
 ** xref:webapp-template:create-a-template.adoc[Turn your app into a template]
 ** xref:webapp-template:variables.adoc[How configuration reaches your app]
 ** xref:webapp-template:anatomy.adoc[What is in the web app template]
-* xref:apps/workflows.adoc[Run a pipeline from your app]
+* xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app]
 * Recipes
 ** xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service]
-** xref:recipes/seaweedfs.adoc[A file gateway over Thinkube Storage]
+** xref:playbooks/store-and-fetch-files.adoc[Store and fetch files with the file gateway]
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]
 * xref:reference/templates.adoc[Templates catalog]
 

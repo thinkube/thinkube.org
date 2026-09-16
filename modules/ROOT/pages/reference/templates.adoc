@@ -19,7 +19,7 @@ image::cp-templates.png[The Templates page of thinkube-control]
 | `tkt-tensorrt-llm-harmony` | component | yes | The TensorRT-LLM inference server the LLM Gateway drives, for NVFP4 models on Blackwell
 | `tkt-text-embeddings` | component | yes | The Text Embeddings Inference server the LLM Gateway drives, for embedding models registered in Thinkube Experiments
 | `tkt-stable-diffusion` | app | yes | Stable Diffusion image generation with a Gradio page; asks for the Hugging Face model id at deploy time and downloads it when it starts
-| `tkt-seaweedfs` | app | — | A file gateway over Thinkube Storage: a REST API and an upload page. xref:recipes/seaweedfs.adoc[A file gateway over Thinkube Storage]
+| `tkt-seaweedfs` | app | — | A file gateway over Thinkube Storage: a REST API and an upload page. xref:playbooks/store-and-fetch-files.adoc[Store and fetch files with the file gateway]
 | `tkt-knative-demo` | knative | — | A minimal scale-to-zero service, for checking a Knative deployment. xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service]
 | `thinkube-style` | app | — | The component showcase of the thinkube-style design system
 | `thinkube.org` | app | — | This documentation site, deployed inside the cluster so Claude Code can search it

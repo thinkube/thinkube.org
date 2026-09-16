@@ -286,7 +286,7 @@ Platform services the application needs. Each declared service injects variables
 
 === Workflows
 
-`workflows` gives the application its own access to Argo Workflows, in its own namespace. The platform creates a ServiceAccount `<app>-workflows` that every pod runs as, a Role allowing it to manage workflows in that namespace, and a default artifact repository in Thinkube Storage under the prefix `<app>/`. Steps run in the application's own images, named by `CONTAINER_IMAGE_<NAME>`, and count against the namespace's ResourceQuota. See xref:apps/workflows.adoc[Run a pipeline from your app].
+`workflows` gives the application its own access to Argo Workflows, in its own namespace. The platform creates a ServiceAccount `<app>-workflows` that every pod runs as, a Role allowing it to manage workflows in that namespace, and a default artifact repository in Thinkube Storage under the prefix `<app>/`. Steps run in the application's own images, named by `CONTAINER_IMAGE_<NAME>`, and count against the namespace's ResourceQuota. See xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app].
 
 == spec.dependencies
 
@@ -423,7 +423,7 @@ spec:
 
 === A web application with a pipeline
 
-The verification application of xref:apps/workflows.adoc[Run a pipeline from your app]: the web app template with `workflows` added to its services.
+The verification application of xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app]: the web app template with `workflows` added to its services.
 
 [source,yaml]
 ----

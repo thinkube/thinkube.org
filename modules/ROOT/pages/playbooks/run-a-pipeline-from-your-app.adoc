@@ -1,0 +1,298 @@
+= Run a pipeline from your app
+:page-type: playbook
+:page-area: gitops
+:page-tagline: Multi-step jobs your app submits and Argo Workflows runs, each step in your app's own image
+:page-difficulty: intermediate
+:page-time: 10 min
+:page-risk: low
+:page-tags: Pipelines, Argo Workflows, Web app template
+:page-order: 50
+:page-updated: 2026-09-16
+:page-aliases: apps/workflows.adoc
+
+== Overview
+
+=== Basic idea
+
+Some work is too long or too heavy for a web request: converting a batch of documents, preparing a dataset, running an evaluation. Applications hand that work to a pipeline, a series of steps that run as separate jobs, pass files from one step to the next, and report each step's result. In the cloud this is AWS Step Functions or Google Cloud Workflows. On Thinkube it is Argo Workflows.
+
+Declaring the `workflows` service gives your app everything a pipeline needs, inside its own namespace:
+
+* *Permission.* The app may create and watch workflows in its namespace, and nowhere else.
+* *Your own images.* Each step can run the image of one of your app's containers, so a step runs the same code as the app.
+* *Files between steps.* Outputs travel through Thinkube Storage, under a folder named after the app.
+
+=== What you'll accomplish
+
+You add `workflows` to an app from the web app template, submit a two-step pipeline from the app's backend in which step two reads a file step one wrote, and give a step the app's secrets.
+
+=== What to know before starting
+
+*Required*
+
+* An app from the web app template. xref:webapp-template:deploy.adoc[Build a web app from the template] makes one.
+* Reading a short Python script.
+
+*Optional*
+
+* xref:reference/thinkube-yaml.adoc#_workflows[thinkube.yaml: workflows], for the full declaration.
+
+=== Supported hardware
+
+[cols="1,1,1,2",options="header"]
+|===
+| Node | Architecture | GPU | On the reference run
+
+| tkamd1 | amd64 | none | —
+| tkamd2 | amd64 | 2 × RTX 3090 | —
+| tkspark | arm64 | GB10 | —
+|===
+
+Steps run on any node; the app's images are built for amd64 and arm64. The reference run used the app `wf-check`.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Argo Workflows is part of every installation.
+
+*Components*
+
+* None.
+
+=== Time & risk
+
+* *Estimated time:* 10 min. Declaring the service is a commit and a push, which rebuilds and redeploys the app: the web app template's build and deploy took 3–4 min on five runs. The two-step pipeline finished 21 seconds after it was submitted.
+* *Risk level:* Low. Everything the service creates is in the app's own namespace.
+* *Rollback:* Remove `workflows` from `services` in `thinkube.yaml`, commit and push.
+* *Last updated:* 2026-09-16. The pipeline and the secret step were run again on `wf-check`; the service was declared on `wf-check` on 2026-09-14.
+
+== Instructions
+
+=== Step 1. Declare the service
+
+Ask Claude:
+
+----
+› add workflows to the services of my app wf-check, commit and push
+----
+
+Claude adds `workflows` under `services` in `apps/wf-check/thinkube.yaml`:
+
+[source,yaml]
+----
+services:
+  - database
+  - workflows
+----
+
+The commit's pre-commit hook regenerates `k8s/` and adds `k8s/workflows.yaml`; the push redeploys the app with it.
+
+=== Step 2. See what the app received
+
+Ask Claude:
+
+----
+› which WORKFLOWS_ and CONTAINER_IMAGE_ variables does wf-check's backend have?
+----
+
+Expected output:
+
+----
+WORKFLOWS_NAMESPACE
+WORKFLOWS_SERVER_URL
+WORKFLOWS_SERVICE_ACCOUNT
+WORKFLOWS_UI_URL
+CONTAINER_IMAGE_BACKEND
+CONTAINER_IMAGE_FRONTEND
+----
+
+In the app's namespace:
+
+[cols="1,3"]
+|===
+| Resource | What it is for
+
+| ServiceAccount `<app>-workflows`
+| Every pod of the app runs as this account, so its token carries the permissions below.
+
+| Role and RoleBinding `<app>-workflows`
+| Create, read, update and delete workflows, workflow templates and cron workflows; report step results; read pods and their logs. In this namespace only.
+
+| ConfigMap `artifact-repositories`
+| The namespace's default artifact repository: bucket `argo-artifacts` in Thinkube Storage, under the prefix `<app>/`.
+
+| Secret `argo-artifacts-s3`
+| The storage credentials that repository uses.
+|===
+
+In every container:
+
+[cols="1,3"]
+|===
+| Variable | Value
+
+| `WORKFLOWS_NAMESPACE` | The app's namespace.
+| `WORKFLOWS_SERVER_URL` | `http://argo-workflows-server.argo.svc.cluster.local:2746`
+| `WORKFLOWS_SERVICE_ACCOUNT` | `<app>-workflows`
+| `WORKFLOWS_UI_URL` | `https://argo.<your domain>/workflows/<namespace>`
+| `CONTAINER_IMAGE_<NAME>` | One per container in `thinkube.yaml`, such as `CONTAINER_IMAGE_BACKEND`: the image that container's deployment runs, `registry.<your domain>/thinkube/<app>-<container>:<build tag>`. The value follows the deployed build, so a step runs the same code as the app that submitted it, and a rollback of the app rolls back its steps.
+|===
+
+=== Step 3. Submit a two-step pipeline
+
+The script runs inside the app. It uses hera, the Python client for Argo Workflows, which the web app template's backend image already contains. Step one writes a file; step two reads it.
+
+[source,python]
+----
+"""Submit a two-step pipeline from inside the application.
+
+Everything it needs is already in the environment: the namespace to submit
+into, the Argo server to submit to, and the application's own image to run
+the steps in. The pod's projected token is what authorises the submission.
+"""
+
+import os
+from pathlib import Path
+
+from hera.workflows import Artifact, Container, Steps, Workflow, WorkflowsService
+
+TOKEN = Path("/var/run/secrets/kubernetes.io/serviceaccount/token").read_text()
+
+namespace = os.environ["WORKFLOWS_NAMESPACE"]
+image = os.environ["CONTAINER_IMAGE_BACKEND"]
+
+workflows = WorkflowsService(
+    host=os.environ["WORKFLOWS_SERVER_URL"],
+    verify_ssl=False,
+    token=TOKEN,
+    namespace=namespace,
+)
+
+with Workflow(
+    generate_name="wf-check-pipeline-",
+    entrypoint="pipeline",
+    namespace=namespace,
+    service_account_name=os.environ["WORKFLOWS_SERVICE_ACCOUNT"],
+    image_pull_secrets=["app-pull-secret"],
+    workflows_service=workflows,
+) as w:
+    produce = Container(
+        name="produce",
+        image=image,
+        command=["sh", "-c"],
+        args=[
+            "mkdir -p /tmp/out && "
+            "echo \"written by step one at $(date -u +%H:%M:%SZ)\" > /tmp/out/message.txt && "
+            "cat /tmp/out/message.txt"
+        ],
+        outputs=[Artifact(name="message", path="/tmp/out/message.txt")],
+    )
+    consume = Container(
+        name="consume",
+        image=image,
+        command=["sh", "-c"],
+        args=["echo 'step two read:' && cat /tmp/in/message.txt"],
+        inputs=[Artifact(name="message", path="/tmp/in/message.txt")],
+    )
+
+    with Steps(name="pipeline"):
+        produce(name="step-one")
+        consume(
+            name="step-two",
+            arguments=[
+                Artifact(
+                    name="message",
+                    from_="{{steps.step-one.outputs.artifacts.message}}",
+                )
+            ],
+        )
+
+created = w.create()
+print(created.metadata.name)
+----
+
+Ask Claude:
+
+----
+› run this pipeline script in wf-check's backend and show me what step two printed
+----
+
+Expected output, from the reference run:
+
+----
+submitted wf-check-pipeline-4cwwf
+phase Succeeded after 21s
+step two read:
+written by step one at 19:17:06Z
+----
+
+The workflow names no storage: the namespace's default artifact repository in Thinkube Storage is used, under the prefix `wf-check/`.
+
+=== Step 4. Give a step the app's secrets
+
+The secrets the app declares in `manifest.yaml` reach the app's own containers. A step receives them only when it asks, with `env_from` on the Secret `<app>-secrets`:
+
+[source,python]
+----
+from hera.workflows import Container, SecretEnvFrom
+
+read_token = Container(
+    name="read-token",
+    image=os.environ["CONTAINER_IMAGE_BACKEND"],
+    command=["sh", "-c"],
+    args=['echo "SECRETS_CHECK_TOKEN has ${#SECRETS_CHECK_TOKEN} characters"'],
+    env_from=[SecretEnvFrom(name=f"{namespace}-secrets")],
+)
+----
+
+Ask Claude:
+
+----
+› run a one-step workflow in wf-check that reads SECRETS_CHECK_TOKEN from the app's secrets and prints its length
+----
+
+Expected output:
+
+----
+SECRETS_CHECK_TOKEN has 33 characters
+----
+
+The same step without `env_from` prints `SECRETS_CHECK_TOKEN has 0 characters`.
+
+=== Step 5. Watch the runs
+
+Open the address in `WORKFLOWS_UI_URL`, `https://argo.<your domain>/workflows/wf-check`: each run with its steps, their logs and their files. Or ask Claude:
+
+----
+› list the workflows in wf-check
+----
+
+Expected output:
+
+----
+wf-check-pipeline-4cwwf   Succeeded
+wf-check-secret-gkbzc     Succeeded
+----
+
+=== Step 6. Next steps
+
+* xref:webapp-template:develop.adoc[Change your app and ship it]: build the pipeline into the app's backend.
+* xref:reference/thinkube-yaml.adoc[thinkube.yaml]: every service an app can declare.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| The deploy stops with `Service 'workflows': workflows is not allowed in Knative services. database, cache, and queue are allowed.`
+| The app is a serverless (Knative) service, which runs no pipelines
+| Declare `workflows` on an app with `type: app`.
+
+| A step prints `SECRETS_CHECK_TOKEN has 0 characters`
+| The step does not ask for the app's secrets
+| Add `+env_from=[SecretEnvFrom(name=f"{namespace}-secrets")]+` to the step.
+|===
+
+The app's steps may create, list and delete workflows in their own namespace only. The storage credentials the steps use are the platform's: the `<app>/` prefix names the app's files but does not keep other apps out of them.
