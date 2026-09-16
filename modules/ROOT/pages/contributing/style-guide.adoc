@@ -59,7 +59,7 @@ Use these exactly:
 
 The branded names are the `display_name` each service registers for the dashboard. Argo Workflows, ArgoCD, GPU Operator, JuiceFS and PostgreSQL keep their own names. Name the implementation once where a reader might need to search for it, in a form that says what it is, "Thinkube IDE, VS Code in the browser", and use the implementation's name where the implementation is the point: error messages, logs, the components catalogue.
 
-Section names are plain: "Build an app", "Models", "Fine-tune". No invented vocabulary for the site's own structure.
+The site is organised in the four areas of the platform, Thinkube Kubernetes, Thinkube GitOps, Thinkube Models and Thinkube Tandem, with the base first. Each area opens with a concept page that names its decision and lists its pages. Below the areas, section and page names are plain: "Install", "Recipes", "Fine-tune". No invented vocabulary for the site's own structure. A page belongs to the area whose reader needs it; a component the areas share stays in the flat components catalog, not in an area.
 
 == Headings
 

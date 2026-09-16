@@ -1,0 +1,252 @@
+= What the install changes on your machines
+:page-type: reference
+
+_Every package, account setting, file, firewall rule and system setting the installer puts on your laptop, the control plane, the workers and the GPU nodes, and what the wipe script takes away again._
+
+.TL;DR
+Ask Claude: "what did the install change on tkamd2?". Claude reads the machine over SSH and answers with what this page lists: `containerd.io`, `kubeadm`, `kubelet` and `kubectl` installed and held at their versions, the node-IP and link-watchdog timers running, the firewall enabled, and name resolution for your domain pointed at the cluster. Read this page before you install on a machine that already does other work.
+
+The installer runs on your laptop and changes the other machines over SSH. It creates no users and no groups on any of them. It does not change the hostname or `/etc/hosts`, it does not change GRUB, and it installs no snaps.
+
+== The machines
+
+[cols="1,3",options="header"]
+|===
+| Machine | What it is
+
+| Laptop
+| The machine the installer runs on. It joins your tailnet and gets a few tools. If you run the installer on one of the servers, that server plays this role too.
+
+| Control plane
+| The one server that runs the Kubernetes control plane. It carries most of the platform's host-side tools.
+
+| Worker
+| Every other server. It runs your workloads and joins the control plane.
+
+| GPU node
+| A control plane or worker with an NVIDIA GPU.
+|===
+
+== What it checks, and what it refuses
+
+[cols="1,3",options="header"]
+|===
+| Where | Check
+
+| Laptop
+| Ubuntu 24.04, not running as root, OpenSSH server installed and running, a connection to `archive.ubuntu.com`, at least 10 GB free in your home directory. The installer does not continue until all five pass.
+
+| Every server
+| Found by the network scan only if its SSH banner is Ubuntu's. Hardware detection must report CPUs, memory and disk.
+
+| Control plane
+| At least 4 CPU cores and 8 GB of memory to be chosen at all; exactly one. The Kubernetes install itself stops unless the machine is Ubuntu 24.04 with at least 16 vCPUs and 60 GB of memory.
+
+| GPU node
+| NVIDIA driver 580 or newer. A GPU older than Volta is reported as unsupported.
+|===
+
+Nothing checks for a clean machine. An existing Docker Engine, containerd or Python environment is not detected; the sections below say what happens to each.
+
+== Packages
+
+[cols="1,3",options="header"]
+|===
+| Machine | Installed
+
+| Laptop
+| From apt: `python3-venv`, `python3-full`, `curl`, `gnupg`, `apt-transport-https`, `ca-certificates`, `software-properties-common`, `git`, `sshpass`, `expect`, `nmap`, and `micro`, `zsh` and `fish` if missing. `gh` from GitHub's apt repository if missing, and `s3cmd`. Tailscale, from its install script. Ansible into `~/.venv`.
+
+| Every server
+| From apt: `python3`, `python3-pip`, `python3-venv`, `python3-full`, `sshpass`, `openssh-server`. Into `~/.venv`: Ansible and the Kubernetes Python client. Tailscale, from its install script.
+
+| Control plane and workers
+| From apt: `ufw`, `containerd.io` from Docker's repository, `kubeadm`, `kubelet` and `kubectl` from the Kubernetes repository. `kubectl` and `helm` into `~/.local/bin`. On a worker with a wireless interface, `iw`.
+
+| Control plane
+| From apt: `cron`, `openssl`, `podman`, `podman-compose`, `podman-toolbox`, `buildah`, `skopeo`, `qemu-user-static`, `binfmt-support`. Outside apt: `acme.sh` in `~/.acme.sh`, `crane` in `/usr/local/bin`, `argo` in `~/.local/bin`, `devpi-client`.
+
+| GPU node without a working driver
+| `ubuntu-drivers-common` and the NVIDIA driver `ubuntu-drivers` recommends. Not on a DGX Spark, whose driver comes with its OS.
+|===
+
+Two apt repositories are added on the control plane and the workers, Docker's and Kubernetes', with their keys.
+
+=== Held versions
+
+[cols="1,1",options="header"]
+|===
+| Package | Held at
+
+| `kubeadm`, `kubelet`, `kubectl`
+| `1.36.4-1.1`
+
+| `containerd.io`
+| `2.2.4`
+|===
+
+`apt upgrade` leaves these where they are. The NVIDIA driver, Tailscale and the kernel are not held: an upgrade moves them. xref:kubernetes/keeping-it-running.adoc[Keeping it running] says what that means.
+
+== Your account and SSH
+
+[cols="1,3",options="header"]
+|===
+| Machine | Change
+
+| Every server
+| Your user is added to `sudo` and gets passwordless sudo in `/etc/sudoers.d/<user>`. sshd gets `PasswordAuthentication yes`, `UseDNS no` and `GSSAPIAuthentication no`. A fresh ed25519 key `~/.ssh/thinkube_cluster_key` is generated, and every server's key and the laptop's key are put in every server's `authorized_keys`. A block marked `BEGIN-THINKUBE-BAREMETAL` is written in `~/.ssh/config`, after a backup of the old file.
+
+| Control plane
+| Your user joins `systemd-journal`, lingering is enabled, and `/etc/subuid` and `/etc/subgid` get a range for rootless containers. SSH keys for Thinkube IDE are made in `~/shared-code/.ssh/`. A regular file `~/.ssh/github_ed25519` is replaced by a link into that folder.
+
+| Laptop
+| `~/.ssh/thinkube_cluster_key` is regenerated, every key is removed from the SSH agent and the new key is loaded, and one `Host` block per worker is added to `~/.ssh/config`.
+|===
+
+== Files and directories
+
+[cols="1,3",options="header"]
+|===
+| Machine | Created or changed
+
+| Laptop
+| `~/.thinkube-installer/`, the installer's own environment. `~/.env`, rewritten by the installer with your tokens, sorted, without comments, mode 600. `~/.bashrc`, `~/.zshrc` and the fish configuration get lines that activate `~/.venv` and load `~/.env`. `~/.config/gh/`. A clone of the platform repository under `/tmp`.
+
+| Control plane
+| `~/.env` with your tokens, mode 600. `~/.kube/config`. `~/.acme.sh`. `~/.config/containers/`. `~/.pip/pip.conf`, pointing pip at Thinkube Packages for every environment of your user. `~/shared-code/`, the home folder of Thinkube IDE. `/etc/ssl/thinkube/<domain>/` with the certificate. `/etc/containers/registries.conf`. A crontab entry for certificate renewal.
+
+| Control plane and workers
+| `/usr/local/bin/thinkube-node-ip-sync` and its units; on workers also `/usr/local/bin/thinkube-link-watchdog` and the API proxy units. `/var/lib/kubelet/plugins_registry`.
+
+| GPU node
+| `/var/lib/jupyterhub-venvs`, where notebook environments are kept.
+|===
+
+Nothing is created under `/opt`. The shared filesystem is mounted inside the cluster, not on the hosts.
+
+== System settings
+
+[cols="1,3",options="header"]
+|===
+| Setting | Change
+
+| Swap
+| Turned off on the control plane and the workers, and its `/etc/fstab` lines commented out. Kubernetes requires it.
+
+| Kernel modules
+| `overlay` and `br_netfilter`, loaded at boot from `/etc/modules-load.d/thinkube-k8s.conf`.
+
+| sysctl
+| Bridged traffic through iptables, IP forwarding, and higher inotify limits, in `/etc/sysctl.d/99-thinkube-k8s.conf`. IP forwarding is also turned on on the laptop, for Tailscale.
+
+| DGX Spark
+| `vm.swappiness = 1` and a limit on dirty pages, in `/etc/sysctl.d/99-thinkube-dgx-spark.conf`, and every swap unit disabled.
+
+| Root volume
+| On a server whose root is an LVM volume with more than 10 GB unallocated, the volume is grown to fill the group. This cannot be undone.
+
+| Name resolution
+| `/etc/systemd/resolved.conf.d/10-thinkube.conf` sends lookups for your domain to the cluster's DNS server, on every machine including the laptop. `/etc/systemd/resolved.conf.d/dns.conf` is deleted. LLMNR is turned on on the control plane and the workers.
+
+| containerd
+| `/etc/containerd/config.toml` is replaced.
+
+| GPU node without a driver
+| nouveau blacklisted, the initramfs rebuilt. On every GPU node, a unit that marks the host driver ready at boot.
+
+| DGX Spark
+| `/etc/docker/daemon.json` is replaced and Docker restarted.
+|===
+
+== Firewall
+
+The firewall is turned on on the control plane and the workers, and the forward policy is set to accept. The default incoming policy is left as Ubuntu ships it.
+
+[cols="1,3",options="header"]
+|===
+| Machine | Allowed in
+
+| Control plane
+| SSH 22, the API server 6443, etcd 2379–2380, the scheduler 10259, the controller manager 10257, kubelet 10250, Cilium health 4240, VXLAN 8472/udp, Cilium metrics 9962, LLMNR 5355/udp. All traffic on the `cilium_host` and `k8s0` interfaces.
+
+| Worker
+| SSH 22, kubelet 10250, 6443 for the local API proxy, Cilium health 4240, VXLAN 8472/udp, Cilium metrics 9962, LLMNR 5355/udp. All traffic on `cilium_host`.
+
+| Every machine on the tailnet, laptop included
+| Tailscale 41641/udp and all traffic on the Tailscale interface. On the laptop these rules are added but the firewall is not turned on.
+|===
+
+The optional Prometheus component adds 9100 for node metrics on every node.
+
+== Network
+
+[cols="1,3",options="header"]
+|===
+| Change | What it is for
+
+| Tailscale on every machine
+| Each machine joins your tailnet under its hostname. xref:kubernetes/networking.adoc[Networking and names] explains what travels over it.
+
+| `k8s0`, a dummy interface with `172.16.0.1`
+| The address every node uses for the Kubernetes API, so a change of LAN address does not break the cluster.
+
+| The API proxy on workers
+| Forwards `172.16.0.1:6443` to the control plane's LAN address.
+
+| `thinkube-node-ip-sync`, every minute and at boot
+| Puts the machine's current LAN address into kubelet's settings.
+
+| `thinkube-link-watchdog`, every minute, workers only
+| When the local router stops answering, bounces the network interface, then resets the device, then reboots.
+|===
+
+== What happens to what was already there
+
+[cols="1,3",options="header"]
+|===
+| Already on the machine | What happens
+
+| Docker Engine
+| Not detected. `containerd.io` is installed at the held version from Docker's repository and its configuration file is replaced.
+
+| containerd
+| Installed at the held version, configuration replaced.
+
+| A cluster from kubeadm
+| On the control plane, `kubeadm init` is skipped if `/etc/kubernetes/admin.conf` exists. On a worker the control plane does not know, `kubeadm reset` runs first.
+
+| k3s, k8s-snap, MicroK8s
+| Not detected and not removed. Remove them before you install.
+
+| `~/.venv` on a server
+| Kept, but Ansible and the Kubernetes Python client are installed into it at the versions the platform needs, which can change what was there.
+
+| `~/.venv` on the laptop
+| Kept, and Ansible is installed into it; your shells are set to activate it.
+
+| pip configuration on the control plane
+| `~/.pip/pip.conf` is replaced.
+
+| Ollama and its models
+| Not touched.
+|===
+
+== What the wipe script removes
+
+`thinkube-wipe.sh` in the `thinkube` repository returns the control plane to as close to a fresh Ubuntu Server as it can. It is written for the control plane: it does nothing on the workers or the laptop. It refuses to run while a repository under `~/shared-code` has work that is not pushed.
+
+[cols="1,3",options="header"]
+|===
+| Removed | Kept
+
+| Kubernetes, containerd, podman and its tools, Tailscale, `sshpass`, `s3cmd`, with their apt repositories. The cluster's state under `/etc/kubernetes`, `/var/lib/kubelet`, `/var/lib/containerd` and `/var/lib/etcd`. The storage under `/ssd` and `/storage`, JuiceFS caches, notebook environments. The node-IP, watchdog and API proxy units, `k8s0`, the kernel module and sysctl files, the DNS setting for your domain. The firewall rules, reset. Your home directory, emptied and refilled from `/etc/skel`, after `~/.ssh` and `~/.env` are copied to `/root/thinkube-wipe-keep/`.
+| Ubuntu, the kernel, your account and its sudo rights, sshd with password login, the NVIDIA driver. With `--keep-home`, your home directory, apart from the Kubernetes and installer folders.
+|===
+
+It does not undo: the sshd settings, the firewall forward policy, the commented swap lines, the DGX Spark sysctl file, the LLMNR setting, the driver-ready unit, the nouveau blacklist, `/etc/docker/daemon.json`, `/etc/containers/registries.conf`, the `subuid` and `subgid` ranges, `/etc/ssl/thinkube`, `crane`, the certificate crontab entry, `ufw`, `cron`, `gh` and the grown root volume.
+
+== Limits
+
+* The requirements for workers are not checked by the installer; a worker smaller than the control plane joins.
+* The GitHub CLI repository on the laptop and the Argo CLI on the control plane are set for amd64 only; the reference cluster's laptop and control plane are amd64.
+* The wipe script is for the control plane. A worker is cleaned by hand, or reinstalled.

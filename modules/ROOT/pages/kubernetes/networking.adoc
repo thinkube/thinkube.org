@@ -1,0 +1,112 @@
+= Networking and names
+:page-type: concept
+
+_How `<service>.<your domain>` reaches the cluster from your laptop or your phone, with a real certificate and nothing open to the internet; how names resolve inside the cluster; and why the cluster keeps working when a machine gets a new address._
+
+.TL;DR
+Ask Claude: "trace how control.<your domain> reaches the cluster". Claude resolves the name to a Tailscale address, finds the gateway service that owns that address, and reads the certificate the gateway presents: on the reference cluster, `100.111.173.33`, the Envoy gateway exposed as `thinkube-gw` on the tailnet, and a Let's Encrypt certificate for `*.thinkube.com`. Every service of the platform and every app you deploy is reached the same way.
+
+== The decision
+
+A platform on your own machines has two bad defaults: open ports on your router and a public address, or a set of IP numbers only the local network understands. Thinkube takes neither. Every machine and the cluster's gateway join your private Tailscale network, the tailnet, and your domain resolves on that network only. From any device on the tailnet, `https://control.<your domain>` works with a valid certificate, at home or away. From anywhere else, nothing answers.
+
+Inside, the cluster refers to itself by one address that never changes, so a machine that moves to another router or gets a new lease comes back up without a reinstall.
+
+== One request, from your browser to the service
+
+[d2,alt="The laptop asks Tailscale DNS for control.<your domain>; split DNS sends the question to the cluster's DNS server on the tailnet, which answers with the gateway's tailnet address; the browser connects to the gateway over the tailnet; the gateway terminates TLS with the wildcard certificate and routes by hostname to the service"]
+....
+direction: right
+laptop: "Your browser\non the tailnet"
+dns: "Cluster DNS\nthinkube-dns\nanswers every name\nwith the gateway"
+gateway: "Gateway\nthinkube-gw\ncertificate for\n*.<your domain>"
+service: "The service\nor your app"
+laptop -> dns: "1. control.<your domain>?\nsplit DNS"
+dns -> laptop: "2. the gateway's\ntailnet address"
+laptop -> gateway: "3. HTTPS over the tailnet"
+gateway -> service: "4. route by hostname"
+....
+
+[cols="1,3",options="header"]
+|===
+| Step | What happens
+
+| The question
+| Your tailnet is told, at install, that every name under your domain is answered by the cluster's DNS server. That server, BIND9, is itself a device on the tailnet, named `<cluster>-dns`. Lookups for other names go where they always went.
+
+| The answer
+| The DNS server answers every name under your domain with one address: the gateway's. A new app needs no DNS record; its name already resolves.
+
+| The connection
+| The gateway is Envoy Gateway, exposed on the tailnet by the Tailscale operator as `<cluster>-gw`. The browser connects to it over the tailnet, encrypted end to end by Tailscale.
+
+| The certificate
+| The gateway holds one wildcard certificate for `<your domain>` and `*.<your domain>`, from Let's Encrypt. It was proven through your Cloudflare token, by a DNS record, so the cluster never needed to be reachable from the internet. Plain HTTP is redirected to HTTPS.
+
+| The route
+| Every service and every app has a route for its hostname on that one gateway. Deploying an app adds its route; the name, the certificate and the connection were already there.
+|===
+
+The same gateway also carries a few TCP services for tools that do not speak HTTP: PostgreSQL on 5432, Thinkube Git over SSH on 2222, and, when installed, NATS on 4222, Valkey on 6379 and ClickHouse on 9000. A Knative service is reached through a second gateway that the Knative component brings, under the same domain.
+
+== Renewal
+
+The certificate is renewed on the control plane by `acme.sh`, from a scheduled job it installs with the certificate. When it renews, a hook copies the new certificate into every Kubernetes secret that carries the old one, so the gateway and anything else that terminates TLS pick it up. Running the certificate playbook again renews it whenever it is within 30 days of expiry or the domain changed.
+
+== Names inside the cluster
+
+A pod asks CoreDNS, the cluster's own DNS. Names under `cluster.local`, the services and pods, are answered by CoreDNS. Every other name, your domain and the internet alike, is forwarded to the cluster's DNS server on the tailnet, so a pod reaches `control.<your domain>` by the same path your laptop does.
+
+Each machine is set up the same way: lookups for your domain go to the cluster's DNS server, everything else to the resolver the machine already had.
+
+== Why a new address does not break the cluster
+
+Kubernetes remembers addresses: the API server's, and each node's. A cluster installed on the addresses of one network stops working on another. Thinkube keeps the first one fixed and corrects the second.
+
+[cols="1,3",options="header"]
+|===
+| Address | How it is kept
+
+| The Kubernetes API
+| Every node has a dummy interface, `k8s0`, with `172.16.0.1`. The API server's certificate, the cluster endpoint and Cilium all use that address. On a worker, a small proxy on `172.16.0.1:6443` forwards to the control plane.
+
+| Each node's own address
+| `thinkube-node-ip-sync` reads the machine's current LAN address at boot, before kubelet starts, and again every minute. When it has changed, it updates kubelet and restarts it. On a worker it also finds the control plane again by name and repoints the proxy.
+|===
+
+The nodes talk to each other on their local network. Tailscale carries your traffic to the cluster, not the cluster's traffic between its nodes, so the machines of one cluster belong on one LAN. The installer warns when it finds them on different networks.
+
+Workers also run `thinkube-link-watchdog`: when the local router stops answering, it restarts the network interface, then resets the network device, and as a last step reboots the machine.
+
+== What it saves you
+
+* *No open ports.* Nothing listens on the internet; the router is not configured.
+* *No DNS records per app.* One wildcard answers every name under your domain.
+* *No certificate per app.* One wildcard certificate, renewed on its own.
+* *No reinstall after a move.* A new lease or a new router is picked up at the next boot or the next check.
+
+== Where it shows up
+
+[cols="1,2",options="header"]
+|===
+| Page | What it covers
+
+| xref:install:overlay-network.adoc[Connect from anywhere]
+| The four Tailscale credentials the installer asks for.
+
+| xref:install:cloudflare-token.adoc[Set up your domain]
+| The Cloudflare token the certificate is proven with.
+
+| xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines]
+| The firewall rules, the DNS settings and the units this page describes.
+
+| xref:kubernetes/keeping-it-running.adoc[Keeping it running]
+| Where to look when a name does not resolve.
+|===
+
+== Limits
+
+* A device reaches the platform only when it is on your tailnet and accepts the tailnet's DNS settings.
+* Tailscale is the only overlay supported.
+* The machines of one cluster must reach each other on their local network.
+* Your domain must be managed in Cloudflare for the certificate to be issued.

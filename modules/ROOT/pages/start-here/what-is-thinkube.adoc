@@ -10,6 +10,29 @@ Install it on one to a few Ubuntu machines. Open Thinkube IDE in your browser, s
 
 Everything a production AI service needs besides the model, the address, the login, the build, the rollback, the shared GPU, the storage, the traces, already exists in standard Kubernetes. Thinkube installs that standard unchanged, decides the infrastructure above it so you never configure it, and puts an assistant on top so you never operate it by hand. xref:why/index.adoc[Why Thinkube] makes the argument; this page is the result.
 
+== Four areas, one platform
+
+Thinkube is one platform in four areas. One is the base; the other three stand on it and are connected through it.
+
+[cols="1,3",options="header"]
+|===
+| Area | What it gives you
+
+| xref:kubernetes/index.adoc[Thinkube Kubernetes]
+| Unmodified upstream Kubernetes on your machines, with identity, storage, registry, database and GPUs ready, and a control plane you drive from Claude Code.
+
+| xref:apps/index.adoc[Thinkube GitOps]
+| Push to git, and it runs: applications from templates, built and deployed, at an address with a certificate and a login.
+
+| xref:lifecycle/index.adoc[Thinkube Models]
+| Serve, fine-tune and track open models on your own GPUs, from notebooks to one address every app calls.
+
+| xref:tandem:index.adoc[Thinkube Tandem]
+| A sentence becomes a change that is built, deployed and judged on the running product.
+|===
+
+The areas are not separate products. A dataset a notebook writes is the file an app reads, the model a notebook fine-tunes is the endpoint the app calls, and the change Tandem delivers ships by the pipeline the app took. xref:how-it-works/architecture.adoc[Architecture] draws the lines between them.
+
 == What it saves you
 
 *Your machine stops breaking.* Python environments are built from definitions and kept apart from each other and from the system. Installing one more package into one cannot take the others down. Every component can be removed again.

@@ -1,0 +1,96 @@
+= A file gateway over Thinkube Storage
+:page-type: how-to
+
+_Deploy the storage template: a small service that stores, lists, fetches and deletes files in Thinkube Storage over a REST API, with an upload page other apps can shape through the address they link to._
+
+.TL;DR
+Ask Claude: "make an app called files from the SeaweedFS template". It is built and deployed at `files.<your domain>`. Then "upload a note to files for tenant docs, list it, fetch it and delete it": the note goes into the bucket `tenant-docs` of Thinkube Storage, comes back byte for byte, and is gone. Any app on the platform can do the same with a few HTTP calls.
+
+== Why this is one sentence
+
+Every app that takes a document needs the same four things: put a file somewhere that outlives the pod, find it again, hand it back, delete it. Thinkube Storage already exists on the base, with credentials in every container. The template wraps it once, so an app sends a form and gets back a reference instead of carrying its own storage client.
+
+== What you get
+
+[cols="1,2",options="header"]
+|===
+| Call | Does
+
+| `GET /api/health`
+| Checks that Thinkube Storage answers.
+
+| `POST /api/buckets` with `tenant`
+| Creates the bucket `tenant-<tenant>` with `documents/` and `sessions/` in it, or says it exists.
+
+| `POST /api/upload` with `files`, `tenant`, `key_prefix`, `doc_id`
+| Stores each file under the prefix in `tenant-<tenant>`, creating the bucket if needed. `+{doc_id}+` in the prefix is replaced by `doc_id`, or by a new id when none is given. Answers with each file's `full_ref`.
+
+| `GET /api/list?tenant=…&prefix=…`
+| The files in the bucket, with size and last change.
+
+| `GET /api/download/<full_ref>`
+| The file.
+
+| `DELETE /api/<full_ref>`
+| Removes the file.
+|===
+
+The round trip on the reference cluster:
+
+----
+$ curl -F tenant=docs -F 'key_prefix=documents/{doc_id}/' -F files=@note.txt https://files.thinkube.com/api/upload
+{"doc_id":"7bfa298d-…","files":[{"bucket":"tenant-docs",
+  "full_ref":"tenant-docs/documents/7bfa298d-…/note.txt","size":20,"content_type":"text/plain"}]}
+
+$ curl https://files.thinkube.com/api/download/tenant-docs/documents/7bfa298d-…/note.txt
+hello from the docs
+
+$ curl -X DELETE https://files.thinkube.com/api/tenant-docs/documents/7bfa298d-…/note.txt
+{"deleted":"tenant-docs/documents/7bfa298d-…/note.txt"}
+----
+
+== The upload page
+
+`files.<your domain>` opens on three sample profiles. *Browse* lists, downloads and deletes the files of a tenant you type in.
+
+image::recipe-files-app.png[The upload page of the file gateway, showing the sample profiles Bilingual Document Alignment, Document Splitting and File Upload]
+
+A profile is an upload form described in the address: a title, the files it asks for, the fields it asks for and where the files go. Another app links to the page with its own profile and gets the form it needs without building one:
+
+----
+https://files.<your domain>/?title=Upload%20a%20contract
+  &file=source|Contract|.pdf|required
+  &meta=language|Language|select|en,es
+  &dest=documents/{doc_id}/source/
+----
+
+Each `file` is `name|label|accepted types|flags`, with `required` and `multiple` as flags. Each `meta` is `name|label|text or select|options`.
+
+== By hand, and what is happening underneath
+
+The descriptor is one small container with a route and a health check:
+
+[source,yaml]
+----
+spec:
+  deployment:
+    type: app
+  containers:
+    - name: seaweedfs-gateway
+      build: .
+      port: 8080
+      size: small
+      health: /api/health
+  routes:
+    - path: /
+      to: seaweedfs-gateway
+----
+
+It declares no services. Every container the platform deploys receives the Thinkube Storage address and credentials as environment variables, and the gateway reads them. The backend is FastAPI speaking the S3 API; the page is React, built into the same image. The repository is yours in Thinkube Git and ships by the xref:how-it-works/deploy-loop.adoc[GitOps deploy loop].
+
+== Limits
+
+* The API and the page are not behind your login, and any origin may call the API: any device on your tailnet can read and delete what is stored.
+* Buckets are named per tenant, not per user; the gateway does not check who is asking.
+* Files go to Thinkube Storage as objects. They are not on the shared filesystem that notebooks and Thinkube IDE see.
+* The template ships a `profiles.json` that only its tests read; the profiles the page offers are in its code.

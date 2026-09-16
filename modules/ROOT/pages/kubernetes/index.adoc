@@ -1,0 +1,89 @@
+= Thinkube Kubernetes
+:page-type: concept
+
+_The base of the platform: unmodified upstream Kubernetes on your machines, with the services every other area stands on already installed, connected and signed in, and a control plane you drive from Claude Code._
+
+.TL;DR
+Ask Claude: "what's running?". Claude calls `list_services_minimal` and answers with every service on the base: Thinkube Identity, Thinkube Storage and JuiceFS, Thinkube Registry, Thinkube Git, Argo Workflows and ArgoCD, PostgreSQL, the GPU Operator, Thinkube IDE, Thinkube Notebooks, Thinkube Experiments and Thinkube Packages. You installed none of them one by one and you configure none of them by hand; the installer put them there and thinkube-control operates them.
+
+== The decision
+
+Everything a production AI service needs besides the model already exists in standard Kubernetes: an address with a certificate, a login, storage that outlives a restart, a registry, a build, a rollback, a shared GPU. Thinkube installs that standard unchanged, with kubeadm, and decides the infrastructure above it once for everyone: one sign-on, one filesystem, one registry, one database, one pipeline. The three other areas never provide any of these for themselves; they use the base. And the base is operated through thinkube-control, which exposes the same operations to its web interface and to Claude Code, so running the platform is a sentence rather than a command line.
+
+[d2,alt="Thinkube GitOps, Thinkube Models and Thinkube Tandem stand on Thinkube Kubernetes, which provides thinkube-control, Thinkube Identity, Thinkube Storage and JuiceFS, Thinkube Registry, Thinkube Git with Argo, PostgreSQL and the GPUs"]
+....
+direction: down
+
+areas: "Thinkube GitOps · Thinkube Models · Thinkube Tandem"
+
+base: "Thinkube Kubernetes" {
+  direction: right
+  label.near: bottom-center
+  control: "thinkube-control\noperated from Claude Code"
+  identity: "Thinkube Identity\none sign-on"
+  storage: "Thinkube Storage\nand JuiceFS\none filesystem"
+  registry: "Thinkube Registry\nimages and models"
+  pipeline: "Thinkube Git\nArgo Workflows · ArgoCD\none pipeline"
+  data: "PostgreSQL\none database"
+  gpus: "GPU Operator\nGPUs as slots"
+}
+
+areas -> base: "use, never provide their own"
+....
+
+xref:how-it-works/architecture.adoc[Architecture] draws the base and the lines between the areas that run through it.
+
+== What it saves you
+
+* *No cluster to assemble.* Identity, storage, registry, database, certificates and names are installed, connected and signed in before you open the first page.
+* *No Kubernetes commands.* Claude Code and thinkube-control do the operating; you read state and ask for changes in a sentence.
+* *No GPU arithmetic.* Each GPU is shared as slots and the platform counts memory per node, so a served model, a notebook and a fine-tune fit together or are refused before they start.
+* *Nothing trapped.* The cluster is upstream Kubernetes, so what you build on it runs on any other standard cluster.
+
+== Where it shows up
+
+[cols="1,2",options="header"]
+|===
+| Page | What it covers
+
+| xref:install:overview.adoc[Install Thinkube]
+| What you need, and the installer from the first screen to a running cluster.
+
+| xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines]
+| Packages, users, directories, firewall ports and system settings, per machine, and what the wipe removes.
+
+| xref:kubernetes/networking.adoc[Networking and names]
+| How `<service>.<your domain>` reaches the cluster from any device, how names resolve inside it, and why the cluster survives a move to another network.
+
+| xref:kubernetes/keeping-it-running.adoc[Keeping it running]
+| Reboots, system updates, what survives what, and where to look when something is wrong.
+
+| xref:apps/claude-code.adoc[What Claude can do for you]
+| The sentences you say and the operation each one runs.
+
+| xref:how-it-works/mcp-operation-model.adoc[The MCP operation model]
+| Why reading state is free and changing it waits for your request.
+
+| xref:control:index.adoc[thinkube-control]
+| The control panel's pages and the operations behind them.
+
+| xref:how-it-works/architecture.adoc[Architecture]
+| The base, the three areas on it, and every service by layer.
+
+| xref:how-it-works/kubernetes-underneath.adoc[Kubernetes underneath]
+| Unmodified upstream Kubernetes, and why Thinkube is an installer rather than a distribution.
+
+| xref:how-it-works/gpu-multiarch.adoc[GPU and multi-arch]
+| GPU slots, the two memory models, and one cluster across amd64 and arm64.
+
+| xref:concepts/running-software.adoc[Concepts: running software]
+| Container, cloud native, Kubernetes, a deploy from a push, a Knative service.
+
+| xref:reference/components.adoc[Components catalog]
+| Every core and optional component, and which stay running.
+|===
+
+== Limits
+
+* The base installs on Ubuntu 24.04 machines; GPU nodes need an NVIDIA GPU.
+* It is built for one person: one login, one set of GPUs, no queue between users.

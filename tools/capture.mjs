@@ -55,6 +55,7 @@ const targets = [
   { name: 'experiments-home', url: `https://experiments.${D}/` },
   { name: 'ide-home', url: `https://ide.${D}/` },
   { name: 'docs-home', url: `https://docs.${D}/` },
+  { name: 'files-app', url: `https://files.${D}/` },
   { name: 'identity-login', url: `https://control.${D}/`, fresh: true, stopAtLogin: true },
 ];
 
