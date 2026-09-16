@@ -30,7 +30,7 @@ You add `workflows` to an app from the web app template, submit a two-step pipel
 
 *Required*
 
-* An app from the web app template. xref:webapp-template:deploy.adoc[Build a web app from the template] makes one.
+* An app from the web app template. xref:webapp-template:build-a-web-app.adoc[Build a web app from the template] makes one.
 * Reading a short Python script.
 
 *Optional*
@@ -277,7 +277,7 @@ wf-check-secret-gkbzc     Succeeded
 
 === Step 6. Next steps
 
-* xref:webapp-template:develop.adoc[Change your app and ship it]: build the pipeline into the app's backend.
+* xref:webapp-template:change-your-app.adoc[Change your app and ship it]: build the pipeline into the app's backend.
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]: every service an app can declare.
 
 == Troubleshooting

@@ -36,7 +36,7 @@ You never have to operate any of this by hand. Claude Code does the deploying, t
 
 *Why it matters to you.* Shipping is a push. A rollback is another push. What is running is always a commit you can read.
 
-*Where you meet it.* xref:webapp-template:deploy.adoc[Deploy a template] and xref:webapp-template:develop.adoc[Change the app and ship it]; the mechanism is xref:how-it-works/deploy-loop.adoc[the GitOps deploy loop].
+*Where you meet it.* xref:webapp-template:build-a-web-app.adoc[Build a web app from the template] and xref:webapp-template:change-your-app.adoc[Change your app and ship it]; the mechanism is xref:how-it-works/deploy-loop.adoc[the GitOps deploy loop].
 
 == A Knative service
 

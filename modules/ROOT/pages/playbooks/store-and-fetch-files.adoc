@@ -168,7 +168,7 @@ image::files-browse.png[The Browse Files page of the file gateway listing contra
 === Step 6. Next steps
 
 * xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service]: a service that runs only while it is being called.
-* xref:webapp-template:deploy.adoc[Build a web app from the template]: a full-stack app with a database and a login.
+* xref:webapp-template:build-a-web-app.adoc[Build a web app from the template]: a full-stack app with a database and a login.
 * xref:reference/templates.adoc[Templates catalog]: every template you can deploy.
 
 == Troubleshooting

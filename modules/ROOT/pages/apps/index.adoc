@@ -50,10 +50,10 @@ A template is an application that already runs, which you copy and change; what 
 | xref:webapp-template:index.adoc[The template round trip]
 | Why nothing is rendered on the way in or out of a template.
 
-| xref:webapp-template:deploy.adoc[Deploy a template]
+| xref:webapp-template:build-a-web-app.adoc[Build a web app from the template]
 | From the sentence to the running app, step by step.
 
-| xref:webapp-template:develop.adoc[Change the app and ship it]
+| xref:webapp-template:change-your-app.adoc[Change your app and ship it]
 | The day-to-day loop: a page added, an endpoint added, a change shipped.
 
 | xref:webapp-template:variables.adoc[How configuration reaches your app]

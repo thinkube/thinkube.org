@@ -188,7 +188,7 @@ Expected output: 93 seconds after the push, the call answers with `"message": "H
 === Step 7. Next steps
 
 * xref:playbooks/store-and-fetch-files.adoc[Store and fetch files with the file gateway]: an always-on app with a REST API and an upload page.
-* xref:webapp-template:deploy.adoc[Build a web app from the template]: a full-stack app with a database and a login.
+* xref:webapp-template:build-a-web-app.adoc[Build a web app from the template]: a full-stack app with a database and a login.
 * xref:reference/templates.adoc[Templates catalog]: every template you can deploy.
 
 == Troubleshooting
