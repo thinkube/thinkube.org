@@ -40,7 +40,7 @@ The installer runs on your laptop and changes the other machines over SSH. It cr
 | Found by the network scan only if its SSH banner is Ubuntu's. Hardware detection must report CPUs, memory and disk.
 
 | Control plane
-| At least 4 CPU cores and 8 GB of memory to be chosen at all; exactly one. The Kubernetes install itself stops unless the machine is Ubuntu 24.04 with at least 16 vCPUs and 60 GB of memory.
+| Exactly one. At least 16 CPU cores and 64 GB of memory; the installer does not offer a smaller machine for the role, and the Kubernetes install stops on one, and on anything but Ubuntu 24.04.
 
 | GPU node
 | NVIDIA driver 580 or newer. A GPU older than Volta is reported as unsupported.
