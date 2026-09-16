@@ -1,121 +1,115 @@
 = Architecture
 :page-type: concept
 
-_What is on the machine after an install, layer by layer._
+_One base and three areas on it, and the lines between the areas that make them one platform._
 
 .TL;DR
-Under everything is unmodified Kubernetes on your machines. On it, a fixed set of core components you never configure: identity, registry, git, builds, storage, the database, the control panel. Above them, the optional components you install with a sentence, and your applications. This page is the map, layer by layer.
+Under everything is unmodified Kubernetes on your machines, with the services every area needs: one sign-on, one filesystem, one registry, one database, the GPUs, and thinkube-control, the control plane you drive from Claude Code. On that base sit three areas: Thinkube GitOps, where apps are built and deployed from a push; Thinkube Models, where models are served, notebooks run and experiments are tracked; and Thinkube Tandem, where a sentence becomes a reviewed change. They are not separate products. A dataset a notebook writes is the file an app reads, the model a notebook fine-tunes is the endpoint the app calls, and the change Tandem delivers ships by the pipeline the app took.
 
-== Before the cluster
+== The decision
 
-The installer runs on your laptop and deploys over SSH. Before Kubernetes
-exists it prepares each machine: grows the root volume Ubuntu leaves at
-100 GB, sets up SSH between nodes, checks the NVIDIA driver, and on a DGX
-Spark applies the unified-memory tuning. It joins the machines to your
-Tailscale network. Then it moves the tokens you entered onto the control-plane
-host, so the machine you ran the installer from can be put away.
+The base provides; the areas use. Nothing an area needs from another area is passed hand to hand: it goes through a service of the base that both areas already share.
 
-== The cluster
+[d2,alt="Thinkube Kubernetes as the base with its services, and Thinkube GitOps, Thinkube Models and Thinkube Tandem on it, with the lines between them"]
+....
+direction: down
 
-kubeadm installs unmodified upstream Kubernetes. Cilium is the network and the
-load balancer. Routes are Gateway API. The cluster runs its own DNS, and
-certificates come from Let's Encrypt through your Cloudflare token — real
-certificates, which parts of the stack require.
+areas: "The three areas" {
+  direction: right
+  tandem: "Thinkube Tandem\na sentence to a running,\nreviewed change"
+  gitops: "Thinkube GitOps\napps from templates,\nbuilt and deployed from a push"
+  models: "Thinkube Models\nmodels served, notebooks,\nexperiments, fine-tuning"
+  tandem -> gitops: "ships by the\nsame pipeline"
+  models -> gitops: "a served model,\none endpoint"
+}
 
-Every internal reference points at a stable virtual IP, and the one value tied
-to the physical network — the kubelet's node IP — is rewritten at boot from
-the default route. Move the machine to a different router and it comes back
-up.
+base: "Thinkube Kubernetes" {
+  direction: right
+  label.near: bottom-center
+  identity: "Thinkube Identity\none sign-on"
+  registry: "Thinkube Registry\none registry"
+  storage: "Thinkube Storage\nand JuiceFS\none filesystem"
+  control: "thinkube-control\nevery task a sentence\nto Claude Code"
+  rest: "PostgreSQL\nThinkube Git · Argo\nGPUs"
+}
 
-== Storage
+areas.tandem -> base.identity: "reviewers sign in\nand drive the app"
+areas.gitops -> base.registry: "app images"
+areas.models -> base.registry: "model servers,\nnotebook images"
+areas.gitops -> base.storage: "mounts the storage\nit declares"
+areas.models -> base.storage: "datasets, weights,\nartifacts"
+....
 
-Thinkube Storage, powered by SeaweedFS, is S3-compatible object storage.
-JuiceFS puts a filesystem on top of it, and that filesystem is the workspace
-shared by Thinkube IDE, Thinkube Notebooks and thinkube-control. PostgreSQL
-holds relational data for the platform and for your applications.
+Two things are deliberately not in the picture. Tandem's workers run on Claude Code, not on a model served in the Models area, so there is no line from Models to Tandem. And thinkube-control is a service of the base, not a fifth area: it is how every box is driven, and it appears once.
 
-== Identity
+== What it saves you
 
-Thinkube Identity, powered by Keycloak, is the one login. Every service
-registers as a client, so you authenticate once and reach all of them.
+Each line in the picture is one thing you never do by hand.
 
-== The factory
+* *One filesystem.* Thinkube Storage is S3-compatible object storage, and JuiceFS puts a filesystem on it. A model you fetch lands there; a served model loads its weights from there; a notebook keeps its datasets and its experiment artifacts there; the workspace of Thinkube IDE is there. An app declares `storage` in its `thinkube.yaml` and mounts it. Nothing is copied from one area to another, because there is one place.
+* *One registry.* The pipeline pushes your app images to Thinkube Registry. The same registry holds the mirrored model servers and the notebook images you build from definitions. One credential, one policy, one place to look.
+* *One sign-on.* An app from the template, the notebooks, the dashboards and thinkube-control all register with Thinkube Identity. You sign in once. It is also why a Tandem reviewer can open your app in a browser at all: it signs in the same way you do.
+* *One endpoint for models.* A model served in the Models area is one address behind the LLM Gateway, and an app built in GitOps calls it the way a notebook does. Change the model, and the app does not change.
+* *One pipeline.* A push to Thinkube Git builds with Argo Workflows and deploys with ArgoCD. A template app takes that path; thinkube-control takes it; a Tandem delivery merges, pushes and takes it too, and Tandem's reviewers judge the result at the address the pipeline gave it.
+* *One way to drive it.* Every box above is a sentence to Claude Code, answered by thinkube-control over MCP. xref:how-it-works/mcp-operation-model.adoc[The MCP operation model] is how.
 
-Thinkube Git (Gitea) holds your repositories. Argo Workflows builds images
-from them and pushes to Thinkube Registry (Harbor). ArgoCD deploys what the
-repository says. Thinkube Packages (DevPI) serves private Python packages.
-Thinkube IDE (code-server) is where you work, with Claude Code installed.
-xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop] is how they
-connect.
+== Where it shows up
 
-== AI
+=== From a notebook to an app with a URL
 
-Thinkube Notebooks (JupyterHub) with environments built from definitions.
-Thinkube Experiments (MLflow) for runs and the model registry. The NVIDIA GPU
-Operator with time-slicing. The LLM Gateway, which loads models onto GPU
-nodes and exposes them as one endpoint.
-xref:how-it-works/gpu-multiarch.adoc[GPU & multi-arch] covers the budgeting.
+The lines are what make the path below possible without leaving the platform.
 
-== Control
+[d2,alt="From a notebook on the shared filesystem to experiments, a served model, an app that calls it, a push that deploys it, and Tandem changing it"]
+....
+direction: down
+notebook: "A notebook explores a question\non datasets in the shared filesystem"
+experiments: "Experiments record the runs and the model"
+served: "The model is served at one endpoint"
+app: "An app from the template calls the endpoint"
+deployed: "A push builds and deploys it at its own address"
+tandem: "Tandem changes it from sentences,\nand reviewers judge it there"
+notebook -> experiments -> served -> app -> deployed -> tandem
+....
 
-thinkube-control is the web UI and the MCP endpoint, one application. It
-reads the catalogues — models, optional components, images — from
-`thinkube-metadata`, and it ships through the same deploy loop as your
-applications.
+xref:playbooks/research-assistant.adoc[Build a research assistant, end to end] walks that path with real notebooks.
 
-== Core and optional components
+=== The base, layer by layer
 
-=== Core is the substrate
+*Before the cluster.* The installer runs on your laptop and deploys over SSH. Before Kubernetes exists it prepares each machine: grows the root volume Ubuntu leaves at 100 GB, sets up SSH between nodes, checks the NVIDIA driver, and on a DGX Spark applies the unified-memory tuning. It joins the machines to your Tailscale network. Then it moves the tokens you entered onto the control-plane host, so the machine you ran the installer from can be put away.
 
-Every optional component's requirements resolve into the core. Six need
-Thinkube Identity, five need PostgreSQL, five need Thinkube Registry. That
-substrate is what makes installing an optional component a single toggle
-rather than an afternoon of provisioning three datastores and registering an
-OIDC client. It is already running, already wired, already logged in.
+*The cluster.* kubeadm installs unmodified upstream Kubernetes. Cilium is the network and the load balancer. Routes are Gateway API. The cluster runs its own DNS, and certificates come from Let's Encrypt through your Cloudflare token. Every internal reference points at a stable virtual IP, and the one value tied to the physical network, the kubelet's node IP, is rewritten at boot from the default route. Move the machine to a different router and it comes back up. xref:how-it-works/kubernetes-underneath.adoc[Kubernetes underneath] is the detail.
 
-=== Optional is yours
+*Storage and data.* Thinkube Storage, powered by SeaweedFS, with JuiceFS on top for the shared filesystem. PostgreSQL holds relational data for the platform and for your applications.
 
-The catalogue has four categories — ai, data, infrastructure, monitoring —
-and each entry declares what it needs and carries three playbooks: install,
-test, uninstall. Every optional component can be removed the same way it
-arrived.
+*Identity.* Thinkube Identity, powered by Keycloak. Every service registers as a client.
 
-Where the platform has no business having an opinion, it offers a choice and
-makes none. Three vector stores. Four inference backends. Those are your
-architecture. xref:why/index.adoc[Why Thinkube]
-is the reasoning.
+*The factory.* Thinkube Git holds your repositories, Argo Workflows builds images, Thinkube Registry stores them, ArgoCD deploys what the repository says, Thinkube Packages serves private Python packages, and Thinkube IDE is where you work, with Claude Code installed. xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop] is how they connect.
 
-=== Nothing has to stay resident
+*GPUs.* The NVIDIA GPU Operator with time-slicing; xref:how-it-works/gpu-multiarch.adoc[GPU and multi-arch] covers the budgeting between served models and notebooks.
 
-Every optional component has a toggle that scales it to zero. The LLM Gateway
-unloads models. What is running on your machine is what you are using.
+*Control.* thinkube-control is the web UI and the MCP endpoint, one application. It reads the catalogues of models, optional components and images from `thinkube-metadata`, and it ships through the same deploy loop as your applications.
 
-On a DGX Spark, where GPU memory is host RAM, that is not housekeeping —
-every running component is AI capacity spent. Twenty components on a 128 GB
-machine would be absurd if they all had to run. They don't.
+=== Core and optional components
 
-=== The catalogue is data
+Every optional component's requirements resolve into the base: six need Thinkube Identity, five need PostgreSQL, five need Thinkube Registry. That is what makes installing one a single sentence rather than an afternoon of provisioning three datastores and registering a client. The catalogue has four categories, ai, data, infrastructure and monitoring, and each entry declares what it needs and carries three playbooks: install, test, uninstall. Every optional component can be removed the same way it arrived, and every one has a toggle that scales it to zero; the LLM Gateway unloads models. On a DGX Spark, where GPU memory is host RAM, every running component is AI capacity spent, so what is running is what you are using.
 
-The lists live in `thinkube-metadata` — `optional_components.json`,
-`models.json`, `mirror_images.json` — as a repository of their own.
-thinkube-control reads them. Adding a model or a component is a data change
-that ships independently of the platform.
+Where the platform has no business having an opinion, it offers a choice and makes none: three vector stores, four inference backends. xref:why/index.adoc[Why Thinkube] is the reasoning; xref:reference/components.adoc[the components catalog] lists every entry. The lists live in `thinkube-metadata` as a repository of their own, so adding a model or a component is a data change that ships independently of the platform.
 
-xref:reference/components.adoc[The components catalog] lists every entry.
-
-== What survives what
+=== What survives what
 
 [cols="2,1,1,1",options="header"]
 |===
 | | Pod restart | Cluster rebuild | `thinkube-wipe.sh`
 
-| The shared workspace | kept | kept | emptied
+| The shared filesystem | kept | kept | emptied
 | Data in Thinkube Storage | kept | kept | removed
-| Harbor, Keycloak, PostgreSQL volumes | kept | removed | removed
+| Registry, Identity and PostgreSQL volumes | kept | removed | removed
 | Ubuntu, your account, sshd, the NVIDIA driver | kept | kept | kept
 |===
 
-A cluster rebuild is `19_rollback_control.yaml` followed by a fresh install:
-your files stay, the platform's databases start over. The wipe script returns
-the machine to as close to a fresh Ubuntu Server as it can, home directory
-included.
+A cluster rebuild is `19_rollback_control.yaml` followed by a fresh install: your files stay, the platform's databases start over. The wipe script returns the machine to as close to a fresh Ubuntu Server as it can, home directory included.
+
+== Limits
+
+* Tandem's workers run on Claude Code; a locally served model is not one of their options.
+* An app reaches the shared data through the `storage` service it declares in `thinkube.yaml`; a container that declares none has no mount.

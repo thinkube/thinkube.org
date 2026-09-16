@@ -42,6 +42,7 @@ Use these exactly:
 | Write it | Not
 
 | Thinkube              | thinkube, ThinKube
+| Thinkube Kubernetes, Thinkube GitOps, Thinkube Models, Thinkube Tandem | the four areas of the platform; the base and the three on it. Not "thinkube k8s", not "the AI area"
 | thinkube-control      | Thinkube Control, the control panel app
 | Thinkube IDE          | code-server, Code Server, VS Code
 | Thinkube Notebooks    | the lab name the JupyterHub theme still shows, JupyterHub, Jupyter, the notebook server

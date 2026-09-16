@@ -19,7 +19,8 @@ Pages of the other four stay in their own repositories, beside the code they des
 ## Layout
 
 ```
-antora-playbook.yml      # the five content sources, the UI bundle, Kroki
+antora-playbook.yml      # the five content sources, the UI bundle, the d2 extension
+lib/d2-block.js          # renders [d2] blocks with the local d2 binary during the build
 antora.yml               # the component descriptor (name: thinkube-docs)
 modules/ROOT/nav.adoc    # the one sidebar; every page of every module is listed here once
 modules/ROOT/pages/      # the site's own pages
@@ -34,6 +35,8 @@ Dockerfile               # builds the site and serves it on nginx :8080 inside t
 ```bash
 npx --no-install antora --fetch antora-playbook.yml   # output in build/site
 ```
+
+Diagrams are `[d2,alt="…"]` literal blocks in the page. `lib/d2-block.js` runs the `d2` binary (v0.9.0, ELK layout) on each one and embeds the SVG, so the build needs `d2` on PATH: the Dockerfile and the Pages workflow install it, and Thinkube IDE's image carries it. A missing binary or a diagram d2 rejects stops the build with d2's own message. The Tandem docs carry the same extension in `docs/lib/d2-block.js`; a change to one is made to both.
 
 The build must print no warnings. `--fetch` pulls the other four repositories from GitHub, so a change in one of them is seen here only after it is pushed. To build from local working trees, write a playbook that points each source at its local path with `branches: HEAD`.
 

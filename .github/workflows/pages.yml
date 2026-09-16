@@ -36,6 +36,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # lib/d2-block.js renders the [d2] diagram blocks with the d2 binary.
+      - name: Install d2
+        run: |
+          curl --retry 5 --retry-delay 5 --retry-all-errors -fsSL \
+            https://github.com/terrastruct/d2/releases/download/v0.9.0/d2-v0.9.0-linux-amd64.tar.gz \
+            -o /tmp/d2.tar.gz
+          tar -xzf /tmp/d2.tar.gz -C /tmp
+          sudo install -m 0755 /tmp/d2-v0.9.0/bin/d2 /usr/local/bin/d2
+          d2 --version
+
       # GitHub Pages serves this repo under the /thinkube.org/ path, so build
       # with that base via Antora's --url flag (the cluster build uses "/").
       - name: Build Antora site (base /thinkube.org/)

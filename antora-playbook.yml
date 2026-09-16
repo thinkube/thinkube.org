@@ -43,13 +43,9 @@ ui:
 
 asciidoc:
   extensions:
-    - asciidoctor-kroki
-  attributes:
-    # d2 diagrams are rendered via a Kroki server and fetched at BUILD time so
-    # the published site embeds the image and needs no runtime Kroki access.
-    kroki-server-url: https://kroki.io
-    kroki-fetch-diagram: true
-    kroki-default-format: svg
+    # [d2] blocks are rendered by the local d2 binary during the build and
+    # embedded as SVG; the build needs d2 on PATH and nothing on the network.
+    - ./lib/d2-block.js
 
 output:
   dir: ./build/site

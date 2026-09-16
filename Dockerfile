@@ -8,7 +8,24 @@ WORKDIR /app
 # git: Antora reads its content source from a git repo. We init a throwaway one
 # below so the build is self-contained regardless of whether the deploy context
 # carried .git (the Copier sync may not).
-RUN apk add --no-cache git
+RUN apk add --no-cache git curl
+
+# d2: renders the [d2] diagram blocks during the Antora build (lib/d2-block.js).
+# Pinned static release for the build's architecture.
+ARG D2_VERSION=v0.9.0
+RUN ARCH="$(uname -m)" && \
+    case "$ARCH" in \
+        x86_64) D2_ARCH="amd64" ;; \
+        aarch64) D2_ARCH="arm64" ;; \
+        *) echo "Unsupported arch: $ARCH" >&2; exit 1 ;; \
+    esac && \
+    curl --retry 5 --retry-delay 5 --retry-all-errors -fsSL \
+        "https://github.com/terrastruct/d2/releases/download/${D2_VERSION}/d2-${D2_VERSION}-linux-${D2_ARCH}.tar.gz" \
+        -o /tmp/d2.tar.gz && \
+    tar -xzf /tmp/d2.tar.gz -C /tmp && \
+    install -m 0755 "/tmp/d2-${D2_VERSION}/bin/d2" /usr/local/bin/d2 && \
+    rm -rf /tmp/d2.tar.gz "/tmp/d2-${D2_VERSION}" && \
+    d2 --version
 
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -19,9 +36,8 @@ COPY . .
 ENV NODE_ENV=production
 
 # Give Antora a git HEAD to read, then build. `npm run build` runs
-# `antora --fetch`, which fetches the UI bundle and renders d2 diagrams via the
-# Kroki server — the cluster build has external egress (the previous Astro build
-# already curl'd d2lang.com and ran npm ci). Base path is "/" for the cluster
+# `antora --fetch`, which fetches the content sources and the UI bundle and
+# renders the [d2] blocks with the d2 binary above. Base path is "/" for the cluster
 # (GitHub Pages overrides it with `--url /thinkube.org/` in its own workflow).
 # kaniko unpacks the rootfs so /app's owner differs from the uid running git,
 # which makes git abort with "detected dubious ownership"; mark it safe first.
