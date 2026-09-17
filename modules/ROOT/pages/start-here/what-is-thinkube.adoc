@@ -8,7 +8,7 @@ Open Thinkube IDE in your browser, start Claude Code, and say what you want: _"g
 
 == Four areas on one base
 
-[d2,alt="Thinkube Tandem and Thinkube Models both lead to Thinkube GitOps, and all three share Thinkube Kubernetes: thinkube-control, Thinkube Identity, Thinkube Registry, Thinkube Storage, Thinkube Git with Argo, PostgreSQL and the GPUs"]
+[d2,alt="Thinkube Tandem and Thinkube Models both lead to Thinkube GitOps, and all three share Thinkube Kubernetes: thinkube-control, Thinkube Identity, Thinkube Registry, Thinkube Storage with JuiceFS on it, Thinkube Git with Argo, PostgreSQL and the GPUs"]
 ....
 direction: down
 
@@ -25,14 +25,16 @@ areas: "" {
 }
 
 base: "Thinkube Kubernetes: what every area shares" {
-  grid-columns: 3
-  grid-gap: 16
-  control: "thinkube-control\nrun from Claude Code" {width: 220; height: 76}
-  identity: "Thinkube Identity\none sign-on" {width: 220; height: 76}
-  registry: "Thinkube Registry\none registry" {width: 220; height: 76}
-  storage: "Thinkube Storage, JuiceFS\none filesystem" {width: 220; height: 76}
-  pipeline: "Thinkube Git, Argo\none pipeline" {width: 220; height: 76}
-  gpus: "PostgreSQL, GPUs" {width: 220; height: 76}
+  grid-columns: 4
+  grid-gap: 14
+  control: "thinkube-control\nrun from Claude Code" {width: 172; height: 76}
+  identity: "Thinkube Identity\none sign-on" {width: 172; height: 76}
+  registry: "Thinkube Registry\ncontainer images" {width: 172; height: 76}
+  pipeline: "Thinkube Git, Argo\none pipeline" {width: 172; height: 76}
+  storage: "Thinkube Storage\nobject storage" {width: 172; height: 76}
+  juicefs: "JuiceFS\na filesystem on it" {width: 172; height: 76}
+  data: "PostgreSQL\na database per app" {width: 172; height: 76}
+  gpus: "GPU Operator\nGPUs as slots" {width: 172; height: 76}
 }
 
 areas -> base

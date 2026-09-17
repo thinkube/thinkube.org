@@ -30,7 +30,7 @@ image::cp-components.png[The Optional Components page of thinkube-control]
 | ArgoCD | ArgoCD | Deploys what Git says
 | PostgreSQL | PostgreSQL | Relational storage for the platform and your apps
 | Thinkube Storage | SeaweedFS | S3-compatible; models and artifacts
-| JuiceFS | JuiceFS | The workspace shared by the three pillars, on SeaweedFS
+| JuiceFS | JuiceFS | A POSIX filesystem on SeaweedFS, shared by every area; its metadata is in PostgreSQL
 | Thinkube Packages | DevPI | Private Python packages
 | Thinkube Notebooks | JupyterHub | Notebooks and environments
 | Thinkube Experiments | MLflow | Runs, registered models, the model registry

@@ -8,7 +8,7 @@ The base of the platform: unmodified upstream Kubernetes on your machines, with 
 
 Ask Claude: _"what's running?"_ Claude calls `list_services_minimal` and answers with every service of the base and everything you added: Thinkube Identity, Thinkube Storage and JuiceFS, Thinkube Registry, Thinkube Git, Argo Workflows and ArgoCD, PostgreSQL, the GPU Operator, Thinkube IDE, Thinkube Notebooks, Thinkube Experiments, Thinkube Packages, your optional components and your apps.
 
-[d2,alt="Thinkube GitOps, Thinkube Models and Thinkube Tandem use Thinkube Kubernetes, which provides thinkube-control, Thinkube Identity, the gateway with one certificate, Thinkube Storage and JuiceFS, Thinkube Registry for container images, PostgreSQL, Thinkube Git, Argo and the GPU Operator"]
+[d2,alt="Thinkube GitOps, Thinkube Models and Thinkube Tandem use Thinkube Kubernetes, which provides thinkube-control, Thinkube Identity, the gateway with one certificate, Thinkube Storage for objects with JuiceFS as a filesystem on it, Thinkube Registry for container images, PostgreSQL, Thinkube Git, Argo and the GPU Operator"]
 ....
 direction: down
 
@@ -20,11 +20,11 @@ base: "Thinkube Kubernetes" {
   control: "thinkube-control\nrun from Claude Code" {width: 210; height: 76}
   identity: "Thinkube Identity\none sign-on" {width: 210; height: 76}
   gateway: "Gateway\none certificate" {width: 210; height: 76}
-  storage: "Thinkube Storage\nand JuiceFS" {width: 210; height: 76}
+  storage: "Thinkube Storage\nobject storage" {width: 210; height: 76}
+  juicefs: "JuiceFS\na filesystem on it" {width: 210; height: 76}
   registry: "Thinkube Registry\ncontainer images" {width: 210; height: 76}
-  data: "PostgreSQL\none server, a database per app" {width: 210; height: 76}
-  git: "Thinkube Git\nyour repositories" {width: 210; height: 76}
-  argo: "Argo\nbuild and deploy" {width: 210; height: 76}
+  data: "PostgreSQL\na database per app" {width: 210; height: 76}
+  git: "Thinkube Git, Argo\nrepositories, builds, deploys" {width: 210; height: 76}
   gpus: "GPU Operator\nGPUs as slots" {width: 210; height: 76}
 }
 
