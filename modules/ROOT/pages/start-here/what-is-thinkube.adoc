@@ -30,7 +30,7 @@ base: "Thinkube Kubernetes: what every area shares" {
   control: "thinkube-control\nrun from Claude Code" {width: 220; height: 76}
   identity: "Thinkube Identity\none sign-on" {width: 220; height: 76}
   registry: "Thinkube Registry\none registry" {width: 220; height: 76}
-  storage: "Thinkube Storage\none filesystem" {width: 220; height: 76}
+  storage: "Thinkube Storage, JuiceFS\none filesystem" {width: 220; height: 76}
   pipeline: "Thinkube Git, Argo\none pipeline" {width: 220; height: 76}
   gpus: "PostgreSQL, GPUs" {width: 220; height: 76}
 }

@@ -8,7 +8,7 @@ Push to git, and it runs. An application goes from a template to its own address
 
 Ask Claude: _"make an app called notes from the web app template"_. A repository named `notes` appears in Thinkube Git, is built, deployed and given `notes.<your domain>` behind your login, with a PostgreSQL database of its own, and is checked out under `apps/notes` in your workspace. Edit it and push; the push builds and deploys.
 
-[d2,alt="thinkube.yaml becomes k8s/ in your repository in Thinkube Git; a push makes Argo Workflows build the images, Thinkube Registry tags them, and ArgoCD runs what k8s/ says at notes.<your domain> with a certificate and a login"]
+[d2,alt="thinkube.yaml becomes k8s/ in your repository in Thinkube Git; a push makes Argo Workflows build the images, Thinkube Registry holds them, and ArgoCD runs what k8s/ says at notes.<your domain> with a certificate and a login"]
 ....
 grid-rows: 2
 grid-columns: 3
@@ -19,7 +19,7 @@ repo: "Your repository\nin Thinkube Git" {width: 210; height: 80}
 build: "Argo Workflows\nbuilds the images" {width: 210; height: 80}
 app: "notes.<your domain>\ncertificate and login" {width: 210; height: 80}
 deploy: "ArgoCD\nruns what k8s/ says" {width: 210; height: 80}
-registry: "Thinkube Registry\ntags the new images" {width: 210; height: 80}
+registry: "Thinkube Registry\nholds the new images" {width: 210; height: 80}
 yaml -> repo
 repo -> build
 build -> registry
