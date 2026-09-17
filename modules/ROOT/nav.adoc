@@ -67,9 +67,9 @@
 .Thinkube Tandem
 * xref:tandem:index.adoc[Thinkube Tandem]
 * Using Tandem
-** xref:tandem:getting-started.adoc[Your first thing built]
+** xref:tandem:build-your-first-change-with-tandem.adoc[Build your first change with Tandem]
 ** xref:tandem:from-sentence-to-promise.adoc[How a sentence becomes a promise]
-** xref:tandem:what-the-work-noticed.adoc[Taking up what the work noticed]
+** xref:tandem:turn-what-the-reviewers-noticed-into-the-next-change.adoc[Turn what the reviewers noticed into the next change]
 ** xref:tandem:the-run.adoc[While it builds]
 ** xref:tandem:the-report.adoc[Reading the report and deciding]
 ** xref:tandem:words-on-the-page.adoc[The words on the page]
