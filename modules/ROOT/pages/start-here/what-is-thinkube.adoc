@@ -27,14 +27,14 @@ areas: "" {
 base: "Thinkube Kubernetes: what every area shares" {
   grid-columns: 4
   grid-gap: 14
-  control: "thinkube-control\nrun from Claude Code" {width: 172; height: 76}
-  identity: "Thinkube Identity\none sign-on" {width: 172; height: 76}
-  registry: "Thinkube Registry\ncontainer images" {width: 172; height: 76}
-  pipeline: "Thinkube Git, Argo\none pipeline" {width: 172; height: 76}
-  storage: "Thinkube Storage\nobject storage" {width: 172; height: 76}
-  juicefs: "JuiceFS\na filesystem on it" {width: 172; height: 76}
-  data: "PostgreSQL\na database per app" {width: 172; height: 76}
-  gpus: "GPU Operator\nGPUs as slots" {width: 172; height: 76}
+  control: "thinkube-control\nrun from Claude Code" {width: 166; height: 76}
+  identity: "Thinkube Identity\none sign-on" {width: 166; height: 76}
+  registry: "Thinkube Registry\ncontainer images" {width: 166; height: 76}
+  pipeline: "Thinkube Git, Argo\none pipeline" {width: 166; height: 76}
+  storage: "Thinkube Storage\nobject storage" {width: 166; height: 76}
+  juicefs: "JuiceFS\na filesystem on it" {width: 166; height: 76}
+  data: "PostgreSQL\na database per app" {width: 166; height: 76}
+  gpus: "GPU Operator\nGPUs as slots" {width: 166; height: 76}
 }
 
 areas -> base
