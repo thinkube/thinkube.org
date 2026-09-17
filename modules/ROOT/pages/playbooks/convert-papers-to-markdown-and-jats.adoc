@@ -1,0 +1,286 @@
+= Convert papers to Markdown and JATS XML
+:page-type: playbook
+:page-area: gitops
+:page-tagline: Turn PDF papers into structured text with Docling, on CPU in a pipeline step or with a vision model on your GPU
+:page-difficulty: intermediate
+:page-time: 15 min
+:page-time-note: plus 82 s the first time a standard conversion downloads Docling's models
+:page-risk: low
+:page-tags: Docling, Argo Workflows, LLM Gateway
+:page-order: 80
+:page-updated: 2026-09-17
+
+== Overview
+
+=== Basic idea
+
+A PDF stores where text sits on a page, not what the text is. To search papers, index them for a research assistant or deposit them in a repository, you need the structure back: title, abstract, sections, tables, figure captions, references. Docling, an open-source toolkit started at IBM Research, recovers that structure and writes it as Markdown, HTML or JSON. The app adds JATS XML, the tag set PubMed Central uses for articles.
+
+The Docling template is a complete app, and it shows how the parts of Thinkube work together:
+
+* *The web app template.* A page to upload a PDF and read the results, a login through Thinkube Identity, a history in PostgreSQL, and API tokens for scripts.
+* *Argo Workflows.* Each conversion runs as a workflow step in the app's own image, so a long conversion never holds a web request open.
+* *Thinkube Storage.* The PDF, the outputs and Docling's models reach the step as artifacts. The step needs no storage credentials.
+* *The LLM Gateway.* Granite-Docling, a 258M vision-language model, reads each page image on a GPU. The step sends one request per page, as a client of the gateway.
+
+[d2,alt="The page and the API submit a conversion; Argo Workflows runs the step in the app's image; the step reads the PDF and models from Thinkube Storage, writes the outputs back, and for Granite-Docling calls the LLM Gateway, which runs the model on a GPU"]
+....
+grid-rows: 2
+grid-columns: 3
+horizontal-gap: 44
+vertical-gap: 56
+app: "docling app\npage, API, history" {width: 210; height: 80}
+argo: "Argo Workflows\none step per PDF" {width: 210; height: 80}
+step: "Conversion step\nthe app's image" {width: 210; height: 80}
+gpu: "Granite-Docling\nvLLM on a GPU" {width: 210; height: 80}
+gateway: "LLM Gateway\none request per page" {width: 210; height: 80}
+storage: "Thinkube Storage\nPDF, models, outputs" {width: 210; height: 80}
+app -> argo
+argo -> step
+step -> storage
+step -> gateway
+gateway -> gpu
+....
+
+=== What you'll accomplish
+
+You load Granite-Docling on an RTX 3090, deploy the app as `docling`, convert an open-access medical paper with both pipelines, and check that the JATS output is valid against the JATS 1.4 schema.
+
+=== What to know before starting
+
+*Required*
+
+* Asking Claude Code in Thinkube IDE to do things on the platform.
+
+*Optional*
+
+* xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app]: the `workflows` service the conversion steps use.
+* xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: the load options.
+* xref:webapp-template:variables.adoc[How configuration reaches your app]: secrets and dependencies.
+
+=== Supported hardware
+
+[cols="1,1,1,2",options="header"]
+|===
+| Node | Architecture | GPU | On the reference run
+
+| tkamd1 | amd64 | none | —
+| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | Granite-Docling, served by vLLM
+| tkspark | arm64 | GB10, 121.7 GB unified | the conversion steps
+|===
+
+The conversion steps need no GPU and run on any node; the app's image is built for amd64 and arm64. Granite-Docling's weights take 0.49 GiB.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
+* A thinkube-control API token stored as `THINKUBE_API_TOKEN` on the Secrets page, for the Granite-Docling pipeline. Ask Claude: _"is THINKUBE_API_TOKEN on the Secrets page?"_ If not, create a token under *API Tokens* in thinkube-control and add it on *Secrets*. Without it, the app offers only the standard pipeline.
+
+*Components*
+
+* vLLM. Ask Claude: _"is vLLM installed?"_ If it is not, ask _"install vLLM"_.
+
+=== Time & risk
+
+* *Estimated time:* 15 min. Mirroring Granite-Docling took 60 s and the engine was serving about a minute after the load. The deploy took 309.8 s; redeploys took 254.7 and 274.1 s. The standard pipeline converted the 15-page paper in 58.1 and 124.8 s on two runs; Granite-Docling in 15.2 s.
+* *Risk level:* Low. The app is isolated in its own namespace, `docling`. The model load uses one vLLM deployment on tkamd2: the node serves no other vLLM model while Granite-Docling is loaded.
+* *Rollback:* Unload the model with _"unload ibm-granite/granite-docling-258M"_, and delete the app from thinkube-control.
+* *Last updated:* 2026-09-17. Measured on one mirror, one load, three deploys and four conversions.
+
+== Instructions
+
+=== Step 1. Load Granite-Docling
+
+Granite-Docling answers through the gateway like any chat model: it takes a page image and returns DocTags, Docling's markup for layout, tables and formulas. It is in the model catalogue, served by vLLM.
+
+Ask Claude:
+
+----
+› mirror ibm-granite/granite-docling-258M and load it on tkamd2 with an 8k context
+----
+
+Claude calls `submit_model_mirror`, follows `get_mirror_status`, then calls `load_llm_model` and follows `get_llm_model_status` until the state is `available`.
+
+Expected output, from the reference run:
+
+----
+status: succeeded          (mirror, 60 s)
+state: loading
+message: Loading on tkamd2 with a 8192 token context; this takes some minutes
+backend_id: vllm-tkamd2
+----
+
+The engine's log on the reference run:
+
+----
+Model loading took 0.49 GiB memory and 7.895869 seconds
+GPU KV cache size: 993,248 tokens
+----
+
+The load sets aside 95% of one RTX 3090's memory for the model and its cache.
+
+=== Step 2. Deploy the app
+
+Ask Claude:
+
+----
+› make an app called docling from the Docling template
+----
+
+Claude calls `deploy_template` with `https://github.com/thinkube/tkt-docling` and follows `get_deployment_status` until it reports `success`.
+
+Expected output, from the reference run:
+
+----
+status: success
+output: Deployment completed successfully
+duration: 309.8
+----
+
+The app's `thinkube.yaml` declares what it needs from the platform, and the platform provides it:
+
+[source,yaml]
+----
+services:
+  - database
+  - workflows            # each conversion is a workflow step
+
+dependencies:
+  - name: llm-gateway
+    type: llm-proxy      # resolved to the gateway's address in the cluster
+    env: LLM_GATEWAY_URL
+
+env:
+  - name: GRANITE_DOCLING_MODEL
+    default: "ibm-granite/granite-docling-258M"
+----
+
+Its `manifest.yaml` declares `THINKUBE_API_TOKEN` under `secrets`, so the deploy copies that secret into the app.
+
+=== Step 3. Convert a paper on the page
+
+The paper is a study protocol from PLOS ONE, _Impact of two endotracheal tube fixation on the incidence of peri-oral lesions_ (doi:10.1371/journal.pone.0297349, CC BY 4.0), 15 pages with a structured abstract, figures and 23 references.
+
+Open `https://docling.<your domain>/` and sign in. Drop the PDF on *New conversion*, leave *Standard* and the formats *Markdown* and *JATS XML*, and press *Convert*. The row shows *Queued*, then *Running*, then *Done* with the page count and the time Docling took.
+
+image::docling-conversions.png[The Docling app's Conversions page: the New conversion form with the Standard and Granite-Docling pipelines and six output formats, and a finished conversion of pone.0297349.pdf, Standard, Done, 15 pages in 58.1 s, with Markdown and JATS XML buttons]
+
+Each format button opens the output, with a *Download* button:
+
+image::docling-jats-preview.png[The JATS XML output in a dialog: an article with dtd-version 1.4 whose abstract has the sections Background and Methods]
+
+The first standard conversion also runs a `prepare-models` step, 82 s on the reference run, which downloads Docling's layout and table models into the app's space in Thinkube Storage. Later conversions read them from there.
+
+=== Step 4. Convert with Granite-Docling through the API
+
+The page and the API are the same endpoints. Create a token on the app's *API Tokens* page and give it to Claude as `DOCLING_TOKEN`.
+
+Ask Claude:
+
+----
+› convert pone.0297349.pdf in docling with granite-docling to every format, using the token in DOCLING_TOKEN, and download the results
+----
+
+Claude posts the file to `/api/v1/conversions`, reads the conversion until it is `succeeded`, and downloads each output.
+
+Expected output, from the reference run:
+
+----
+$ curl -H "Authorization: Bearer $DOCLING_TOKEN" -F file=@pone.0297349.pdf \
+    -F pipeline=granite-docling -F formats=markdown,html,text,json,doctags,jats \
+    https://docling.thinkube.com/api/v1/conversions
+{"id":"6c750aed-…","pipeline":"granite-docling","status":"queued",
+ "workflow_name":"docling-convert-n5bnc",…}
+
+$ curl -H "Authorization: Bearer $DOCLING_TOKEN" https://docling.thinkube.com/api/v1/conversions/6c750aed-…
+{"status":"succeeded","pages":15,"seconds":15.2,…}
+
+markdown 43832 bytes   html 49076   text 43638   json 692300   doctags 61242   jats 50812
+----
+
+[cols="1,2",options="header"]
+|===
+| Call | Does
+
+| `GET /api/v1/conversions/options` | The pipelines and formats, and whether Granite-Docling is available.
+| `POST /api/v1/conversions` with `file`, `pipeline`, `formats` | Stores the PDF and submits its workflow.
+| `GET /api/v1/conversions` | Your conversions, newest first, with their status.
+| `GET /api/v1/conversions/<id>/outputs/<format>` | One output; add `?download=true` for a file name.
+| `DELETE /api/v1/conversions/<id>` | Removes the conversion, its PDF and its outputs.
+|===
+
+=== Step 5. Compare the two pipelines
+
+The pipelines read a page in different ways. The standard pipeline finds the layout with Docling's models and takes the text from the PDF's own text layer; Granite-Docling reads the page image and returns layout and text together. On this paper the text layer splits accented letters, and the image does not.
+
+Ask Claude:
+
+----
+› compare the affiliations line in docling's standard and granite-docling Markdown for pone.0297349.pdf
+----
+
+Expected output, from the reference run:
+
+----
+standard         1 Service de Me ´decine Intensive Re ´ animation, …
+granite-docling  1 Service de Médecine Intensive Réanimation, …
+----
+
+[cols="1,1,1",options="header"]
+|===
+| On the reference run | Standard | Granite-Docling
+
+| Runs on | CPU, in the step | a GPU, through the gateway
+| Docling time for 15 pages | 58.1 and 124.8 s | 15.2 s
+| Whole workflow | 99 and 162 s | 38 s
+| Needs | Docling's models in Thinkube Storage | the model loaded, `THINKUBE_API_TOKEN`
+|===
+
+=== Step 6. Check the JATS output
+
+Docling reads JATS but does not write it; the template maps Docling's document onto JATS 1.4 and validates the result in its tests.
+
+Ask Claude:
+
+----
+› validate docling's JATS output for pone.0297349.pdf against JATS Archiving 1.4 and compare it with the publisher's JATS for the same article
+----
+
+Expected output, from the reference run, for the standard pipeline:
+
+[cols="2,1,1",options="header"]
+|===
+| | docling | Publisher
+
+| Valid against JATS Archiving 1.4 | yes | —
+| Abstract sections | Background, Methods, Discussion, Trial registration | the same
+| References | 23 | 23
+| Figures | 3 | 3
+| Article title | — | present
+| Sections in the body | 15, all at one level | 30, under 4 at the top
+|===
+
+The Granite-Docling output is valid too, with the same abstract sections and 23 references, and 2 figures.
+
+The front matter, the part before the abstract, is kept as text in `<notes notes-type="front-matter">`. This paper's first page names no title that Docling labels as one.
+
+=== Step 7. Next steps
+
+* xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers]: index the Markdown in a vector store and ask questions with sources.
+* xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app]: the workflows service on its own.
+* xref:reference/templates.adoc[Templates catalog]: every template you can deploy.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| A Granite-Docling call through the gateway answers text with no structure: no `<doctag>`, `<text>` or `<section_header_level_1>` tags, and Docling's Markdown comes back empty
+| The request asked the server to strip special tokens, `skip_special_tokens: true`; this model's DocTags tags are special tokens
+| Send `skip_special_tokens: false`. The app's conversion step does.
+|===
+
+A PDF gives Docling what is printed, in reading order: authors, affiliations and journal details come out as text rather than metadata fields, each reference is one `<mixed-citation>` string, a first-page sidebar can land inside the abstract, and figures carry their captions without the images. The standard pipeline runs no OCR, so it needs a PDF with a text layer.

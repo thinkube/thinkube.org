@@ -20,6 +20,7 @@
 ** xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app]
 ** xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service]
 ** xref:playbooks/store-and-fetch-files.adoc[Store and fetch files with the file gateway]
+** xref:playbooks/convert-papers-to-markdown-and-jats.adoc[Convert papers to Markdown and JATS XML]
 * xref:lifecycle/index.adoc[Thinkube Models]
 ** xref:playbooks/serve-your-first-model.adoc[Serve your first model]
 ** xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]
