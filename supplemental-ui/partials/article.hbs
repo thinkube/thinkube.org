@@ -1,17 +1,18 @@
 <article class="doc{{#with page.attributes.type}} doc--{{this}}{{/with}}{{#with page.attributes.area}} area-{{this}}{{/with}}">
 {{#if (eq page.attributes.type 'playbook')}}
 <header class="playbook-head">
-  <div class="playbook-meta">
-    <span class="area-chip">{{area-name page.attributes.area}}</span>
-    <span class="badge">{{page.attributes.difficulty}}</span>
-    <span class="badge badge-time" title="Measured on the reference cluster">{{page.attributes.time}}{{#with page.attributes.time-note}} · {{this}}{{/with}}</span>
-    <span class="badge badge-risk">risk: {{page.attributes.risk}}</span>
-  </div>
+  <p class="playbook-kicker">{{area-name page.attributes.area}}</p>
 {{#with page.title}}
   <h1 class="page">{{{this}}}</h1>
 {{/with}}
   <p class="playbook-tagline">{{page.attributes.tagline}}</p>
-  <p class="playbook-tags">{{#each (split page.attributes.tags)}}<span class="tag">{{this}}</span>{{/each}}<span class="playbook-updated">Updated {{page.attributes.updated}}</span></p>
+  <dl class="playbook-facts">
+    <div><dt>Level</dt><dd class="cap">{{page.attributes.difficulty}}</dd></div>
+    <div><dt>Time</dt><dd title="Measured on the reference cluster">{{page.attributes.time}}{{#with page.attributes.time-note}}<span class="facts-note">, {{this}}</span>{{/with}}</dd></div>
+    <div><dt>Risk</dt><dd class="cap">{{page.attributes.risk}}</dd></div>
+    <div><dt>Updated</dt><dd>{{page.attributes.updated}}</dd></div>
+  </dl>
+  <p class="playbook-tags">{{#each (split page.attributes.tags)}}<span class="tag">{{this}}</span>{{/each}}</p>
 </header>
 {{else}}
 {{#with page.attributes.type}}

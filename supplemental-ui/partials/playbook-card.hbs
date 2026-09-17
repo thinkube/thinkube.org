@@ -1,8 +1,7 @@
 <a class="card playbook-card area-{{area}}" data-area="{{area}}" href="{{{relativize url}}}">
   <span class="card-kicker">{{area-name area}}</span>
-  <span class="card-badges"><span class="badge">{{difficulty}}</span><span class="badge badge-time">{{time}}</span></span>
   <h3 class="card-title">{{{title}}}</h3>
   <p class="card-desc">{{tagline}}</p>
   <span class="card-tags">{{#each tags}}<span class="tag">{{this}}</span>{{/each}}</span>
-  <span class="card-updated">Updated {{updated}}</span>
+  <span class="card-meta"><span class="card-level">{{difficulty}}</span><span class="card-time">{{time}}</span><span class="card-updated">{{updated}}</span></span>
 </a>

@@ -100,6 +100,11 @@ code, pre, kbd, .colist > table code {
   margin-top: 2px;
 }
 
+body.home { position: relative; }
+body.home #dgx-stamp { position: absolute; top: 7.5rem; bottom: auto; right: 3rem; }
+@media (max-width: 1240px) {
+  body.home #dgx-stamp { display: none; }
+}
 @media (max-width: 1024px) {
   #dgx-stamp { display: none; }
 }
@@ -107,15 +112,16 @@ code, pre, kbd, .colist > table code {
 /* ---- Page types and areas --------------------------------------------------
    Every page declares :page-type:; article.hbs adds `doc--<type>`. A playbook
    also declares :page-area:, which adds `area-<area>` and sets --area, the one
-   colour its header, card and tabs are drawn in. */
-.area-kubernetes { --area: #326ce5; }
-.area-gitops     { --area: #b3561a; }
-.area-models     { --area: #1b7a50; }
-.area-tandem     { --area: #7a4fb0; }
-html[data-theme="dark"] .area-kubernetes { --area: #80a6f4; }
-html[data-theme="dark"] .area-gitops     { --area: #e58a47; }
-html[data-theme="dark"] .area-models     { --area: #4cc28c; }
-html[data-theme="dark"] .area-tandem     { --area: #b896df; }
+   colour its kicker, card rule and tab are drawn in. The four sit close to the
+   brand teal in saturation and lightness, so a page of cards reads as one set. */
+.area-kubernetes { --area: #3b6ea5; }
+.area-gitops     { --area: #b8623f; }
+.area-models     { --area: #1a6b7c; }
+.area-tandem     { --area: #6f5c9a; }
+html[data-theme="dark"] .area-kubernetes { --area: #8fb3e0; }
+html[data-theme="dark"] .area-gitops     { --area: #e39a7a; }
+html[data-theme="dark"] .area-models     { --area: #5cc0cf; }
+html[data-theme="dark"] .area-tandem     { --area: #b3a2d9; }
 
 .page-type-badge {
   display: inline-block;
@@ -132,60 +138,84 @@ html[data-theme="dark"] .area-tandem     { --area: #b896df; }
   border-top: 4px solid var(--th-primary);
 }
 
-/* Playbook page header */
-.doc--playbook { padding-top: 1rem; border-top: 4px solid var(--area); }
-.playbook-head { margin-bottom: 1.5rem; }
-.playbook-meta { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; margin-bottom: .9rem; }
-.area-chip {
-  font: 700 .7rem/1 "Poppins", sans-serif; letter-spacing: .1em; text-transform: uppercase;
-  padding: .42rem .7rem; background: var(--area); color: #fff;
+/* Playbook page header: kicker, title, tagline, one line of facts, tags */
+.doc--playbook { padding-top: 1.25rem; border-top: 3px solid var(--area); }
+.playbook-head { margin-bottom: 1.75rem; }
+.playbook-kicker {
+  font: 700 .74rem/1 "Poppins", sans-serif; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--area); margin: 0 0 .6rem;
 }
-.badge {
-  font: 600 .68rem/1 "Poppins", sans-serif; letter-spacing: .06em; text-transform: uppercase;
-  padding: .36rem .55rem; border: 1px solid #d9d4cc; color: #4a4a4a; background: #fff;
+.doc--playbook h1.page { margin-top: 0; }
+.playbook-tagline { font-size: 1.12rem; line-height: 1.5; color: #4a4a4a; margin: .4rem 0 1.1rem; max-width: 46rem; }
+.playbook-facts {
+  display: flex; flex-wrap: wrap; gap: .5rem 0; margin: 0 0 .9rem; padding: .7rem 0;
+  border-top: 1px solid #e6e2dc; border-bottom: 1px solid #e6e2dc; font-size: .88rem;
 }
-.badge-time::before { content: "◷ "; }
-.doc--playbook h1.page { margin-top: .2rem; }
-.playbook-tagline { font-size: 1.1rem; color: #4a4a4a; margin: .3rem 0 .7rem; }
-.playbook-tags { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; margin: 0; }
-.tag { font-size: .75rem; padding: .2rem .5rem; background: #f1ede6; color: #555; }
-.playbook-updated { margin-left: auto; font-size: .78rem; color: #8a8a8a; }
+.playbook-facts > div { display: flex; gap: .4rem; padding-right: 1.1rem; margin-right: 1.1rem; border-right: 1px solid #e6e2dc; }
+.playbook-facts > div:last-child { border-right: 0; margin-right: 0; padding-right: 0; }
+.playbook-facts dt { color: #8a8a8a; margin: 0; }
+.playbook-facts dd { margin: 0; color: #333; font-weight: 600; }
+.playbook-facts dd.cap { text-transform: capitalize; }
+.playbook-facts dd .facts-note { font-weight: 400; text-transform: none; color: #6a6a6a; }
+.playbook-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; }
+.tag { font-size: .76rem; line-height: 1; padding: .32rem .55rem; background: #f1ede6; color: #5a5a5a; }
 
 /* Playbook tabs: head-meta.hbs turns the three sections into tabs */
-.playbook-tabs { display: flex; gap: 0; margin: 1.25rem 0 0; border-bottom: 2px solid #e6e2dc; }
+.playbook-tabs { display: flex; gap: .25rem; margin: 1.5rem 0 0; border-bottom: 1px solid #e6e2dc; }
 .playbook-tab {
-  font: 600 .95rem/1 "Poppins", sans-serif; padding: .8rem 1.2rem; cursor: pointer;
-  background: transparent; border: none; border-bottom: 3px solid transparent;
-  margin-bottom: -2px; color: #555;
+  font: 600 .95rem/1 "Poppins", sans-serif; padding: .85rem 1.1rem; cursor: pointer;
+  background: transparent; border: none; border-bottom: 2px solid transparent;
+  margin-bottom: -1px; color: #6a6a6a; transition: color .12s ease;
 }
+.playbook-tab:hover { color: var(--th-primary); }
 .playbook-tab[aria-selected="true"] { color: var(--area); border-bottom-color: var(--area); }
 .doc--playbook.has-tabs .sect1[hidden] { display: none; }
 .doc--playbook.has-tabs .sect1 > h2 { position: absolute; left: -9999px; }
 
-/* Playbook cards */
+/* Playbook cards: three across, two on a tablet, one on a phone */
 .card.area-kubernetes, .card.area-gitops, .card.area-models, .card.area-tandem { border-top-color: var(--area); }
 .card.area-kubernetes .card-kicker, .card.area-gitops .card-kicker,
 .card.area-models .card-kicker, .card.area-tandem .card-kicker { color: var(--area); }
 .card.area-kubernetes:hover, .card.area-gitops:hover,
 .card.area-models:hover, .card.area-tandem:hover { border-top-color: var(--area); }
 .card[class*="area-"]:hover::after { border-color: transparent var(--area) transparent transparent; }
-.playbook-card .card-badges { display: flex; gap: .35rem; margin: .7rem 0 0; }
-.playbook-card .card-title { margin-top: .6rem; }
+.playbook-card { padding: 1.5rem 1.5rem 1.25rem; }
+.playbook-card::after { display: none; }
+.playbook-card .card-title { font-size: 1.12rem; margin: .5rem 0 .55rem; }
 .playbook-card .card-desc {
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: 0 0 auto;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  flex: 0 0 auto; margin-bottom: 1rem; font-size: .93rem;
 }
 .playbook-card .card-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: auto; }
-.playbook-card .card-updated { font-size: .74rem; color: #8a8a8a; margin-top: .8rem; }
-.playbook-grid { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
-.playbook-card[hidden] { display: none; }
-
-/* Area filter */
-.area-filter { display: flex; flex-wrap: wrap; gap: .5rem; margin: -0.5rem 0 1.4rem; }
-.filter-chip {
-  font: 600 .8rem/1 "Poppins", sans-serif; padding: .55rem .85rem; cursor: pointer;
-  background: #fff; color: #4a4a4a; border: 1px solid #d9d4cc; border-left: 4px solid var(--area, var(--th-primary));
+.playbook-card .card-meta {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem; margin-top: 1rem; padding-top: .75rem; white-space: nowrap;
+  border-top: 1px solid #eeeae4; font-size: .8rem; color: #6a6a6a;
 }
+.playbook-card .card-level { text-transform: capitalize; font-weight: 600; color: #4a4a4a; }
+.playbook-card .card-level::after { content: "·"; margin-left: .4rem; color: #b5b0a8; }
+.playbook-card .card-time::before { content: "◷ "; }
+.playbook-card .card-updated { margin-left: auto; color: #9a958d; }
+.card-grid.playbook-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.card-grid.featured-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 1024px) { .card-grid.playbook-grid, .card-grid.featured-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px)  { .card-grid.playbook-grid, .card-grid.featured-grid { grid-template-columns: minmax(0, 1fr); } }
+.playbook-card[hidden] { display: none; }
+.catalog .kicker {
+  display: block; font: 700 0.72rem/1 "Poppins", sans-serif; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--th-accent); margin-bottom: .55rem;
+}
+
+/* Area filter: quiet chips with the area's dot; the active one takes its colour */
+.area-filter { display: flex; flex-wrap: wrap; gap: .5rem; margin: -0.5rem 0 1.5rem; }
+.filter-chip {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font: 600 .82rem/1 "Poppins", sans-serif; padding: .6rem .9rem; cursor: pointer;
+  background: #fff; color: #4a4a4a; border: 1px solid #d9d4cc; transition: background .12s ease, color .12s ease;
+}
+.filter-chip[class*="area-"]::before { content: ""; width: .55rem; height: .55rem; background: var(--area); border-radius: 50% !important; }
+.filter-chip:hover { border-color: var(--area, var(--th-primary)); }
 .filter-chip.is-active { background: var(--area, var(--th-primary)); border-color: var(--area, var(--th-primary)); color: #fff; }
+.filter-chip.is-active::before { background: rgba(255,255,255,.85); }
 
 /* Area pages list their playbooks after their text */
 .area-catalog { margin-top: 2.5rem; }
@@ -272,8 +302,8 @@ body.home { background: var(--th-bg); }
   transition: border-color .18s ease;
 }
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 18px 42px rgba(26,107,124,.16);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(26,107,124,.12);
   border-top-color: var(--th-accent);
 }
 .card:hover::after { border-color: transparent var(--th-accent) transparent transparent; }
@@ -399,11 +429,14 @@ html[data-theme="dark"] .doc .listingblock > .content { background: #0e1b1f; box
 
 /* ===== Theme toggle ======================================================= */
 .theme-toggle {
-  background: transparent; border: none; cursor: pointer; color: #fff;
-  font-size: 1.05rem; line-height: 1; padding: 0 .55rem;
+  display: inline-flex; align-items: center; background: transparent; border: none;
+  cursor: pointer; color: #fff; padding: 0 .6rem; opacity: .9;
 }
-.theme-toggle-icon::before { content: "🌙"; }
-html[data-theme="dark"] .theme-toggle-icon::before { content: "☀️"; }
+.theme-toggle:hover { opacity: 1; }
+.theme-toggle svg { display: block; }
+.theme-toggle .icon-sun { display: none; }
+html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
 
 /* ===== Dark mode ========================================================== */
 html[data-theme="dark"] {
@@ -447,18 +480,21 @@ html[data-theme="dark"] .card-icon {
   background: linear-gradient(135deg, rgba(0,140,168,.22), rgba(0,140,168,.06)); color: var(--th-primary-light);
 }
 html[data-theme="dark"] .cockpit-lead strong { color: var(--th-primary-light); }
-html[data-theme="dark"] .badge, html[data-theme="dark"] .filter-chip {
-  background: var(--th-surface); color: var(--th-text); border-color: var(--th-border);
-}
-html[data-theme="dark"] .filter-chip { border-left-color: var(--area, var(--th-primary-light)); }
-html[data-theme="dark"] .filter-chip.is-active,
-html[data-theme="dark"] .area-chip { background: var(--area, var(--th-primary-light)); color: #0e1b1f; border-color: var(--area, var(--th-primary-light)); }
+html[data-theme="dark"] .filter-chip { background: var(--th-surface); color: var(--th-text); border-color: var(--th-border); }
+html[data-theme="dark"] .filter-chip.is-active { background: var(--area, var(--th-primary-light)); color: #0e1b1f; border-color: var(--area, var(--th-primary-light)); }
+html[data-theme="dark"] .filter-chip.is-active::before { background: rgba(14,27,31,.7); }
 html[data-theme="dark"] .tag { background: #2a434b; color: var(--th-text); }
 html[data-theme="dark"] .playbook-tagline { color: var(--th-muted); }
+html[data-theme="dark"] .playbook-facts { border-color: var(--th-border); }
+html[data-theme="dark"] .playbook-facts > div { border-color: var(--th-border); }
+html[data-theme="dark"] .playbook-facts dt { color: var(--th-muted); }
+html[data-theme="dark"] .playbook-facts dd { color: var(--th-text); }
+html[data-theme="dark"] .playbook-card .card-meta { border-color: var(--th-border); color: var(--th-muted); }
+html[data-theme="dark"] .playbook-card .card-level { color: var(--th-text); }
 html[data-theme="dark"] .playbook-tabs { border-bottom-color: var(--th-border); }
 html[data-theme="dark"] .playbook-tab { color: var(--th-muted); }
 html[data-theme="dark"] .playbook-tab[aria-selected="true"] { color: var(--area); }
-html[data-theme="dark"] .playbook-updated, html[data-theme="dark"] .playbook-card .card-updated { color: var(--th-muted); }
+html[data-theme="dark"] .playbook-card .card-updated { color: var(--th-muted); }
 html[data-theme="dark"] .doc pre, html[data-theme="dark"] .listingblock pre,
 html[data-theme="dark"] .doc :not(pre) > code { background: #0e1b1f; color: #e6eef0; }
 html[data-theme="dark"] table, html[data-theme="dark"] th, html[data-theme="dark"] td {

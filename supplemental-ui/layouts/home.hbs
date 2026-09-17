@@ -89,8 +89,9 @@
 {{#with (playbooks featured=true)}}
 {{#if length}}
       <section class="journeys catalog" id="first-time">
+        <span class="kicker">Playbooks</span>
         <h2 class="section-h">First time here?</h2>
-        <div class="card-grid playbook-grid">
+        <div class="card-grid playbook-grid featured-grid">
 {{#each this}}
 {{> playbook-card}}
 {{/each}}
