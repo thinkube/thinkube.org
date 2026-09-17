@@ -1,14 +1,12 @@
 = Thinkube Kubernetes
 :page-type: concept
+:page-layout: area
+:page-area: kubernetes
+:page-aliases: kubernetes/networking.adoc, how-it-works/gpu-multiarch.adoc, kubernetes/keeping-it-running.adoc
 
-_The base of the platform: unmodified upstream Kubernetes on your machines, with the services every other area stands on already installed, connected and signed in, and a control plane you drive from Claude Code._
+The base of the platform: unmodified upstream Kubernetes on your machines, with identity, storage, registry, database, certificates and GPUs installed and connected before you open the first page, and thinkube-control to drive it all from Claude Code.
 
-.TL;DR
-Ask Claude: "what's running?". Claude calls `list_services_minimal` and answers with every service on the base: Thinkube Identity, Thinkube Storage and JuiceFS, Thinkube Registry, Thinkube Git, Argo Workflows and ArgoCD, PostgreSQL, the GPU Operator, Thinkube IDE, Thinkube Notebooks, Thinkube Experiments and Thinkube Packages. You installed none of them one by one and you configure none of them by hand; the installer put them there and thinkube-control operates them.
-
-== The decision
-
-Everything a production AI service needs besides the model already exists in standard Kubernetes: an address with a certificate, a login, storage that outlives a restart, a registry, a build, a rollback, a shared GPU. Thinkube installs that standard unchanged, with kubeadm, and decides the infrastructure above it once for everyone: one sign-on, one filesystem, one registry, one database, one pipeline. The three other areas never provide any of these for themselves; they use the base. And the base is operated through thinkube-control, which exposes the same operations to its web interface and to Claude Code, so running the platform is a sentence rather than a command line.
+Ask Claude: _"what's running?"_ Claude calls `list_services_minimal` and answers with every service of the base and everything you added: Thinkube Identity, Thinkube Storage and JuiceFS, Thinkube Registry, Thinkube Git, Argo Workflows and ArgoCD, PostgreSQL, the GPU Operator, Thinkube IDE, Thinkube Notebooks, Thinkube Experiments, Thinkube Packages, your optional components and your apps.
 
 [d2,alt="Thinkube GitOps, Thinkube Models and Thinkube Tandem stand on Thinkube Kubernetes, which provides thinkube-control, Thinkube Identity, Thinkube Storage and JuiceFS, Thinkube Registry, Thinkube Git with Argo, PostgreSQL and the GPUs"]
 ....
@@ -31,59 +29,19 @@ base: "Thinkube Kubernetes" {
 areas -> base: "use, never provide their own"
 ....
 
-xref:how-it-works/architecture.adoc[Architecture] draws the base and the lines between the areas that run through it.
+== How it works
 
-== What it saves you
+* *One sign-on.* Thinkube Identity, powered by Keycloak, is the login of every service, every dashboard and every app you deploy. You sign in once.
+* *One filesystem, one registry.* Thinkube Storage is S3-compatible object storage, and JuiceFS puts a shared filesystem on it: the IDE workspace, the notebooks, the datasets and the model weights are one place. Thinkube Registry, powered by Harbor, holds your app images, the model servers and the notebook images.
+* *Every service at `<name>.<your domain>`, from any device on your tailnet.* Every machine and the cluster's gateway join your private Tailscale network, and your domain resolves on that network only. The cluster's DNS answers every name under your domain with the gateway's address, so a new app needs no DNS record. The gateway holds one wildcard certificate from Let's Encrypt, proven through your Cloudflare token and renewed on its own, and routes each name to its service. Nothing listens on the internet.
+* *A machine that moves keeps working.* Every node reaches the Kubernetes API at one fixed address on a local interface, and a small service rewrites the node's own address into kubelet at boot and every minute. A new router or a new lease is picked up at the next check.
+* *GPUs as slots, memory as a budget.* The GPU Operator shares each GPU as four slots, so a served model, a fine-tune and an embedding server run on one card. A vLLM, TensorRT-LLM or text-embeddings model takes one slot; Ollama holds several models in one. The platform counts memory per node: on a card, the card's memory; on a DGX Spark, where GPU memory is host memory, a budget of 96 GB (112 GB on a node dedicated to AI) that keeps the machine responsive. A load that does not fit is refused before it starts.
+* *amd64 and arm64 in one cluster.* Images are built once per architecture and combined; notebook environments are built per architecture; the scheduler places each pod on a node that can run it. The reference cluster is an amd64 control plane, an amd64 worker with two RTX 3090s and an arm64 DGX Spark.
+* *Every operation is a sentence.* thinkube-control exposes the same operations to its pages and to Claude Code. Claude reads state freely and changes it when you ask; xref:start-here/what-is-thinkube.adoc#_how_you_work_with_it[What Thinkube is] says where the line is drawn.
 
-* *No cluster to assemble.* Identity, storage, registry, database, certificates and names are installed, connected and signed in before you open the first page.
-* *No Kubernetes commands.* Claude Code and thinkube-control do the operating; you read state and ask for changes in a sentence.
-* *No GPU arithmetic.* Each GPU is shared as slots and the platform counts memory per node, so a served model, a notebook and a fine-tune fit together or are refused before they start.
-* *Nothing trapped.* The cluster is upstream Kubernetes, so what you build on it runs on any other standard cluster.
+== Reference
 
-== Where it shows up
-
-[cols="1,2",options="header"]
-|===
-| Page | What it covers
-
-| xref:install:overview.adoc[Install Thinkube]
-| What you need, and the installer from the first screen to a running cluster.
-
-| xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines]
-| Packages, accounts, directories, firewall ports and system settings, per machine.
-
-| xref:kubernetes/networking.adoc[Networking and names]
-| How `<service>.<your domain>` reaches the cluster from any device, how names resolve inside it, and why the cluster survives a move to another network.
-
-| xref:kubernetes/keeping-it-running.adoc[Keeping it running]
-| Reboots, system updates, what survives what, and where to look when something is wrong.
-
-| xref:apps/claude-code.adoc[What Claude can do for you]
-| The sentences you say and the operation each one runs.
-
-| xref:how-it-works/mcp-operation-model.adoc[The MCP operation model]
-| Why reading state is free and changing it waits for your request.
-
-| xref:control:index.adoc[thinkube-control]
-| The control panel's pages and the operations behind them.
-
-| xref:how-it-works/architecture.adoc[Architecture]
-| The base, the three areas on it, and every service by layer.
-
-| xref:how-it-works/kubernetes-underneath.adoc[Kubernetes underneath]
-| Unmodified upstream Kubernetes, and why Thinkube is an installer rather than a distribution.
-
-| xref:how-it-works/gpu-multiarch.adoc[GPU and multi-arch]
-| GPU slots, the two memory models, and one cluster across amd64 and arm64.
-
-| xref:concepts/running-software.adoc[Concepts: running software]
-| Container, cloud native, Kubernetes, a deploy from a push, a Knative service.
-
-| xref:reference/components.adoc[Components catalog]
-| Every core and optional component, and which stay running.
-|===
-
-== Limits
-
-* The base installs on Ubuntu 24.04 machines; GPU nodes need an NVIDIA GPU.
-* It is built for one person: one login, one set of GPUs, no queue between users.
+* xref:install:overview.adoc[Install Thinkube]: what you need and what the installer does, screen by screen.
+* xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines]: every package, file, firewall rule and setting, per machine.
+* xref:control:index.adoc[thinkube-control]: the control panel's pages and the operations behind them.
+* xref:reference/components.adoc[Components catalog]: every core and optional component.

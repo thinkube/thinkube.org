@@ -1,0 +1,96 @@
+= <Verb-first title naming the result>
+:page-type: playbook
+:page-area: <kubernetes | gitops | models | tandem>
+:page-tagline: <One line, no period>
+:page-difficulty: <beginner | intermediate | advanced>
+:page-time: <measured: "5 min", "3–4 min", "2 h", "9 h 30 min">
+:page-time-note: <optional: what is added, such as a download, per size>
+:page-risk: <low | medium | high>
+:page-tags: <Up to three, comma-separated>
+:page-order: <position within the area>
+:page-updated: <YYYY-MM-DD>
+
+== Overview
+
+=== Basic idea
+
+<One paragraph, then bullets that each open with a bold lead.>
+
+=== What you'll accomplish
+
+<One or two sentences naming the result.>
+
+=== What to know before starting
+
+*Required*
+
+* <A playbook or a skill.>
+
+*Optional*
+
+* xref:<page>[<Page>]: <what it adds.>
+
+=== Supported hardware
+
+[cols="1,1,1,2",options="header"]
+|===
+| Node | Architecture | GPU | On the reference run
+
+| tkamd1 | amd64 | none | <what ran here, or —>
+| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | <…>
+| tkspark | arm64 | GB10, 121.7 GB unified | <…>
+|===
+
+=== Prerequisites
+
+*Platform*
+
+* <Item.> Ask Claude: _"<the sentence that checks it>"_
+
+*Components*
+
+* <Component.> Ask Claude: _"is <it> installed?"_
+
+=== Time & risk
+
+* *Estimated time:* <measured, with what was measured.>
+* *Risk level:* <Low | Medium | High>. <One reason.>
+* *Rollback:* <One concrete action.>
+* *Last updated:* <date>. <What changed, and how many runs.>
+
+== Instructions
+
+=== Step 1. <Imperative title>
+
+<One or two sentences on why.>
+
+Ask Claude:
+
+----
+› <the sentence>
+----
+
+Claude calls `<operation>`.
+
+Or by hand: <the command or the click path in thinkube-control.>
+
+Expected output, from the reference run:
+
+----
+<quoted output>
+----
+
+=== Step N. Next steps
+
+* xref:<playbook>[<Title>]: <what it adds.>
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| <A failure hit on the reference cluster, in the tool's words>
+| <Why>
+| <What to do>
+|===

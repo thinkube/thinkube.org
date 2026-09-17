@@ -14,24 +14,29 @@
   </dl>
   <p class="playbook-tags">{{#each (split page.attributes.tags)}}<span class="tag">{{this}}</span>{{/each}}</p>
 </header>
+{{else if (eq page.attributes.type 'reference')}}
+<p class="playbook-kicker">Reference</p>
 {{else}}
-{{#with page.attributes.type}}
-<div class="page-type-badge" data-type="{{this}}">{{this}}</div>
-{{/with}}
+<p class="playbook-kicker">Learn</p>
 {{#with page.title}}
 <h1 class="page">{{{this}}}</h1>
 {{/with}}
 {{/if}}
-{{{page.contents}}}
 {{#if (eq page.layout 'area')}}
+{{#with (area-split page.contents)}}
+{{{before}}}
 <section class="catalog area-catalog" id="playbooks">
   <h2>Playbooks</h2>
   <div class="card-grid playbook-grid">
-{{#each (playbooks area=page.attributes.area)}}
+{{#each (playbooks area=../page.attributes.area)}}
 {{> playbook-card}}
 {{/each}}
   </div>
 </section>
+{{{after}}}
+{{/with}}
+{{else}}
+{{{page.contents}}}
 {{/if}}
 {{> pagination}}
 </article>

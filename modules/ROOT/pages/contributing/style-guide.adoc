@@ -4,22 +4,18 @@
 _How the pages sound, what they are called, and the shape every one of them has._
 
 .TL;DR
-Open with the sentence the reader says to Claude and what they get. Name the decision the page rests on and what it saves them. Then the details. Then the limits, one line each. Say each thing once, link the rest, and check every fact against the source file you name in the commit.
-
-== The thread through every page
-
-Nearly every architectural decision in Thinkube was made to make the developer's life easy. Every page says which decision it rests on and what that saves the reader, in its first section. A page that cannot say that is describing something the reader does not need to know.
+A playbook opens with what you get and is written from a run on the reference cluster. A concept page says how an area works, each idea once. Say what a thing does, never what it is not. Check every fact against the source file you name in the commit.
 
 == The shape
 
-* *TL;DR first.* Two to five lines before anything else: the task as a sentence to Claude Code in Thinkube IDE, what Claude calls, what you have afterwards. Every TL;DR is run on the reference cluster exactly as written before it is published. A task that cannot be done in one sentence to Claude is a product finding, not a longer TL;DR.
-* *One section order per type.* xref:contributing/page-types.adoc[Page types] fixes it. Follow it.
-* *Why before what.* The first section after the TL;DR names the decision and what it saves. Steps come after.
-* *Teach, then show.* In a tutorial, one sentence on why a step exists before the command. In a concept page, one worked example.
-* *Strength first, limits once.* Describe what a thing does. Its limits go in the Limits block at the end, one line each. No failure narratives on product pages.
+* *The sentence first.* A playbook's steps and a concept page's opening carry the sentence the reader says to Claude Code in Thinkube IDE, what Claude calls, and what they have afterwards. Every sentence is run on the reference cluster exactly as written before it is published.
+* *One shape per type.* xref:contributing/page-types.adoc[Page types] fixes it. Follow it.
+* *Why, then how.* Each step opens with one sentence on why it exists, then the sentence to Claude, then the click path, then the expected output as it came back.
+* *Positive polarity.* Say what a thing does and what you get. A heading never starts with "Not". A condition is a Troubleshooting row or a Good to know line, phrased as what makes it work.
+* *Say it once.* xref:start-here/what-is-thinkube.adoc[What Thinkube is] and the four area pages own the ideas. Every other page links to the owner in one sentence and never restates it.
 * *Clarity over coverage.* Explain a few things well; Claude sees the whole API and can be asked for the rest. No page lists an API in full.
-* *Concepts once.* The xref:concepts/running-software.adoc[Concepts] pages define the vocabulary. Link a term the first time a page uses it; never define it again.
-* *A process that fails is not documented.* If a documented path fails on the reference cluster, the page is not published. The defect goes to the board, gets fixed, the path is rerun, then the page is written.
+* *Measured times only.* A playbook's time comes from the records of its run: deployments, mirror jobs, notebook runs, model loads. Several runs give a range, one run gives "about", and the record ids go in the commit message. A figure that depends on many variables is left out.
+* *A process that fails is not documented.* If a documented path fails on the reference cluster, the page waits. The defect is fixed, the path is rerun, then the page is written.
 
 == Voice
 
@@ -27,7 +23,6 @@ Nearly every architectural decision in Thinkube was made to make the developer's
 * Short sentences, common words, one point per sentence. No throat-clearing, no idioms that do not translate.
 * Describe rather than characterise. No "powerful", "seamless", "simple". Let the capability speak.
 * The reader is capable, not expert. Explain the platform's own terms once, in Concepts; do not explain general computing on every page.
-* No time figures: not "takes N minutes", not "in a few seconds". State what happens, not how long.
 * No claim that the Kubernetes underneath passed any test programme or carries any mark. Say "unmodified upstream Kubernetes, installed with kubeadm".
 * Alpha status is stated once, on xref:start-here/what-is-thinkube.adoc[What Thinkube is]. Nowhere else.
 * Thinkube Tandem is "an experimental intent-driven development methodology for working with Claude Code, still changing", stated once on its index page.
@@ -59,12 +54,12 @@ Use these exactly:
 
 The branded names are the `display_name` each service registers for the dashboard. Argo Workflows, ArgoCD, GPU Operator, JuiceFS and PostgreSQL keep their own names. Name the implementation once where a reader might need to search for it, in a form that says what it is, "Thinkube IDE, VS Code in the browser", and use the implementation's name where the implementation is the point: error messages, logs, the components catalogue.
 
-The site is organised in the four areas of the platform, Thinkube Kubernetes, Thinkube GitOps, Thinkube Models and Thinkube Tandem, with the base first. Each area opens with a concept page that names its decision and lists its pages. Below the areas, section and page names are plain: "Install", "Recipes", "Fine-tune". No invented vocabulary for the site's own structure. A page belongs to the area whose reader needs it; a component the areas share stays in the flat components catalog, not in an area.
+The site has three menus. *Playbooks* lists every task by area, Thinkube Kubernetes, Thinkube GitOps, Thinkube Models and Thinkube Tandem, and each area's page opens its group. *Learn* holds What Thinkube is and the install pages. *Reference* holds the lookup pages. No invented vocabulary for the site's own structure.
 
 == Headings
 
 * Sentence case: "Set up your domain", not "Set Up Your Domain".
-* A heading names what the section achieves or what it is. No "Introduction", no "Overview".
+* A heading names what the section achieves or what it is. A playbook's three top sections are the exception: Overview, Instructions, Troubleshooting.
 
 == Facts
 
@@ -74,6 +69,6 @@ Every factual sentence is checked against the source that makes it true, and the
 
 Rare. A NOTE is an aside the reader can skip. An IMPORTANT is something they must get right or the task fails. A WARNING is an action that can lose data. Anything else is prose.
 
-== Limits
+== Good to know
 
-* The four other repositories' pages follow this guide; their maintainers are the ones who change them.
+The four other repositories' pages follow this guide; their maintainers are the ones who change them.

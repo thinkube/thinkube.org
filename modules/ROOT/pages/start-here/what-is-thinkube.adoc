@@ -1,28 +1,52 @@
 = What Thinkube is
 :page-type: concept
+:page-aliases: why/index.adoc, how-it-works/architecture.adoc, how-it-works/kubernetes-underneath.adoc, how-it-works/mcp-operation-model.adoc, apps/claude-code.adoc
 
-_A platform for one developer, on machines you own, that takes an idea to a running product in an afternoon: models, notebooks, apps, serving and tracing, operated by Claude Code._
+Thinkube is a platform for one developer, on machines you own, that takes an AI project from an idea to a running product: a model served on your GPU, an app that calls it, notebooks to fine-tune it, and a report on every change. You operate it by talking to Claude Code.
 
-.TL;DR
-Install it on one to a few Ubuntu machines. Open Thinkube IDE in your browser, start Claude Code, and say what you want: "get Qwen3.5-4B and serve it", "make an app from the web app template", "install Qdrant". An hour after install you have a model answering behind your own address and a notebook beside it. The rest of this page says what is there and what is not.
+Open Thinkube IDE in your browser, start Claude Code, and say what you want: _"get Qwen3.5-4B and serve it"_, _"make an app called notes from the web app template"_, _"install Qdrant"_. Each sentence is a real operation of the platform, and the same click in thinkube-control. The xref:index.adoc#playbooks[playbooks] are those sentences, one task each, with what you get.
 
-== The decision it rests on
+== Four areas on one base
 
-Everything a production AI service needs besides the model, the address, the login, the build, the rollback, the shared GPU, the storage, the traces, already exists in standard Kubernetes. Thinkube installs that standard unchanged, decides the infrastructure above it so you never configure it, and puts an assistant on top so you never operate it by hand. xref:why/index.adoc[Why Thinkube] makes the argument; this page is the result.
+[d2,alt="Thinkube Kubernetes as the base with its services, and Thinkube GitOps, Thinkube Models and Thinkube Tandem on it, with the lines between them"]
+....
+direction: down
 
-== Four areas, one platform
+areas: "The three areas" {
+  direction: right
+  tandem: "Thinkube Tandem\na sentence to a running,\nreviewed change"
+  gitops: "Thinkube GitOps\napps from templates,\nbuilt and deployed from a push"
+  models: "Thinkube Models\nmodels served, notebooks,\nexperiments, fine-tuning"
+  tandem -> gitops: "ships by the\nsame pipeline"
+  models -> gitops: "a served model,\none endpoint"
+}
 
-Thinkube is one platform in four areas. One is the base; the other three stand on it and are connected through it.
+base: "Thinkube Kubernetes" {
+  direction: right
+  label.near: bottom-center
+  identity: "Thinkube Identity\none sign-on"
+  registry: "Thinkube Registry\none registry"
+  storage: "Thinkube Storage\nand JuiceFS\none filesystem"
+  control: "thinkube-control\nevery task a sentence\nto Claude Code"
+  rest: "PostgreSQL\nThinkube Git · Argo\nGPUs"
+}
+
+areas.tandem -> base.identity: "reviewers sign in\nand drive the app"
+areas.gitops -> base.registry: "app images"
+areas.models -> base.registry: "model servers,\nnotebook images"
+areas.gitops -> base.storage: "mounts the storage\nit declares"
+areas.models -> base.storage: "datasets, weights,\nartifacts"
+....
 
 [cols="1,3",options="header"]
 |===
 | Area | What it gives you
 
 | xref:kubernetes/index.adoc[Thinkube Kubernetes]
-| Unmodified upstream Kubernetes on your machines, with identity, storage, registry, database and GPUs ready, and a control plane you drive from Claude Code.
+| The base: unmodified upstream Kubernetes on your machines, with identity, storage, registry, database, certificates and GPUs installed and connected, driven from Claude Code.
 
 | xref:apps/index.adoc[Thinkube GitOps]
-| Push to git, and it runs: applications from templates, built and deployed, at an address with a certificate and a login.
+| Push to git, and it runs: applications from templates, built and deployed at an address with a certificate and a login.
 
 | xref:lifecycle/index.adoc[Thinkube Models]
 | Serve, fine-tune and track open models on your own GPUs, from notebooks to one address every app calls.
@@ -31,44 +55,34 @@ Thinkube is one platform in four areas. One is the base; the other three stand o
 | A sentence becomes a change that is built, deployed and judged on the running product.
 |===
 
-The areas are not separate products. A dataset a notebook writes is the file an app reads, the model a notebook fine-tunes is the endpoint the app calls, and the change Tandem delivers ships by the pipeline the app took. xref:how-it-works/architecture.adoc[Architecture] draws the lines between them.
+The areas are one platform. A dataset a notebook writes is the file an app reads, the model a notebook fine-tunes is the address the app calls, and the change Tandem delivers ships by the pipeline the app took. Each line in the picture is a service of the base that two areas share: one sign-on, one filesystem, one registry, one pipeline, one way to drive it.
 
-== What it saves you
+== How you work with it
 
-*Your machine stops breaking.* Python environments are built from definitions and kept apart from each other and from the system. Installing one more package into one cannot take the others down. Every component can be removed again.
+* *Thinkube IDE* is VS Code in the browser, with Claude Code installed and connected to the platform. This is where you say things.
+* *Claude Code reads freely and changes on request.* thinkube-control offers its operations to Claude through MCP. Reading state, what is running, what the GPUs hold, a build's log, is something Claude consults whenever it needs to. Changing state, a deploy, a load, an install, a restart, happens when you ask. The line between the two is drawn in the platform, not left to Claude's judgement.
+* *thinkube-control* is the control panel: models, the LLM Gateway, templates, components, nodes, secrets, tokens. Everything Claude can do, you can click here, and the health of every service is on its card.
+* *Thinkube Notebooks* is JupyterLab with two environments built for your hardware, `fine-tuning` and `agent-dev`, on the same filesystem as the IDE.
+* *The LLM Gateway* is one address for every served model, `llm.<your domain>`, speaking the OpenAI and Anthropic APIs.
+* *Optional components* arrive with one sentence: vector stores, tracing, search, messaging, caches, inference backends. xref:reference/components.adoc[The components catalog] lists them.
 
-*Every experiment is findable.* Models are pulled once into Thinkube Registry and versioned. Every training run is tracked in Thinkube Experiments, and the model it produced is registered beside it. The platform tells you what fits your GPU before you download anything.
+== What comes out
 
-*There is a path from a notebook to something with an address.* Describe an application in about twenty lines of `thinkube.yaml`, or start from a template, and it is built, deployed, given a URL with a certificate, and put behind a login.
+What you build is a git repository with real code, a Dockerfile, tests and a standard image. Under it is unmodified upstream Kubernetes, installed with kubeadm: `kubectl version` on the reference cluster reports v1.36.4 at the upstream release commit, with no vendor suffix. Your repository builds and deploys on any cluster that standard runs on.
 
-*You do not learn Kubernetes.* Claude Code sees the platform through the same operations the control panel uses. Ask it to deploy, load, install or restart, and it does; ask it what is running, and it reads. When something breaks, it has the logs.
+== Why it is built this way
 
-== What you work with
+* *Production is a system, so use the one that exists.* An address and a certificate, a login, a build that repeats, a rollback, a shared GPU, storage, traces: all of it exists in Kubernetes, maintained by thousands of people. Thinkube installs it unchanged, decides the base once (Keycloak, Harbor, PostgreSQL, SeaweedFS, Gitea, Argo, each chosen so it cannot be relicensed against you), and puts Claude Code on top so you operate it in sentences. Above the application it offers choices: three vector stores, four inference backends.
+* *A model you own beats a model you rent.* Small open models are good enough for most production tasks, and a fine-tuned small model beats a frontier model on the narrow task it was tuned for. The weights on your disk are the same weights tomorrow, nothing you send them leaves your machines, and once the GPU is bought every experiment is free. One gateway serves any of them behind the same API, so the app stays the same when the model changes.
+* *Your data becomes capability.* Prompting has a ceiling. Fine-tuning encodes your format, vocabulary, tools and tone, and the long prompt goes away with its cost and latency. Your traces, documents and checkers are what nobody else has: a program that can verify an answer can train a model with no labelled data, and today's traces are tomorrow's training set. The result goes behind the same address, is compared with yesterday's, and is kept or rolled back.
+* *One person.* One GPU serves one developer without a scheduler or a queue. One login, one set of credentials, one machine. A lab shares it the way lab equipment is shared: by saying who has the GPU this afternoon.
 
-* *Thinkube IDE*, VS Code in the browser with Claude Code installed and connected to the platform. This is where you say things.
-* *Thinkube Notebooks*, JupyterLab with ready environments: `fine-tuning` with the training libraries pinned for your hardware, `agent-dev` with LangChain, CrewAI and AG2. Add packages, or define your own.
-* *thinkube-control*, the control panel: models, the gateway, templates, components, nodes, tokens. Everything Claude can do, you can click here.
-* *The LLM Gateway*, one address for every served model, speaking the OpenAI and Anthropic APIs.
-* *Optional components* you install with one sentence: vector stores, tracing, search, messaging, caches.
+== Where it runs
 
-xref:reference/components.adoc[The components catalogue] lists everything by name.
-
-== The loop you will run
-
-Get a model from the catalogue, mirrored once into your registry. Serve it behind the gateway. Build an app that calls it, from a template, shipped with a push. When the prompt is not enough, fine-tune the model in a notebook on one GPU, register the result, and put it behind the same address. Compare, keep or roll back, repeat. Each of the sections that follow is one turn of that loop.
-
-== What comes out is a repository
-
-Thinkube is not a no-code platform. What you build is a git repository with real code, a Dockerfile, tests and a standard image. If Thinkube disappeared tomorrow, that repository would still build and deploy anywhere Kubernetes runs.
-
-== What it is not
-
-* *Not multi-user.* One GPU cannot be shared between two developers without a queue and an argument. One person, one login.
-* *Not a cloud service.* Owning the hardware is the point. The platform runs without any external service; Claude Code is a paid service from Anthropic and a real dependency.
-* *Not finished.* Thinkube is alpha software. It has run on a DGX Spark and on an x86-64 workstation with RTX 3090s, both on Ubuntu 24.04. A future version may require reinstalling from scratch. Install it on a machine you can afford to reinstall.
+Ubuntu 24.04 on one to a few machines. Thinkube runs on a DGX Spark (GB10, arm64) and on x86-64 workstations with RTX 3090s, and one cluster mixes both. Thinkube is alpha software: a new version may need a fresh install, so install it on a machine you can reinstall. Claude Code is a paid service from Anthropic and part of the platform.
 
 == Where next
 
-* xref:playbooks/serve-your-first-model.adoc[Serve your first model]: from a fresh install to a model answering at your address.
-* xref:concepts/running-software.adoc[Concepts]: the words this site uses, explained once.
+* xref:playbooks/serve-your-first-model.adoc[Serve your first model]: a model answering at your own address.
+* xref:webapp-template:build-a-web-app.adoc[Build a web app from the template]: an app at its own address, behind your login.
 * xref:install:overview.adoc[Install Thinkube]: what you need and what the installer does.

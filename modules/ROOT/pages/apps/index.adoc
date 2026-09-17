@@ -1,16 +1,12 @@
 = Thinkube GitOps
 :page-type: concept
+:page-layout: area
+:page-area: gitops
+:page-aliases: how-it-works/deploy-loop.adoc, concepts/running-software.adoc, webapp-template:index.adoc
 
-_Push to git, and it runs: an application goes from a template to an address with a certificate and a login, and every change after that is a push. What that rests on, what it saves you, and where each part is explained._
+Push to git, and it runs. An application goes from a template to its own address with a certificate and a login, and every change after that is a push.
 
-.TL;DR
-Ask Claude: "make an app called notes from the web app template". A repository named `notes` appears in Thinkube Git, is built, deployed and given `notes.<your domain>` behind your login, with a PostgreSQL database of its own, and is checked out under `apps/notes` in your workspace. Edit it and push; the push builds and deploys. That is the whole build story; the pages below are its parts.
-
-== The decision
-
-Production is a system, not a script. An application needs an address with a certificate, a login, a build that repeats, a rollback, a database, and a way to reach a model, and all of that already exists on the base. So Thinkube does not ask you to describe any of it. You describe the application in about twenty lines of `thinkube.yaml`, containers, ports, routes, services, and the platform generates the Kubernetes manifests, builds the images, deploys them, and puts the login and the certificate in front.
-
-The repository is the only source of truth. The generated manifests are committed beside your code, a push builds the images, and the cluster runs what the repository says, so what is running is always a commit you can read, and rolling back is checking out the previous one.
+Ask Claude: _"make an app called notes from the web app template"_. A repository named `notes` appears in Thinkube Git, is built, deployed and given `notes.<your domain>` behind your login, with a PostgreSQL database of its own, and is checked out under `apps/notes` in your workspace. Edit it and push; the push builds and deploys.
 
 [d2,alt="thinkube.yaml becomes generated manifests committed to your repository in Thinkube Git; a push triggers Argo Workflows to build the images into Thinkube Registry, and ArgoCD deploys what the repository says to an address behind your login"]
 ....
@@ -29,62 +25,19 @@ registry -> deploy
 deploy -> app
 ....
 
-A template is an application that already runs, which you copy and change; what you publish back is a template again.
+== How it works
 
-== What it saves you
+* *About twenty lines describe the app.* `thinkube.yaml` names the containers, ports, routes and the platform services the app uses. thinkube-control generates the Kubernetes manifests into `k8s/` and commits them beside your code, so what runs is always a commit you can read. You never write the manifests.
+* *A push builds and deploys.* A webhook starts Argo Workflows, which builds each container in the cluster, once per architecture, and pushes the image to Thinkube Registry. ArgoCD watches the same repository and runs what `k8s/` says. Rolling back is pushing the previous commit. thinkube-control itself ships through this loop.
+* *A container is the unit.* An image is built once from the repository and started anywhere; the image that ran your tests is the image that runs. Configuration arrives as environment variables at deploy time, and state lives in the database or the storage the app declares, so any container can be restarted at any moment.
+* *A template is a running application you copy.* Deploying one gives you your own repository, with a name, a database, a domain and a login. Improve it and push. Publish it, and it is a template again for the next app. Every step is a copy: declarations and defaults live in the repository, values live in the deployment, so a published template carries nothing of yours.
+* *A service that runs only when called.* A Knative service scales to zero between requests and starts on the first one, the right shape for a webhook, a processing step or a small API.
+* *Pipelines for the app's own jobs.* An app hands long work to Argo Workflows in its own namespace, with its own images: converting a batch, preparing a dataset, running an evaluation.
+* *The login, the certificate and the model come from the base.* An app registers with Thinkube Identity, is reached through the platform's gateway, and calls the LLM Gateway with a token; the model behind it changes without the app changing.
 
-* *No manifests.* `k8s/` is generated from `thinkube.yaml`; you read it, you never write it.
-* *No pipeline to build.* A push builds and deploys. Ask Claude for the status, or watch it under *Templates* in thinkube-control.
-* *No plumbing to the model.* The app calls the LLM Gateway with a token; the model behind it can change without the app changing.
-* *No lock-in.* What comes out is a git repository with real code, tests and a standard image. It builds and deploys anywhere Kubernetes runs.
+== Reference
 
-== Where it shows up
-
-[cols="1,2",options="header"]
-|===
-| Page | What it covers
-
-| xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop]
-| How `thinkube.yaml` becomes a running application, and why the manifests you never write are in your repository.
-
-| xref:webapp-template:index.adoc[The template round trip]
-| Why nothing is rendered on the way in or out of a template.
-
-| xref:webapp-template:build-a-web-app.adoc[Build a web app from the template]
-| From the sentence to the running app, step by step.
-
-| xref:webapp-template:change-your-app.adoc[Change your app and ship it]
-| The day-to-day loop: a page added, an endpoint added, a change shipped.
-
-| xref:webapp-template:variables.adoc[How configuration reaches your app]
-| The four channels, and why the browser sees only what you allow.
-
-| xref:webapp-template:anatomy.adoc[What is in the web app template]
-| The file-by-file tour.
-
-| xref:webapp-template:publish-your-app-as-a-template.adoc[Publish your app as a template]
-| Publish it, and someone else's sentence starts from your work.
-
-| xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app]
-| Argo Workflows for your app, in its own namespace, with its own images.
-
-| xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service]
-| The Knative template: a service that runs only while requests arrive.
-
-| xref:playbooks/store-and-fetch-files.adoc[Store and fetch files with the file gateway]
-| The storage template: upload and fetch files over a REST API and a page.
-
-| xref:reference/thinkube-yaml.adoc[thinkube.yaml]
-| The full specification of the descriptor.
-
-| xref:reference/templates.adoc[Templates catalog]
-| Every template the platform offers.
-
-| xref:tandem:index.adoc[Thinkube Tandem]
-| When the change you want is a sentence rather than code; its deliveries ship by this same pipeline.
-|===
-
-== Limits
-
-* The web app template is React and FastAPI with PostgreSQL; other stacks are templates you write or publish yourself.
-* Login on a deployed app is the platform's; it is not automatic at the route, the app asks for it.
+* xref:reference/thinkube-yaml.adoc[thinkube.yaml]: the full specification of the descriptor.
+* xref:reference/templates.adoc[Templates catalog]: every template the platform offers.
+* xref:webapp-template:anatomy.adoc[What is in the web app template]: the file-by-file tour.
+* xref:webapp-template:variables.adoc[How configuration reaches your app]: the four channels, and why the browser sees only what you allow.

@@ -35,7 +35,7 @@ You load `Qwen/Qwen3-8B` on tkamd2 with a 16k context, see a second model on the
 *Optional*
 
 * xref:control:llm-serving.adoc[LLM serving and models]: how a load is sized, and the options `keep_alive` and `num_speculative_tokens`.
-* xref:concepts/models.adoc[Models]: parameters, quantization and context.
+* xref:lifecycle/index.adoc[Thinkube Models]: parameters, quantization and context.
 
 === Supported hardware
 

@@ -1,53 +1,43 @@
 = Page types
 :page-type: reference
 
-_Every page is one of four types, and every page of a type has the same section order. The type is declared with `:page-type:` under the title and shown as a badge._
+_Every page is one of three types, and every page of a type has the same shape. The type is declared with `:page-type:` under the title._
 
 .TL;DR
-Copy the skeleton for the type below and fill it in order. Every type opens with a TL;DR that does the task through Claude Code and closes with Limits. A page that cannot follow its type's order is a different type, or two pages.
+Copy the skeleton for the type and fill it in order. A playbook is one task, run end to end on the reference cluster. A concept page says how an area works, each idea once. A reference page is exact lookup material.
 
-== The four types and their shape
+== The three types
 
 [cols="1,2,3",options="header"]
 |===
-| Type | Use it for | Section order
+| Type | Use it for | Shape
 
-| `tutorial`
-| A start-to-finish path that ends with something working, for a reader who is learning.
-| TL;DR · What you will learn · What you need · numbered steps, each "why, then how" · What you have now · Limits
-
-| `how-to`
-| A task for a reader who knows what they want.
-| TL;DR · Why this is one sentence · By hand, and what is happening underneath · Limits
+| `playbook`
+| One task with a result, for a reader who wants to do it.
+| The card attributes; Overview with Basic idea, What you'll accomplish, What to know before starting, Supported hardware, Prerequisites, Time & risk; Instructions as numbered steps ending with Next steps; Troubleshooting as a Symptom, Cause, Fix table. `lib/playbook-check.js` fails the build on a playbook that lacks any of them.
 
 | `concept`
-| An idea, a decision, or a mechanism, for a reader who wants to understand.
-| TL;DR · The decision · What it saves you · Where it shows up · Limits
+| What Thinkube is, and the page of each area.
+| A lead of one or two sentences; the sentence to Claude and what it does; one diagram; *How it works* as bullets with a bold lead, each idea once; the area's playbooks as cards (`:page-layout: area`); *Reference* links.
 
 | `reference`
 | Exact lookup material: fields, operations, catalogues.
-| TL;DR · one section per thing, tables preferred · Limits
+| One section per thing, tables preferred; *Good to know* for the conditions that make it work.
 |===
 
-Two rules apply to every type:
+Three rules apply to every type:
 
-* *One type per page.* A page that teaches a concept and walks through a task is two pages that link to each other.
-* *Concepts are linked, not re-explained.* A word from the xref:concepts/running-software.adoc[Concepts] pages is linked the first time a page uses it and is not defined again.
+* *One type per page.* A page that explains an area and walks through a task is two pages that link to each other.
+* *Positive polarity.* Say what a thing does and what you get. A heading never starts with "Not". A condition is a row in Troubleshooting or a line under Good to know, phrased as what makes it work.
+* *Say it once.* Each idea has one owner: xref:start-here/what-is-thinkube.adoc[What Thinkube is] or the page of its area. Every other page links to it in one sentence.
 
 == Skeletons
 
-=== tutorial
+=== playbook
 
 [source,asciidoc]
 ----
-include::example$templates/tutorial.adoc[]
-----
-
-=== how-to
-
-[source,asciidoc]
-----
-include::example$templates/how-to.adoc[]
+include::example$templates/playbook.adoc[]
 ----
 
 === concept
@@ -64,6 +54,6 @@ include::example$templates/concept.adoc[]
 include::example$templates/reference.adoc[]
 ----
 
-== Limits
+== Good to know
 
-* Pages of the other four repositories (install, control, tandem, webapp-template) follow the same shapes; their skeletons are these.
+Pages of the other four repositories (install, control, tandem, webapp-template) follow the same shapes; their skeletons are these.

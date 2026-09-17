@@ -15,6 +15,6 @@ _<One sentence: what this page is the reference for, and its scope.>_
 | `field` | string | <Exact meaning, one line.>
 |===
 
-== Limits
+== Good to know
 
-* <One line each: what this page does not cover, and where that is.>
+* <One line each: the condition that makes it work, and where the rest is.>

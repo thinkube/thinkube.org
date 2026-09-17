@@ -32,7 +32,7 @@ You create a two-cell notebook, run it while you watch it in a Thinkube IDE tab,
 *Optional*
 
 * xref:control:notebooks.adoc[Notebook execution over MCP]: every notebook operation and what it answers.
-* xref:lifecycle/notebooks.adoc[Thinkube Notebooks]: the environments and the servers.
+* xref:lifecycle/index.adoc[Thinkube Models]: the environments and the servers.
 
 === Supported hardware
 

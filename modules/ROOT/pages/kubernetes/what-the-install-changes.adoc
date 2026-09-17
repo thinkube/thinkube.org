@@ -85,7 +85,7 @@ Two apt repositories are added on the control plane and the workers, Docker's an
 | `2.2.4`
 |===
 
-`apt upgrade` leaves these where they are. The NVIDIA driver, Tailscale and the kernel are not held: an upgrade moves them. xref:kubernetes/keeping-it-running.adoc[Keeping it running] says what that means.
+`apt upgrade` leaves these where they are. The NVIDIA driver, Tailscale and the kernel move with Ubuntu's own upgrades.
 
 == Your account and SSH
 
@@ -185,7 +185,7 @@ The optional Prometheus component adds 9100 for node metrics on every node.
 | Change | What it is for
 
 | Tailscale on every machine
-| Each machine joins your tailnet under its hostname. xref:kubernetes/networking.adoc[Networking and names] explains what travels over it.
+| Each machine joins your tailnet under its hostname; xref:kubernetes/index.adoc[Thinkube Kubernetes] says what travels over it.
 
 | `k8s0`, a dummy interface with `172.16.0.1`
 | The address every node uses for the Kubernetes API, so a change of LAN address does not break the cluster.
@@ -231,7 +231,7 @@ The optional Prometheus component adds 9100 for node metrics on every node.
 | Not touched.
 |===
 
-== Limits
+== Good to know
 
-* The requirements for workers are not checked by the installer; a worker smaller than the control plane joins.
-* The GitHub CLI repository on the install machine and the Argo CLI on the control plane are set for amd64 only; on the reference cluster both are amd64.
+* The installer checks the control plane's size; a worker of any size joins.
+* The GitHub CLI repository on the install machine and the Argo CLI on the control plane are installed for amd64, the architecture of both on the reference cluster.

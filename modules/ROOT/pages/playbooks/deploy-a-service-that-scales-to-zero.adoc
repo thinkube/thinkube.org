@@ -31,7 +31,7 @@ You deploy `knative-demo`, a serverless service, from a template. You call it wh
 
 *Optional*
 
-* xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop], to see how a push becomes a running service.
+* xref:apps/index.adoc[Thinkube GitOps], to see how a push becomes a running service.
 * xref:reference/thinkube-yaml.adoc#_knative_portability[thinkube.yaml], for every rule a Knative service follows.
 
 === Supported hardware

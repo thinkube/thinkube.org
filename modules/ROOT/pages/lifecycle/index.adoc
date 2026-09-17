@@ -1,16 +1,12 @@
 = Thinkube Models
 :page-type: concept
+:page-layout: area
+:page-area: models
+:page-aliases: lifecycle/notebooks.adoc, lifecycle/example-notebooks.adoc, concepts/models.adoc, concepts/improving-a-model.adoc, concepts/building-with-models.adoc
 
-_Open models on your own GPUs: get one, serve it at one address, work with it in notebooks, fine-tune it and serve the result the same way. What that rests on, what it saves you, and where each part is explained._
+Open models on your own GPUs: get one, serve it at one address, work with it in notebooks, fine-tune it, and serve the result the same way.
 
-.TL;DR
-Ask Claude: "get Qwen/Qwen3-8B and load it on the spark". The model is mirrored once into your registry and served at `llm.<your domain>` through the OpenAI or Anthropic API. Write your app or your notebook against that address. When the prompt is not enough, fine-tune the model in a notebook, register the result, and load it at the same address.
-
-== The decision
-
-A model you own and can change beats a model you rent and cannot. So Thinkube serves open models only, keeps them in your own registry, and gives every one of them the same address and API through the LLM Gateway. The catalogue carries what each model needs to run, so the platform can say what fits your GPU before you download anything and configure the server from the entry rather than from a guess. xref:why/index.adoc[Why Thinkube] makes the case; xref:concepts/models.adoc[Concepts: models] explains the words.
-
-Nothing in this area is its own infrastructure. The weights live on Thinkube Storage, the runs and registered models in Thinkube Experiments, the notebooks on the same filesystem as Thinkube IDE and the apps of Thinkube GitOps, and every GPU is counted by the base. A dataset a notebook writes is a file an app can read, and a model a notebook registers is served at the address the app already calls.
+Ask Claude: _"get Qwen/Qwen3-8B and load it on the spark"_. The model is mirrored once into your storage and served at `llm.<your domain>` through the OpenAI or Anthropic API. Write your app or your notebook against that address. When the prompt is not enough, fine-tune the model in a notebook, register the result, and load it at the same address.
 
 [d2,alt="A model is mirrored from Hugging Face into Thinkube Storage and served at the LLM Gateway; apps and notebooks call the gateway; a notebook fine-tunes the model, registers the result in Thinkube Experiments, and the result is served at the same gateway"]
 ....
@@ -29,63 +25,17 @@ notebook -> experiments: "register"
 experiments -> gateway: "load"
 ....
 
-== What it saves you
+== How it works
 
-* *One download, ever.* A model is mirrored once from Hugging Face into Thinkube Registry and served from your storage from then on.
-* *One address, every model.* Your code speaks to `llm.<your domain>`; the model behind it changes without the code changing.
-* *No sizing by hand.* The platform computes what fits from the catalogue and your GPU budget, and refuses a load that will not fit.
-* *No environment to build.* Notebooks open with kernels built for your hardware, and `tk_llm` already knows the gateway.
-* *No bill per experiment.* Once the hardware is yours, trying a model, comparing two, or fine-tuning costs nothing extra.
+* *A model is a file of weights.* Its size is counted in parameters, its context window in tokens it can look at at once. Quantization stores the weights in fewer bits: BF16 is the full model, FP8, FP4 and Q4 are smaller copies that fit a smaller GPU. At 16 bits a model needs about two gigabytes of GPU memory per billion parameters, plus room for the context; at 4 bits, a quarter of that. The catalogue carries each model's size, quantization and context, and the platform says what fits your GPU before you download anything.
+* *Mirrored once, served at one address.* The weights are downloaded once from Hugging Face into Thinkube Storage. A load starts a serving engine on the node you choose, with the context length you choose, and registers the model with the LLM Gateway. The engines are optional components: vLLM and TensorRT-LLM at full precision, Ollama for quantized models, text-embeddings for embedding models. A vLLM, TensorRT-LLM or text-embeddings engine serves one model per node; Ollama's holds several.
+* *Notebooks on the same filesystem as the IDE.* Thinkube Notebooks is JupyterLab at `notebooks.<your domain>`. Two environments come with the platform, `fine-tuning` with the training libraries and `agent-dev` with LangChain, AG2, CrewAI and LangGraph, both built per architecture, both with `tk_llm` configured for your gateway. An environment of your own starts from one of them. Claude opens, runs and reads notebooks through thinkube-control, in your server or in a server of its own that stops when the run ends.
+* *The example notebooks.* The first server start copies them into `notebooks/examples/`: `research-assistant/` with four notebooks that check the platform, load the models, index papers and run a debate, and `zebra-grpo/` with the fine-tuning notebook. A newer copy lands under `templates/examples/` at every start, for you to take when you want it.
+* *Improving a model.* Fine-tuning trains an existing model a little further on your examples; a LoRA adapter trains a few hundred megabytes beside the weights, on one GPU in hours. When a program can check an answer, the program replaces the examples: the model tries, the checker scores, and the model learns from the score. Distillation lets a large model teach a small one. Thinkube Experiments records every run and the model it produced, and a registered model is served exactly like a mirrored one.
+* *Building with models.* An embedding model turns text into vectors, and a vector store finds the nearest ones: search by meaning. Retrieval puts the documents found into the prompt, so the model answers from your documents and cites them. Tool calling lets a model ask for a function to be run; an agent loops on that, and the catalogue marks the models that can do it. Langfuse traces every call, with its prompts, its documents, its tools and its latency, and those traces are the record you fine-tune from next.
 
-== Where it shows up
+== Reference
 
-[cols="1,2,2",options="header"]
-|===
-| Page | You do | You end with
-
-| xref:playbooks/serve-your-first-model.adoc[Serve your first model]
-| Ask what fits, mirror it.
-| The weights in your registry, the model marked ready to load.
-
-| xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]
-| Choose the node, the backend and the context for a load.
-| A model served where you want it, with the memory you chose.
-
-| xref:control:llm-serving.adoc[LLM serving and models]
-| Read how the gateway picks a backend and sizes a load.
-| The rules behind a load that fits or is refused.
-
-| xref:lifecycle/notebooks.adoc[Thinkube Notebooks]
-| Start a server, pick an environment, call a served model from Python.
-| A notebook with `tk_llm` configured for your gateway.
-
-| xref:control:notebooks.adoc[Notebook execution over MCP]
-| Let Claude open, edit and run notebooks.
-| A notebook run you did not have to sit through.
-
-| xref:lifecycle/example-notebooks.adoc[The example notebooks]
-| Find the five notebooks the platform ships and what each needs.
-| A checked platform, and a starting point for your own work.
-
-| xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers]
-| Run four notebooks: index papers, ask with sources, let agents argue.
-| A retrieval assistant on your models, your vector store and your traces.
-
-| xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks]
-| Train a 4B model against a solver, track the run, register the result.
-| A model you trained, ready to load.
-
-| xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned]
-| Give the fine-tune its catalogue entry, load it, call it.
-| A model you trained, answering at the gateway.
-|===
-
-The seam between them is what the platform carries for you: a fine-tuned model is served exactly like a mirrored one, and the app that calls the gateway never knows which it got.
-
-xref:concepts/models.adoc[Concepts: models], xref:concepts/improving-a-model.adoc[Improving a model] and xref:concepts/building-with-models.adoc[Building with models] explain the vocabulary once.
-
-== Limits
-
-* Every served model needs a catalogue entry; a model that is not in the catalogue needs one added first.
-* A backend serves one model per node at a time.
-* The inference servers are optional components, `vllm`, `tensorrt` and `text-embeddings`; a model loads only on a backend that is installed.
+* xref:control:llm-serving.adoc[LLM serving and models]: model states, load options, sizing, routing and authentication at the gateway.
+* xref:control:notebooks.adoc[Notebook execution over MCP]: every notebook operation and what it answers.
+* xref:reference/components.adoc[Components catalog]: the inference backends, vector stores and tracing.

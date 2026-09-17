@@ -14,7 +14,7 @@ image::cp-templates.png[The Templates page of thinkube-control]
 |===
 | Template | Type | GPU | Deploys
 
-| `tkt-webapp-react-fastapi` | app | — | A web application: React frontend on thinkube-style, FastAPI backend, PostgreSQL, sign-in through Thinkube Identity, tests and migrations wired. The xref:webapp-template:index.adoc[template pages] are written from it.
+| `tkt-webapp-react-fastapi` | app | — | A web application: React frontend on thinkube-style, FastAPI backend, PostgreSQL, sign-in through Thinkube Identity, tests and migrations wired. The xref:webapp-template:anatomy.adoc[template pages] are written from it.
 | `tkt-vllm-gradio` | component | yes | The vLLM inference server the LLM Gateway drives, with a Gradio chat interface
 | `tkt-tensorrt-llm-harmony` | component | yes | The TensorRT-LLM inference server the LLM Gateway drives, for NVFP4 models on Blackwell
 | `tkt-text-embeddings` | component | yes | The Text Embeddings Inference server the LLM Gateway drives, for embedding models registered in Thinkube Experiments

@@ -31,7 +31,7 @@ You list the services, read the health and pods of two of them, restart the `doc
 
 *Optional*
 
-* xref:how-it-works/mcp-operation-model.adoc[The MCP operation model]: which operations read and which change.
+* xref:start-here/what-is-thinkube.adoc#_how_you_work_with_it[What Thinkube is]: which operations read and which change.
 
 === Supported hardware
 
@@ -185,7 +185,7 @@ The site answered `200` again at 00:14:09.
 
 * xref:webapp-template:change-your-app.adoc[Change your app and ship it]: redeploy an app after a change.
 * xref:playbooks/serve-your-first-model.adoc[Serve your first model]: GPU status and model loads.
-* xref:kubernetes/keeping-it-running.adoc[Keeping it running]: reboots, system updates and what survives a rebuild.
+* xref:playbooks/install-and-remove-optional-components.adoc[Install and remove optional components]: add a service, and take it out again.
 
 == Troubleshooting
 

@@ -35,8 +35,7 @@ You run the three research-assistant notebooks in order: `01` checks the models,
 
 *Optional*
 
-* xref:concepts/building-with-models.adoc[Concepts: building with models]: embeddings, retrieval, agents and tracing.
-* xref:lifecycle/example-notebooks.adoc[The example notebooks]: where the notebooks are and how to take a newer copy.
+* xref:lifecycle/index.adoc[Thinkube Models]: embeddings, retrieval, agents and tracing, and where the example notebooks are.
 
 === Supported hardware
 

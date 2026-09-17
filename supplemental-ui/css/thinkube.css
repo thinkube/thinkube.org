@@ -133,10 +133,16 @@ html[data-theme="dark"] .area-tandem     { --area: #b3a2d9; }
   color: #ffffff;
   background: var(--th-primary);
 }
-.doc--concept, .doc--reference, .doc--tutorial, .doc--how-to {
-  padding-top: 1rem;
-  border-top: 4px solid var(--th-primary);
+.doc--concept, .doc--reference {
+  padding-top: 1.25rem;
+  border-top: 3px solid var(--th-primary);
 }
+.doc--concept .playbook-kicker, .doc--reference .playbook-kicker { color: var(--th-primary); }
+.doc--concept > h1.page, .doc--reference > h1.page { margin-top: 0; }
+.area-page .doc { padding-top: 1.25rem; border-top: 3px solid var(--area); }
+.area-page .doc > h1.page { margin-top: 0; }
+.area-catalog { margin-top: 2.5rem; }
+.area-catalog > h2 { color: var(--th-primary); }
 
 /* Playbook page header: kicker, title, tagline, one line of facts, tags */
 .doc--playbook { padding-top: 1.25rem; border-top: 3px solid var(--area); }

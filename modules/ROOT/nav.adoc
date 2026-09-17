@@ -1,87 +1,52 @@
-.Why
-* xref:why/index.adoc[Why Thinkube]
-
-.Start here
-* xref:start-here/what-is-thinkube.adoc[What is Thinkube]
-
-.Thinkube Kubernetes
+.Playbooks
 * xref:kubernetes/index.adoc[Thinkube Kubernetes]
-* Install
-** xref:install:overview.adoc[Install Thinkube]
+** xref:playbooks/check-and-restart-services-from-claude-code.adoc[Check and restart services from Claude Code]
+** xref:playbooks/install-and-remove-optional-components.adoc[Install and remove optional components]
+* xref:apps/index.adoc[Thinkube GitOps]
+** xref:webapp-template:build-a-web-app.adoc[Build a web app from the template]
+** xref:webapp-template:change-your-app.adoc[Change your app and ship it]
+** xref:webapp-template:configure-your-app.adoc[Pass configuration to your app]
+** xref:webapp-template:publish-your-app-as-a-template.adoc[Publish your app as a template]
+** xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app]
+** xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service]
+** xref:playbooks/store-and-fetch-files.adoc[Store and fetch files with the file gateway]
+* xref:lifecycle/index.adoc[Thinkube Models]
+** xref:playbooks/serve-your-first-model.adoc[Serve your first model]
+** xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]
+** xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script]
+** xref:playbooks/build-a-notebook-environment.adoc[Build a notebook environment]
+** xref:playbooks/run-notebooks-from-claude.adoc[Run notebooks from Claude, watched or unattended]
+** xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers]
+** xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks]
+** xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned]
+* xref:tandem:index.adoc[Thinkube Tandem]
+** xref:tandem:build-your-first-change-with-tandem.adoc[Build your first application change with Tandem]
+** xref:tandem:turn-what-the-reviewers-noticed-into-the-next-change.adoc[Build the improvements Tandem's reviewers suggest]
+
+.Learn
+* xref:start-here/what-is-thinkube.adoc[What Thinkube is]
+* xref:install:overview.adoc[Install Thinkube]
 ** xref:install:node-setup.adoc[Prepare your machines]
 ** xref:install:overlay-network.adoc[Connect from anywhere]
 ** xref:install:cloudflare-token.adoc[Set up your domain]
 ** xref:install:github-token.adoc[Connect to GitHub]
 ** xref:install:huggingface-token.adoc[Unlock AI models]
 ** xref:install:adding-nodes.adoc[Add more nodes]
-* xref:kubernetes/what-the-install-changes.adoc[What the install changes]
-* xref:kubernetes/networking.adoc[Networking and names]
-* xref:kubernetes/keeping-it-running.adoc[Keeping it running]
-* xref:playbooks/check-and-restart-services-from-claude-code.adoc[Check and restart services from Claude Code]
-* xref:playbooks/install-and-remove-optional-components.adoc[Install and remove optional components]
-* Operate it from Claude Code
-** xref:apps/claude-code.adoc[What Claude can do for you]
-** xref:how-it-works/mcp-operation-model.adoc[The MCP operation model]
-** xref:control:index.adoc[thinkube-control]
-* xref:how-it-works/architecture.adoc[Architecture]
-* xref:how-it-works/kubernetes-underneath.adoc[Kubernetes underneath]
-* xref:how-it-works/gpu-multiarch.adoc[GPU and multi-arch]
-* xref:concepts/running-software.adoc[Concepts: running software]
-
-.Thinkube GitOps
-* xref:apps/index.adoc[Thinkube GitOps]
-* xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop]
-* xref:webapp-template:index.adoc[The template round trip]
-** xref:webapp-template:build-a-web-app.adoc[Build a web app from the template]
-** xref:webapp-template:change-your-app.adoc[Change your app and ship it]
-** xref:webapp-template:publish-your-app-as-a-template.adoc[Publish your app as a template]
-** xref:webapp-template:variables.adoc[How configuration reaches your app]
-** xref:webapp-template:anatomy.adoc[What is in the web app template]
-* xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app]
-* Recipes
-** xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service]
-** xref:playbooks/store-and-fetch-files.adoc[Store and fetch files with the file gateway]
-* xref:reference/thinkube-yaml.adoc[thinkube.yaml]
-* xref:reference/templates.adoc[Templates catalog]
-
-.Thinkube Models
-* xref:lifecycle/index.adoc[Thinkube Models]
-* xref:playbooks/serve-your-first-model.adoc[Serve your first model]
-* xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]
-** xref:control:llm-serving.adoc[LLM serving and models]
-* xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script]
-* xref:playbooks/run-notebooks-from-claude.adoc[Run notebooks from Claude, watched or unattended]
-* xref:playbooks/build-a-notebook-environment.adoc[Build a notebook environment]
-* xref:lifecycle/notebooks.adoc[Thinkube Notebooks]
-** xref:control:notebooks.adoc[Notebook execution over MCP]
-** xref:lifecycle/example-notebooks.adoc[The example notebooks]
-* xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks]
-* xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned]
-* xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers]
-* Concepts
-** xref:concepts/models.adoc[Models]
-** xref:concepts/improving-a-model.adoc[Improving a model]
-** xref:concepts/building-with-models.adoc[Building with models]
-
-.Thinkube Tandem
-* xref:tandem:index.adoc[Thinkube Tandem]
-* Using Tandem
-** xref:tandem:build-your-first-change-with-tandem.adoc[Build your first application change with Tandem]
-** xref:tandem:from-sentence-to-promise.adoc[How a sentence becomes a promise]
-** xref:tandem:turn-what-the-reviewers-noticed-into-the-next-change.adoc[Build the improvements Tandem's reviewers suggest]
-** xref:tandem:the-run.adoc[While it builds]
-** xref:tandem:the-report.adoc[Reading the report and deciding]
-** xref:tandem:words-on-the-page.adoc[The words on the page]
-** xref:tandem:defect-ledger.adoc[The defect ledger]
-** xref:tandem:configuration.adoc[Configuration and settings]
-** xref:tandem:troubleshooting.adoc[When something goes wrong]
-* Reference
-** xref:tandem:identity.adoc[Projects and identity]
-** xref:tandem:store.adoc[The store]
-** xref:tandem:defects.adoc[The defect ledger, reference]
 
 .Reference
+* xref:reference/thinkube-yaml.adoc[thinkube.yaml]
+* xref:reference/templates.adoc[Templates catalog]
 * xref:reference/components.adoc[Components catalog]
+* xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines]
+* xref:control:index.adoc[thinkube-control]
+* xref:control:llm-serving.adoc[LLM serving and models]
+* xref:control:notebooks.adoc[Notebook execution over MCP]
+* xref:webapp-template:anatomy.adoc[What is in the web app template]
+* xref:webapp-template:variables.adoc[How configuration reaches your app]
+* xref:tandem:words-on-the-page.adoc[Tandem: the words on the page]
+* xref:tandem:configuration.adoc[Tandem: configuration and settings]
+* xref:tandem:store.adoc[Tandem: the store]
+* xref:tandem:defects.adoc[Tandem: the defect ledger]
 
 .Contributing
 * xref:contributing/page-types.adoc[Page types]

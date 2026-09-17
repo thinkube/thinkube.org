@@ -36,7 +36,7 @@ You load `Qwen/Qwen3.5-4B` on a GPU node, call it from a notebook, and unload it
 
 *Optional*
 
-* xref:concepts/models.adoc[Models]: parameters, quantization and context, the numbers that decide what fits.
+* xref:lifecycle/index.adoc[Thinkube Models]: parameters, quantization and context, the numbers that decide what fits.
 * xref:control:llm-serving.adoc[LLM serving and models]: how the gateway routes, authenticates and sizes a load.
 
 === Supported hardware
@@ -201,7 +201,7 @@ The vLLM engine on tkamd2 stopped at once, and the node's free memory returned t
 === Step 6. Next steps
 
 * xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: choose the node, the backend and the context length for each load.
-* xref:lifecycle/notebooks.adoc[Thinkube Notebooks]: the environments and how to build your own.
+* xref:playbooks/build-a-notebook-environment.adoc[Build a notebook environment]: the environments and how to build your own.
 * xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers]: a served model answering over your own documents.
 
 == Troubleshooting

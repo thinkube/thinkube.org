@@ -34,7 +34,7 @@ You deploy the file gateway as `files`, store a file through the API and through
 
 *Optional*
 
-* xref:how-it-works/deploy-loop.adoc[The GitOps deploy loop], to see how the template becomes a running app.
+* xref:apps/index.adoc[Thinkube GitOps], to see how the template becomes a running app.
 
 === Supported hardware
 

@@ -39,8 +39,7 @@ You run `zebra_grpo.ipynb` on a GPU: it measures the base model, trains it, meas
 
 *Optional*
 
-* xref:concepts/improving-a-model.adoc[Improving a model]: fine-tuning, rewards and distillation.
-* xref:lifecycle/example-notebooks.adoc[The example notebooks]: where the notebook is and how to take a newer copy.
+* xref:lifecycle/index.adoc[Thinkube Models]: fine-tuning, rewards and distillation, and where the example notebooks are.
 
 === Supported hardware
 
@@ -253,7 +252,7 @@ message: Model unloaded successfully
 
 * xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned]: load the registered model and call it from your code.
 * xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: the node and the context for the load.
-* xref:concepts/improving-a-model.adoc[Improving a model]: when rewards, supervised fine-tuning or distillation fit.
+* xref:lifecycle/index.adoc[Thinkube Models]: when rewards, supervised fine-tuning or distillation fit.
 
 == Troubleshooting
 

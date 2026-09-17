@@ -1,23 +1,22 @@
-= <The idea, as a noun phrase>
+= <The area, or What Thinkube is>
 :page-type: concept
+:page-layout: area
+:page-area: <kubernetes | gitops | models | tandem>
 
-_<One sentence: what the idea lets the reader do.>_
+<One or two sentences: what the area is and what you get.>
 
-.TL;DR
-<What the idea lets you do on Thinkube, in two or three sentences, with the sentence you would say to Claude where there is one.>
+Ask Claude: _"<the sentence>"_. <What happens, in two sentences.>
 
-== The decision
+[d2,alt="<what the diagram shows>"]
+....
+direction: down
+<…>
+....
 
-<What was decided, and the reason. One or two paragraphs; one worked example.>
+== How it works
 
-== What it saves you
+* *<Bold lead.>* <One idea, said once, in three sentences at most.>
 
-* <Three to five lines, each a thing the reader no longer does.>
+== Reference
 
-== Where it shows up
-
-* xref:<page>[<Page>]: <what of this idea that page covers.>
-
-== Limits
-
-* <One line each.>
+* xref:<page>[<Page>]: <what it holds.>

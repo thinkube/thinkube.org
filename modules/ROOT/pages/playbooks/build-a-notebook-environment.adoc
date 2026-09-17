@@ -32,7 +32,7 @@ You build the environment `data-tools`, which is `agent-dev` plus `polars`, and 
 
 *Optional*
 
-* xref:lifecycle/notebooks.adoc[Thinkube Notebooks]: the servers and the two built-in environments.
+* xref:lifecycle/index.adoc[Thinkube Models]: the servers and the two built-in environments.
 
 === Supported hardware
 

@@ -474,14 +474,14 @@ spec:
     - workflows
 ----
 
-== What the file does not say
+== What belongs elsewhere
 
-Conditional logic, Kubernetes resources, cloud-specific settings, deployment strategies, service meshes, command overrides and multi-region deployment. Container-specific configuration belongs in the Dockerfile; orchestration belongs to thinkube-control; cloud specifics to the future cloud bridge.
+The file describes the application. Container-specific configuration belongs in the Dockerfile, orchestration to thinkube-control, and cloud specifics to the future cloud bridge, so the file stays a static descriptor with no conditional logic, raw Kubernetes resources, deployment strategies or command overrides.
 
 == Version
 
 v1.0. A static descriptor with one to many containers; routing; the `database`, `cache`, `storage`, `queue` and `workflows` services; dependencies and configurable variables, with a per-container allow-list of the variables a browser application may read; Knative scaling; components with a fixed name and gateway-managed pods; health endpoints; per-container tests with the whole suite and one file; parts, deploy, verify and docs for repositories the platform does not deploy.
 
-== Limits
+== Scope
 
-* This page covers applications and Knative services. The same file also describes the platform's own components and repositories the platform does not deploy; those uses are for platform development and are not documented here.
+This page covers applications and Knative services. The same file also describes the platform's own components and repositories the platform does not deploy; those uses belong to platform development.
