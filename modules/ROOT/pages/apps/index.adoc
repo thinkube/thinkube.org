@@ -64,7 +64,7 @@ From that file, at deploy time, the platform:
 * creates its repository in Thinkube Git, the webhook that builds it, and the ArgoCD application that runs it;
 * gives it `<name>.<your domain>` with the platform's certificate.
 
-On the reference cluster the `notes` app from the template has a `thinkube.yaml` of 43 lines. The platform generated 14 files in its `k8s/` folder, about 1,100 lines, holding 20 Kubernetes resources: the namespace, two deployments and two services, the route, the database and experiment credentials, a resource quota and default limits, the build workflow, two sync hooks, and a page that answers while the app is scaled to zero. You read those files when you want to; you never write them. When `thinkube.yaml` changes, a commit hook regenerates them.
+On the reference cluster an app made from the template has a `thinkube.yaml` of 44 lines. The platform generated 11 files in its `k8s/` folder, about 1,000 lines, holding 15 Kubernetes resources: the namespace, two deployments and two services, the route, the app's metadata, a resource quota and default limits, the build workflow, two sync hooks, and a page that answers while the app is scaled to zero. The credentials the app uses, for its database, Thinkube Experiments, Thinkube Storage and its build, are Kubernetes Secrets the platform writes at deploy time; the files name them and hold no credential. You read those files when you want to; you never write them. When `thinkube.yaml` changes, a commit hook regenerates them.
 
 xref:reference/thinkube-yaml.adoc[The thinkube.yaml reference] lists every field.
 
