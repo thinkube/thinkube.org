@@ -35,6 +35,10 @@ COPY . .
 # node-base sets NODE_ENV=development; production for the build
 ENV NODE_ENV=production
 
+# Node gives each address it tries 250 ms to connect; from the build pods that
+# is too short for GitHub, and the fetch fails with ETIMEDOUT.
+ENV NODE_OPTIONS=--network-family-autoselection-attempt-timeout=500
+
 # Give Antora a git HEAD to read, then build. `npm run build` runs
 # `antora --fetch`, which fetches the content sources and the UI bundle and
 # renders the [d2] blocks with the d2 binary above. Base path is "/" for the cluster
