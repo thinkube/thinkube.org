@@ -8,22 +8,24 @@ The base of the platform: unmodified upstream Kubernetes on your machines, with 
 
 Ask Claude: _"what's running?"_ Claude calls `list_services_minimal` and answers with every service of the base and everything you added: Thinkube Identity, Thinkube Storage and JuiceFS, Thinkube Registry, Thinkube Git, Argo Workflows and ArgoCD, PostgreSQL, the GPU Operator, Thinkube IDE, Thinkube Notebooks, Thinkube Experiments, Thinkube Packages, your optional components and your apps.
 
-[d2,alt="Thinkube GitOps, Thinkube Models and Thinkube Tandem stand on Thinkube Kubernetes, which provides thinkube-control, Thinkube Identity, Thinkube Storage and JuiceFS, Thinkube Registry, Thinkube Git with Argo, PostgreSQL and the GPUs"]
+[d2,alt="Thinkube GitOps, Thinkube Models and Thinkube Tandem use Thinkube Kubernetes, which provides thinkube-control, Thinkube Identity, the gateway with one certificate, Thinkube Storage and JuiceFS, Thinkube Registry, PostgreSQL, Thinkube Git, Argo and the GPU Operator"]
 ....
 direction: down
 
 areas: "Thinkube GitOps · Thinkube Models · Thinkube Tandem"
 
 base: "Thinkube Kubernetes" {
-  direction: right
-  label.near: bottom-center
-  control: "thinkube-control\noperated from Claude Code"
-  identity: "Thinkube Identity\none sign-on"
-  storage: "Thinkube Storage\nand JuiceFS\none filesystem"
-  registry: "Thinkube Registry\nimages and models"
-  pipeline: "Thinkube Git\nArgo Workflows · ArgoCD\none pipeline"
-  data: "PostgreSQL\none database"
-  gpus: "GPU Operator\nGPUs as slots"
+  grid-columns: 3
+  grid-gap: 16
+  control: "thinkube-control\nrun from Claude Code" {width: 210; height: 76}
+  identity: "Thinkube Identity\none sign-on" {width: 210; height: 76}
+  gateway: "Gateway\none certificate" {width: 210; height: 76}
+  storage: "Thinkube Storage\nand JuiceFS" {width: 210; height: 76}
+  registry: "Thinkube Registry\nimages and models" {width: 210; height: 76}
+  data: "PostgreSQL\none database" {width: 210; height: 76}
+  git: "Thinkube Git\nyour repositories" {width: 210; height: 76}
+  argo: "Argo\nbuild and deploy" {width: 210; height: 76}
+  gpus: "GPU Operator\nGPUs as slots" {width: 210; height: 76}
 }
 
 areas -> base: "use, never provide their own"

@@ -8,34 +8,34 @@ Open Thinkube IDE in your browser, start Claude Code, and say what you want: _"g
 
 == Four areas on one base
 
-[d2,alt="Thinkube Kubernetes as the base with its services, and Thinkube GitOps, Thinkube Models and Thinkube Tandem on it, with the lines between them"]
+[d2,alt="Thinkube Tandem and Thinkube Models both lead to Thinkube GitOps, and all three share Thinkube Kubernetes: thinkube-control, Thinkube Identity, Thinkube Registry, Thinkube Storage, Thinkube Git with Argo, PostgreSQL and the GPUs"]
 ....
 direction: down
 
-areas: "The three areas" {
-  direction: right
-  tandem: "Thinkube Tandem\na sentence to a running,\nreviewed change"
-  gitops: "Thinkube GitOps\napps from templates,\nbuilt and deployed from a push"
-  models: "Thinkube Models\nmodels served, notebooks,\nexperiments, fine-tuning"
-  tandem -> gitops: "ships by the\nsame pipeline"
-  models -> gitops: "a served model,\none endpoint"
+areas: "" {
+  style.stroke-width: 0
+  style.fill: transparent
+  grid-columns: 3
+  horizontal-gap: 40
+  tandem: "Thinkube Tandem\na sentence becomes\na reviewed change" {width: 196; height: 96}
+  gitops: "Thinkube GitOps\napps built and deployed\nfrom a push" {width: 196; height: 96}
+  models: "Thinkube Models\nserved models,\nnotebooks, fine-tuning" {width: 196; height: 96}
+  tandem -> gitops
+  models -> gitops
 }
 
-base: "Thinkube Kubernetes" {
-  direction: right
-  label.near: bottom-center
-  identity: "Thinkube Identity\none sign-on"
-  registry: "Thinkube Registry\none registry"
-  storage: "Thinkube Storage\nand JuiceFS\none filesystem"
-  control: "thinkube-control\nevery task a sentence\nto Claude Code"
-  rest: "PostgreSQL\nThinkube Git · Argo\nGPUs"
+base: "Thinkube Kubernetes: what every area shares" {
+  grid-columns: 3
+  grid-gap: 16
+  control: "thinkube-control\nrun from Claude Code" {width: 220; height: 76}
+  identity: "Thinkube Identity\none sign-on" {width: 220; height: 76}
+  registry: "Thinkube Registry\none registry" {width: 220; height: 76}
+  storage: "Thinkube Storage\none filesystem" {width: 220; height: 76}
+  pipeline: "Thinkube Git, Argo\none pipeline" {width: 220; height: 76}
+  gpus: "PostgreSQL, GPUs" {width: 220; height: 76}
 }
 
-areas.tandem -> base.identity: "reviewers sign in\nand drive the app"
-areas.gitops -> base.registry: "app images"
-areas.models -> base.registry: "model servers,\nnotebook images"
-areas.gitops -> base.storage: "mounts the storage\nit declares"
-areas.models -> base.storage: "datasets, weights,\nartifacts"
+areas -> base
 ....
 
 [cols="1,3",options="header"]
@@ -55,7 +55,7 @@ areas.models -> base.storage: "datasets, weights,\nartifacts"
 | A sentence becomes a change that is built, deployed and judged on the running product.
 |===
 
-The areas are one platform. A dataset a notebook writes is the file an app reads, the model a notebook fine-tunes is the address the app calls, and the change Tandem delivers ships by the pipeline the app took. Each line in the picture is a service of the base that two areas share: one sign-on, one filesystem, one registry, one pipeline, one way to drive it.
+The areas are one platform. A dataset a notebook writes is the file an app reads, the model a notebook fine-tunes is the address the app calls, and the change Tandem delivers ships by the pipeline the app took. The base is what they share: one sign-on, one filesystem, one registry, one pipeline, one way to drive it.
 
 == How you work with it
 
