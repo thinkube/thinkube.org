@@ -1,0 +1,199 @@
+= Check and restart services from Claude Code
+:page-type: playbook
+:page-area: kubernetes
+:page-tagline: Ask what is running and whether it is healthy, restart a service, and turn one off and on again, without kubectl
+:page-difficulty: beginner
+:page-time: 5 min
+:page-risk: low
+:page-tags: Health checks, Services, MCP
+:page-order: 40
+:page-updated: 2026-09-17
+
+== Overview
+
+=== Basic idea
+
+thinkube-control knows every service on the platform: the core services, the optional components you installed, and the apps you deployed. Claude reads and changes them through the same operations the dashboard uses.
+
+* *Health, on a schedule.* Every 2 minutes thinkube-control checks each enabled service's health address, and each of its other addresses. The latest result is on the service's card and in its details.
+* *Restart.* A rolling restart of the service's pods: a new pod starts, then the old one stops.
+* *Turn off and on.* An optional component or an app can be scaled to zero and back. Core services stay on.
+
+=== What you'll accomplish
+
+You list the services, read the health and pods of two of them, restart the `docs` app, and turn it off and on again.
+
+=== What to know before starting
+
+*Required*
+
+* Asking Claude Code in Thinkube IDE to do things on the platform.
+
+*Optional*
+
+* xref:how-it-works/mcp-operation-model.adoc[The MCP operation model]: which operations read and which change.
+
+=== Supported hardware
+
+[cols="1,1,1,2",options="header"]
+|===
+| Node | Architecture | GPU | On the reference run
+
+| tkamd1 | amd64 | none | —
+| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | Qdrant, and the `docs` pod after the restart
+| tkspark | arm64 | GB10, 121.7 GB unified | the `docs` pod after it was turned on again
+|===
+
+The operations do not depend on the hardware: a pod goes wherever Kubernetes schedules it.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
+* An app of your own to restart, for example the one from xref:webapp-template:build-a-web-app.adoc[Build a web app from the template]. The reference run used `docs`.
+
+*Components*
+
+* Qdrant, for Step 2. Ask Claude: _"is Qdrant installed?"_ Any installed service works the same way.
+
+=== Time & risk
+
+* *Estimated time:* 5 min. On the reference run the restarted pod was running 2 s after the request, and the app answered again 3 s after it was turned back on.
+* *Risk level:* Low. The restart and the toggle act only on the service you name. While an app is turned off, its address answers `503`.
+* *Rollback:* Turn the service on again.
+* *Last updated:* 2026-09-17. Measured on one restart and one toggle.
+
+== Instructions
+
+=== Step 1. List the services
+
+Ask Claude:
+
+----
+› what's running?
+----
+
+Claude calls `list_services_minimal`.
+
+Or by hand: in thinkube-control open *All Services*.
+
+Expected output, from the reference run, shortened:
+
+----
+40 services
+core:      Argo Workflows, ArgoCD, JuiceFS, Thinkube Notebooks, Thinkube Identity, Thinkube Packages,
+           Thinkube Git, GPU Operator, Thinkube IDE, PostgreSQL, Thinkube Registry, Thinkube Storage,
+           Thinkube Experiments
+optional:  Chroma, Knative, ClickHouse, NATS, Ollama, Langflow, Langfuse, OpenSearch Dashboards,
+           Qdrant, Prometheus, Perses, pgAdmin, Valkey
+component: Text Embeddings, Vllm, Tensorrt
+user_app:  Docs, Todo, Notes, Files, ... (Tasks and Knative Demo turned off)
+----
+
+The list says what each service is and whether it is on. Health is in the details.
+
+=== Step 2. Check a service's health
+
+Ask Claude:
+
+----
+› is Qdrant healthy?
+----
+
+Claude calls `get_service_details`.
+
+Or by hand: in *All Services*, open the service's card.
+
+Expected output, from the reference run:
+
+----
+Qdrant: healthy, checked 00:13:33
+  api: healthy, 200 in 40 ms
+pod qdrant-0 on tkamd2: Running, ready, 0 restarts
+requests 2 CPU and 4Gi, limits 4 CPU and 8Gi
+----
+
+A service with several addresses lists each one with its own result. Read those lines as well as the overall status.
+
+=== Step 3. Restart a service
+
+Ask Claude:
+
+----
+› restart docs
+----
+
+Claude calls `restart_service`.
+
+Or by hand: on the service's card or details page, choose *Restart Service*.
+
+Expected output, from the reference run:
+
+----
+Service Docs restarted successfully
+----
+
+and in the details a moment later:
+
+----
+recent action: restart at 00:12:53
+pod docs-docs-6545b67686-4d4pp on tkamd2: Running, ready, started 00:12:55
+health: healthy, checked 00:13:33
+----
+
+=== Step 4. Turn it off and on again
+
+Turning a service off scales it to zero and keeps everything else: its data, its address, its settings. Turning it on starts it with the replicas it had.
+
+Ask Claude:
+
+----
+› turn off docs
+----
+
+Claude calls `toggle_service` with `is_enabled: false`.
+
+Or by hand: on the details page, switch *Service Enabled* off.
+
+Expected output, from the reference run:
+
+----
+is_enabled: false
+recent action: disable at 00:14:00
+----
+
+`docs-docs` had 0 replicas, and `https://docs.<your domain>/` answered `503`.
+
+Then:
+
+----
+› turn docs back on
+----
+
+Expected output, from the reference run:
+
+----
+is_enabled: true
+recent action: enable at 00:14:06
+pod docs-docs-6545b67686-jpdvz on tkspark: Pending
+----
+
+The site answered `200` again at 00:14:09.
+
+=== Step 5. Next steps
+
+* xref:webapp-template:change-your-app.adoc[Change your app and ship it]: redeploy an app after a change.
+* xref:playbooks/serve-your-first-model.adoc[Serve your first model]: GPU status and model loads.
+* xref:kubernetes/keeping-it-running.adoc[Keeping it running]: reboots, system updates and what survives a rebuild.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| `toggle_service` answers `400` with `Core services cannot be disabled`
+| The service is a core service, such as JuiceFS; the platform needs it running
+| Restart it instead, with _"restart <service>"_.
+|===

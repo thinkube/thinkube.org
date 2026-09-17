@@ -209,8 +209,4 @@ The server `job-651a370f` stopped when the run ended, and `jupyter_notebook_stat
 | `jupyter_list_kernels` answers `Notebook servers are running on tkamd1, tkamd2, tkspark; say which with node.`
 | More than one notebook server is running, and the request did not name its node
 | Name the node: _"list the kernels on tkamd1"_.
-
-| A cell stays busy and its output repeats `nats: empty response from server when expecting INFO message`
-| The cell's client cannot reach NATS, and it retries the connection
-| Ask Claude to interrupt the kernel, then _"is NATS healthy?"_. `jupyter_interrupt_kernel` stops the cell, as Ctrl-C does.
 |===
