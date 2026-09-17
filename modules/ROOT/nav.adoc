@@ -57,8 +57,7 @@
 ** xref:lifecycle/example-notebooks.adoc[The example notebooks]
 * xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks]
 * xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned]
-* Playbooks
-** xref:playbooks/research-assistant.adoc[Build a research assistant, end to end]
+* xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers]
 * Concepts
 ** xref:concepts/models.adoc[Models]
 ** xref:concepts/improving-a-model.adoc[Improving a model]

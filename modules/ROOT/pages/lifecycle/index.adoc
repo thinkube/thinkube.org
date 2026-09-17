@@ -67,7 +67,7 @@ experiments -> gateway: "load"
 | Find the five notebooks the platform ships and what each needs.
 | A checked platform, and a starting point for your own work.
 
-| xref:playbooks/research-assistant.adoc[Build a research assistant, end to end]
+| xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers]
 | Run four notebooks: index papers, ask with sources, let agents argue.
 | A retrieval assistant on your models, your vector store and your traces.
 

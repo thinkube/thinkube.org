@@ -44,7 +44,7 @@ A platform is easiest to believe when something runs on it. The notebooks use th
 
 Run the research assistant in order: each notebook uses what the one before it left. The zebra notebook stands alone. Install Qdrant and Langfuse before `02`; ask Claude "install Qdrant and Langfuse".
 
-xref:playbooks/research-assistant.adoc[Build a research assistant, end to end] and xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks] follow them one step at a time and show what each step printed on the reference cluster.
+xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers] and xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks] follow them one step at a time and show what each step printed on the reference cluster.
 
 == Where they are
 

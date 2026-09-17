@@ -1,0 +1,235 @@
+= Build a research assistant over your papers
+:page-type: playbook
+:page-area: models
+:page-tagline: Index arXiv papers in your own vector store, ask questions that come back with sources, and let agents argue from the index
+:page-difficulty: intermediate
+:page-time: 5 min
+:page-risk: low
+:page-tags: RAG, Qdrant, Langfuse, AG2, Notebooks
+:page-order: 60
+:page-updated: 2026-09-17
+:page-aliases: playbooks/research-assistant.adoc
+
+== Overview
+
+=== Basic idea
+
+A research assistant answers from documents you chose and shows which ones it used. It is built from services the platform already runs: a served chat model and embedding model, a vector store, and tracing.
+
+* *Fetch and chunk.* Papers come from arXiv and are cut into pieces of about 1,000 characters.
+* *Embed and store.* Each piece becomes a vector through the LLM Gateway and is stored in Qdrant with what it came from.
+* *Retrieve and answer.* A question finds the closest pieces, and the chat model answers from them, citing the papers.
+* *Trace.* Langfuse records every retrieval and every answer, with its latency.
+* *Argue.* Two AG2 agents take opposite sides of a question and can cite only what a search of your index returns; a judge scores them.
+
+=== What you'll accomplish
+
+You run the three research-assistant notebooks in order: `01` checks the models, `02` indexes 146 papers and answers three questions with sources, and `03` runs a debate between two agents and a judge over that index.
+
+=== What to know before starting
+
+*Required*
+
+* xref:playbooks/run-notebooks-from-claude.adoc[Run notebooks from Claude, watched or unattended]: how Claude runs a notebook.
+* xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: serving the two models.
+
+*Optional*
+
+* xref:concepts/building-with-models.adoc[Concepts: building with models]: embeddings, retrieval, agents and tracing.
+* xref:lifecycle/example-notebooks.adoc[The example notebooks]: where the notebooks are and how to take a newer copy.
+
+=== Supported hardware
+
+[cols="1,1,1,2",options="header"]
+|===
+| Node | Architecture | GPU | On the reference run
+
+| tkamd1 | amd64 | none | the notebooks, on the node's notebook server
+| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | `Qwen/Qwen3-Embedding-0.6B`, served by text-embeddings
+| tkspark | arm64 | GB10, 121.7 GB unified | `unsloth/Qwen3.6-27B-NVFP4`, served by vLLM
+|===
+
+The notebooks need no GPU: the models run behind the LLM Gateway.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
+* A notebook server on tkamd1. Ask Claude: _"start a notebook server on tkamd1"_.
+* A chat model the catalogue marks for tool use, and an embedding model, both loaded. Ask Claude: _"which models are loaded?"_ The run used `unsloth/Qwen3.6-27B-NVFP4` and `Qwen/Qwen3-Embedding-0.6B`.
+* Outbound access to arXiv.
+
+*Components*
+
+* Qdrant and Langfuse. Ask Claude: _"are Qdrant and Langfuse installed?"_ If not, ask _"install Qdrant and Langfuse"_; the install brings their requirements, ClickHouse and Valkey.
+
+=== Time & risk
+
+* *Estimated time:* 5 min. On the reference run `01` took 94 s as an unattended run, including its own server's start; `02` took 75 s, fetching, embedding and indexing 146 papers and answering three questions; `03` took 4 min 1 s, of which the debate was 230.5 s.
+* *Risk level:* Low. `02` deletes and recreates its own Qdrant collection, `rl_reasoning_papers`; nothing else is changed.
+* *Rollback:* In a notebook, `QdrantClient(url=os.environ["QDRANT_URL"]).delete_collection("rl_reasoning_papers")`.
+* *Last updated:* 2026-09-17. Measured on one run of each notebook, on fresh copies from the thinkube-notebooks-examples repository.
+
+== Instructions
+
+=== Step 1. Check the models are served
+
+`01-load-models.ipynb` lists the models and the GPUs, loads a chat model and an embedding model when none is loaded, and tests both. When both are loaded, it says so and moves on.
+
+Ask Claude:
+
+----
+› run examples/research-assistant/01-load-models.ipynb with agent-dev on tkamd1
+----
+
+Expected output, from the reference run:
+
+----
+✅ Chat model already loaded: unsloth/Qwen3.6-27B-NVFP4
+✅ Embedding model already loaded: Qwen/Qwen3-Embedding-0.6B
+✅ Embeddings with Qwen/Qwen3-Embedding-0.6B — 1024 dimensions
+
+📐 Semantic Similarity:
+  LoRA ↔ QLoRA:    0.833  (related topics)
+  LoRA ↔ Weather:  0.289  (unrelated)
+  QLoRA ↔ Weather: 0.260  (unrelated)
+----
+
+Closeness in meaning becomes closeness in vector space: that is what the next notebook retrieves by. Leave the models loaded.
+
+=== Step 2. Index the papers and ask questions
+
+`02-langchain-rag.ipynb` fetches papers on reasoning post-training from arXiv, chunks them, embeds the chunks, stores them in Qdrant, and answers three questions through a LangChain retrieval chain traced in Langfuse.
+
+Ask Claude:
+
+----
+› run examples/research-assistant/02-langchain-rag.ipynb with agent-dev on tkamd1
+----
+
+Expected output, from the reference run:
+
+----
+✅ Total: 146 papers from ArXiv
+ℹ️    - Anchor papers: 3
+ℹ️    - GRPO/RLVR papers: 50
+ℹ️    - Distillation papers: 50
+ℹ️    - General reasoning papers: 43
+✅ Created 431 total chunks from 146 papers
+✅ All 431 embeddings generated (dimension: 1024)
+✅ Created collection 'rl_reasoning_papers'
+✅ Uploaded 431 vectors to Qdrant
+----
+
+The index holds abstracts. `FETCH_FULL_TEXT = True` in the fetch cell also downloads each paper's LaTeX source and extracts algorithms, results tables and equations.
+
+Each question comes back with an answer and four sources:
+
+[cols="2,1,3",options="header"]
+|===
+| Question | Time | Answer, in short, and sources
+
+| What is GRPO and how does it differ from PPO for training language models?
+| 8.98 s
+| GRPO is a widely used algorithm for reinforcement learning with verifiable rewards; the excerpts say nothing about PPO, so the answer says it cannot compare them. Sources: GRPO-SG, CoDistill-GRPO, GRPO-VPS.
+
+| Does reinforcement learning with verifiable rewards create new reasoning ability, or mostly sharpen what the base model already can do?
+| 11.51 s
+| It mostly sharpens what the base model already has. Sources include _Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model?_
+
+| When does distilling reasoning traces from a large teacher beat running RL directly on a small model?
+| 9.48 s
+| Distilling a teacher's traces generally beats RL on the small model alone. Sources: RLKD, NaturalThoughts and two more.
+|===
+
+An answer is as good as the pieces under it. The first answer shows the chain saying what its sources do not cover.
+
+=== Step 3. Read the traces
+
+The last cells of `02` read the traces back from Langfuse and summarise latency per kind of trace.
+
+Expected output, from the reference run:
+
+----
+✅ Fetched 12 traces from Langfuse
+ℹ️  Excluded 2 trace(s) newer than 30s — their latency is not final yet
+🔹 RetrievalQA
+   Traces:  7
+   Median:  11171 ms  (11.17 sec)
+💡 Measured: RetrievalQA has the higher median latency at 11.2 s, against 3.2 s for embedding-generation — a factor of 3.5.
+----
+
+Every trace, with its prompts and retrieved pieces, is at `https://langfuse.<your domain>`.
+
+=== Step 4. Let two agents argue from the index
+
+`03-multi-agent.ipynb` gives three AG2 agents a question the literature has not settled: for a small model with a reward checker and a large teacher, post-train with GRPO or distil the teacher's traces? Each advocate searches the index once, argues, and ends its turn with `ARGUMENT_COMPLETE`. The judge scores five criteria, declares a winner, and calls `generate_code` for the winning approach.
+
+Ask Claude:
+
+----
+› run examples/research-assistant/03-multi-agent.ipynb with agent-dev on tkamd1
+----
+
+Expected output, from the reference run:
+
+----
+Timing:
+  Round 1 (Openings):  71.9s
+  Round 2 (Rebuttals): 60.0s
+  Judge:               98.6s
+  Total:               230.5s
+Code Generated: Yes (ok)
+  - Winning approach: Distillation
+  - Algorithm excerpts used: 3
+  - Paper citations: 2312.10730v2, 2601.18734v3, 2212.00193v2
+----
+
+and the judge's totals:
+
+----
+GRPO Total:         0.68
+Distillation Total: 0.76
+The side with the higher total score is Distillation.
+----
+
+Pro-GRPO opened with _Reinforcement Learning with Verifiable Rewards Implicitly Incentivizes Correct Reasoning in Base LLMs_, DeepSeek-R1 and RLKD; Pro-Distillation with work on chain-of-thought distillation into small models. Tool calling is what lets the agents search: the model emits a call the server parses, which is why the chat model must be one the catalogue marks for tool use.
+
+=== Step 5. Close the notebooks
+
+Each open notebook holds a kernel and its memory on the server.
+
+Ask Claude:
+
+----
+› close the research assistant notebooks on tkamd1
+----
+
+Claude calls `jupyter_close_notebook` for each.
+
+Expected output:
+
+----
+saved: true
+kernel_shut_down: true
+----
+
+The models stay loaded for other work. Unload the ones you loaded for this playbook with _"unload <model>"_.
+
+=== Step 6. Next steps
+
+* xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks]: train with rewards a program checks, the GRPO side of the debate.
+* xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script]: the same gateway from your own code.
+* xref:playbooks/install-and-remove-optional-components.adoc[Install and remove optional components]: another vector store, such as Chroma or Weaviate.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| A chat call answers with no visible text and `finish_reason=length`
+| A reasoning model spent `max_tokens` on thinking before the answer; with `unsloth/Qwen3.6-27B-NVFP4` 1024 tokens were not enough
+| Raise `max_tokens`, to 4096 for example, or switch thinking off with `extra_body={"chat_template_kwargs": {"enable_thinking": False}}`.
+|===

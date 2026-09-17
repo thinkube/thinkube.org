@@ -175,7 +175,7 @@ On the reference run the vLLM engine on tkamd2 was removed at once, since it ser
 
 * xref:playbooks/serve-your-first-model.adoc[Serve your first model]: call a loaded model from a notebook.
 * xref:control:llm-serving.adoc[LLM serving and models]: sizing, speculative decoding and routing.
-* xref:playbooks/research-assistant.adoc[Build a research assistant, end to end]: a served model answering over your own documents.
+* xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers]: a served model answering over your own documents.
 
 == Troubleshooting
 

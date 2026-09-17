@@ -226,7 +226,7 @@ message: Model unloaded successfully
 
 * xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: serve the model your app needs where it fits.
 * xref:webapp-template:variables.adoc[How configuration reaches your app]: give a deployed app the token as a secret.
-* xref:playbooks/research-assistant.adoc[Build a research assistant, end to end]: a served model answering over your own documents.
+* xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers]: a served model answering over your own documents.
 
 == Troubleshooting
 

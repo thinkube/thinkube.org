@@ -202,7 +202,7 @@ The vLLM engine on tkamd2 stopped at once, and the node's free memory returned t
 
 * xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: choose the node, the backend and the context length for each load.
 * xref:lifecycle/notebooks.adoc[Thinkube Notebooks]: the environments and how to build your own.
-* xref:playbooks/research-assistant.adoc[Build a research assistant, end to end]: a served model answering over your own documents.
+* xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers]: a served model answering over your own documents.
 
 == Troubleshooting
 

@@ -71,7 +71,7 @@ tandem: "Tandem changes it from sentences,\nand reviewers judge it there"
 notebook -> experiments -> served -> app -> deployed -> tandem
 ....
 
-xref:playbooks/research-assistant.adoc[Build a research assistant, end to end] walks that path with real notebooks.
+xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers] walks that path with real notebooks.
 
 === The base, layer by layer
 
