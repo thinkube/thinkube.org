@@ -1,0 +1,167 @@
+= Build a notebook environment
+:page-type: playbook
+:page-area: models
+:page-tagline: Start from agent-dev or fine-tuning, add the packages you need, and get a kernel built for every architecture in your cluster
+:page-difficulty: beginner
+:page-time: 10 min
+:page-risk: low
+:page-tags: Notebooks, Python environments, Kernels
+:page-order: 40
+:page-updated: 2026-09-17
+
+== Overview
+
+=== Basic idea
+
+A notebook environment is a Python virtual environment that Thinkube Notebooks offers as a kernel. Two come with the platform: `agent-dev` for building with models and agents, and `fine-tuning` for training. When you need other packages, you build an environment of your own instead of installing into those.
+
+* *From a template.* A new environment copies the package list of `agent-dev` or `fine-tuning`, then adds yours.
+* *Built for your hardware.* The build runs as a Kubernetes Job for each architecture in the cluster, on a GPU node, and the result is copied to the other GPU nodes.
+* *PyTorch from the image.* Every environment uses the PyTorch the notebook image was built with, so compiled extensions keep working.
+* *A kernel by name.* The environment appears as a kernel with its name, in every notebook server started after the build.
+
+=== What you'll accomplish
+
+You build the environment `data-tools`, which is `agent-dev` plus `polars`, and run a notebook with its kernel.
+
+=== What to know before starting
+
+*Required*
+
+* xref:playbooks/run-notebooks-from-claude.adoc[Run notebooks from Claude, watched or unattended]: the run that uses the new kernel.
+
+*Optional*
+
+* xref:lifecycle/notebooks.adoc[Thinkube Notebooks]: the servers and the two built-in environments.
+
+=== Supported hardware
+
+[cols="1,1,1,2",options="header"]
+|===
+| Node | Architecture | GPU | On the reference run
+
+| tkamd1 | amd64 | none | —
+| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | the notebook run
+| tkspark | arm64 | GB10, 121.7 GB unified | —
+|===
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
+
+*Components*
+
+* None beyond the base platform.
+
+=== Time & risk
+
+* *Estimated time:* 10 min. On the reference run the build took 7 min 14 s for both architectures, and the notebook run, starting its own server, 49 s.
+* *Risk level:* Low. The build writes only the new environment; the built-in environments stay as they are.
+* *Rollback:* Delete the environment under *Jupyter Kernels*.
+* *Last updated:* 2026-09-17. Measured on one build and one run.
+
+== Instructions
+
+=== Step 1. Create the environment
+
+The name starts with a letter and holds letters, digits, hyphens and underscores. `agent-dev` and `fine-tuning` are taken by the built-in environments.
+
+Ask Claude:
+
+----
+› make a notebook environment called data-tools from agent-dev and add polars
+----
+
+Claude calls `create_jupyter_venv` with `name: data-tools`, `packages: [polars]` and `parent_template: agent-dev`.
+
+Or by hand: in thinkube-control open *Jupyter Kernels*. Under *Create New Kernel* type `data-tools` as *Kernel Name*, pick *agent-dev* as *Base Template* and choose *Create*. Then under *Kernels* choose *Edit packages* on `data-tools` and add `polars`.
+
+Expected output, from the reference run:
+
+----
+id: 12276bdc-1aa4-488b-8ae8-608e26700fe6
+name: data-tools
+packages: ipykernel, transformers, ... anthropic, tk-llm[openai], ... langchain==1.4.0, ... ag2[openai]==0.10.2, ... polars
+status: pending
+----
+
+=== Step 2. Build it
+
+Ask Claude:
+
+----
+› build data-tools
+----
+
+Claude calls `build_jupyter_venv`, which answers at once, and follows `get_jupyter_venv` until the status is `success` or `failed`. pip prints nothing while it installs, so the status is the progress to follow.
+
+Or by hand: under *Kernels*, choose *Build kernel* (the play button) on `data-tools`.
+
+Expected output, from the reference run:
+
+----
+status: building
+message: Build started on a GPU node; poll get_jupyter_venv for its status
+----
+
+and at the end:
+
+----
+status: success
+output: Build completed. Log: /tmp/thinkube-venvs/data-tools/build-20260917-000554.log
+venv_path: /var/lib/jupyterhub-venvs/custom/data-tools
+architectures_built: amd64, arm64
+duration: 433.5
+----
+
+=== Step 3. Run a notebook with the new kernel
+
+A notebook server registers the kernels that exist when it starts. An unattended run starts a server of its own, so it has the new kernel at once. `sys.prefix` shows the environment the kernel runs in.
+
+Ask Claude:
+
+----
+› create try-data-tools.ipynb that imports polars and filters a small table, and run it unattended on tkamd2 with the data-tools kernel
+----
+
+Claude calls `jupyter_create_notebook`, then `run_notebook_job` with `kernel_name: data-tools`, and follows `notebook_job_status`.
+
+Expected output, from the reference run:
+
+----
+status: completed
+completed_cells: 2 of 2
+cell 0: /home/thinkube/venvs/custom/data-tools/amd64
+        polars 1.44.2
+cell 1: shape: (2, 2)
+        ┌─────────┬──────┐
+        │ node    ┆ gpus │
+        │ ---     ┆ ---  │
+        │ str     ┆ i64  │
+        ╞═════════╪══════╡
+        │ tkamd2  ┆ 2    │
+        │ tkspark ┆ 1    │
+        └─────────┴──────┘
+created_at: 00:15:11   finished_at: 00:16:00
+----
+
+To use the kernel in a server you already have running, stop and start that server: _"restart my notebook server on tkamd1"_.
+
+=== Step 4. Next steps
+
+* xref:playbooks/run-notebooks-from-claude.adoc[Run notebooks from Claude, watched or unattended]: watch a run in a Thinkube IDE tab.
+* xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script]: the clients every environment carries.
+* xref:control:notebooks.adoc[Notebook execution over MCP]: the notebook operations.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| `create_jupyter_venv` answers `400` with `'agent-dev' is a built-in template; build the template itself to rebuild it, or choose another name`
+| The name is taken by a built-in environment
+| Choose another name, such as `agent-dev-polars`.
+|===

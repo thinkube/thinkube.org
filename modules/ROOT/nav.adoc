@@ -50,6 +50,7 @@
 ** xref:control:llm-serving.adoc[LLM serving and models]
 * xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script]
 * xref:playbooks/run-notebooks-from-claude.adoc[Run notebooks from Claude, watched or unattended]
+* xref:playbooks/build-a-notebook-environment.adoc[Build a notebook environment]
 * xref:lifecycle/notebooks.adoc[Thinkube Notebooks]
 ** xref:control:notebooks.adoc[Notebook execution over MCP]
 ** xref:lifecycle/example-notebooks.adoc[The example notebooks]
