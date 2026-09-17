@@ -197,7 +197,7 @@ The server `job-651a370f` stopped when the run ended, and `jupyter_notebook_stat
 === Step 6. Next steps
 
 * xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script]: call a served model from a notebook cell.
-* xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards, end to end]: a long run on a GPU, a good fit for an unattended run.
+* xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks]: a long run on a GPU, a good fit for an unattended run.
 * xref:control:notebooks.adoc[Notebook execution over MCP]: editing cells, long single cells, and large outputs.
 
 == Troubleshooting

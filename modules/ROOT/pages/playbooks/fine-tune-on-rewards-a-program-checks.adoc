@@ -1,0 +1,275 @@
+= Fine-tune a model on rewards a program checks
+:page-type: playbook
+:page-area: models
+:page-tagline: Train a 4B model with GRPO against a solver that grades every answer, with no labelled data, and register the result beside its run
+:page-difficulty: advanced
+:page-time: 9 h 30 min
+:page-time-note: at full scale on one GB10; the demo scale runs every stage on fewer puzzles
+:page-risk: medium
+:page-tags: GRPO, Unsloth, Thinkube Experiments, Notebooks
+:page-order: 70
+:page-updated: 2026-09-16
+:page-aliases: playbooks/zebra-grpo.adoc, lifecycle/fine-tune.adoc
+
+== Overview
+
+=== Basic idea
+
+Fine-tuning usually needs examples of the right answer. When a program can decide whether an answer is right, the program replaces the examples: the model tries, the program grades, and training pushes the model towards what scored well.
+
+The example is a zebra puzzle: five houses, fifteen clues, fill in the grid.
+
+* *The model formalises.* It translates each clue into one formal rule, as JSON.
+* *The solver deduces.* A constraint solver finds the grid from the rules, and grades it against the puzzle's answer key.
+* *GRPO learns from the grade.* For each puzzle the model writes eight answers; the ones that score above their group's average are made more likely.
+* *A LoRA adapter is what trains.* 21 million parameters, 0.47% of the model, so the run fits one GPU and the result is small until it is merged.
+* *Thinkube Experiments keeps the record.* The run's parameters and reward curve, and the registered model version linked to that run.
+
+The same loop fits any task a program can check: text to SQL, documents to records, sentences to a knowledge graph.
+
+=== What you'll accomplish
+
+You run `zebra_grpo.ipynb` on a GPU: it measures the base model, trains it, measures it again on your own puzzles and on the public ZebraLogic benchmark, registers the merged model `zebra-rules-qwen35-4b` in Thinkube Experiments, and makes it loadable at the LLM Gateway.
+
+=== What to know before starting
+
+*Required*
+
+* xref:playbooks/run-notebooks-from-claude.adoc[Run notebooks from Claude, watched or unattended]: this run is long, so it runs unattended.
+
+*Optional*
+
+* xref:concepts/improving-a-model.adoc[Improving a model]: fine-tuning, rewards and distillation.
+* xref:lifecycle/example-notebooks.adoc[The example notebooks]: where the notebook is and how to take a newer copy.
+
+=== Supported hardware
+
+[cols="1,1,1,2",options="header"]
+|===
+| Node | Architecture | GPU | On the reference run
+
+| tkamd1 | amd64 | none | —
+| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | the trained model, served at the end
+| tkspark | arm64 | GB10, 121.7 GB unified | the whole notebook: evaluation, training, merge and registration
+|===
+
+The notebook needs one GPU with about 20 GB of memory free, in bfloat16 with FlashAttention-2.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
+* `unsloth/Qwen3.5-4B` mirrored: the notebook reads the base model from your storage. Ask Claude: _"is unsloth/Qwen3.5-4B mirrored?"_ If it is not, ask _"mirror unsloth/Qwen3.5-4B"_.
+* A free GPU slot on the node. Ask Claude: _"how many GPU slots are free on tkspark?"_
+* A private repository named `<your GitHub user>-metadata` on GitHub, for the model's catalogue entry. Ask Claude: _"does my GitHub account have a -metadata repository?"_
+
+*Components*
+
+* The optional component vLLM, for the notebook's last section. Ask Claude: _"is vLLM installed?"_ If it is not, ask _"install vLLM"_.
+
+=== Time & risk
+
+* *Estimated time:* 9 h 30 min at full scale, measured on one GB10:
++
+[cols="3,1",options="header"]
+|===
+| Stage | Time
+| load the base model from the mirror | about 1 min
+| generate 2,200 puzzles | about 3 min
+| baseline evaluation, 2 × 200 puzzles | about 75 min
+| GRPO training, 250 steps | 6 h 54 min
+| evaluation after training, 2 × 200 puzzles | about 31 min
+| merge, upload 8.7 GB, register | about 41 min
+| load on vLLM and call the gateway | about 5 min
+|===
++
+The baseline is cached on disk by scale, so a second run at the same scale skips those 75 minutes.
+* *Risk level:* Medium. The run holds a GPU for hours, and a served model on the same unified-memory node shares that memory.
+* *Rollback:* Delete the registered version in Thinkube Experiments. The base model is untouched.
+* *Last updated:* 2026-09-16. Written from the full run recorded in the notebook, commit ef3a82b of `thinkube-notebooks-examples`.
+
+== Instructions
+
+=== Step 1. Choose the scale
+
+`FULL_RUN` in the configuration cell picks the scale:
+
+* `True`, the default: 2,000 training puzzles, 200 in each evaluation set, 250 steps. It produces a model worth serving.
+* `False`: 500 training puzzles, 50 in each evaluation set, 60 steps. Every stage runs the same way, on fewer puzzles.
+
+Ask Claude:
+
+----
+› in examples/zebra-grpo/zebra_grpo.ipynb set FULL_RUN to False
+----
+
+Claude reads the configuration cell with `jupyter_read_cell` and rewrites the line with `jupyter_overwrite_cell`. Leave it as it is for the full run.
+
+=== Step 2. Run it unattended on the GPU node
+
+A run of hours belongs on a server of its own, which stops when the run ends and gives the GPU back.
+
+Ask Claude:
+
+----
+› run examples/zebra-grpo/zebra_grpo.ipynb unattended on tkspark with one GPU and the fine-tuning kernel
+----
+
+Claude calls `run_notebook_job` with `node: tkspark`, `gpus: 1` and `kernel_name: fine-tuning`, and follows `notebook_job_status`.
+
+Or by hand: in Thinkube Notebooks start a server on tkspark with one GPU, open `thinkube/notebooks/examples/zebra-grpo/zebra_grpo.ipynb` with the *fine-tuning* kernel, and run all cells.
+
+Expected output from the first cells, from the recorded run:
+
+----
+Model: unsloth/Qwen3.5-4B
+Scale: FULL
+Train: 2000, Eval: 200, Bench: 200
+LoRA rank: 16, LR: 1e-05, Steps: 250
+Loading from local MLflow mirror: /home/thinkube/thinkube/mlflow/artifacts/1/.../artifacts/model
+   \\   /|    NVIDIA GB10. Num GPUs = 1. Max memory: 121.689 GB. Platform: Linux.
+Parameters: 4,560,499,200 total, 21,233,664 trainable (0.47%)
+Train/eval disjoint: confirmed (2000 vs 200 unique)
+5-house puzzles for evaluation: 200
+----
+
+`Train/eval disjoint: confirmed` is the check that the model is measured on puzzles it never trained on.
+
+=== Step 3. Read the starting point
+
+Before training, the model translates 200 of the generated puzzles and 200 ZebraLogic puzzles. ZebraLogic is written by other people, so it measures whether the skill transfers.
+
+Ask Claude:
+
+----
+› show me the baseline results of the zebra run
+----
+
+Claude reads the cell's outputs from the job's results, or with `jupyter_read_cell`.
+
+Expected output, from the recorded run:
+
+----
+Baseline Results:
+  In-dist    solved=8%  cell_acc=0.313  parse=99%
+  ZebraLogic solved=28%  cell_acc=0.527  parse=97%
+----
+
+The model already writes well-formed rules, 97 to 99% of them parse. What it gets wrong is which rule.
+
+=== Step 4. Follow the training
+
+Each step writes eight answers per puzzle and scores them with the solver: the fraction of the 25 grid cells right, plus 0.05 for one rule per clue and 0.25 for a fully correct grid. The reward shows progress; the loss shows how far the model moved.
+
+Expected output, from the recorded run:
+
+----
+Num examples = 2,000 | Num Epochs = 1 | Total steps = 250
+Batch size per device = 8 | Gradient accumulation steps = 4
+Trainable parameters = 21,233,664 of 4,560,499,200 (0.47% trained)
+Training completed in 414.2 minutes
+MLflow run: ec1f9ee6e1fa455b99936a9ef9f32e51
+  experiment: zebra-grpo (id 5)
+  logged 6256 metric points across 251 steps
+  view: https://experiments.<your domain>/#/experiments/5/runs/ec1f9ee6e1fa455b99936a9ef9f32e51
+----
+
+The run is logged to Thinkube Experiments once training ends, so the whole reward curve is in one run. On the recorded run the reward reached its ceiling around step 190.
+
+=== Step 5. Compare before and after
+
+The same puzzles, the same sampling and the same grader, with the trained adapter.
+
+Expected output, from the recorded run:
+
+----
+                             baseline    trained      delta
+==========================================================
+in-dist  puzzle_acc                8%        99%       +92%
+in-dist  cell_acc               0.313      0.995     +0.682
+in-dist  parse_rate               99%       100%        +1%
+zlogic  puzzle_acc                28%        67%       +39%
+zlogic  cell_acc                0.527      0.782     +0.255
+zlogic  parse_rate                97%       100%        +3%
+Results logged to MLflow run ec1f9ee6e1fa455b99936a9ef9f32e51
+----
+
+ZebraLogic is the row that shows real learning: from 28% to 67% of puzzles solved, on clues the generator never wrote. The next section prints one unseen puzzle clue by clue, with the rule the model wrote and the solver's grid.
+
+=== Step 6. Register the model
+
+The notebook merges the adapter into the base weights, uploads the result, and registers it as a version of `zebra-rules-qwen35-4b` linked to the training run.
+
+Expected output, from the recorded run:
+
+----
+Merged model in staging: /home/thinkube/thinkube/mlflow/.staging/zebra-rules-qwen35-4b  [full-250steps]
+Uploading 9 files to s3://mlflow/artifacts/5/ec1f9ee6e1fa455b99936a9ef9f32e51/artifacts/model
+  model.safetensors-00001-of-00002.safetensors (5.0 GB)...
+  model.safetensors-00002-of-00002.safetensors (3.7 GB)...
+Upload complete
+Registered zebra-rules-qwen35-4b version 3
+  linked to training run ec1f9ee6e1fa455b99936a9ef9f32e51
+----
+
+In Thinkube Experiments, the version opens onto the run: its parameters and reward curve.
+
+=== Step 7. Make the model loadable
+
+The gateway loads a model that has two more records: a catalogue entry that says how to serve it, and a completed registration in thinkube-control. Section 14b writes both:
+
+* the entry, in `models.json` of your private `<your GitHub user>-metadata` repository on GitHub, with the notebook server's `GITHUB_TOKEN`;
+* the registration, in the `model_mirror_jobs` table of thinkube-control's database, with the notebook server's PostgreSQL credentials.
+
+Then it waits until the gateway lists the model. This step is manual in this release; the next releases record a registered fine-tune for you.
+
+The cell prints:
+
+----
+Catalogue entry written to <your GitHub user>/<your GitHub user>-metadata/models.json
+Registration recorded for zebra-rules-qwen35-4b
+state: ModelState.deployable
+----
+
+=== Step 8. Give the GPU back
+
+The notebook's last section loads the model on vLLM and calls it, as xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned] describes. On the recorded run it loaded on `vllm-tkamd2`. The unattended run's server stopped when the notebook ended; the served model holds its GPU until you unload it.
+
+Ask Claude:
+
+----
+› unload zebra-rules-qwen35-4b
+----
+
+Expected output:
+
+----
+state: deployable
+message: Model unloaded successfully
+----
+
+=== Step 9. Next steps
+
+* xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned]: load the registered model and call it from your code.
+* xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: the node and the context for the load.
+* xref:concepts/improving-a-model.adoc[Improving a model]: when rewards, supervised fine-tuning or distillation fit.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| The model cell prints `No local mirror; downloading from HuggingFace`
+| `unsloth/Qwen3.5-4B` is not mirrored, so the notebook would download it into the server
+| Stop the run and ask Claude _"mirror unsloth/Qwen3.5-4B"_; every GPU node then reads the one mirror.
+
+| Training stops at step 0 with `FailOnRecompileLimitHit`
+| The Unsloth in the environment is older than the PyTorch it runs against
+| Use the notebook environments of the current release.
+
+| A compiled kernel fails on a tensor without storage
+| An extension was built against a different PyTorch than the image's
+| Run `import torch, os; print(torch.__version__, os.path.dirname(torch.__file__))`; the path must be under `/usr/local/lib/python3.12/dist-packages`, the image's build.
+|===

@@ -21,7 +21,7 @@ A platform is easiest to believe when something runs on it. The notebooks use th
 | Nothing installed beyond the base; a service that is not installed is reported as skipped
 | One line per service: reached, skipped, or failed with the error. A test run in Thinkube Experiments.
 
-| `research-assistant/01-register-litellm.ipynb`
+| `research-assistant/01-load-models.ipynb`
 | `agent-dev`
 | A chat model and an embedding model in the catalogue, mirrored
 | Both models loaded at the LLM Gateway, for 02 and 03 to call.
@@ -44,7 +44,7 @@ A platform is easiest to believe when something runs on it. The notebooks use th
 
 Run the research assistant in order: each notebook uses what the one before it left. The zebra notebook stands alone. Install Qdrant and Langfuse before `02`; ask Claude "install Qdrant and Langfuse".
 
-xref:playbooks/research-assistant.adoc[Build a research assistant, end to end] and xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards, end to end] follow them one step at a time and show what each step printed on the reference cluster.
+xref:playbooks/research-assistant.adoc[Build a research assistant, end to end] and xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks] follow them one step at a time and show what each step printed on the reference cluster.
 
 == Where they are
 

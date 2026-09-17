@@ -67,16 +67,16 @@ experiments -> gateway: "load"
 | Find the five notebooks the platform ships and what each needs.
 | A checked platform, and a starting point for your own work.
 
-| xref:lifecycle/fine-tune.adoc[Fine-tune]
-| Train in a notebook, track the run, register the result.
-| A model of your own in the same catalogue, served the same way.
-
 | xref:playbooks/research-assistant.adoc[Build a research assistant, end to end]
 | Run four notebooks: index papers, ask with sources, let agents argue.
 | A retrieval assistant on your models, your vector store and your traces.
 
-| xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards, end to end]
-| Train a 4B model against a solver, register it, serve it.
+| xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks]
+| Train a 4B model against a solver, track the run, register the result.
+| A model you trained, ready to load.
+
+| xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned]
+| Give the fine-tune its catalogue entry, load it, call it.
 | A model you trained, answering at the gateway.
 |===
 

@@ -12,7 +12,7 @@ When the prompt is not enough, you change the model instead. On Thinkube that is
 
 *Why it matters to you.* Prompts have a ceiling: a long system prompt approximates the behaviour and fails under load. Fine-tuning encodes it, and the long prompt goes away, along with most of the cost and latency of every call. It is also how your data, which nobody else has, becomes a capability nobody else has.
 
-*Where you meet it.* xref:lifecycle/fine-tune.adoc[Fine-tune], and the notebooks under Thinkube Notebooks.
+*Where you meet it.* xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks], and the notebooks under Thinkube Notebooks.
 
 == LoRA
 
@@ -28,7 +28,7 @@ When the prompt is not enough, you change the model instead. On Thinkube that is
 
 *Why it matters to you.* Most businesses have checkable tasks and no labelled datasets. If you can write the check, you can train the model.
 
-*Where you meet it.* xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards] does exactly this, on logic puzzles a program can verify.
+*Where you meet it.* xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks] does exactly this, on logic puzzles a program can verify.
 
 == Distillation
 
@@ -44,4 +44,4 @@ When the prompt is not enough, you change the model instead. On Thinkube that is
 
 *Why it matters to you.* Without it you are guessing. With it, "the new model is better" is a number, and the model behind that number is one click from being served.
 
-*Where you meet it.* Thinkube Experiments records every training run and registers the model beside it; xref:lifecycle/fine-tune.adoc[Fine-tune] shows both halves.
+*Where you meet it.* Thinkube Experiments records every training run and registers the model beside it; xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned] shows both halves.

@@ -47,7 +47,7 @@ The Thinkube Experiments cell created the `research-assistant-validation` experi
 
 == 2. Make sure the models are served
 
-`01-register-litellm.ipynb` is about model management from Python: what the registry holds, what your GPUs have room for, and how a model goes from `deployable` to `loading` to `available`. It uses `tk_llm`, the platform's client, which is configured for your gateway in every environment:
+`01-load-models.ipynb` is about model management from Python: what the registry holds, what your GPUs have room for, and how a model goes from `deployable` to `loading` to `available`. It uses `tk_llm`, the platform's client, which is configured for your gateway in every environment:
 
 [source,python]
 ----
@@ -109,7 +109,7 @@ The judge did not deliver its verdict in this run. Given its four-part instructi
 
 A retrieval assistant over a corpus you chose, running on your own hardware: your models, your vector store, your traces. Swap arXiv for your own documents and the same steps hold, with Qdrant, the gateway and Langfuse unchanged. Every question and every agent turn is in Langfuse, which is the record you would fine-tune from next.
 
-If the argument leaves you wanting to run the winner rather than read about it, xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards] trains a model with reinforcement learning on rewards a program checks and serves it through the same gateway.
+If the argument leaves you wanting to run the winner rather than read about it, xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks] trains a model with reinforcement learning on rewards a program checks and serves it through the same gateway.
 
 == Limits
 

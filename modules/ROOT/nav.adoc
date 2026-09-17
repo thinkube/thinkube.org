@@ -52,10 +52,10 @@
 * xref:lifecycle/notebooks.adoc[Thinkube Notebooks]
 ** xref:control:notebooks.adoc[Notebook execution over MCP]
 ** xref:lifecycle/example-notebooks.adoc[The example notebooks]
-* xref:lifecycle/fine-tune.adoc[Fine-tune]
+* xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks]
+* xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned]
 * Playbooks
 ** xref:playbooks/research-assistant.adoc[Build a research assistant, end to end]
-** xref:playbooks/zebra-grpo.adoc[Fine-tune on verifiable rewards, end to end]
 * Concepts
 ** xref:concepts/models.adoc[Models]
 ** xref:concepts/improving-a-model.adoc[Improving a model]

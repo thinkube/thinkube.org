@@ -28,7 +28,7 @@ A model is a file of numbers that turns text into more text. Everything you expe
 
 *Why it matters to you.* You will do inference a million times and fine-tuning a few times. The hardware for the first is much smaller than for the second.
 
-*Where you meet it.* xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose] is inference; xref:lifecycle/fine-tune.adoc[Fine-tune] is the small amount of training you will do.
+*Where you meet it.* xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose] is inference; xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks] is the small amount of training you will do.
 
 == Quantization
 
