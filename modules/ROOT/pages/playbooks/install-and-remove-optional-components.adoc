@@ -1,0 +1,183 @@
+= Install and remove optional components
+:page-type: playbook
+:page-area: kubernetes
+:page-tagline: Add a database, a vector store or an inference backend to the platform when you need it, and take it out again
+:page-difficulty: beginner
+:page-time: 5 min
+:page-risk: low
+:page-tags: Optional components, Weaviate, MCP
+:page-order: 50
+:page-updated: 2026-09-17
+
+== Overview
+
+=== Basic idea
+
+The platform installs its core services once. Everything else is an optional component you add when a project needs it: vector stores, databases, observability, inference backends.
+
+* *Installed by a playbook.* An install runs the component's own playbook on the server: its pods, its storage and its address under your domain.
+* *Requirements first.* Each component names what it needs. The list says whether those are there, and an install whose requirements are missing is refused.
+* *One at a time.* Installs and uninstalls go through the deployment queue, so each answers with a deployment id to follow.
+* *Removed with its data kept.* An uninstall removes the pods, the addresses and the configuration. The data volume stays.
+
+=== What you'll accomplish
+
+You list the optional components, install Weaviate, check that it answers, and uninstall it.
+
+=== What to know before starting
+
+*Required*
+
+* Asking Claude Code in Thinkube IDE to do things on the platform.
+
+*Optional*
+
+* xref:reference/components.adoc[Components catalog]: every component and what it needs.
+* xref:playbooks/check-and-restart-services-from-claude-code.adoc[Check and restart services from Claude Code]: turning an installed component off and on.
+
+=== Supported hardware
+
+[cols="1,1,1,2",options="header"]
+|===
+| Node | Architecture | GPU | On the reference run
+
+| tkamd1 | amd64 | none | —
+| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | —
+| tkspark | arm64 | GB10, 121.7 GB unified | —
+|===
+
+Weaviate runs on any node. Components that serve models, such as vLLM, place their pods on GPU nodes when a model is loaded.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
+
+*Components*
+
+* None. Weaviate needs Thinkube Registry, which is a core service.
+
+=== Time & risk
+
+* *Estimated time:* 5 min. On the reference run the Weaviate install took 3 min 9 s and the uninstall 1 min 9 s.
+* *Risk level:* Low. The install adds a namespace of its own; the uninstall removes only that component's pods and addresses.
+* *Rollback:* Uninstall the component.
+* *Last updated:* 2026-09-17. Measured on one install and one uninstall.
+
+== Instructions
+
+=== Step 1. List the components
+
+Ask Claude:
+
+----
+› which optional components are installed, and which could I add?
+----
+
+Claude calls `list_optional_components`.
+
+Or by hand: in thinkube-control open *Optional Components*.
+
+Expected output, from the reference run, shortened:
+
+----
+installed: Prometheus, Perses, OpenSearch, PgAdmin, Qdrant, Knative, Chroma, Valkey,
+           ClickHouse, NATS, Langfuse, Ollama, Langflow, vLLM, TensorRT-LLM, Text Embeddings
+not installed: Weaviate, LiteLLM, Argilla, CVAT
+Weaviate: requirements_met: true
+----
+
+=== Step 2. Install one
+
+Ask Claude:
+
+----
+› install Weaviate
+----
+
+Claude calls `install_optional_component`, which answers at once, and follows `get_deployment_status` until the status is `success` or `failed`.
+
+Or by hand: on *Optional Components*, choose *Install* on the component.
+
+Expected output, from the reference run:
+
+----
+deployment_id: ca152774-dbb7-44df-83db-f2442d119537
+status: queued
+message: Installation of Weaviate queued at position 1; poll get_deployment_status with the deployment id
+----
+
+The status names the step in progress, such as `Create PersistentVolumeClaim for Weaviate data` or `Wait for Weaviate StatefulSet to be ready`, and at the end:
+
+----
+status: success
+output: Component weaviate installed successfully
+started_at: 00:17:07   completed_at: 00:20:15
+----
+
+=== Step 3. Check that it answers
+
+Ask Claude:
+
+----
+› is Weaviate running?
+----
+
+Claude calls `get_component_info`.
+
+Expected output, from the reference run:
+
+----
+status: running
+message: All 1 pods running
+----
+
+On the reference run `https://weaviate.<your domain>/v1/.well-known/ready` answered `200`.
+
+=== Step 4. Remove it
+
+Ask Claude:
+
+----
+› uninstall Weaviate
+----
+
+Claude calls `uninstall_optional_component` and follows `get_deployment_status`.
+
+Or by hand: on *Optional Components*, choose *Uninstall* on the component.
+
+Expected output, from the reference run:
+
+----
+status: success
+output: Component weaviate uninstalled successfully
+started_at: 00:21:59   completed_at: 00:23:08
+----
+
+and then `get_component_info` answers:
+
+----
+installed: false
+status: not_installed
+message: No pods found
+----
+
+The namespace `weaviate` and its data volume `weaviate-data-pvc`, 10 GiB, stayed.
+
+=== Step 5. Next steps
+
+* xref:playbooks/check-and-restart-services-from-claude-code.adoc[Check and restart services from Claude Code]: health, restart, and turning a component off.
+* xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service]: an app that uses the Knative component.
+* xref:reference/components.adoc[Components catalog]: what each component provides.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| `uninstall_optional_component` answers `400` with `Component 'weaviate' is not installed`
+| The component was already removed, or never installed
+| Ask Claude _"which optional components are installed?"_ and uninstall one from that list.
+|===

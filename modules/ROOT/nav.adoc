@@ -18,6 +18,7 @@
 * xref:kubernetes/networking.adoc[Networking and names]
 * xref:kubernetes/keeping-it-running.adoc[Keeping it running]
 * xref:playbooks/check-and-restart-services-from-claude-code.adoc[Check and restart services from Claude Code]
+* xref:playbooks/install-and-remove-optional-components.adoc[Install and remove optional components]
 * Operate it from Claude Code
 ** xref:apps/claude-code.adoc[What Claude can do for you]
 ** xref:how-it-works/mcp-operation-model.adoc[The MCP operation model]
