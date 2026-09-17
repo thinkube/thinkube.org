@@ -1,3 +1,13 @@
+.Getting started
+* xref:start-here/what-is-thinkube.adoc[What Thinkube is]
+* xref:install:overview.adoc[Install Thinkube]
+** xref:install:node-setup.adoc[Prepare your machines]
+** xref:install:overlay-network.adoc[Connect from anywhere]
+** xref:install:cloudflare-token.adoc[Set up your domain]
+** xref:install:github-token.adoc[Connect to GitHub]
+** xref:install:huggingface-token.adoc[Unlock AI models]
+** xref:install:adding-nodes.adoc[Add more nodes]
+
 .Playbooks
 * xref:kubernetes/index.adoc[Thinkube Kubernetes]
 ** xref:playbooks/check-and-restart-services-from-claude-code.adoc[Check and restart services from Claude Code]
@@ -22,16 +32,6 @@
 * xref:tandem:index.adoc[Thinkube Tandem]
 ** xref:tandem:build-your-first-change-with-tandem.adoc[Build your first application change with Tandem]
 ** xref:tandem:turn-what-the-reviewers-noticed-into-the-next-change.adoc[Build the improvements Tandem's reviewers suggest]
-
-.Learn
-* xref:start-here/what-is-thinkube.adoc[What Thinkube is]
-* xref:install:overview.adoc[Install Thinkube]
-** xref:install:node-setup.adoc[Prepare your machines]
-** xref:install:overlay-network.adoc[Connect from anywhere]
-** xref:install:cloudflare-token.adoc[Set up your domain]
-** xref:install:github-token.adoc[Connect to GitHub]
-** xref:install:huggingface-token.adoc[Unlock AI models]
-** xref:install:adding-nodes.adoc[Add more nodes]
 
 .Reference
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]

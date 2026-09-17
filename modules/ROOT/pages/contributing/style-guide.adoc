@@ -54,7 +54,7 @@ Use these exactly:
 
 The branded names are the `display_name` each service registers for the dashboard. Argo Workflows, ArgoCD, GPU Operator, JuiceFS and PostgreSQL keep their own names. Name the implementation once where a reader might need to search for it, in a form that says what it is, "Thinkube IDE, VS Code in the browser", and use the implementation's name where the implementation is the point: error messages, logs, the components catalogue.
 
-The site has three menus. *Playbooks* lists every task by area, Thinkube Kubernetes, Thinkube GitOps, Thinkube Models and Thinkube Tandem, and each area's page opens its group. *Learn* holds What Thinkube is and the install pages. *Reference* holds the lookup pages. No invented vocabulary for the site's own structure.
+The site has three menus. *Getting started* holds What Thinkube is and the install pages. *Playbooks* lists every task by area, Thinkube Kubernetes, Thinkube GitOps, Thinkube Models and Thinkube Tandem, and each area's page opens its group. *Reference* holds the lookup pages. No invented vocabulary for the site's own structure.
 
 == Headings
 

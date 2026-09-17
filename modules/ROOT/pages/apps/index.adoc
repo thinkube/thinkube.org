@@ -25,10 +25,52 @@ registry -> deploy
 deploy -> app
 ....
 
+== thinkube.yaml: your app, without the Kubernetes
+
+Running an app on Kubernetes normally means writing and keeping in step a dozen kinds of object: namespaces, deployments, services, routes, secrets, quotas, build pipelines, sync hooks. `thinkube.yaml` replaces all of them with one short file at the root of your repository that says only what you know about your app: its containers, how each is built, the port it listens on, where requests go, and the platform services it uses.
+
+The web app template's file, shortened to what matters:
+
+[source,yaml]
+----
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+
+spec:
+  containers:
+    - name: backend
+      build: ./backend        # the folder with its Containerfile
+      port: 8000
+      health: /health
+    - name: frontend
+      build: ./frontend
+      port: 80
+      health: /health
+
+  routes:
+    - path: /api
+      to: backend
+    - path: /
+      to: frontend
+
+  services:
+    - database                # a PostgreSQL database of its own
+----
+
+From that file, at deploy time, the platform:
+
+* generates the Kubernetes manifests into `k8s/` and commits them beside your code;
+* creates the app's namespace, its database, and its login client in Thinkube Identity;
+* creates its repository in Thinkube Git, the webhook that builds it, and the ArgoCD application that runs it;
+* gives it `<name>.<your domain>` with the platform's certificate.
+
+On the reference cluster the `notes` app from the template has a `thinkube.yaml` of 43 lines. The platform generated 14 files in its `k8s/` folder, about 1,100 lines, holding 20 Kubernetes resources: the namespace, two deployments and two services, the route, the database and experiment credentials, a resource quota and default limits, the build workflow, two sync hooks, and a page that answers while the app is scaled to zero. You read those files when you want to; you never write them. When `thinkube.yaml` changes, a commit hook regenerates them.
+
+xref:reference/thinkube-yaml.adoc[The thinkube.yaml reference] lists every field.
+
 == How it works
 
-* *About twenty lines describe the app.* `thinkube.yaml` names the containers, ports, routes and the platform services the app uses. thinkube-control generates the Kubernetes manifests into `k8s/` and commits them beside your code, so what runs is always a commit you can read. You never write the manifests.
-* *A push builds and deploys.* A webhook starts Argo Workflows, which builds each container in the cluster, once per architecture, and pushes the image to Thinkube Registry. ArgoCD watches the same repository and runs what `k8s/` says. Rolling back is pushing the previous commit. thinkube-control itself ships through this loop.
+* *A push builds and deploys.* A webhook starts Argo Workflows, which builds each container from its Containerfile in the cluster, once per architecture, and pushes the image to Thinkube Registry. ArgoCD watches the same repository and runs what `k8s/` says. Rolling back is pushing the previous commit. thinkube-control itself ships through this loop.
 * *A container is the unit.* An image is built once from the repository and started anywhere; the image that ran your tests is the image that runs. Configuration arrives as environment variables at deploy time, and state lives in the database or the storage the app declares, so any container can be restarted at any moment.
 * *A template is a running application you copy.* Deploying one gives you your own repository, with a name, a database, a domain and a login. Improve it and push. Publish it, and it is a template again for the next app. Every step is a copy: declarations and defaults live in the repository, values live in the deployment, so a published template carries nothing of yours.
 * *A service that runs only when called.* A Knative service scales to zero between requests and starts on the first one, the right shape for a webhook, a processing step or a small API.

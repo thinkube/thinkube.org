@@ -6,6 +6,8 @@ _The one file that says what your application is: its containers and how each is
 .TL;DR
 You rarely write this file from scratch: a template comes with one, and Claude edits it when you say "add a second container" or "expose port 8080 at /api". Read this page when you want to know what a line means. About twenty lines describe a whole application; the manifests under `k8s/` are generated from them.
 
+xref:apps/index.adoc#_thinkube_yaml_your_app_without_the_kubernetes[Thinkube GitOps] explains what the file is for and what the platform generates from it. This page is the field-by-field lookup.
+
 `thinkube.yaml` sits at the root of a repository. thinkube-control reads it to build and deploy an application. Thinkube Tandem reads it to know where a repository's tests live, how one of them runs, how the repository is made live when the platform does not do it, and where its documentation lands. Both read the file where it is; nothing copies it.
 
 The example below is not hand-typed. It is included from the `thinkube.yaml` that deploys this documentation site, so it can never drift from a working manifest:
@@ -476,7 +478,7 @@ spec:
 
 == What belongs elsewhere
 
-The file describes the application. Container-specific configuration belongs in the Dockerfile, orchestration to thinkube-control, and cloud specifics to the future cloud bridge, so the file stays a static descriptor with no conditional logic, raw Kubernetes resources, deployment strategies or command overrides.
+The file describes the application. Container-specific configuration belongs in the Containerfile, orchestration to thinkube-control, and cloud specifics to the future cloud bridge, so the file stays a static descriptor with no conditional logic, raw Kubernetes resources, deployment strategies or command overrides.
 
 == Version
 

@@ -61,6 +61,7 @@ The areas are one platform. A dataset a notebook writes is the file an app reads
 
 * *Thinkube IDE* is VS Code in the browser, with Claude Code installed and connected to the platform. This is where you say things.
 * *Claude Code reads freely and changes on request.* thinkube-control offers its operations to Claude through MCP. Reading state, what is running, what the GPUs hold, a build's log, is something Claude consults whenever it needs to. Changing state, a deploy, a load, an install, a restart, happens when you ask. The line between the two is drawn in the platform, not left to Claude's judgement.
+* *`thinkube.yaml`* describes an app in a few dozen lines: its containers, routes and the services it uses. The platform generates the Kubernetes objects from it, so you deploy to Kubernetes without writing Kubernetes. xref:apps/index.adoc#_thinkube_yaml_your_app_without_the_kubernetes[Thinkube GitOps] shows one.
 * *thinkube-control* is the control panel: models, the LLM Gateway, templates, components, nodes, secrets, tokens. Everything Claude can do, you can click here, and the health of every service is on its card.
 * *Thinkube Notebooks* is JupyterLab with two environments built for your hardware, `fine-tuning` and `agent-dev`, on the same filesystem as the IDE.
 * *The LLM Gateway* is one address for every served model, `llm.<your domain>`, speaking the OpenAI and Anthropic APIs.
@@ -68,7 +69,7 @@ The areas are one platform. A dataset a notebook writes is the file an app reads
 
 == What comes out
 
-What you build is a git repository with real code, a Dockerfile, tests and a standard image. Under it is unmodified upstream Kubernetes, installed with kubeadm: `kubectl version` on the reference cluster reports v1.36.4 at the upstream release commit, with no vendor suffix. Your repository builds and deploys on any cluster that standard runs on.
+What you build is a git repository with real code, a Containerfile, tests and a standard image. Under it is unmodified upstream Kubernetes, installed with kubeadm: `kubectl version` on the reference cluster reports v1.36.4 at the upstream release commit, with no vendor suffix. Your repository builds and deploys on any cluster that standard runs on.
 
 == Why it is built this way
 

@@ -14,10 +14,12 @@
   </dl>
   <p class="playbook-tags">{{#each (split page.attributes.tags)}}<span class="tag">{{this}}</span>{{/each}}</p>
 </header>
+{{else if (eq page.layout 'area')}}
+<p class="playbook-kicker">Playbooks</p>
 {{else if (eq page.attributes.type 'reference')}}
 <p class="playbook-kicker">Reference</p>
 {{else}}
-<p class="playbook-kicker">Learn</p>
+<p class="playbook-kicker">Getting started</p>
 {{#with page.title}}
 <h1 class="page">{{{this}}}</h1>
 {{/with}}

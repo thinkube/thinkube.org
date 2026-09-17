@@ -27,7 +27,7 @@ modules/ROOT/pages/      # the site's own pages
 modules/ROOT/images/     # captures and diagrams
 supplemental-ui/         # branding over the default Antora UI; layouts/home.hbs is the home page
 tools/capture.mjs        # takes the screen captures (DOMAIN_NAME=<domain> node tools/capture.mjs out/ [names])
-Dockerfile               # builds the site and serves it on nginx :8080 inside the cluster
+Containerfile            # builds the site and serves it on nginx :8080 inside the cluster
 ```
 
 ## Build
@@ -36,7 +36,7 @@ Dockerfile               # builds the site and serves it on nginx :8080 inside t
 npx --no-install antora --fetch antora-playbook.yml   # output in build/site
 ```
 
-Diagrams are `[d2,alt="…"]` literal blocks in the page. `lib/d2-block.js` runs the `d2` binary (v0.9.0, ELK layout) on each one and embeds the SVG, so the build needs `d2` on PATH: the Dockerfile and the Pages workflow install it, and Thinkube IDE's image carries it. A missing binary or a diagram d2 rejects stops the build with d2's own message. The Tandem docs carry the same extension in `docs/lib/d2-block.js`; a change to one is made to both.
+Diagrams are `[d2,alt="…"]` literal blocks in the page. `lib/d2-block.js` runs the `d2` binary (v0.9.0, ELK layout) on each one and embeds the SVG, so the build needs `d2` on PATH: the Containerfile and the Pages workflow install it, and Thinkube IDE's image carries it. A missing binary or a diagram d2 rejects stops the build with d2's own message. The Tandem docs carry the same extension in `docs/lib/d2-block.js`; a change to one is made to both.
 
 The build must print no warnings. `--fetch` pulls the other four repositories from GitHub, so a change in one of them is seen here only after it is pushed. To build from local working trees, write a playbook that points each source at its local path with `branches: HEAD`.
 
