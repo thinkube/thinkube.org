@@ -1,3 +1,8 @@
+/*
+ * Copyright Alejandro Martínez Corriá and the Thinkube contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 'use strict'
 
 // Lists every playbook page of the site for the card catalog.

@@ -1,3 +1,8 @@
+/*
+ * Copyright Alejandro Martínez Corriá and the Thinkube contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Captures the platform's screens for the documentation.
 //
 //   node tools/capture.mjs <out-dir> [name ...]

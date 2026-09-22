@@ -1,3 +1,6 @@
+# Copyright Alejandro Martínez Corriá and the Thinkube contributors
+# SPDX-License-Identifier: Apache-2.0
+
 ARG CONTAINER_REGISTRY
 
 # Build stage — Antora renders the AsciiDoc site to ./build/site

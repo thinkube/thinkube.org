@@ -1,3 +1,8 @@
+/*
+ * Copyright Alejandro Martínez Corriá and the Thinkube contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 'use strict'
 
 // Splits a comma-separated page attribute into its trimmed items:

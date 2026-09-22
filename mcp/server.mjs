@@ -1,4 +1,10 @@
 #!/usr/bin/env node
+
+/*
+ * Copyright Alejandro Martínez Corriá and the Thinkube contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Thinkube docs MCP server (Context7-style).
 // Exposes the Thinkube documentation to a Claude session as MCP tools,
 // reusing Antora's built Lunr index. No new RAG/backend/chat widget.

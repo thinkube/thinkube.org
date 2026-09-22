@@ -1,3 +1,6 @@
+# Copyright Alejandro Martínez Corriá and the Thinkube contributors
+# SPDX-License-Identifier: Apache-2.0
+
 # Antora playbook for the Thinkube documentation site.
 # Base path per deploy target is set via the `--url` CLI flag, NOT here:
 #   cluster (default):  antora antora-playbook.yml            -> base "/"

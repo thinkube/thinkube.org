@@ -1,3 +1,8 @@
+/*
+ * Copyright Alejandro Martínez Corriá and the Thinkube contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // Core docs-query logic — reuses Antora's built Lunr search-index.js.
 // Kept separate from the MCP transport so it is directly testable.
 import { readFileSync } from 'node:fs';

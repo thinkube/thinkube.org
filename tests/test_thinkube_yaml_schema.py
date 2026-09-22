@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+
+# Copyright Alejandro Martínez Corriá and the Thinkube contributors
+# SPDX-License-Identifier: Apache-2.0
+
 """The reference page and the machine-readable schema agree.
 
 Every YAML example printed under "== Examples" on the thinkube.yaml
