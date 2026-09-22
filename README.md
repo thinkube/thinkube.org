@@ -1,9 +1,5 @@
 # Thinkube.org
 
-> **Warning**: under active development; not yet ready for production use.
-
----
-
 Official documentation site for the Thinkube platform, built with **Antora** and
 **AsciiDoc**.
 
