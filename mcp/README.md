@@ -1,39 +1,35 @@
-# Thinkube docs MCP server (Context7-style)
+# Thinkube docs MCP server (local build)
 
 Exposes the Thinkube documentation to a Claude session as MCP tools, **reusing
-Antora's built Lunr search index** (`build/site/search-index.js`). No new RAG
-backend, embeddings service, or chat widget — the docs simply become a capability
-Claude has, in the cockpit (code-server) where you actually work.
+Antora's built Lunr search index** (`build/site/search-index.js`). No RAG
+backend, embeddings service, or chat widget.
+
+On a Thinkube cluster, Claude gets the same two tools from thinkube-control's
+MCP server (`backend/app/api/docs_search.py` in thinkube-control). That version
+reads the index of the deployed docs site. This folder is the local version: it
+reads the site you built in this checkout, for work on the docs.
 
 ## Tools
 
 - `search_thinkube_docs(query)` — the best-matching pages (title, url, snippet).
 - `get_thinkube_doc(page)` — the full text of a page, by `name` (`components`) or
-  `url` (`/thinkube-docs/components.html`).
+  `url` (`/thinkube-docs/reference/components.html`).
 
-## Setup
+## Working on it
 
 ```bash
 npm run build              # produces build/site/search-index.js
 (cd mcp && npm install)    # install the server's deps (SDK + lunr)
 ```
 
-Then register it in your `.mcp.json` (this auto-loads into your Claude sessions —
-add it yourself; an agent can't self-modify its own startup config):
+To use it from a local Claude session, register `node mcp/server.mjs` (with its
+absolute path) as a stdio MCP server in your `.mcp.json`. Then *"search the
+thinkube docs for how to fine-tune a model"* → Claude calls
+`search_thinkube_docs`, then `get_thinkube_doc`, and answers from the built
+documentation.
 
-```json
-"thinkube-docs": {
-  "command": "node",
-  "args": ["/home/thinkube/thinkube-platform/docs/thinkube.org/mcp/server.mjs"]
-}
-```
-
-Optional: set `THINKUBE_DOCS_SITE` to point at a different built site (e.g. a
-deployed copy) instead of the local `build/site`.
-
-Now, in any Claude session: *"search the thinkube docs for how to fine-tune a
-model"* → Claude calls `search_thinkube_docs`, then `get_thinkube_doc`, and answers
-grounded in the actual documentation.
+Set `THINKUBE_DOCS_SITE` to read another built site directory instead of the
+local `build/site`.
 
 ## Test
 
