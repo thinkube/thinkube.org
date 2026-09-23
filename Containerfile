@@ -46,8 +46,6 @@ ENV NODE_OPTIONS=--network-family-autoselection-attempt-timeout=500
 # `antora --fetch`, which fetches the content sources and the UI bundle and
 # renders the [d2] blocks with the d2 binary above. Base path is "/" for the cluster
 # (GitHub Pages overrides it with `--url /thinkube.org/` in its own workflow).
-# kaniko unpacks the rootfs so /app's owner differs from the uid running git,
-# which makes git abort with "detected dubious ownership"; mark it safe first.
 RUN git config --global --add safe.directory /app \
  && git init -q && git add -A \
  && git -c user.email=build@thinkube.io -c user.name=thinkube-build commit -qm build \
