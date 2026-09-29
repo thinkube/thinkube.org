@@ -17,8 +17,6 @@ A fine-tune becomes a model you can call in two steps. Once it is served, nothin
 
 * *Registered.* The merged weights are a version in Thinkube Experiments, linked to the run that trained them, and thinkube-control has a completed registration for the model. Registering puts the weights in your storage.
 * *In the catalogue.* A catalogue entry tells the gateway how to serve the weights: the backend, the reasoning format, whether it calls tools. With both, the model is `deployable`.
-
-In this release the zebra-grpo notebook writes the registration record and the catalogue entry itself, in its section 14b. The next releases record a registered fine-tune for you.
 * *Served.* A load puts it on a GPU, and it answers at `llm.<your domain>` by its name, through the same API as every other model.
 
 === What you'll accomplish
@@ -54,7 +52,7 @@ The model is 8.7 GB of weights in BF16, the size of its base, `unsloth/Qwen3.5-4
 *Platform*
 
 * Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
-* The fine-tune registered, with the notebook's section 14b run. Ask Claude: _"is zebra-rules-qwen35-4b deployable?"_
+* The fine-tune registered, with the notebook's section 14 run. Ask Claude: _"is zebra-rules-qwen35-4b deployable?"_
 
 *Components*
 
@@ -65,13 +63,13 @@ The model is 8.7 GB of weights in BF16, the size of its base, `unsloth/Qwen3.5-4
 * *Estimated time:* 5 min. On the recorded run the load and the call through the gateway took about 5 minutes together.
 * *Risk level:* Low. A load that does not fit a node is refused before anything starts.
 * *Rollback:* Unload the model. The registered version stays.
-* *Last updated:* 2026-09-16. Written from the run recorded in the zebra-grpo notebook, commit ef3a82b of `thinkube-notebooks-examples`; the catalogue entry checked on the reference cluster.
+* *Last updated:* 2026-09-29. Written from the run recorded in the zebra-grpo notebook, commit ef3a82b of `thinkube-notebooks-examples`; the catalogue entry checked on the reference cluster. Step 2 written from a run of `register_finetuned_model` on the reference cluster.
 
 == Instructions
 
 === Step 1. Check the catalogue entry
 
-The platform reads the catalogue from two `models.json` files: the platform's, in `thinkube/thinkube-metadata`, and yours, in the private repository `<your GitHub user>/<your GitHub user>-metadata`. An entry in yours with the same `id` wins. The notebook's section 14b writes the entry for `zebra-rules-qwen35-4b` in yours.
+The platform reads the catalogue from two `models.json` files: the platform's, in `thinkube/thinkube-metadata`, and yours, in the private repository `<your GitHub user>/<your GitHub user>-metadata`. An entry in yours with the same `id` wins. The notebook's section 14 writes the entry for `zebra-rules-qwen35-4b` in yours.
 
 Ask Claude:
 
@@ -95,7 +93,15 @@ is_finetuned: true
 
 === Step 2. Make a fine-tune of your own loadable
 
-A model you train under another name needs the same two records. Copy section 14b of the zebra-grpo notebook into your notebook, after your registration, and change `CATALOG_ENTRY` to your model. The cell writes the entry to `models.json` in your `-metadata` repository, records the registration, and waits until the gateway lists the model; the platform reads the catalogue again within 5 minutes.
+A model you train under another name is published with the same call as section 14 of the zebra-grpo notebook, with your own catalogue entry and the MLflow run of your training:
+
+[source,python]
+----
+import thinkube_models as tkm
+tkm.register_finetuned_model(model, tokenizer, CATALOG_ENTRY, run_id)
+----
+
+It merges the adapter, uploads the weights to the run, registers the model version, writes the entry to `models.json` in your `-metadata` repository, records the registration, and waits until the gateway lists the model; the platform reads the catalogue again within 5 minutes. It refuses an entry that is missing a field, or that asks for another backend than vLLM or another format than BF16.
 
 The zebra model's entry is a good start:
 
@@ -212,5 +218,5 @@ The registered version stays, and the next load reads it from your storage.
 
 | The load answers `Model 'zebra-rules-qwen35-4b' not found`
 | The model is registered in Thinkube Experiments, and its catalogue entry or its registration record is missing
-| Run section 14b of the notebook, as in Step 2.
+| Run section 14 of the notebook again, as in Step 2. It reuses the merged weights in staging, registers a new version and writes both records.
 |===

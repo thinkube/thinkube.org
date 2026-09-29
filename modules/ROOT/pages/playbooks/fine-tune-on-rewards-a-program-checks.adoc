@@ -86,7 +86,7 @@ The notebook needs one GPU with about 20 GB of memory free, in bfloat16 with Fla
 The baseline is cached on disk by scale, so a second run at the same scale skips those 75 minutes.
 * *Risk level:* Medium. The run holds a GPU for hours, and a served model on the same unified-memory node shares that memory.
 * *Rollback:* Delete the registered version in Thinkube Experiments. The base model is untouched.
-* *Last updated:* 2026-09-16. Written from the full run recorded in the notebook, commit ef3a82b of `thinkube-notebooks-examples`.
+* *Last updated:* 2026-09-29. Steps 1 to 5 written from the full run recorded in the notebook, commit ef3a82b of `thinkube-notebooks-examples`. Step 6 written from a run of `register_finetuned_model` on the reference cluster, on `unsloth/Qwen3.5-4B` with an untrained adapter.
 
 == Instructions
 
@@ -196,42 +196,35 @@ Results logged to MLflow run ec1f9ee6e1fa455b99936a9ef9f32e51
 
 ZebraLogic is the row that shows real learning: from 28% to 67% of puzzles solved, on clues the generator never wrote. The next section prints one unseen puzzle clue by clue, with the rule the model wrote and the solver's grid.
 
-=== Step 6. Register the model
+=== Step 6. Register the model and make it loadable
 
-The notebook merges the adapter into the base weights, uploads the result, and registers it as a version of `zebra-rules-qwen35-4b` linked to the training run.
+Section 14 of the notebook calls `thinkube_models.register_finetuned_model` with the model, its catalogue entry and the training run. The function:
 
-Expected output, from the recorded run:
+* merges the adapter into the base weights and uploads the result to the training run's `model` folder;
+* registers it as a version of `zebra-rules-qwen35-4b` linked to that run;
+* writes the catalogue entry to `models.json` of your private `<your GitHub user>-metadata` repository on GitHub, with the notebook server's `GITHUB_TOKEN`;
+* records the registration in thinkube-control's database, with the notebook server's PostgreSQL credentials;
+* waits until the gateway lists the model.
+
+It refuses a catalogue entry that is missing a field, or that asks for another backend than vLLM or another format than BF16.
+
+The cell prints, with Unsloth's progress bars left out:
 
 ----
-Merged model in staging: /home/thinkube/thinkube/mlflow/.staging/zebra-rules-qwen35-4b  [full-250steps]
-Uploading 9 files to s3://mlflow/artifacts/5/ec1f9ee6e1fa455b99936a9ef9f32e51/artifacts/model
+Merging the adapter into the base weights: /home/thinkube/thinkube/mlflow/.staging/zebra-rules-qwen35-4b
+Uploading 9 files to s3://mlflow/artifacts/<experiment>/<run>/artifacts/model
   model.safetensors-00001-of-00002.safetensors (5.0 GB)...
   model.safetensors-00002-of-00002.safetensors (3.7 GB)...
 Upload complete
-Registered zebra-rules-qwen35-4b version 3
-  linked to training run ec1f9ee6e1fa455b99936a9ef9f32e51
+Registered zebra-rules-qwen35-4b version 1, linked to run <run>
+Catalogue entry written to <your GitHub user>/<your GitHub user>-metadata/models.json
+Registration recorded for zebra-rules-qwen35-4b
+zebra-rules-qwen35-4b: ModelState.deployable
 ----
 
 In Thinkube Experiments, the version opens onto the run: its parameters and reward curve.
 
-=== Step 7. Make the model loadable
-
-The gateway loads a model that has two more records: a catalogue entry that says how to serve it, and a completed registration in thinkube-control. Section 14b writes both:
-
-* the entry, in `models.json` of your private `<your GitHub user>-metadata` repository on GitHub, with the notebook server's `GITHUB_TOKEN`;
-* the registration, in the `model_mirror_jobs` table of thinkube-control's database, with the notebook server's PostgreSQL credentials.
-
-Then it waits until the gateway lists the model. This step is manual in this release; the next releases record a registered fine-tune for you.
-
-The cell prints:
-
-----
-Catalogue entry written to <your GitHub user>/<your GitHub user>-metadata/models.json
-Registration recorded for zebra-rules-qwen35-4b
-state: ModelState.deployable
-----
-
-=== Step 8. Give the GPU back
+=== Step 7. Give the GPU back
 
 The notebook's last section loads the model on vLLM and calls it, as xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned] describes. On the recorded run it loaded on `vllm-tkamd2`. The unattended run's server stopped when the notebook ended; the served model holds its GPU until you unload it.
 
@@ -248,7 +241,7 @@ state: deployable
 message: Model unloaded successfully
 ----
 
-=== Step 9. Next steps
+=== Step 8. Next steps
 
 * xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned]: load the registered model and call it from your code.
 * xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: the node and the context for the load.
