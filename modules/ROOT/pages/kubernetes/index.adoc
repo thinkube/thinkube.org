@@ -43,7 +43,7 @@ areas -> base: "share"
 
 == Reference
 
-* xref:install:overview.adoc[Install Thinkube]: what you need and what the installer does, screen by screen.
+* xref:install:overview.adoc[Install Thinkube]: what you need, and the order to install in.
 * xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines]: every package, file, firewall rule and setting, per machine.
 * xref:control:index.adoc[Thinkube Control]: the control panel's pages and the operations behind them.
 * xref:reference/components.adoc[Components catalog]: every core and optional component.

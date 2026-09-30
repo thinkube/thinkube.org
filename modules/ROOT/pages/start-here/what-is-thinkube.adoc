@@ -111,4 +111,4 @@ Your cluster has its own machines and names. Where a page names one of these nod
 
 * xref:playbooks/serve-your-first-model.adoc[Serve your first model]: a model answering at your own address.
 * xref:webapp-template:build-a-web-app.adoc[Build a web app from the template]: an app at its own address, behind your login.
-* xref:install:overview.adoc[Install Thinkube]: what you need and what the installer does.
+* xref:install:overview.adoc[Install Thinkube]: what you need, and the order to install in.

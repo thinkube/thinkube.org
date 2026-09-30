@@ -7,6 +7,7 @@
 ** xref:install:cloudflare-token.adoc[Set up your domain]
 ** xref:install:github-token.adoc[Connect to GitHub]
 ** xref:install:huggingface-token.adoc[Unlock AI models]
+** xref:install:run-the-installer.adoc[Run the installer]
 ** xref:install:adding-nodes.adoc[Add more nodes]
 
 .Playbooks
