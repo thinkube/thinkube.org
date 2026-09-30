@@ -3,7 +3,7 @@
 :page-area: models
 :page-tagline: Give a registered fine-tune a catalogue entry, load it on a GPU and call it through the gateway like any other model
 :page-difficulty: intermediate
-:page-time: 5 min
+:page-time: 30 min
 :page-risk: low
 :page-tags: Fine-tuning, LLM Gateway, vLLM, Model catalogue
 :page-order: 80
@@ -52,7 +52,7 @@ You check that `zebra-rules-qwen35-4b`, the model from xref:playbooks/fine-tune-
 
 === Time & risk
 
-* *Estimated time:* 5 min. On the recorded run the load and the call through the gateway took about 5 minutes together.
+* *Estimated time:* 30 min. On the recorded run the load and the call through the gateway took about 5 minutes together.
 * *Risk level:* Low. A load that does not fit a node is refused before anything starts.
 * *Rollback:* Unload the model. The registered version stays.
 * *Last updated:* 2026-09-29. Written from the run recorded in the zebra-grpo notebook, commit ef3a82b of `thinkube-notebooks-examples`; the catalogue entry checked on the reference cluster. Step 2 written from a run of `register_finetuned_model` on the reference cluster.

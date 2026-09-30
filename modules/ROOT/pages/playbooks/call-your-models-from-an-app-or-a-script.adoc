@@ -3,7 +3,7 @@
 :page-area: models
 :page-tagline: Point the OpenAI or Anthropic client you already use at your gateway, with a Thinkube API token
 :page-difficulty: beginner
-:page-time: 5 min
+:page-time: 30 min
 :page-risk: low
 :page-tags: LLM Gateway, OpenAI API, Anthropic API, API tokens
 :page-order: 30
@@ -56,7 +56,7 @@ You create an API token, call a loaded model with the `openai` client and with t
 
 === Time & risk
 
-* *Estimated time:* 5 min. On the reference run the vLLM engine was ready 2 min 3 s after the load request, and the model was `available` about a minute later. The first call answered in 1.4 s, and the unload answered at once.
+* *Estimated time:* 30 min. On the reference run the vLLM engine was ready 2 min 3 s after the load request, and the model was `available` about a minute later. The first call answered in 1.4 s, and the unload answered at once.
 * *Risk level:* Low. The calls only read from the model.
 * *Rollback:* Unload the model, and delete the token under *API Tokens* when you no longer use it.
 * *Last updated:* 2026-09-16. Measured on one load, one set of calls and one unload.

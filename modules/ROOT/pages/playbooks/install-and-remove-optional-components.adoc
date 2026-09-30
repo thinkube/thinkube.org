@@ -3,7 +3,7 @@
 :page-area: kubernetes
 :page-tagline: Add a database, a vector store or an inference backend to the platform when you need it, and take it out again
 :page-difficulty: beginner
-:page-time: 5 min
+:page-time: 30 min
 :page-risk: low
 :page-tags: Optional components, Weaviate, MCP
 :page-order: 50
@@ -52,7 +52,7 @@ You list the optional components, install Weaviate, check that it answers, and u
 
 === Time & risk
 
-* *Estimated time:* 5 min. On the reference run the Weaviate install took 3 min 9 s and the uninstall 1 min 9 s.
+* *Estimated time:* 30 min. On the reference run the Weaviate install took 3 min 9 s and the uninstall 1 min 9 s.
 * *Risk level:* Low. The install adds a namespace of its own; the uninstall removes only that component's pods and addresses.
 * *Rollback:* Uninstall the component.
 * *Last updated:* 2026-09-17. Measured on one install and one uninstall.

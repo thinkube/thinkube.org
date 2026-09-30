@@ -3,7 +3,7 @@
 :page-area: models
 :page-tagline: Load an open model on your own GPU and call it from a notebook, as you would call a cloud API
 :page-difficulty: beginner
-:page-time: 5 min
+:page-time: 30 min
 :page-time-note: plus the download the first time, 7 min 40 s for this 9 GB model
 :page-risk: low
 :page-tags: LLM Gateway, vLLM, Notebooks
@@ -57,7 +57,7 @@ You load `Qwen/Qwen3.5-4B` on a GPU node, call it from a notebook, and unload it
 
 === Time & risk
 
-* *Estimated time:* 5 min. On the reference run the engine was ready 108 seconds after the load request, the call answered in seconds, and the unload took under 5 seconds.
+* *Estimated time:* 30 min. On the reference run the engine was ready 108 seconds after the load request, the call answered in seconds, and the unload took under 5 seconds.
 * *Download:* the first time only, 7 min 40 s for the 9 GB of this model on the reference cluster's connection.
 * *Risk level:* Low. A vLLM engine serves one model per node, so a node that already serves a model is refused, and nothing running is replaced.
 * *Rollback:* Unload the model. The weights stay in your storage for the next load.

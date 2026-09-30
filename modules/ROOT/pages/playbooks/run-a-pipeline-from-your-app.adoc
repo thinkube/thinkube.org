@@ -3,7 +3,7 @@
 :page-area: gitops
 :page-tagline: Multi-step jobs your app submits and Argo Workflows runs, each step in your app's own image
 :page-difficulty: intermediate
-:page-time: 10 min
+:page-time: 30 min
 :page-risk: low
 :page-tags: Pipelines, Argo Workflows, Web app template
 :page-order: 50
@@ -54,7 +54,7 @@ You add `workflows` to an app from the web app template, submit a two-step pipel
 
 === Time & risk
 
-* *Estimated time:* 10 min. Declaring the service is a commit and a push, which rebuilds and redeploys the app: the web app template's build and deploy took 3–4 min on five runs. The two-step pipeline finished 21 seconds after it was submitted.
+* *Estimated time:* 30 min. Declaring the service is a commit and a push, which rebuilds and redeploys the app: the web app template's build and deploy took 3–4 min on five runs. The two-step pipeline finished 21 seconds after it was submitted.
 * *Risk level:* Low. Everything the service creates is in the app's own namespace.
 * *Rollback:* Remove `workflows` from `services` in `thinkube.yaml`, commit and push.
 * *Last updated:* 2026-09-16. The pipeline and the secret step were run again on `wf-check`; the service was declared on `wf-check` on 2026-09-14.

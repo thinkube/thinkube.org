@@ -3,7 +3,7 @@
 :page-area: models
 :page-tagline: Start from agent-dev or fine-tuning, add the packages you need, and get a kernel built for every architecture in your cluster
 :page-difficulty: beginner
-:page-time: 10 min
+:page-time: 30 min
 :page-risk: low
 :page-tags: Notebooks, Python environments, Kernels
 :page-order: 40
@@ -51,7 +51,7 @@ You build the environment `data-tools`, which is `agent-dev` plus `polars`, and 
 
 === Time & risk
 
-* *Estimated time:* 10 min. On the reference run the build took 7 min 14 s for both architectures, and the notebook run, starting its own server, 49 s.
+* *Estimated time:* 30 min. On the reference run the build took 7 min 14 s for both architectures, and the notebook run, starting its own server, 49 s.
 * *Risk level:* Low. The build writes only the new environment; the built-in environments stay as they are.
 * *Rollback:* Delete the environment under *Jupyter Kernels*.
 * *Last updated:* 2026-09-17. Measured on one build and one run.

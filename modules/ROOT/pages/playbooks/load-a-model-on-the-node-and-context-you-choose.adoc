@@ -3,7 +3,7 @@
 :page-area: models
 :page-tagline: Pick the GPU node, the backend and the context length for a load, and see how a node already serving a model answers
 :page-difficulty: intermediate
-:page-time: 5 min
+:page-time: 30 min
 :page-risk: low
 :page-tags: LLM Gateway, vLLM, Context length
 :page-order: 20
@@ -55,7 +55,7 @@ You load `Qwen/Qwen3-8B` on tkamd2 with a 16k context, see a second model on the
 
 === Time & risk
 
-* *Estimated time:* 5 min. On the reference run the vLLM engine was ready 4 min 33 s after the load request, 3 min 39 s of it reading the weights, and the model was `available` about a minute later. The refused loads and the unload answered at once.
+* *Estimated time:* 30 min. On the reference run the vLLM engine was ready 4 min 33 s after the load request, 3 min 39 s of it reading the weights, and the model was `available` about a minute later. The refused loads and the unload answered at once.
 * *Risk level:* Low. A load that does not fit, or that asks for a node whose engine serves another model, is refused before anything starts.
 * *Rollback:* Unload the model. The weights stay in your storage for the next load.
 * *Last updated:* 2026-09-16. Measured on one load and one unload.

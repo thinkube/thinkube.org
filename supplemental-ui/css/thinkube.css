@@ -201,8 +201,8 @@ html[data-theme="dark"] .area-tandem     { --area: #956ed2; }
 
 /* Playbook and area cards, in the style of thinkube-control's cards: no
    badges. The area is the left bar and the icon colour, and is written into
-   the top border line; a playbook card has its time at the other end and its
-   level as the line under the title. */
+   the top border line; a playbook card has its time at the other end, its
+   level as the line under the title, and its date in the bottom border line. */
 .playbook-card, .area-card { position: relative; border-left: 4px solid var(--area); padding: 1.35rem 1.25rem 1rem; }
 .playbook-card:hover, .area-card:hover { border-left-color: var(--area); }
 :is(.playbook-card, .area-card) .card-edge {
@@ -221,14 +221,13 @@ html[data-theme="dark"] .area-tandem     { --area: #956ed2; }
 .playbook-card .card-level { font-size: .85rem; color: var(--th-muted); text-transform: capitalize; }
 .playbook-card .card-desc {
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  flex: 0 0 auto; margin-bottom: .9rem;
+  flex: 0 0 auto; margin-bottom: .4rem;
 }
-.playbook-card .card-foot {
-  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
-  margin-top: auto; font-size: .8rem; color: var(--th-muted);
+.playbook-card .card-edge-updated {
+  top: auto; bottom: -.55rem; right: 1rem; text-transform: none; letter-spacing: 0;
+  /* The card above the border line, the page below it */
+  background: linear-gradient(to bottom, var(--th-surface) 50%, var(--th-bg) 50%);
 }
-.playbook-card .card-tags { display: flex; align-items: center; gap: .4rem; min-width: 0; }
-.playbook-card .tag-more { font-weight: 600; }
 /* Cards keep a landscape minimum width and the grid fits as many as the space
    holds: three on a wide screen, two on a laptop, one on a phone, where the
    minimum gives way to the full width. */
@@ -271,13 +270,9 @@ html[data-theme="dark"] .area-tandem     { --area: #956ed2; }
 .area-gitops .tk-area-icon     { -webkit-mask-image: url(../img/icons/tk_devops.svg); mask-image: url(../img/icons/tk_devops.svg); }
 .area-models .tk-area-icon     { -webkit-mask-image: url(../img/icons/tk_ai.svg); mask-image: url(../img/icons/tk_ai.svg); }
 .area-tandem .tk-area-icon     { -webkit-mask-image: url(../img/icons/tk_code.svg); mask-image: url(../img/icons/tk_code.svg); }
-/* The page type's letter before the kicker: Concept, Playbook, Reference */
+/* The area's icon before the kicker of a playbook or area page, as on its card */
 .playbook-kicker { display: flex; align-items: center; gap: .5rem; }
-.tk-type-icon { width: 1.15rem; height: 1.15rem; }
-.doc--concept .tk-type-icon   { -webkit-mask-image: url(../img/icons/chars/upper-c.svg); mask-image: url(../img/icons/chars/upper-c.svg); }
-.doc--reference .tk-type-icon { -webkit-mask-image: url(../img/icons/chars/upper-r.svg); mask-image: url(../img/icons/chars/upper-r.svg); }
-.doc--playbook .tk-type-icon,
-.area-page .doc .tk-type-icon { -webkit-mask-image: url(../img/icons/chars/upper-p.svg); mask-image: url(../img/icons/chars/upper-p.svg); }
+.tk-kicker-icon { width: 3rem; height: 3rem; background-color: var(--area); }
 /* A playbook step's number, set by head-meta.hbs */
 .tk-step-icon { width: 1.6rem; height: 1.6rem; margin-right: .6rem; vertical-align: -.35em; }
 .sr-only {

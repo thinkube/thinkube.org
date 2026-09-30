@@ -3,7 +3,7 @@
 :page-area: models
 :page-tagline: Index arXiv papers in your own vector store, ask questions that come back with sources, and let agents argue from the index
 :page-difficulty: intermediate
-:page-time: 5 min
+:page-time: 30 min
 :page-risk: low
 :page-tags: RAG, Qdrant, Langfuse, AG2, Notebooks
 :page-order: 60
@@ -57,7 +57,7 @@ You run the three research-assistant notebooks in order: `01` checks the models,
 
 === Time & risk
 
-* *Estimated time:* 5 min. On the reference run `01` took 94 s as an unattended run, including its own server's start; `02` took 75 s, fetching, embedding and indexing 146 papers and answering three questions; `03` took 4 min 1 s, of which the debate was 230.5 s.
+* *Estimated time:* 30 min. On the reference run `01` took 94 s as an unattended run, including its own server's start; `02` took 75 s, fetching, embedding and indexing 146 papers and answering three questions; `03` took 4 min 1 s, of which the debate was 230.5 s.
 * *Risk level:* Low. `02` deletes and recreates its own Qdrant collection, `rl_reasoning_papers`; nothing else is changed.
 * *Rollback:* In a notebook, `QdrantClient(url=os.environ["QDRANT_URL"]).delete_collection("rl_reasoning_papers")`.
 * *Last updated:* 2026-09-17. Measured on one run of each notebook, on fresh copies from the thinkube-notebooks-examples repository.

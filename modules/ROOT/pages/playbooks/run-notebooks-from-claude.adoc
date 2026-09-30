@@ -3,7 +3,7 @@
 :page-area: models
 :page-tagline: Have Claude run a notebook while you watch it in a Thinkube IDE tab, or on a server of its own that stops when the run ends
 :page-difficulty: beginner
-:page-time: 5 min
+:page-time: 30 min
 :page-risk: low
 :page-tags: Notebooks, MCP, Unattended runs
 :page-order: 50
@@ -52,7 +52,7 @@ You create a two-cell notebook, run it while you watch it in a Thinkube IDE tab,
 
 === Time & risk
 
-* *Estimated time:* 5 min. On the reference run the watched run took 30 s. The unattended run took 69 s from the request to its end: 30 s of cells, and the rest starting its server and kernel.
+* *Estimated time:* 30 min. On the reference run the watched run took 30 s. The unattended run took 69 s from the request to its end: 30 s of cells, and the rest starting its server and kernel.
 * *Risk level:* Low. The unattended run uses a server of its own, and the watched run uses only the notebook's kernel.
 * *Rollback:* Delete the notebook file.
 * *Last updated:* 2026-09-16. Measured on one watched run and one unattended run.

@@ -3,7 +3,7 @@
 :page-area: <kubernetes | gitops | models | tandem>
 :page-tagline: <One line, no period>
 :page-difficulty: <beginner | intermediate | advanced>
-:page-time: <measured: "5 min", "3–4 min", "2 h", "9 h 30 min">
+:page-time: <30 min at least; longer when the measured run takes longer: "45–60 min", "2 h", "9 h 30 min">
 :page-time-note: <optional: what is added, such as a download, per size>
 :page-risk: <low | medium | high>
 :page-tags: <Up to three, comma-separated>
@@ -47,7 +47,7 @@
 
 === Time & risk
 
-* *Estimated time:* <measured, with what was measured.>
+* *Estimated time:* <the page time, then the measured figures of the run and what was measured.>
 * *Risk level:* <Low | Medium | High>. <One reason.>
 * *Rollback:* <One concrete action.>
 * *Last updated:* <date>. <What changed, and how many runs.>

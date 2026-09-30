@@ -15,7 +15,7 @@ A playbook opens with what you get and is written from a run on the reference cl
 * *Positive polarity.* Say what a thing does and what you get. A heading never starts with "Not". A condition is a Troubleshooting row or a Good to know line, phrased as what makes it work.
 * *Say it once.* xref:start-here/what-is-thinkube.adoc[What Thinkube is] and the four area pages own the ideas. Every other page links to the owner in one sentence and never restates it.
 * *Clarity over coverage.* Explain a few things well; Claude sees the whole API and can be asked for the rest. No page lists an API in full.
-* *Measured times only.* A playbook's time comes from the records of its run: deployments, mirror jobs, notebook runs, model loads. Several runs give a range, one run gives "about", and the record ids go in the commit message. A figure that depends on many variables is left out.
+* *Time: 30 minutes at least.* A playbook's time is what a reader should set aside: 30 minutes, or longer when its measured run takes longer. The measured figures go under *Time & risk*, from the records of the run: deployments, mirror jobs, notebook runs, model loads. Several runs give a range, one run gives "about", and the record ids go in the commit message. A figure that depends on many variables is left out.
 * *A process that fails is not documented.* If a documented path fails on the reference cluster, the page waits. The defect is fixed, the path is rerun, then the page is written.
 
 == Voice

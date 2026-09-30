@@ -3,7 +3,7 @@
 :page-area: gitops
 :page-tagline: Upload, list, download and delete files in Thinkube Storage over a REST API and a web page
 :page-difficulty: beginner
-:page-time: 5 min
+:page-time: 30 min
 :page-risk: low
 :page-tags: Object storage, REST API, Templates
 :page-order: 70
@@ -53,7 +53,7 @@ You deploy the file gateway as `files`, store a file through the API and through
 
 === Time & risk
 
-* *Estimated time:* 5 min. The deploy took 155 seconds on one run; each call takes under a second.
+* *Estimated time:* 30 min. The deploy took 155 seconds on one run; each call takes under a second.
 * *Risk level:* Low. The app is isolated in its own namespace, `files`, and writes only to the buckets it creates.
 * *Rollback:* Deploy the template again; a deploy of the same name overwrites the app. Stored files stay in Thinkube Storage.
 * *Last updated:* 2026-09-16. Measured on one deploy.

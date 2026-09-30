@@ -31,7 +31,6 @@ module.exports = (options) => {
         tagline: a['page-tagline'],
         difficulty: a['page-difficulty'],
         time: a['page-time'],
-        tags: a['page-tags'].split(',').map((tag) => tag.trim()).slice(0, 3),
         order: Number(a['page-order']),
         featured: a['page-featured'] === 'true',
         updated: a['page-updated'],

@@ -3,7 +3,7 @@
 :page-area: gitops
 :page-tagline: Turn PDF papers into structured text with Docling, on CPU in a pipeline step or with a vision model on your GPU
 :page-difficulty: intermediate
-:page-time: 15 min
+:page-time: 30 min
 :page-time-note: plus 82 s the first time a standard conversion downloads Docling's models
 :page-risk: low
 :page-tags: Docling, Argo Workflows, LLM Gateway
@@ -76,7 +76,7 @@ You load Granite-Docling on an RTX 3090, deploy the app as `docling`, convert an
 
 === Time & risk
 
-* *Estimated time:* 15 min. Mirroring Granite-Docling took 60 s and the engine was serving about a minute after the load. The deploy took 309.8 s; redeploys took 254.7 and 274.1 s. The standard pipeline converted the 15-page paper in 58.1 and 124.8 s on two runs; Granite-Docling in 15.2 s.
+* *Estimated time:* 30 min. Mirroring Granite-Docling took 60 s and the engine was serving about a minute after the load. The deploy took 309.8 s; redeploys took 254.7 and 274.1 s. The standard pipeline converted the 15-page paper in 58.1 and 124.8 s on two runs; Granite-Docling in 15.2 s.
 * *Risk level:* Low. The app is isolated in its own namespace, `docling`. The model load uses one vLLM deployment on tkamd2: the node serves no other vLLM model while Granite-Docling is loaded.
 * *Rollback:* Unload the model with _"unload ibm-granite/granite-docling-258M"_, and delete the app from thinkube-control.
 * *Last updated:* 2026-09-17. Measured on one mirror, one load, three deploys and four conversions.

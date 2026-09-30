@@ -3,7 +3,7 @@
 :page-area: gitops
 :page-tagline: A service that runs only while it is being called, like AWS Lambda, on your own machines
 :page-difficulty: beginner
-:page-time: 5 min
+:page-time: 30 min
 :page-time-note: plus about 5 min to install Knative the first time
 :page-risk: low
 :page-tags: Serverless, Knative, Templates
@@ -51,7 +51,7 @@ You deploy `knative-demo`, a serverless service, from a template. You call it wh
 
 === Time & risk
 
-* *Estimated time:* 5 min. The deploy took 97 and 108 seconds on two runs, a pushed change was live 93 seconds after the push, and the calls take seconds.
+* *Estimated time:* 30 min. The deploy took 97 and 108 seconds on two runs, a pushed change was live 93 seconds after the push, and the calls take seconds.
 * *Risk level:* Low. The service is isolated in its own namespace, `knative-demo`, and changes nothing else.
 * *Rollback:* Deploy the template again. A deploy of the same name overwrites the service; nothing is lost that you need.
 * *Last updated:* 2026-09-16. Measured on two deploys, one scaling run and one pushed change.
