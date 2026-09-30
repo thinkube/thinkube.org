@@ -13,7 +13,7 @@
 
 === Basic idea
 
-A notebook runs in a notebook server: one pod on one node, with the CPU, memory and GPUs chosen when it starts. Claude works in that server through the notebook operations, with no JupyterLab tab needed.
+A notebook runs in a notebook server: one pod on one node, with the CPU, memory and GPUs chosen when it starts. Claude works in that server directly, through the notebook operations.
 
 * *Watched.* Claude opens the notebook on your server and shows it in a Thinkube IDE tab. The outputs and the progress bar appear there as the cells run.
 * *Unattended.* Claude starts a server of its own on the node you name, runs the notebook top to bottom, and stops the server when the run ends. Your own server and its tabs stay as they are.
@@ -44,7 +44,7 @@ You create a two-cell notebook, run it while you watch it in a Thinkube IDE tab,
 *Platform*
 
 * Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
-* A notebook server on tkamd1, for the watched run. Ask Claude: _"start a notebook server on tkamd1"_. The first start on a node downloads the notebook environments, so it takes longer than later starts.
+* A notebook server on tkamd1, for the watched run. Ask Claude: _"start a notebook server on tkamd1"_. The first start on a node downloads the notebook environments, so it takes longer than later starts. Replace tkamd1 and tkamd2, here and below, with your own nodes.
 
 *Components*
 
@@ -52,7 +52,7 @@ You create a two-cell notebook, run it while you watch it in a Thinkube IDE tab,
 
 === Time & risk
 
-* *Estimated time:* 30 min. On the reference run the watched run took 30 s. The unattended run took 69 s from the request to its end: 30 s of cells, and the rest starting its server and kernel.
+* *Estimated time:* 30 min. The reference run is one run on the test cluster this page was checked on. On it, the watched run took 30 s. The unattended run took 69 s from the request to its end: 30 s of cells, and the rest starting its server and kernel.
 * *Risk level:* Low. The unattended run uses a server of its own, and the watched run uses only the notebook's kernel.
 * *Rollback:* Delete the notebook file.
 * *Last updated:* 2026-09-16. Measured on one watched run and one unattended run.
@@ -67,7 +67,7 @@ Ask Claude:
 › create watch-a-run.ipynb on tkamd1: one cell that prints the server name and the cores, one that counts 30 seconds with a tqdm progress bar
 ----
 
-Claude calls `jupyter_create_notebook`. The notebook it wrote on the reference run:
+The notebook Claude wrote on the reference run:
 
 [source,python]
 ----
@@ -87,7 +87,7 @@ for i in tqdm(range(30)):
 print(f"sum: {total}")
 ----
 
-`from tqdm import tqdm` is the text form of the progress bar, which moves in the tab while the cell runs.
+tqdm draws a text progress bar that moves in the tab.
 
 === Step 2. Open it in a Thinkube IDE tab
 
@@ -97,7 +97,7 @@ Ask Claude:
 › open watch-a-run.ipynb with agent-dev and show it to me
 ----
 
-Claude calls `jupyter_use_notebook` with `kernel_name: agent-dev`, then runs the command it answers with in the terminal:
+Claude opens the notebook with the agent-dev kernel, then runs this command in the terminal:
 
 ----
 tk-notebook-open --node tkamd1 watch-a-run.ipynb
@@ -111,7 +111,7 @@ Expected output:
 {"opened":"https://notebooks.<your domain>/user/<you>/tkamd1/notebooks/thinkube/notebooks/watch-a-run.ipynb","node":"tkamd1",...}
 ----
 
-The tab takes a few seconds to attach. Claude waits until `jupyter_kernel_status` reports `connections: 1` before it runs anything, so you see the run from its first line.
+The tab takes a few seconds to attach. Claude waits until the tab is connected, so you see the run from its first line.
 
 === Step 3. Run it while you watch
 
@@ -121,7 +121,7 @@ Ask Claude:
 › run all the cells
 ----
 
-Claude calls `jupyter_execute_all_cells`, which answers at once with an `execution_id`, and follows `jupyter_check_all_cells_status` until the run ends. The tab shows the progress bar move.
+The tab shows the progress bar move.
 
 Expected output, from the reference run:
 
@@ -145,8 +145,6 @@ Ask Claude:
 › close watch-a-run.ipynb
 ----
 
-Claude calls `jupyter_close_notebook`.
-
 Expected output:
 
 ----
@@ -163,8 +161,6 @@ Ask Claude:
 ----
 › run watch-a-run.ipynb unattended on tkamd2 with agent-dev and no GPU
 ----
-
-Claude calls `run_notebook_job` with `node: tkamd2`, `gpus: 0` and `kernel_name: agent-dev`, and follows `notebook_job_status`.
 
 Expected output, from the reference run:
 
@@ -184,7 +180,7 @@ cell 1: sum: 435
 created_at: 23:43:21   finished_at: 23:44:30
 ----
 
-The server `job-651a370f` stopped when the run ended, and `jupyter_notebook_status` listed no other servers.
+The server `job-651a370f` stopped when the run ended, and no other servers were listed.
 
 === Step 6. Next steps
 
@@ -198,7 +194,7 @@ The server `job-651a370f` stopped when the run ended, and `jupyter_notebook_stat
 |===
 | Symptom | Cause | Fix
 
-| `jupyter_list_kernels` answers `Notebook servers are running on tkamd1, tkamd2, tkspark; say which with node.`
+| Listing the kernels answers `Notebook servers are running on tkamd1, tkamd2, tkspark; say which with node.`
 | More than one notebook server is running, and the request did not name its node
 | Name the node: _"list the kernels on tkamd1"_.
 |===

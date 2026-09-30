@@ -4,7 +4,7 @@
 :page-area: gitops
 :page-aliases: how-it-works/deploy-loop.adoc, concepts/running-software.adoc, webapp-template:index.adoc
 
-Push to git, and it runs. An application goes from a template to its own address with a certificate and a login, and every change after that is a push.
+Push to git, and it runs. An application goes from a template to its own address with a certificate and a login, and each later change goes live when you push.
 
 Ask Claude: _"make an app called notes from the web app template"_. A repository named `notes` appears in Thinkube Git, is built, deployed and given `notes.<your domain>` behind your login, with a PostgreSQL database of its own, and is checked out under `apps/notes` in your workspace. Edit it and push; the push builds and deploys.
 
@@ -29,7 +29,7 @@ deploy -> app
 
 == thinkube.yaml: your app, without the Kubernetes
 
-Running an app on Kubernetes normally means writing and keeping in step a dozen kinds of object: namespaces, deployments, services, routes, secrets, quotas, build pipelines, sync hooks. `thinkube.yaml` replaces all of them with one short file at the root of your repository that says only what you know about your app: its containers, how each is built, the port it listens on, where requests go, and the platform services it uses.
+Running an app on Kubernetes normally means writing a dozen kinds of object and keeping them consistent: namespaces, deployments, services, routes, secrets, quotas, build pipelines, sync hooks. `thinkube.yaml` replaces all of them with one short file at the root of your repository that says only what you know about your app: its containers, how each is built, the port it listens on, where requests go, and the platform services it uses.
 
 The web app template's file, shortened to what matters:
 
@@ -66,22 +66,22 @@ From that file, at deploy time, the platform:
 * creates its repository in Thinkube Git, the webhook that builds it, and the ArgoCD application that runs it;
 * gives it `<name>.<your domain>` with the platform's certificate.
 
-On the reference cluster an app made from the template has a `thinkube.yaml` of 44 lines. The platform generated 11 files in its `k8s/` folder, about 1,000 lines, holding 15 Kubernetes resources: the namespace, two deployments and two services, the route, the app's metadata, a resource quota and default limits, the build workflow, two sync hooks, and a page that answers while the app is scaled to zero. The credentials the app uses, for its database, Thinkube Experiments, Thinkube Storage and its build, are Kubernetes Secrets the platform writes at deploy time; the files name them and hold no credential. You read those files when you want to; you never write them. When `thinkube.yaml` changes, a commit hook regenerates them.
+On the reference cluster an app made from the template has a `thinkube.yaml` of 44 lines. The platform generated 11 files in its `k8s/` folder, about 1,000 lines, holding 15 Kubernetes resources: the namespace, two deployments and two services, the route, the app's metadata, a resource quota and default limits, the build workflow, two sync hooks, and a page that answers while the app is scaled to zero. The credentials the app uses, for its database, Thinkube Experiments, Thinkube Storage and its build, are Kubernetes Secrets the platform writes at deploy time; the files name them and hold no credential. You can read these files and never have to edit them. When `thinkube.yaml` changes, a commit hook regenerates them.
 
 xref:reference/thinkube-yaml.adoc[The thinkube.yaml reference] lists every field.
 
 == How it works
 
-* *A push builds and deploys.* A webhook starts Argo Workflows, which builds each container from its Containerfile in the cluster, once per architecture, and pushes the image to Thinkube Registry. When the images arrive, the registry's webhook commits their new tags to the repository and asks ArgoCD to sync, and ArgoCD runs what `k8s/` says. Rolling back is pushing the previous commit. Thinkube Control itself ships through this loop.
+* *A push builds and deploys.* A webhook starts Argo Workflows, which builds each container from its Containerfile in the cluster, once per architecture, and pushes the image to Thinkube Registry. When the images are ready, the new version goes live. To roll back, push the previous commit. Thinkube Control itself is deployed the same way.
 * *A container is the unit.* An image is built once from the repository and started anywhere; the image that ran your tests is the image that runs. Configuration arrives as environment variables at deploy time, and state lives in the database or the storage the app declares, so any container can be restarted at any moment.
-* *A template is a running application you copy.* Deploying one gives you your own repository, with a name, a database, a domain and a login. Improve it and push. Publish it, and it is a template again for the next app. Every step is a copy: declarations and defaults live in the repository, values live in the deployment, so a published template carries nothing of yours.
-* *A service that runs only when called.* A Knative service scales to zero between requests and starts on the first one, the right shape for a webhook, a processing step or a small API.
+* *A template is a running application you copy.* Deploying one gives you your own repository, with a name, a database, a domain and a login. Improve it and push. Publish it, and it is a template again for the next app. Every step is a copy. Declarations and defaults are in the repository. Your settings stay with your deployment, so a published template carries nothing of yours.
+* *A service that runs only when called.* A Knative service scales to zero between requests and starts on the first one. It suits a webhook, a processing step or a small API.
 * *Pipelines for the app's own jobs.* An app hands long work to Argo Workflows in its own namespace, with its own images: converting a batch, preparing a dataset, running an evaluation.
-* *The login, the certificate and the model come from the base.* An app registers with Thinkube Identity, is reached through the platform's gateway, and calls the LLM Gateway with a token; the model behind it changes without the app changing.
+* *The login, the certificate and the model come from the base.* An app registers with Thinkube Identity, is reached through the platform's gateway, and calls the LLM Gateway with a token. You can change the model behind the gateway without changing the app.
 
 == Reference
 
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]: the full specification of the descriptor.
 * xref:reference/templates.adoc[Templates catalog]: every template the platform offers.
 * xref:webapp-template:anatomy.adoc[What is in the web app template]: the file-by-file tour.
-* xref:webapp-template:variables.adoc[How configuration reaches your app]: the four channels, and why the browser sees only what you allow.
+* xref:webapp-template:variables.adoc[How configuration reaches your app]: why the browser sees only what you allow.

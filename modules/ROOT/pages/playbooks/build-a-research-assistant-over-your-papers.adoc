@@ -47,8 +47,8 @@ You run the three research-assistant notebooks in order: `01` checks the models,
 *Platform*
 
 * Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
-* A notebook server on tkamd1. Ask Claude: _"start a notebook server on tkamd1"_.
-* A chat model the catalogue marks for tool use, and an embedding model, both loaded. Ask Claude: _"which models are loaded?"_ The run used `unsloth/Qwen3.6-27B-NVFP4` and `Qwen/Qwen3-Embedding-0.6B`.
+* A notebook server on tkamd1. Ask Claude: _"start a notebook server on tkamd1"_. Replace tkamd1 with one of your nodes.
+* A chat model the catalogue marks for tool use, and an embedding model, both loaded. Ask Claude: _"which models are loaded?"_ The reference run, one run on the test cluster this page was checked on, used `unsloth/Qwen3.6-27B-NVFP4` and `Qwen/Qwen3-Embedding-0.6B`.
 * Outbound access to arXiv.
 
 *Components*
@@ -57,10 +57,13 @@ You run the three research-assistant notebooks in order: `01` checks the models,
 
 === Time & risk
 
-* *Estimated time:* 30 min. On the reference run `01` took 94 s as an unattended run, including its own server's start; `02` took 75 s, fetching, embedding and indexing 146 papers and answering three questions; `03` took 4 min 1 s, of which the debate was 230.5 s.
+* *Estimated time:* 30 min. On the reference run:
+** `01`: 94 s as an unattended run, including its own server's start.
+** `02`: 75 s, to fetch, embed and index 146 papers and answer three questions.
+** `03`: 4 min 1 s, of which the debate was 230.5 s.
 * *Risk level:* Low. `02` deletes and recreates its own Qdrant collection, `rl_reasoning_papers`; nothing else is changed.
 * *Rollback:* In a notebook, `QdrantClient(url=os.environ["QDRANT_URL"]).delete_collection("rl_reasoning_papers")`.
-* *Last updated:* 2026-09-17. Measured on one run of each notebook, on fresh copies from the thinkube-notebooks-examples repository.
+* *Last updated:* 2026-09-17. Measured on one run of each notebook.
 
 == Instructions
 
@@ -87,7 +90,7 @@ Expected output, from the reference run:
   QLoRA ↔ Weather: 0.260  (unrelated)
 ----
 
-Closeness in meaning becomes closeness in vector space: that is what the next notebook retrieves by. Leave the models loaded.
+Texts close in meaning get vectors close to each other. The next notebook uses this to find related text. Leave the models loaded.
 
 === Step 2. Index the papers and ask questions
 
@@ -134,7 +137,7 @@ Each question comes back with an answer and four sources:
 | Distilling a teacher's traces generally beats RL on the small model alone. Sources: RLKD, NaturalThoughts and two more.
 |===
 
-An answer is as good as the pieces under it. The first answer shows the chain saying what its sources do not cover.
+Answers are only as good as the retrieved text. The first answer shows the chain saying what its sources do not cover.
 
 === Step 3. Read the traces
 
@@ -155,7 +158,7 @@ Every trace, with its prompts and retrieved pieces, is at `https://langfuse.<you
 
 === Step 4. Let two agents argue from the index
 
-`03-multi-agent.ipynb` gives three AG2 agents a question the literature has not settled: for a small model with a reward checker and a large teacher, post-train with GRPO or distil the teacher's traces? Each advocate searches the index once, argues, and ends its turn with `ARGUMENT_COMPLETE`. The judge scores five criteria, declares a winner, and calls `generate_code` for the winning approach.
+`03-multi-agent.ipynb` gives three AG2 agents a question the literature has not settled: for a small model with a reward checker and a large teacher, post-train with GRPO or distil the teacher's traces? Each advocate searches the index once, argues, and ends its turn with `ARGUMENT_COMPLETE`. The judge scores five criteria and declares a winner. The judge writes code for the winning approach.
 
 Ask Claude:
 
@@ -185,7 +188,7 @@ Distillation Total: 0.76
 The side with the higher total score is Distillation.
 ----
 
-Pro-GRPO opened with _Reinforcement Learning with Verifiable Rewards Implicitly Incentivizes Correct Reasoning in Base LLMs_, DeepSeek-R1 and RLKD; Pro-Distillation with work on chain-of-thought distillation into small models. Tool calling is what lets the agents search: the model emits a call the server parses, which is why the chat model must be one the catalogue marks for tool use.
+Pro-GRPO opened with _Reinforcement Learning with Verifiable Rewards Implicitly Incentivizes Correct Reasoning in Base LLMs_, DeepSeek-R1 and RLKD; Pro-Distillation with work on chain-of-thought distillation into small models. Tool calling lets the agents search: the model writes a search call, and the server reads it.
 
 === Step 5. Close the notebooks
 
@@ -196,8 +199,6 @@ Ask Claude:
 ----
 › close the research assistant notebooks on tkamd1
 ----
-
-Claude calls `jupyter_close_notebook` for each.
 
 Expected output:
 

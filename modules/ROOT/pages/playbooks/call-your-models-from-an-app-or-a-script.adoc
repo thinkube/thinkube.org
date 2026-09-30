@@ -48,7 +48,7 @@ You create an API token, call a loaded model with the `openai` client and with t
 
 * Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
 * `Qwen/Qwen3.5-4B` mirrored. Ask Claude: _"is Qwen/Qwen3.5-4B mirrored?"_ If it is not, ask _"mirror Qwen/Qwen3.5-4B"_.
-* A notebook server, for the reference run's calls. Ask Claude: _"start a notebook server on tkamd1"_.
+* A notebook server, to run the calls. Ask Claude: _"start a notebook server on tkamd1"_. Replace tkamd1 and tkamd2, here and below, with your own nodes.
 
 *Components*
 
@@ -56,7 +56,7 @@ You create an API token, call a loaded model with the `openai` client and with t
 
 === Time & risk
 
-* *Estimated time:* 30 min. On the reference run the vLLM engine was ready 2 min 3 s after the load request, and the model was `available` about a minute later. The first call answered in 1.4 s, and the unload answered at once.
+* *Estimated time:* 30 min. The reference run is one run on the test cluster this page was checked on. On it, the vLLM engine was ready 2 min 3 s after the load request, and the model was `available` about a minute later. The first call answered in 1.4 s, and the unload answered at once.
 * *Risk level:* Low. The calls only read from the model.
 * *Rollback:* Unload the model, and delete the token under *API Tokens* when you no longer use it.
 * *Last updated:* 2026-09-16. Measured on one load, one set of calls and one unload.
@@ -70,8 +70,6 @@ Ask Claude:
 ----
 › load Qwen/Qwen3.5-4B on tkamd2 with a 16k context
 ----
-
-Claude calls `load_llm_model` and follows `get_llm_model_status` until the state is `available`.
 
 Expected output:
 
@@ -89,7 +87,7 @@ A script or an app outside the platform's own tools authenticates with an API to
 
 In Thinkube Control open *API Tokens*. Under *Create New Token* type a *Token Name*, leave *Expires in (days)* empty for a token with no expiry or give a number of days, and choose *Create Token*. Copy the token from *Token Created Successfully*.
 
-Keep the address and the token in two variables, the names notebook servers already have:
+Keep the address and the token in two variables:
 
 [source,bash]
 ----
@@ -135,7 +133,7 @@ Paris
 CompletionUsage(completion_tokens=2, prompt_tokens=21, total_tokens=23, ...)
 ----
 
-`/v1/models` lists the models you can call by name: the loaded ones and the mirrored ones. `extra_body` switches Qwen3.5's thinking off, so the answer is the whole completion.
+`/v1/models` lists loaded and mirrored models; only loaded ones answer. `extra_body` switches Qwen3.5's thinking off, so the answer is the whole completion.
 
 === Step 4. Stream the answer
 

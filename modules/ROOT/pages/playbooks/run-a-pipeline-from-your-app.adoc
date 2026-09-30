@@ -57,7 +57,7 @@ You add `workflows` to an app from the web app template, submit a two-step pipel
 * *Estimated time:* 30 min. Declaring the service is a commit and a push, which rebuilds and redeploys the app: the web app template's build and deploy took 3–4 min on five runs. The two-step pipeline finished 21 seconds after it was submitted.
 * *Risk level:* Low. Everything the service creates is in the app's own namespace.
 * *Rollback:* Remove `workflows` from `services` in `thinkube.yaml`, commit and push.
-* *Last updated:* 2026-09-16. The pipeline and the secret step were run again on `wf-check`; the service was declared on `wf-check` on 2026-09-14.
+* *Last updated:* 2026-09-16. Measured on one pipeline run.
 
 == Instructions
 
@@ -78,7 +78,7 @@ services:
   - workflows
 ----
 
-The commit's pre-commit hook regenerates `k8s/` and adds `k8s/workflows.yaml`; the push redeploys the app with it.
+The commit adds `k8s/workflows.yaml`. The push redeploys the app with pipeline access.
 
 === Step 2. See what the app received
 
@@ -128,7 +128,7 @@ In every container:
 | `WORKFLOWS_SERVER_URL` | `http://argo-workflows-server.argo.svc.cluster.local:2746`
 | `WORKFLOWS_SERVICE_ACCOUNT` | `<app>-workflows`
 | `WORKFLOWS_UI_URL` | `https://argo.<your domain>/workflows/<namespace>`
-| `CONTAINER_IMAGE_<NAME>` | One per container in `thinkube.yaml`, such as `CONTAINER_IMAGE_BACKEND`: the image that container's deployment runs, `registry.<your domain>/thinkube/<app>-<container>:<build tag>`. The value follows the deployed build, so a step runs the same code as the app that submitted it, and a rollback of the app rolls back its steps.
+| `CONTAINER_IMAGE_<NAME>` | One per container in `thinkube.yaml`, such as `CONTAINER_IMAGE_BACKEND`: the image that container's deployment runs, `registry.<your domain>/thinkube/<app>-<container>:<build tag>`. The value follows the deployed build, so a rollback of the app also rolls back its steps.
 |===
 
 === Step 3. Submit a two-step pipeline
@@ -210,7 +210,7 @@ Ask Claude:
 › run this pipeline script in wf-check's backend and show me what step two printed
 ----
 
-Expected output, from the reference run:
+Expected output, from the reference run (one run on the test cluster this page was checked on):
 
 ----
 submitted wf-check-pipeline-4cwwf
@@ -219,7 +219,7 @@ step two read:
 written by step one at 19:17:06Z
 ----
 
-The workflow names no storage: the namespace's default artifact repository in Thinkube Storage is used, under the prefix `wf-check/`.
+Files between steps go to Thinkube Storage automatically.
 
 === Step 4. Give a step the app's secrets
 
@@ -287,4 +287,4 @@ wf-check-secret-gkbzc     Succeeded
 | Add `+env_from=[SecretEnvFrom(name=f"{namespace}-secrets")]+` to the step.
 |===
 
-The app's steps may create, list and delete workflows in their own namespace only. The storage credentials the steps use are the platform's: the `<app>/` prefix names the app's files but does not keep other apps out of them.
+The app's steps may create, list and delete workflows in their own namespace only. The storage credentials the steps use are the platform's. The `<app>/` prefix names the app's files, and other apps can still reach them.

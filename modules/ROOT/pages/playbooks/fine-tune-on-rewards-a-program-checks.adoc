@@ -21,9 +21,9 @@ The example is a zebra puzzle: five houses, fifteen clues, fill in the grid.
 
 * *The model formalises.* It translates each clue into one formal rule, as JSON.
 * *The solver deduces.* A constraint solver finds the grid from the rules, and grades it against the puzzle's answer key.
-* *GRPO learns from the grade.* For each puzzle the model writes eight answers; the ones that score above their group's average are made more likely.
-* *A LoRA adapter is what trains.* 21 million parameters, 0.47% of the model, so the run fits one GPU and the result is small until it is merged.
-* *Thinkube Experiments keeps the record.* The run's parameters and reward curve, and the registered model version linked to that run.
+* *GRPO learns from the grade.* GRPO is a training method that learns from scores rather than example answers. For each puzzle the model writes eight answers; the ones that score above their group's average are made more likely.
+* *A LoRA adapter is what trains.* Training changes only a small add-on (a LoRA adapter), 0.47% of the model, so it fits on one GPU.
+* *Thinkube Experiments (MLflow) keeps the record.* The run's parameters and reward curve, and the registered model version linked to that run.
 
 The same loop fits any task a program can check: text to SQL, documents to records, sentences to a knowledge graph.
 
@@ -43,7 +43,7 @@ You run `zebra_grpo.ipynb` on a GPU: it measures the base model, trains it, meas
 
 === Supported hardware
 
-* *GPU:* one NVIDIA GPU with about 20 GB of memory free, for training in bfloat16 with FlashAttention-2.
+* *GPU:* one NVIDIA GPU with about 20 GB of memory free.
 * *Architecture:* amd64 or arm64.
 
 === Prerequisites
@@ -52,7 +52,7 @@ You run `zebra_grpo.ipynb` on a GPU: it measures the base model, trains it, meas
 
 * Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
 * `unsloth/Qwen3.5-4B` mirrored: the notebook reads the base model from your storage. Ask Claude: _"is unsloth/Qwen3.5-4B mirrored?"_ If it is not, ask _"mirror unsloth/Qwen3.5-4B"_.
-* A free GPU slot on the node. Ask Claude: _"how many GPU slots are free on tkspark?"_
+* A free GPU slot on the node. Ask Claude: _"how many GPU slots are free on tkspark?"_ Replace tkspark with one of your nodes.
 * A private repository named `<your GitHub user>-metadata` on GitHub, for the model's catalogue entry. Ask Claude: _"does my GitHub account have a -metadata repository?"_
 
 *Components*
@@ -76,9 +76,9 @@ You run `zebra_grpo.ipynb` on a GPU: it measures the base model, trains it, meas
 |===
 +
 The baseline is cached on disk by scale, so a second run at the same scale skips those 75 minutes.
-* *Risk level:* Medium. The run holds a GPU for hours, and a served model on the same unified-memory node shares that memory.
+* *Risk level:* Medium. The run holds a GPU for hours, and a served model on the same node shares that memory when the CPU and GPU share memory.
 * *Rollback:* Delete the registered version in Thinkube Experiments. The base model is untouched.
-* *Last updated:* 2026-09-29. Steps 1 to 5 written from the full run recorded in the notebook, commit ef3a82b of `thinkube-notebooks-examples`. Step 6 written from a run of `register_finetuned_model` on the reference cluster, on `unsloth/Qwen3.5-4B` with an untrained adapter.
+* *Last updated:* 2026-09-16. Measured on one full run on one GB10.
 
 == Instructions
 
@@ -95,11 +95,11 @@ Ask Claude:
 › in examples/zebra-grpo/zebra_grpo.ipynb set FULL_RUN to False
 ----
 
-Claude reads the configuration cell with `jupyter_read_cell` and rewrites the line with `jupyter_overwrite_cell`. Leave it as it is for the full run.
+Claude changes the line in the configuration cell. Leave it as it is for the full run.
 
 === Step 2. Run it unattended on the GPU node
 
-A run of hours belongs on a server of its own, which stops when the run ends and gives the GPU back.
+A run of many hours gets a server of its own. The server stops when the run ends and gives the GPU back.
 
 Ask Claude:
 
@@ -107,11 +107,9 @@ Ask Claude:
 › run examples/zebra-grpo/zebra_grpo.ipynb unattended on tkspark with one GPU and the fine-tuning kernel
 ----
 
-Claude calls `run_notebook_job` with `node: tkspark`, `gpus: 1` and `kernel_name: fine-tuning`, and follows `notebook_job_status`.
-
 Or by hand: in Thinkube Notebooks start a server on tkspark with one GPU, open `thinkube/notebooks/examples/zebra-grpo/zebra_grpo.ipynb` with the *fine-tuning* kernel, and run all cells.
 
-Expected output from the first cells, from the recorded run:
+The reference run is one full run on the test cluster this page was checked on. Expected output from the first cells, from the reference run:
 
 ----
 Model: unsloth/Qwen3.5-4B
@@ -137,9 +135,7 @@ Ask Claude:
 › show me the baseline results of the zebra run
 ----
 
-Claude reads the cell's outputs from the job's results, or with `jupyter_read_cell`.
-
-Expected output, from the recorded run:
+Expected output, from the reference run:
 
 ----
 Baseline Results:
@@ -147,13 +143,13 @@ Baseline Results:
   ZebraLogic solved=28%  cell_acc=0.527  parse=97%
 ----
 
-The model already writes well-formed rules, 97 to 99% of them parse. What it gets wrong is which rule.
+97 to 99% of the rules are valid. The errors are wrong rules, not broken ones.
 
 === Step 4. Follow the training
 
 Each step writes eight answers per puzzle and scores them with the solver: the fraction of the 25 grid cells right, plus 0.05 for one rule per clue and 0.25 for a fully correct grid. The reward shows progress; the loss shows how far the model moved.
 
-Expected output, from the recorded run:
+Expected output, from the reference run:
 
 ----
 Num examples = 2,000 | Num Epochs = 1 | Total steps = 250
@@ -166,13 +162,13 @@ MLflow run: ec1f9ee6e1fa455b99936a9ef9f32e51
   view: https://experiments.<your domain>/#/experiments/5/runs/ec1f9ee6e1fa455b99936a9ef9f32e51
 ----
 
-The run is logged to Thinkube Experiments once training ends, so the whole reward curve is in one run. On the recorded run the reward reached its ceiling around step 190.
+The run is logged to Thinkube Experiments once training ends, so the whole reward curve is in one run. On the reference run the reward reached its ceiling around step 190.
 
 === Step 5. Compare before and after
 
 The same puzzles, the same sampling and the same grader, with the trained adapter.
 
-Expected output, from the recorded run:
+Expected output, from the reference run:
 
 ----
                              baseline    trained      delta
@@ -190,15 +186,9 @@ ZebraLogic is the row that shows real learning: from 28% to 67% of puzzles solve
 
 === Step 6. Register the model and make it loadable
 
-Section 14 of the notebook calls `thinkube_models.register_finetuned_model` with the model, its catalogue entry and the training run. The function:
+Section 14 of the notebook merges the adapter into the base model. It stores the model, adds it to your catalogue, and waits until the gateway lists it. The model is registered as a version of `zebra-rules-qwen35-4b`, linked to the training run.
 
-* merges the adapter into the base weights and uploads the result to the training run's `model` folder;
-* registers it as a version of `zebra-rules-qwen35-4b` linked to that run;
-* writes the catalogue entry to `models.json` of your private `<your GitHub user>-metadata` repository on GitHub, with the notebook server's `GITHUB_TOKEN`;
-* records the registration in Thinkube Control's database, with the notebook server's PostgreSQL credentials;
-* waits until the gateway lists the model.
-
-It refuses a catalogue entry that is missing a field, or that asks for another backend than vLLM or another format than BF16.
+The catalogue entry needs every field, the vLLM backend and the BF16 format. The notebook stops on an entry that asks for anything else.
 
 The cell prints, with Unsloth's progress bars left out:
 
@@ -218,7 +208,7 @@ In Thinkube Experiments, the version opens onto the run: its parameters and rewa
 
 === Step 7. Give the GPU back
 
-The notebook's last section loads the model on vLLM and calls it, as xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned] describes. On the recorded run it loaded on `vllm-tkamd2`. The unattended run's server stopped when the notebook ended; the served model holds its GPU until you unload it.
+The notebook's last section loads the model on vLLM and calls it, as xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned] describes. On the reference run it loaded on `vllm-tkamd2`. The unattended run's server stopped when the notebook ended; the served model holds its GPU until you unload it.
 
 Ask Claude:
 
@@ -248,10 +238,6 @@ message: Model unloaded successfully
 | The model cell prints `No local mirror; downloading from HuggingFace`
 | `unsloth/Qwen3.5-4B` is not mirrored, so the notebook would download it into the server
 | Stop the run and ask Claude _"mirror unsloth/Qwen3.5-4B"_; every GPU node then reads the one mirror.
-
-| Training stops at step 0 with `FailOnRecompileLimitHit`
-| The Unsloth in the environment is older than the PyTorch it runs against
-| Use the notebook environments of the current release.
 
 | A compiled kernel fails on a tensor without storage
 | An extension was built against a different PyTorch than the image's

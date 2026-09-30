@@ -4,7 +4,7 @@
 _Exact lookup material and how things work: the platform, the catalogues, the file that describes your apps, and Thinkube Tandem._
 
 .TL;DR
-Most days you say what you want to Claude Code and never open these pages. Come here to know exactly what a field, a component, an operation or a word on the screen means, and how the parts behind it work.
+Most days you work through Claude Code. Come here for the exact meaning of a field, a component, an operation or a word on the screen, and for how the parts behind it work.
 
 == The platform
 
@@ -31,5 +31,5 @@ Every app on Thinkube is described by `thinkube.yaml`, one short file at the roo
 * xref:tandem:words-on-the-page.adoc[The words on the page]: every line, button and state word on Tandem's pages.
 * xref:tandem:configuration.adoc[Configuration and settings]: Tandem's commands and settings in Thinkube IDE.
 * xref:tandem:store.adoc[The store]: what Tandem records about your work, and where it is kept.
-* xref:tandem:defect-ledger.adoc[ODC: the defect ledger for work done with an AI]: what Tandem records about its runs to improve the process, and why.
+* xref:tandem:defect-ledger.adoc[ODC (Orthogonal Defect Classification): the defect ledger for work done with an AI]: what Tandem records about its runs to improve the process, and why.
 * xref:tandem:defects.adoc[The defect ledger, reference]: the fields of a defect row.

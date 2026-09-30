@@ -26,7 +26,7 @@ A playbook opens with what you get and is written from a run on the reference cl
 * The reader is capable, not expert. Explain the platform's own terms once, in Concepts; do not explain general computing on every page.
 * No claim that the Kubernetes underneath passed any test programme or carries any mark. Say "unmodified upstream Kubernetes, installed with kubeadm".
 * Alpha status is stated once, on xref:start-here/what-is-thinkube.adoc[What Thinkube is]. Nowhere else.
-* Thinkube Tandem is "an experimental intent-driven development methodology for working with Claude Code, still changing", stated once on its index page.
+* Thinkube Tandem is "an experimental way of working with Claude Code", stated once on its index page.
 * Nothing about where a page's source lives. That is a maintainer fact and belongs to xref:contributing/documentation-map.adoc[the documentation map] only.
 
 == Names

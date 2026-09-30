@@ -14,7 +14,7 @@
 
 === Basic idea
 
-Applications keep files such as uploads, documents and generated results in object storage: a service that stores each file under a name and hands it back on request, with no disk to manage. In the cloud this is Amazon S3 or Google Cloud Storage. On Thinkube it is Thinkube Storage, which speaks the same S3 API.
+Applications keep files such as uploads, documents and generated results in object storage: a service that stores each file under a name and hands it back on request, with no disk to manage. In the cloud this is Amazon S3 or Google Cloud Storage. On Thinkube it is Thinkube Storage (built on SeaweedFS), which speaks the same S3 API.
 
 The file gateway template puts a small service in front of it, so an app stores and fetches files with plain HTTP calls instead of carrying a storage client and credentials.
 
@@ -55,7 +55,7 @@ You deploy the file gateway as `files`, store a file through the API and through
 
 * *Estimated time:* 30 min. The deploy took 155 seconds on one run; each call takes under a second.
 * *Risk level:* Low. The app is isolated in its own namespace, `files`, and writes only to the buckets it creates.
-* *Rollback:* Deploy the template again; a deploy of the same name overwrites the app. Stored files stay in Thinkube Storage.
+* *Rollback:* Deploy the template again with the same name to replace the app. Stored files stay in Thinkube Storage.
 * *Last updated:* 2026-09-16. Measured on one deploy.
 
 == Instructions
@@ -70,7 +70,7 @@ Ask Claude:
 › make an app called files from the SeaweedFS template
 ----
 
-Claude calls `deploy_template` with `https://github.com/thinkube/tkt-seaweedfs` and follows `get_deployment_status` until it reports `success`.
+The template is `https://github.com/thinkube/tkt-seaweedfs`.
 
 Or by hand: in Thinkube Control open *Templates*, choose *tkt-seaweedfs*, name it `files` and deploy.
 
@@ -98,7 +98,7 @@ Expected output:
 
 === Step 3. Store and fetch a file through the API
 
-Each tenant gets its own bucket, `tenant-<tenant>`. An upload answers with a `full_ref`, the reference you store in your app to fetch or delete the file later. `+{doc_id}+` in the prefix groups the files of one upload under a new id.
+Each tenant gets its own bucket, `tenant-<tenant>`. An upload answers with a `full_ref`, the reference you store in your app to fetch or delete the file later. Put `+{doc_id}+` in the prefix to give each upload its own new folder.
 
 Ask Claude:
 
@@ -106,7 +106,7 @@ Ask Claude:
 › upload a note to files for tenant docs under documents/{doc_id}/, list it, fetch it and delete it
 ----
 
-Expected output, from the reference run:
+Expected output, from the reference run (one run on the test cluster this page was checked on):
 
 ----
 $ curl -F tenant=docs -F 'key_prefix=documents/{doc_id}/' -F files=@note.txt https://files.thinkube.com/api/upload
@@ -170,7 +170,7 @@ image::files-browse.png[The Browse Files page of the file gateway listing contra
 | Symptom | Cause | Fix
 
 | Opening `https://files.<your domain>/upload` or `/browse` directly answers `{"detail":"Not Found"}`
-| The server serves those pages only when you reach them from inside the app
+| These pages open from the app's menu
 | Open `https://files.<your domain>/` and use *Samples* or *Browse*.
 
 | After an upload the reference reads `tenant-docs//contract.pdf`

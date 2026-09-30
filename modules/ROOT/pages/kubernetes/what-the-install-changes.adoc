@@ -4,9 +4,9 @@
 _Every package, account setting, file, firewall rule and system setting the installer puts on the machine you install from, the control plane, the workers and the GPU nodes._
 
 .TL;DR
-Ask Claude: "what did the install change on tkamd2?". Claude reads the machine over SSH and answers with what this page lists: `containerd.io`, `kubeadm`, `kubelet` and `kubectl` installed and held at their versions, the node-IP and link-watchdog timers running, the firewall enabled, and name resolution for your domain pointed at the cluster. Read this page before you install on a machine that already does other work.
+Ask Claude: "what did the install change on tkamd2?". Claude reads the machine over SSH and answers with what this page lists: `containerd.io`, `kubeadm`, `kubelet` and `kubectl` installed and held at their versions, two services running every minute (one gives Kubernetes the machine's current network address, one restarts a worker's network when the router stops answering), the firewall enabled, and name resolution for your domain pointed at the cluster. Read this page before you install on a machine that already does other work.
 
-The installer runs on a machine with Ubuntu 24.04 and changes the other machines over SSH. It creates no users and no groups on any of them. It does not change the hostname or `/etc/hosts`, it does not change GRUB, and it installs no snaps.
+The installer runs on one machine and changes the other machines over SSH. It leaves users, groups, the hostname, `/etc/hosts` and GRUB as they are, and it installs no snaps.
 
 == The machines
 
@@ -15,7 +15,7 @@ The installer runs on a machine with Ubuntu 24.04 and changes the other machines
 | Machine | What it is
 
 | Install machine
-| The machine the installer runs on. It must run Ubuntu 24.04; it can be one of the servers or a separate machine. It joins your tailnet and gets a few tools. When it is one of the servers, that server gets both sets of changes.
+| The machine the installer runs on. It can be one of the servers or a separate machine. It joins your tailnet and gets a few tools. When it is one of the servers, that server gets both sets of changes.
 
 | Control plane
 | The one server that runs the Kubernetes control plane. It carries most of the platform's host-side tools.
@@ -34,13 +34,13 @@ The installer runs on a machine with Ubuntu 24.04 and changes the other machines
 | Where | Check
 
 | Install machine
-| Ubuntu 24.04, not running as root, OpenSSH server installed and running, a connection to `archive.ubuntu.com`, at least 10 GB free in your home directory. The installer does not continue until all five pass.
+| Ubuntu 24.04, not running as root, OpenSSH server installed and running, a connection to `archive.ubuntu.com`, at least 10 GB free in your home directory. The installer continues when all five pass.
 
 | Every server
-| Found by the network scan only if its SSH banner is Ubuntu's. Hardware detection must report CPUs, memory and disk.
+| The network scan finds a server when its SSH banner is Ubuntu's. Hardware detection must report CPUs, memory and disk.
 
 | Control plane
-| Exactly one. At least 16 CPU cores and 64 GB of memory; the installer does not offer a smaller machine for the role, and the Kubernetes install stops on one, and on anything but Ubuntu 24.04. With a DGX Spark and other machines, choose another machine, so the Spark's shared memory stays for AI work.
+| Exactly one. At least 16 CPU cores and 64 GB of memory. The installer offers only machines this size for the role. The Kubernetes install stops on a smaller machine, and on a system other than Ubuntu 24.04. With a DGX Spark and other machines, choose another machine, so the Spark's shared memory stays for AI work.
 
 | GPU node
 | NVIDIA driver 580 or newer. A GPU older than Volta is reported as unsupported.
@@ -188,7 +188,7 @@ The optional Prometheus component adds 9100 for node metrics on every node.
 | Each machine joins your tailnet under its hostname; xref:kubernetes/index.adoc[Thinkube Kubernetes] says what travels over it.
 
 | `k8s0`, a dummy interface with `172.16.0.1`
-| The address every node uses for the Kubernetes API, so a change of LAN address does not break the cluster.
+| The address every node uses for the Kubernetes API, so the cluster keeps working when the LAN address changes.
 
 | The API proxy on workers
 | Forwards `172.16.0.1:6443` to the control plane's LAN address.
@@ -197,7 +197,7 @@ The optional Prometheus component adds 9100 for node metrics on every node.
 | Puts the machine's current LAN address into kubelet's settings.
 
 | `thinkube-link-watchdog`, every minute, workers only
-| When the local router stops answering, bounces the network interface, then resets the device, then reboots.
+| When the local router stops answering, restarts the network interface, then resets the device, then reboots.
 |===
 
 == What happens to what was already there
@@ -233,5 +233,5 @@ The optional Prometheus component adds 9100 for node metrics on every node.
 
 == Good to know
 
-* The installer checks the control plane's size; a worker of any size joins.
-* The GitHub CLI repository on the install machine and the Argo CLI on the control plane are installed for amd64, the architecture of both on the reference cluster.
+* A worker of any size joins the cluster.
+* The GitHub CLI and the Argo CLI are installed for amd64 only.

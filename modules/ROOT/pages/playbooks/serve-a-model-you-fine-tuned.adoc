@@ -13,9 +13,9 @@
 
 === Basic idea
 
-A fine-tune becomes a model you can call in two steps. Once it is served, nothing about calling it is special.
+Making a fine-tune callable takes three steps. Once served, you call it like any other model.
 
-* *Registered.* The merged weights are a version in Thinkube Experiments, linked to the run that trained them, and Thinkube Control has a completed registration for the model. Registering puts the weights in your storage.
+* *Registered.* The merged weights are a version in Thinkube Experiments, linked to the run that trained them. Registering puts the weights in your storage.
 * *In the catalogue.* A catalogue entry tells the gateway how to serve the weights: the backend, the reasoning format, whether it calls tools. With both, the model is `deployable`.
 * *Served.* A load puts it on a GPU, and it answers at `llm.<your domain>` by its name, through the same API as every other model.
 
@@ -44,7 +44,7 @@ You check that `zebra-rules-qwen35-4b`, the model from xref:playbooks/fine-tune-
 *Platform*
 
 * Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
-* The fine-tune registered, with the notebook's section 14 run. Ask Claude: _"is zebra-rules-qwen35-4b deployable?"_
+* The fine-tuned model is registered (section 14 of the notebook has run). Ask Claude: _"is zebra-rules-qwen35-4b deployable?"_
 
 *Components*
 
@@ -52,16 +52,16 @@ You check that `zebra-rules-qwen35-4b`, the model from xref:playbooks/fine-tune-
 
 === Time & risk
 
-* *Estimated time:* 30 min. On the recorded run the load and the call through the gateway took about 5 minutes together.
+* *Estimated time:* 30 min. The reference run is one run on the test cluster this page was checked on. On it, the load and the call through the gateway took about 5 minutes together.
 * *Risk level:* Low. A load that does not fit a node is refused before anything starts.
 * *Rollback:* Unload the model. The registered version stays.
-* *Last updated:* 2026-09-29. Written from the run recorded in the zebra-grpo notebook, commit ef3a82b of `thinkube-notebooks-examples`; the catalogue entry checked on the reference cluster. Step 2 written from a run of `register_finetuned_model` on the reference cluster.
+* *Last updated:* 2026-09-16. Measured on one load and one call.
 
 == Instructions
 
 === Step 1. Check the catalogue entry
 
-The platform reads the catalogue from two `models.json` files: the platform's, in `thinkube/thinkube-metadata`, and yours, in the private repository `<your GitHub user>/<your GitHub user>-metadata`. An entry in yours with the same `id` wins. The notebook's section 14 writes the entry for `zebra-rules-qwen35-4b` in yours.
+The platform reads the catalogue from two `models.json` files: the platform's, in `thinkube/thinkube-metadata`, and yours, in the private repository `<your GitHub user>/<your GitHub user>-metadata`. When both files have an entry with the same `id`, yours is used. The notebook's section 14 writes the entry for `zebra-rules-qwen35-4b` in yours.
 
 Ask Claude:
 
@@ -69,9 +69,7 @@ Ask Claude:
 › show the catalogue entry for zebra-rules-qwen35-4b
 ----
 
-Claude calls `get_model_catalog`.
-
-Expected output, from the reference cluster:
+Expected output, from the reference run:
 
 ----
 id: zebra-rules-qwen35-4b
@@ -85,7 +83,7 @@ is_finetuned: true
 
 === Step 2. Make a fine-tune of your own loadable
 
-A model you train under another name is published with the same call as section 14 of the zebra-grpo notebook, with your own catalogue entry and the MLflow run of your training:
+A model you train under another name is published with the same call as section 14 of the zebra-grpo notebook, with your own catalogue entry and the Thinkube Experiments run of your training:
 
 [source,python]
 ----
@@ -93,7 +91,9 @@ import thinkube_models as tkm
 tkm.register_finetuned_model(model, tokenizer, CATALOG_ENTRY, run_id)
 ----
 
-It merges the adapter, uploads the weights to the run, registers the model version, writes the entry to `models.json` in your `-metadata` repository, records the registration, and waits until the gateway lists the model; the platform reads the catalogue again within 5 minutes. It refuses an entry that is missing a field, or that asks for another backend than vLLM or another format than BF16.
+It merges the adapter, stores the model, registers the model version, and adds the entry to `models.json` in your `-metadata` repository. Then it waits until the gateway lists the model. The platform reads the catalogue again within 5 minutes.
+
+The entry needs every field, the vLLM backend and the BF16 format. The call stops on an entry that asks for anything else.
 
 The zebra model's entry is a good start:
 
@@ -129,11 +129,11 @@ Ask Claude:
 › load zebra-rules-qwen35-4b on tkamd2
 ----
 
-Claude calls `load_llm_model` and follows `get_llm_model_status` until the state is `available`.
+Replace tkamd2 with one of your nodes.
 
 Or by hand: in Thinkube Control open *LLM Gateway*, choose *Load* on the model, pick the node and choose *Load Model*.
 
-Expected output, from the recorded run:
+Expected output, from the reference run:
 
 ----
 state: loading
@@ -169,7 +169,7 @@ grid, n_valid, n_invalid = solve_rules(rules, pz) if rules else (None, 0, 0)
 print(f"Gateway translation: {len(rules)} rules, valid={n_valid}, acc={grade_grid(grid, pz):.2f}")
 ----
 
-Expected output, from the recorded run:
+Expected output, from the reference run:
 
 ----
 Gateway translation: 15 rules, valid=15, acc=1.00
@@ -194,7 +194,7 @@ state: deployable
 message: Model unloaded successfully
 ----
 
-The registered version stays, and the next load reads it from your storage.
+The next load reads the model from your storage.
 
 === Step 6. Next steps
 

@@ -49,7 +49,7 @@ You load `Qwen/Qwen3.5-4B` on a GPU node, call it from a notebook, and unload it
 *Platform*
 
 * Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
-* A notebook server. Ask Claude: _"start a notebook server on tkamd1"_. The first start on a node downloads the notebook environments, so it takes longer than later starts.
+* A notebook server. Ask Claude: _"start a notebook server on tkamd1"_. The first start on a node downloads the notebook environments, so it takes longer than later starts. Replace tkamd1 and tkamd2, here and below, with your own nodes.
 
 *Components*
 
@@ -57,11 +57,10 @@ You load `Qwen/Qwen3.5-4B` on a GPU node, call it from a notebook, and unload it
 
 === Time & risk
 
-* *Estimated time:* 30 min. On the reference run the engine was ready 108 seconds after the load request, the call answered in seconds, and the unload took under 5 seconds.
-* *Download:* the first time only, 7 min 40 s for the 9 GB of this model on the reference cluster's connection.
-* *Risk level:* Low. A vLLM engine serves one model per node, so a node that already serves a model is refused, and nothing running is replaced.
+* *Estimated time:* 30 min. The reference run is one run on the test cluster this page was checked on. On it, the engine was ready 108 seconds after the load request, the call answered in seconds, and the unload took under 5 seconds.
+* *Risk level:* Low. A load on a node whose engine already serves a model is refused; the running model is not touched.
 * *Rollback:* Unload the model. The weights stay in your storage for the next load.
-* *Last updated:* 2026-09-16. Measured on one load, one call and one unload; the download on 2026-09-09.
+* *Last updated:* 2026-09-16. Measured on one load, one call, one unload and one download.
 
 == Instructions
 
@@ -75,8 +74,6 @@ Ask Claude:
 › how much GPU memory does Qwen/Qwen3.5-4B need, and which node has room?
 ----
 
-Claude calls `get_llm_load_options` and `get_llm_gpu_status`.
-
 Expected output, from the reference run:
 
 ----
@@ -87,6 +84,8 @@ tkspark: 26.1 GB left of its 96 GB budget, 3 of 4 slots free
 
 === Step 2. Mirror it
 
+A model already mirrored shows `is_downloaded: true` in the catalogue; skip to the next step.
+
 The download runs as a job in the background, from Hugging Face into your storage.
 
 Ask Claude:
@@ -94,8 +93,6 @@ Ask Claude:
 ----
 › mirror Qwen/Qwen3.5-4B
 ----
-
-Claude calls `submit_model_mirror` and follows `get_mirror_status`.
 
 Or by hand: in Thinkube Control open *AI Models* and choose *Mirror* on the model.
 
@@ -107,8 +104,6 @@ status: succeeded
 created_at: 22:03:22   updated_at: 22:11:02
 ----
 
-A model already mirrored shows `is_downloaded: true` in the catalogue; skip to the next step.
-
 === Step 3. Load it
 
 Loading starts a vLLM engine on the node you name, puts the weights in its GPU memory and registers the model with the gateway.
@@ -118,8 +113,6 @@ Ask Claude:
 ----
 › load Qwen/Qwen3.5-4B on tkamd2
 ----
-
-Claude calls `load_llm_model` and follows `get_llm_model_status` until the state is `available`.
 
 Or by hand: in Thinkube Control open *LLM Gateway*, choose *Load* on the model, pick the node in the dialog and choose *Load Model*.
 
@@ -209,8 +202,4 @@ The vLLM engine on tkamd2 stopped at once, and the node's free memory returned t
 | The call fails with `APIConnectionError: Connection error.` and `[Errno -2] Name or service not known`
 | The notebook server started without `LLM_GATEWAY_URL`, so `tk_llm` could not find the gateway
 | Stop and start the notebook server; it reads the gateway address when it starts.
-
-| The call fails with `ImportError: openai package required. Install with: pip install tk-llm[openai]`
-| The notebook environments on the node are from an older release that lacked `openai`
-| Stop the notebook server, remove `/var/lib/jupyterhub-venvs/<arch>/.version` on that node, and start the server; it downloads the current environments.
 |===

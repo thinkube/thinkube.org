@@ -4,20 +4,17 @@
 _Every component, what provides it, and whether it stays running._
 
 .TL;DR
-Ask Claude: "install Qdrant and Langfuse". Core components are always present and never configured by you; optional ones install with their requirements and cost nothing while switched off. This page is the full list, with what each provides.
+Ask Claude: "install Qdrant and Langfuse". Core components are always present and set up by the installer. Optional ones install with what they need and use no CPU or memory while switched off. This page is the full list, with what each provides.
 
-Core components are always present. Optional components are installed from
-Thinkube Control under *Optional Components*, and each carries a toggle that
-scales it to zero — an installed component costs nothing until you use it.
-The LLM Gateway unloads models the same way.
-
-The first column is the name the dashboard shows; the second is the component
-behind it.
-That is the name to search for when something goes wrong.
+Optional components are installed from Thinkube Control under *Optional Components*.
+Each one has a toggle that scales it to zero.
 
 image::cp-components.png[The Optional Components page of Thinkube Control]
 
 == Core
+
+The first column is the name the dashboard shows.
+The second is the component behind it, the name to search for when something goes wrong.
 
 [cols="1,1,2",options="header"]
 |===
@@ -27,7 +24,7 @@ image::cp-components.png[The Optional Components page of Thinkube Control]
 | Thinkube Registry | Harbor | Container images, built here and mirrored from upstream
 | Thinkube Git | Gitea | Your repositories, in-cluster
 | Argo Workflows | Argo Workflows | Builds images from your repositories and runs your applications' pipelines
-| ArgoCD | ArgoCD | Deploys what Git says
+| ArgoCD | ArgoCD | Deploys what is in Git
 | PostgreSQL | PostgreSQL | Relational storage for the platform and your apps
 | Thinkube Storage | SeaweedFS | S3-compatible; models and artifacts
 | JuiceFS | JuiceFS | A POSIX filesystem on SeaweedFS, shared by every area; its metadata is in PostgreSQL
@@ -48,23 +45,23 @@ image::cp-components.png[The Optional Components page of Thinkube Control]
 
 | vLLM | ai | — | Inference backend for the LLM Gateway
 | TensorRT-LLM | ai | — | NVIDIA-optimised inference backend
-| Ollama | ai | Harbor | Inference backend for quantised GGUF models
+| Ollama | ai | Thinkube Registry | Inference backend for quantised GGUF models
 | text-embeddings | ai | — | Embedding backend (TEI)
-| Langflow | ai | Keycloak, PostgreSQL | Visual builder for LLM applications
-| Langfuse | ai | PostgreSQL, Keycloak, ClickHouse, Valkey | Tracing and observability for LLM applications
-| Chroma | ai | Harbor | Vector store
+| Langflow | ai | Thinkube Identity, PostgreSQL | Visual builder for LLM applications
+| Langfuse | ai | PostgreSQL, Thinkube Identity, ClickHouse, Valkey | Tracing and observability for LLM applications
+| Chroma | ai | Thinkube Registry | Vector store
 | Qdrant | ai | — | Vector store
-| Weaviate | ai | Harbor | Vector store
-| Argilla | ai | Harbor, Keycloak, OpenSearch, Valkey | Data labelling and curation
+| Weaviate | ai | Thinkube Registry | Vector store
+| Argilla | ai | Thinkube Registry, Thinkube Identity, OpenSearch, Valkey | Data labelling and curation
 | CVAT | ai | — | Image and video annotation
 | ClickHouse | data | — | Column-oriented analytics database
 | OpenSearch | data | — | Search and analytics
 | Valkey | data | — | Cache and key-value store (Redis-compatible)
-| pgAdmin | data | PostgreSQL, Keycloak | Web UI for PostgreSQL
+| pgAdmin | data | PostgreSQL, Thinkube Identity | Web UI for PostgreSQL
 | Knative | infrastructure | — | Scale-to-zero serving
 | NATS | infrastructure | — | Messaging
 | Prometheus | monitoring | — | Metrics
-| Perses | monitoring | Keycloak, Prometheus | Dashboards
+| Perses | monitoring | Thinkube Identity, Prometheus | Dashboards
 |===
 
 Every optional component's needs resolve into the core. That is why

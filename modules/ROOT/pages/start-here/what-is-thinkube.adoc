@@ -4,7 +4,7 @@
 
 Thinkube is a platform for one developer, on machines you own, that takes an AI project from an idea to a running product: a model served on your GPU, an app that calls it, notebooks to fine-tune it, and a report on every change. You operate it by talking to Claude Code.
 
-Open Thinkube IDE in your browser, start Claude Code, and say what you want: _"get Qwen3.5-4B and serve it"_, _"make an app called notes from the web app template"_, _"install Qdrant"_. Each sentence is a real operation of the platform, and the same click in thinkube-control. The xref:index.adoc#playbooks[playbooks] are those sentences, one task each, with what you get.
+Open Thinkube IDE in your browser, start Claude Code, and say what you want: _"get Qwen3.5-4B and serve it"_, _"make an app called notes from the web app template"_, _"install Qdrant"_. Each sentence is a real operation of the platform, and each one is also a button in Thinkube Control. The xref:index.adoc#playbooks[playbooks] are those sentences, one task each, with what you get.
 
 == Four areas on one base
 
@@ -27,7 +27,7 @@ areas: "" {
 base: "Thinkube Kubernetes: what every area shares" {
   grid-columns: 4
   grid-gap: 14
-  control: "thinkube-control\nrun from Claude Code" {width: 166; height: 76}
+  control: "Thinkube Control\nrun from Claude Code" {width: 166; height: 76}
   identity: "Thinkube Identity\none sign-on" {width: 166; height: 76}
   registry: "Thinkube Registry\ncontainer images" {width: 166; height: 76}
   pipeline: "Thinkube Git, Argo\none pipeline" {width: 166; height: 76}
@@ -45,7 +45,7 @@ areas -> base
 | Area | What it gives you
 
 | xref:kubernetes/index.adoc[Thinkube Kubernetes]
-| The base: unmodified upstream Kubernetes on your machines, with identity, storage, registry, database, certificates and GPUs installed and connected, driven from Claude Code.
+| The base: unmodified upstream Kubernetes, installed with kubeadm on your machines, with identity, storage, registry, database, certificates and GPUs installed and connected, driven from Claude Code.
 
 | xref:apps/index.adoc[Thinkube GitOps]
 | Push to git, and it runs: applications from templates, built and deployed at an address with a certificate and a login.
@@ -57,12 +57,12 @@ areas -> base
 | A sentence becomes a change that is built, deployed and judged on the running product.
 |===
 
-The areas are one platform. A dataset a notebook writes is the file an app reads, the model a notebook fine-tunes is the address the app calls, and the change Tandem delivers ships by the pipeline the app took. The base is what they share: one sign-on, one filesystem, one registry, one pipeline, one way to drive it.
+The areas are one platform. A dataset a notebook writes is the file an app reads. The model a notebook fine-tunes is served at the address the app calls. The change Tandem delivers is deployed the same way as the app. The base is what they share: one sign-on, one filesystem, one registry, one pipeline, one way to drive it.
 
 == How you work with it
 
 * *Thinkube IDE* is VS Code in the browser, with Claude Code from Anthropic installed and connected to the platform. This is where you say things.
-* *Claude Code reads freely and changes on request.* Thinkube Control offers its operations to Claude through MCP. Reading state, what is running, what the GPUs hold, a build's log, is something Claude consults whenever it needs to. Changing state, a deploy, a load, an install, a restart, happens when you ask. The line between the two is drawn in the platform, not left to Claude's judgement.
+* *Claude Code reads freely and changes on request.* Thinkube Control offers its operations to Claude through MCP (Model Context Protocol, the standard way Claude calls tools). Claude reads the cluster's state whenever it needs to: what is running, what the GPUs hold, a build's log. It changes something only when you ask: a deploy, a model load, an install, a restart. The platform draws that line, not Claude.
 * *`thinkube.yaml`* describes an app in a few dozen lines: its containers, routes and the services it uses. The platform generates the Kubernetes objects from it, so you deploy to Kubernetes without writing Kubernetes. xref:apps/index.adoc#_thinkube_yaml_your_app_without_the_kubernetes[Thinkube GitOps] shows one.
 * *Thinkube Control* is the control panel: models, the LLM Gateway, templates, components, nodes, secrets, tokens. Everything Claude can do, you can click here, and the health of every service is on its card.
 * *Thinkube Notebooks* is JupyterLab with two environments built for your hardware, `fine-tuning` and `agent-dev`, on the same filesystem as the IDE.
@@ -71,22 +71,27 @@ The areas are one platform. A dataset a notebook writes is the file an app reads
 
 == What comes out
 
-What you build is a git repository with real code, a Containerfile, tests and a standard image. Under it is unmodified upstream Kubernetes, installed with kubeadm: `kubectl version` on the reference cluster reports v1.36.4 at the upstream release commit, with no vendor suffix. Your repository builds and deploys on any cluster that standard runs on.
+What you build is a git repository with real code, a Containerfile, tests and a standard image. The platform under it is standard upstream Kubernetes, so your app runs on any standard cluster.
 
 == Why it is built this way
 
-* *Production is a system, so use the one that exists.* An address and a certificate, a login, a build that repeats, a rollback, a shared GPU, storage, traces: all of it exists in Kubernetes, maintained by thousands of people. Thinkube installs it unchanged, decides the base once (Keycloak, Harbor, PostgreSQL, SeaweedFS, Gitea, Argo, each chosen so it cannot be relicensed against you), and puts Claude Code on top so you operate it in sentences. Above the application it offers choices: three vector stores, four inference backends.
+* *Production is a system, so use the one that exists.* An address and a certificate, a login, a build that repeats, a rollback, a shared GPU, storage, traces: all of it exists in Kubernetes, maintained by thousands of people. Thinkube installs it unchanged. It chooses the base once, each part under an open licence that cannot be withdrawn. It puts Claude Code on top, so you operate the platform in sentences. Above the application it offers choices: three vector stores, four inference backends.
 * *A model you own beats a model you rent.* Small open models are good enough for most production tasks, and a fine-tuned small model beats a frontier model on the narrow task it was tuned for. The weights on your disk are the same weights tomorrow, nothing you send them leaves your machines, and once the GPU is bought every experiment is free. One gateway serves any of them behind the same API, so the app stays the same when the model changes.
-* *Your data becomes capability.* Prompting has a ceiling. Fine-tuning encodes your format, vocabulary, tools and tone, and the long prompt goes away with its cost and latency. Your traces, documents and checkers are what nobody else has: a program that can verify an answer can train a model with no labelled data, and today's traces are tomorrow's training set. The result goes behind the same address, is compared with yesterday's, and is kept or rolled back.
-* *One person.* One GPU serves one developer without a scheduler or a queue. One login, one set of credentials, one machine. A lab shares it the way lab equipment is shared: by saying who has the GPU this afternoon.
+* *Your data becomes capability.* Prompting has limits. Fine-tuning teaches the model your format, vocabulary, tools and tone, so you can drop the long prompt and its cost and latency. Your traces, documents and checkers are yours alone. A program that can verify an answer can train a model with no labelled data, and the traces you record become data you can fine-tune on. The new model is served at the same address. You compare it with the previous one, then keep it or roll it back.
+* *One person.* One GPU serves one developer without a scheduler or a queue. One login and one set of credentials for one developer. A lab shares it the way lab equipment is shared: by saying who has the GPU this afternoon.
 
 == Where it runs
 
-Ubuntu 24.04 on one to a few machines. Thinkube runs on a DGX Spark (GB10, arm64) and on x86-64 workstations with NVIDIA GPUs, and one cluster mixes both. The installer accepts any NVIDIA GPU from the Volta generation on, with driver 580 or newer. vLLM, TensorRT-LLM and Ollama are built for both architectures; the catalogue's TensorRT-LLM models are NVFP4, which needs a Blackwell GPU such as the DGX Spark's. The cluster moves with you: a new network or a new address is picked up on its own (xref:kubernetes/index.adoc#_how_it_works[How it works]). Thinkube is alpha software: a new version may need a fresh install, so install it on a machine you can reinstall. Claude Code is not part of Thinkube: Thinkube installs it from Anthropic's official installer, and you sign in with your own Anthropic account, which is a paid service.
+* *Operating system:* Ubuntu 24.04, on one to a few machines.
+* *Hardware:* a DGX Spark (GB10, arm64) and x86-64 workstations with NVIDIA GPUs. The installer accepts any NVIDIA GPU from the Volta generation on, with driver 580 or newer.
+* *Architectures:* one cluster can mix arm64 and x86-64 machines. vLLM, TensorRT-LLM and Ollama are built for both. The catalogue's TensorRT-LLM models are NVFP4, which needs a Blackwell GPU such as the DGX Spark's.
+* *Networks:* you can move the cluster to a new network. It picks up a new network or a new address on its own (xref:kubernetes/index.adoc#_how_it_works[How it works]).
+* *Alpha:* Thinkube is alpha software. A new version may need a fresh install, so install it on a machine you can reinstall.
+* *Claude Code:* Claude Code comes from Anthropic. Thinkube installs it with Anthropic's official installer, and you sign in with your own Anthropic account, which is a paid service.
 
 == How these docs are written
 
-The pages are written for an example cluster of two amd64 workstations and one DGX Spark, and the names of its nodes appear in the prompts and in the output:
+The pages are written for the reference cluster, the test cluster these pages were checked on. It has two amd64 workstations and one DGX Spark. The names of its nodes appear in the prompts and in the output:
 
 [cols="1,2,2",options="header"]
 |===
