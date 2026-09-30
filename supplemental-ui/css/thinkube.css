@@ -133,14 +133,14 @@ body.home #dgx-stamp { position: absolute; top: 7.5rem; bottom: auto; right: 3re
    Every page declares :page-type:; article.hbs adds `doc--<type>`. A playbook
    also declares :page-area:, which adds `area-<area>` and sets --area, the one
    colour its kicker, card rule and tab are drawn in. The four are chart roles
-   of thinkube-style (--chart-3, --chart-2, --chart-1, --chart-6), each with
+   of thinkube-style (--chart-3, --chart-7, --chart-1, --chart-6), each with
    its dark-theme value, so they keep their contrast on both backgrounds. */
 .area-kubernetes { --area: #366bd3; }
-.area-gitops     { --area: #8f5d04; }
+.area-gitops     { --area: #2e9848; }
 .area-models     { --area: #008ca0; }
 .area-tandem     { --area: #7a4aba; }
 html[data-theme="dark"] .area-kubernetes { --area: #4e82e5; }
-html[data-theme="dark"] .area-gitops     { --area: #a97d3a; }
+html[data-theme="dark"] .area-gitops     { --area: #44aa5a; }
 html[data-theme="dark"] .area-models     { --area: #13a5b2; }
 html[data-theme="dark"] .area-tandem     { --area: #956ed2; }
 
