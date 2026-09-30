@@ -26,6 +26,7 @@ modules/ROOT/nav.adoc    # the one sidebar; every page of every module is listed
 modules/ROOT/pages/      # the site's own pages
 modules/ROOT/images/     # captures and diagrams
 supplemental-ui/         # branding over the default Antora UI; layouts/home.hbs is the home page
+tools/sync-icons.sh      # copies the thinkube-style hexagon icons into supplemental-ui/img/icons (tools/sync-icons.sh <thinkube-style checkout>)
 tools/capture.mjs        # takes the screen captures (DOMAIN_NAME=<domain> node tools/capture.mjs out/ [names])
 Containerfile            # builds the site and serves it on nginx :8080 inside the cluster
 ```

@@ -1,7 +1,7 @@
 <article class="doc{{#with page.attributes.type}} doc--{{this}}{{/with}}{{#with page.attributes.area}} area-{{this}}{{/with}}">
 {{#if (eq page.attributes.type 'playbook')}}
 <header class="playbook-head">
-  <p class="playbook-kicker">{{area-name page.attributes.area}}</p>
+  <p class="playbook-kicker"><span class="tk-icon tk-type-icon" aria-hidden="true"></span>{{area-name page.attributes.area}}</p>
 {{#with page.title}}
   <h1 class="page">{{{this}}}</h1>
 {{/with}}
@@ -15,11 +15,11 @@
   <p class="playbook-tags">{{#each (split page.attributes.tags)}}<span class="tag">{{this}}</span>{{/each}}</p>
 </header>
 {{else if (eq page.layout 'area')}}
-<p class="playbook-kicker">Playbooks</p>
+<p class="playbook-kicker"><span class="tk-icon tk-type-icon" aria-hidden="true"></span>Playbooks</p>
 {{else if (eq page.attributes.type 'reference')}}
-<p class="playbook-kicker">Reference</p>
+<p class="playbook-kicker"><span class="tk-icon tk-type-icon" aria-hidden="true"></span>Reference</p>
 {{else}}
-<p class="playbook-kicker">Getting started</p>
+<p class="playbook-kicker"><span class="tk-icon tk-type-icon" aria-hidden="true"></span>Getting started</p>
 {{#with page.title}}
 <h1 class="page">{{{this}}}</h1>
 {{/with}}

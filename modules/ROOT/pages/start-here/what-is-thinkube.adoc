@@ -82,7 +82,7 @@ What you build is a git repository with real code, a Containerfile, tests and a 
 
 == Where it runs
 
-Ubuntu 24.04 on one to a few machines. Thinkube runs on a DGX Spark (GB10, arm64) and on x86-64 workstations with RTX 3090s, and one cluster mixes both. Thinkube is alpha software: a new version may need a fresh install, so install it on a machine you can reinstall. Claude Code is a paid service from Anthropic and part of the platform.
+Ubuntu 24.04 on one to a few machines. Thinkube runs on a DGX Spark (GB10, arm64) and on x86-64 workstations with NVIDIA GPUs, and one cluster mixes both. The installer accepts any NVIDIA GPU from the Volta generation on, with driver 580 or newer. vLLM, TensorRT-LLM and Ollama are built for both architectures; the catalogue's TensorRT-LLM models are NVFP4, which needs a Blackwell GPU such as the DGX Spark's. The cluster moves with you: a new network or a new address is picked up on its own (xref:kubernetes/index.adoc#_how_it_works[How it works]). Thinkube is alpha software: a new version may need a fresh install, so install it on a machine you can reinstall. Claude Code is a paid service from Anthropic and part of the platform.
 
 == Where next
 

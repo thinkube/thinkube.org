@@ -2,7 +2,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Mono:wght@400;500;600;700&display=swap">
 <link rel="icon" href="{{{uiRootPath}}}/img/logo.svg" type="image/svg+xml">
-<link rel="stylesheet" href="{{{uiRootPath}}}/css/thinkube.css?v=17">
+<link rel="stylesheet" href="{{{uiRootPath}}}/css/thinkube.css?v=18">
 <script>
 /* Set the theme before paint to avoid a flash of the wrong theme. */
 (function () {
@@ -88,6 +88,23 @@ document.addEventListener('DOMContentLoaded', function () {
       fromHash();
     }
   }
+  /* A "Step N. Title" heading shows N as the hexagon number icon; the words
+     "Step N." stay in the heading for screen readers. tools/sync-icons.sh
+     copies the icons for steps 1 to 30. */
+  document.querySelectorAll('.doc--playbook .sect2 > h3').forEach(function (h3) {
+    var text = Array.prototype.filter.call(h3.childNodes, function (n) {
+      return n.nodeType === 3 && /^\s*Step \d+\.\s/.test(n.nodeValue);
+    })[0];
+    if (!text) return;
+    var n = /Step (\d+)\./.exec(text.nodeValue)[1];
+    var icon = document.createElement('span');
+    icon.className = 'tk-icon tk-step-icon'; icon.setAttribute('aria-hidden', 'true');
+    icon.style.maskImage = icon.style.webkitMaskImage = 'url({{{uiRootPath}}}/img/icons/chars/number-' + n + '.svg)';
+    var label = document.createElement('span');
+    label.className = 'sr-only'; label.textContent = 'Step ' + n + '. ';
+    text.nodeValue = text.nodeValue.replace(/^\s*Step \d+\.\s*/, '');
+    h3.insertBefore(icon, text); h3.insertBefore(label, text);
+  });
   /* Click a capture to see it at full size; click again or press Escape to close. */
   document.querySelectorAll('.doc .imageblock img').forEach(function (img) {
     img.addEventListener('click', function () {
