@@ -33,13 +33,11 @@ Containerfile            # builds the site and serves it on nginx :8080 inside t
 
 ## Build
 
-```bash
-npx --no-install antora --fetch antora-playbook.yml   # output in build/site
-```
+The pipeline is the build: the deploy (see Deploy) builds the site with the Containerfile, which runs `antora --fetch antora-playbook.yml`. The site is not built or served in the IDE (see the CI/CD policy); a change is checked on the deployed pages, or in the build log when the build fails.
 
-Diagrams are `[d2,alt="…"]` literal blocks in the page. `lib/d2-block.js` runs the `d2` binary (v0.9.0, ELK layout) on each one and embeds the SVG, so the build needs `d2` on PATH: the Containerfile and the Pages workflow install it, and Thinkube IDE's image carries it. A missing binary or a diagram d2 rejects stops the build with d2's own message. The Tandem docs carry the same extension in `docs/lib/d2-block.js`; a change to one is made to both.
+Diagrams are `[d2,alt="…"]` literal blocks in the page. `lib/d2-block.js` runs the `d2` binary (v0.9.0, ELK layout) on each one and embeds the SVG; the Containerfile and the Pages workflow install `d2`. A missing binary or a diagram d2 rejects stops the build with d2's own message. The Tandem docs carry the same extension in `docs/lib/d2-block.js`; a change to one is made to both.
 
-The build must print no warnings. `--fetch` pulls the other four repositories from GitHub, so a change in one of them is seen here only after it is pushed. To build from local working trees, write a playbook that points each source at its local path with `branches: HEAD`.
+The build must print no warnings. `--fetch` pulls the other four repositories from GitHub, so a change in one of them is seen here only after it is pushed.
 
 ## Tests
 
