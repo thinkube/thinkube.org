@@ -1,7 +1,7 @@
 <a class="card playbook-card area-{{area}}" data-area="{{area}}" href="{{{relativize url}}}">
-  <span class="card-head"><span class="tk-icon tk-area-icon" aria-hidden="true"></span><h3 class="card-title">{{{title}}}</h3></span>
+  <span class="card-edge card-edge-area">{{area-name area}}</span>
+  <span class="card-edge card-edge-time">{{time}}</span>
+  <span class="card-head"><span class="tk-icon tk-area-icon" aria-hidden="true"></span><span class="card-id"><h3 class="card-title">{{{title}}}</h3><span class="card-level">{{difficulty}}</span></span></span>
   <p class="card-desc">{{tagline}}</p>
-  <span class="card-badges"><span class="badge badge-area">{{area-name area}}</span><span class="badge card-level">{{difficulty}}</span><span class="badge card-time">{{time}}</span></span>
-  <span class="card-tags">{{#each tags}}<span class="tag">{{this}}</span>{{/each}}</span>
-  <span class="card-meta"><span class="card-updated">{{updated}}</span></span>
+  <span class="card-foot"><span class="card-tags">{{#each tags}}{{#if @first}}<span class="tag">{{this}}</span>{{/if}}{{/each}}{{#if tags.[1]}}<span class="tag-more">+{{tags-more tags}}</span>{{/if}}</span><span class="card-updated">{{updated}}</span></span>
 </a>
