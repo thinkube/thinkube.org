@@ -51,7 +51,7 @@ pytest tests/          # needs pytest, pyyaml and jsonschema
 
 ## Deploy
 
-The site is deployed inside the cluster as the application `docs` and read by thinkube-control's documentation search. After pushing, redeploy with the MCP tool `redeploy_template` (`template_url: https://github.com/thinkube/thinkube.org`, `template_name: docs`), wait for the build, and check the served pages at `https://docs.<domain>/thinkube-docs/`.
+The site is deployed inside the cluster as the application `docs` and read by thinkube-control's documentation search. A deploy builds from the newest release tag `vMAJOR.MINOR.PATCH`, not from the newest commit. After pushing, tag the commit with the next patch version and push the tag, then redeploy with the MCP tool `redeploy_template` (`template_url: https://github.com/thinkube/thinkube.org`, `template_name: docs`), wait for the build, and check the served pages at `https://docs.<domain>/thinkube-docs/`.
 
 ## Writing rules
 
