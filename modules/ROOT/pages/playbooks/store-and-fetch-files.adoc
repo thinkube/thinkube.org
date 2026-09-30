@@ -149,8 +149,6 @@ The calls:
 
 Open `https://files.<your domain>/`. The page lists sample upload forms. Choose *File Upload*, type the tenant `docs`, add a file and press *Upload*. The page answers with the document id and the file's reference.
 
-image::files-upload.png[The File Upload form of the file gateway after an upload: tenant docs, and Upload Complete with the document id and the reference tenant-docs//contract.pdf]
-
 === Step 5. Find it in Browse
 
 Choose *Browse*, type the tenant `docs` and press *Search*. Each file has a download and a delete button.
