@@ -22,7 +22,7 @@ The machine-readable schema is link:{attachmentsdir}/thinkube-yaml-v1.0.schema.j
 == Principles
 
 * *A static descriptor.* It has no conditionals and two substitutions only: `{{ project_name }}` and `{{ domain_name }}`.
-* *Cloud agnostic.* The same file works on premise and, through a future bridge, in a cloud.
+* *Open standards.* What you build is standard: a git repository with ordinary code, a Containerfile and OCI container images. Your work is portable and not tied to Thinkube. The platform services it uses (a PostgreSQL database, S3-compatible storage, OpenID Connect sign-in, an OCI image registry) have close, highly compatible equivalents at the main cloud providers.
 * *Written without Kubernetes knowledge.* You name containers, ports, routes and services. The platform derives the rest.
 * *One to many containers.* Always-on applications, scale-to-zero Knative services, and platform components with a fixed name.
 * *Declared, never guessed.* What only you can know about a repository is written here. Facts the platform can find out by running a command are not written here.
@@ -481,7 +481,7 @@ spec:
 
 == What belongs elsewhere
 
-The file describes the application. Container-specific configuration belongs in the Containerfile, orchestration to Thinkube Control, and cloud specifics to the future cloud bridge, so the file stays a static descriptor with no conditional logic, raw Kubernetes resources, deployment strategies or command overrides.
+The file describes the application. Container-specific configuration belongs in the Containerfile, and orchestration to Thinkube Control, so the file stays a static descriptor with no conditional logic, raw Kubernetes resources, deployment strategies or command overrides.
 
 == Version
 

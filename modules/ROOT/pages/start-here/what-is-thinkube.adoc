@@ -71,7 +71,7 @@ The areas are one platform. A dataset a notebook writes is the file an app reads
 
 == What comes out
 
-What you build is a git repository with real code, a Containerfile, tests and a standard image. The platform under it is standard upstream Kubernetes, so your app runs on any standard cluster.
+What you build is a git repository with real code, a Containerfile, tests and a standard image. Your work is portable: the code, the Containerfile and the images are standard, and move with you to any other platform. The platform services it uses (a PostgreSQL database, S3-compatible storage, OpenID Connect sign-in, an OCI image registry) have close, highly compatible equivalents at the main cloud providers.
 
 == Why it is built this way
 
