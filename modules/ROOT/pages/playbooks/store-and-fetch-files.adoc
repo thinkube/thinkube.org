@@ -38,16 +38,8 @@ You deploy the file gateway as `files`, store a file through the API and through
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | control plane
-| tkamd2 | amd64 | 2 × RTX 3090 | —
-| tkspark | arm64 | GB10 | —
-|===
-
-The gateway needs no GPU and its image is built for amd64 and arm64.
+* *GPU:* not needed.
+* *Architecture:* amd64 or arm64: the gateway's image is built for both, so it runs on any node.
 
 === Prerequisites
 

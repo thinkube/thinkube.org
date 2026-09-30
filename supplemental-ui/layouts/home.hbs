@@ -57,26 +57,26 @@
 
       <section class="journeys">
         <h2 class="section-h">Four areas, one platform</h2>
-        <div class="card-grid">
-          <a class="card area-kubernetes" href="kubernetes/index.html">
+        <div class="card-grid area-grid">
+          <a class="card area-card area-kubernetes" href="kubernetes/index.html">
+            <span class="card-edge card-edge-area">Thinkube Kubernetes</span>
             <span class="card-head"><span class="tk-icon tk-area-icon" aria-hidden="true"></span><h3 class="card-title">The base, ready and signed in</h3></span>
             <p class="card-desc">Unmodified upstream Kubernetes on your machines, with identity, storage, registry, database and GPUs ready, driven from Claude Code.</p>
-            <span class="card-badges"><span class="badge badge-area">Thinkube Kubernetes</span></span>
           </a>
-          <a class="card area-gitops" href="apps/index.html">
+          <a class="card area-card area-gitops" href="apps/index.html">
+            <span class="card-edge card-edge-area">Thinkube GitOps</span>
             <span class="card-head"><span class="tk-icon tk-area-icon" aria-hidden="true"></span><h3 class="card-title">Push to git, and it runs</h3></span>
             <p class="card-desc">From a template to an application at its own address behind your login, and every change after that a push.</p>
-            <span class="card-badges"><span class="badge badge-area">Thinkube GitOps</span></span>
           </a>
-          <a class="card area-models" href="lifecycle/index.html">
+          <a class="card area-card area-models" href="lifecycle/index.html">
+            <span class="card-edge card-edge-area">Thinkube Models</span>
             <span class="card-head"><span class="tk-icon tk-area-icon" aria-hidden="true"></span><h3 class="card-title">Serve, fine-tune, track</h3></span>
             <p class="card-desc">Open models on your own GPUs, from a notebook to one address every app calls.</p>
-            <span class="card-badges"><span class="badge badge-area">Thinkube Models</span></span>
           </a>
-          <a class="card area-tandem" href="tandem/index.html">
+          <a class="card area-card area-tandem" href="tandem/index.html">
+            <span class="card-edge card-edge-area">Thinkube Tandem</span>
             <span class="card-head"><span class="tk-icon tk-area-icon" aria-hidden="true"></span><h3 class="card-title">A sentence to a running change</h3></span>
             <p class="card-desc">Say what you want; it is built under checks, deployed and judged on the running product, and you decide.</p>
-            <span class="card-badges"><span class="badge badge-area">Thinkube Tandem</span></span>
           </a>
         </div>
       </section>
@@ -86,7 +86,7 @@
       <section class="journeys catalog" id="first-time">
         <span class="kicker">Playbooks</span>
         <h2 class="section-h">First time here?</h2>
-        <div class="card-grid playbook-grid featured-grid">
+        <div class="card-grid playbook-grid">
 {{#each this}}
 {{> playbook-card}}
 {{/each}}

@@ -84,6 +84,24 @@ What you build is a git repository with real code, a Containerfile, tests and a 
 
 Ubuntu 24.04 on one to a few machines. Thinkube runs on a DGX Spark (GB10, arm64) and on x86-64 workstations with NVIDIA GPUs, and one cluster mixes both. The installer accepts any NVIDIA GPU from the Volta generation on, with driver 580 or newer. vLLM, TensorRT-LLM and Ollama are built for both architectures; the catalogue's TensorRT-LLM models are NVFP4, which needs a Blackwell GPU such as the DGX Spark's. The cluster moves with you: a new network or a new address is picked up on its own (xref:kubernetes/index.adoc#_how_it_works[How it works]). Thinkube is alpha software: a new version may need a fresh install, so install it on a machine you can reinstall. Claude Code is a paid service from Anthropic and part of the platform.
 
+== How these docs are written
+
+The pages are written for an example cluster of two amd64 workstations and one DGX Spark, and the names of its nodes appear in the prompts and in the output:
+
+[cols="1,2,2",options="header"]
+|===
+| Node | Machine | GPU
+
+| tkamd1 | amd64 workstation | none
+| tkamd2 | amd64 workstation | 2 × RTX 3090, 24 GB each
+| tkspark | DGX Spark, arm64 | GB10, 121.7 GB unified
+|===
+
+Your cluster has its own machines and names. Where a page names one of these nodes, use a node of yours that meets the page's *Supported hardware*, which states what the task needs on any cluster.
+
+* A line that starts with `›` is what you say to Claude Code in Thinkube IDE; the lines under it are the answer.
+* `<your domain>` is the domain you gave the installer.
+
 == Where next
 
 * xref:playbooks/serve-your-first-model.adoc[Serve your first model]: a model answering at your own address.

@@ -24,7 +24,7 @@ Declaring the `workflows` service gives your app everything a pipeline needs, in
 
 === What you'll accomplish
 
-You add `workflows` to an app from the web app template, submit a two-step pipeline from the app's backend in which step two reads a file step one wrote, and give a step the app's secrets.
+You add `workflows` to an app from the web app template, submit a two-step pipeline from the app's backend in which step two reads a file step one wrote, and give a step the app's secrets. The examples use an app named `wf-check`.
 
 === What to know before starting
 
@@ -39,16 +39,8 @@ You add `workflows` to an app from the web app template, submit a two-step pipel
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | —
-| tkamd2 | amd64 | 2 × RTX 3090 | —
-| tkspark | arm64 | GB10 | —
-|===
-
-Steps run on any node; the app's images are built for amd64 and arm64. The reference run used the app `wf-check`.
+* *GPU:* not needed.
+* *Architecture:* amd64 or arm64: the app's images are built for both, so it runs on any node.
 
 === Prerequisites
 

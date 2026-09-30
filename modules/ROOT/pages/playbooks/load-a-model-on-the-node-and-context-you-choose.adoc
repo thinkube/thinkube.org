@@ -39,16 +39,8 @@ You load `Qwen/Qwen3-8B` on tkamd2 with a 16k context, see a second model on the
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | —
-| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | `Qwen/Qwen3-8B` on one GPU, served by vLLM
-| tkspark | arm64 | GB10, 121.7 GB unified | serving `unsloth/Qwen3.6-27B-NVFP4` throughout, untouched
-|===
-
-`Qwen/Qwen3-8B` is 15.3 GiB of weights in BF16. The load options estimate 21.5 GB with a 32k context, close to the 24 GB of one RTX 3090. With a 16k context, vLLM on the reference run had 5.85 GiB left for the KV cache: 42,560 tokens, room for 2.6 requests of full length at once.
+* *GPU:* one NVIDIA GPU with about 22 GB of memory free for `Qwen/Qwen3-8B` with a 32k context: its weights are 15.3 GiB in BF16, and the load options estimate 21.5 GB. A shorter context needs less.
+* *Architecture:* amd64 or arm64.
 
 === Prerequisites
 

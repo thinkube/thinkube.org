@@ -35,16 +35,8 @@ You list the services, read the health and pods of two of them, restart the `doc
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | —
-| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | Qdrant, and the `docs` pod after the restart
-| tkspark | arm64 | GB10, 121.7 GB unified | the `docs` pod after it was turned on again
-|===
-
-The operations do not depend on the hardware: a pod goes wherever Kubernetes schedules it.
+* *GPU:* not needed. The operations do not depend on the hardware: a pod goes wherever Kubernetes schedules it.
+* *Architecture:* amd64 or arm64.
 
 === Prerequisites
 

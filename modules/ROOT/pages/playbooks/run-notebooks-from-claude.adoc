@@ -36,16 +36,8 @@ You create a two-cell notebook, run it while you watch it in a Thinkube IDE tab,
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | the watched run, on the node's notebook server
-| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | the unattended run, on a server of its own with no GPU
-| tkspark | arm64 | GB10, 121.7 GB unified | —
-|===
-
-This notebook needs no GPU. A notebook that trains or runs a model in the kernel asks for one when its server starts: say _"with one GPU"_.
+* *GPU:* not needed for this notebook. A notebook that trains or runs a model in the kernel asks for one when its server starts: say _"with one GPU"_.
+* *Architecture:* amd64 or arm64.
 
 === Prerequisites
 

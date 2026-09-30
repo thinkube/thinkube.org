@@ -36,16 +36,8 @@ You deploy `knative-demo`, a serverless service, from a template. You call it wh
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | control plane
-| tkamd2 | amd64 | 2 × RTX 3090 | the Knative gateway
-| tkspark | arm64 | GB10 | the service's running copies
-|===
-
-The template's image is built for amd64 and arm64, so the service runs on any node. It needs no GPU.
+* *GPU:* not needed.
+* *Architecture:* amd64 or arm64: the template's image is built for both, so it runs on any node.
 
 === Prerequisites
 

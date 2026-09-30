@@ -32,14 +32,8 @@
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | <what ran here, or —>
-| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | <…>
-| tkspark | arm64 | GB10, 121.7 GB unified | <…>
-|===
+* *GPU:* <not needed | the GPUs and the memory the playbook needs, and why>
+* *Architecture:* <amd64 or arm64 | the one it needs, and why>
 
 === Prerequisites
 

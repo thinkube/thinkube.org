@@ -39,16 +39,8 @@ You run the three research-assistant notebooks in order: `01` checks the models,
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | the notebooks, on the node's notebook server
-| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | `Qwen/Qwen3-Embedding-0.6B`, served by text-embeddings
-| tkspark | arm64 | GB10, 121.7 GB unified | `unsloth/Qwen3.6-27B-NVFP4`, served by vLLM
-|===
-
-The notebooks need no GPU: the models run behind the LLM Gateway.
+* *GPU:* not needed for the notebooks. The embedding model and the language model are served behind the LLM Gateway on the cluster's GPU nodes.
+* *Architecture:* amd64 or arm64.
 
 === Prerequisites
 

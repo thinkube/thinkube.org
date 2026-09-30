@@ -43,16 +43,8 @@ You run `zebra_grpo.ipynb` on a GPU: it measures the base model, trains it, meas
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | —
-| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | the trained model, served at the end
-| tkspark | arm64 | GB10, 121.7 GB unified | the whole notebook: evaluation, training, merge and registration
-|===
-
-The notebook needs one GPU with about 20 GB of memory free, in bfloat16 with FlashAttention-2.
+* *GPU:* one NVIDIA GPU with about 20 GB of memory free, for training in bfloat16 with FlashAttention-2.
+* *Architecture:* amd64 or arm64.
 
 === Prerequisites
 

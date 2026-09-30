@@ -199,24 +199,24 @@ html[data-theme="dark"] .area-tandem     { --area: #956ed2; }
 .doc--playbook.has-tabs .sect1[hidden] { display: none; }
 .doc--playbook.has-tabs .sect1 > h2 { position: absolute; left: -9999px; }
 
-/* Playbook cards, in the style of thinkube-control's cards: no badges. The
-   area is the left bar and the icon colour, and is written into the top
-   border line with the time at its other end; the level is the line under
-   the title. Three across, two on a tablet, one on a phone. */
-.playbook-card { position: relative; border-left: 4px solid var(--area); padding: 1.35rem 1.25rem 1rem; }
-.playbook-card:hover { border-left-color: var(--area); }
-.playbook-card .card-edge {
+/* Playbook and area cards, in the style of thinkube-control's cards: no
+   badges. The area is the left bar and the icon colour, and is written into
+   the top border line; a playbook card has its time at the other end and its
+   level as the line under the title. */
+.playbook-card, .area-card { position: relative; border-left: 4px solid var(--area); padding: 1.35rem 1.25rem 1rem; }
+.playbook-card:hover, .area-card:hover { border-left-color: var(--area); }
+:is(.playbook-card, .area-card) .card-edge {
   position: absolute; top: -.55rem; padding: 0 .4rem;
   font: 600 .68rem/1.1rem "Poppins", sans-serif; letter-spacing: .06em; text-transform: uppercase;
   color: var(--th-muted);
   /* The page above the border line, the card below it */
   background: linear-gradient(to bottom, var(--th-bg) 50%, var(--th-surface) 50%);
 }
-.playbook-card .card-edge-area { left: 1rem; color: var(--area); }
+:is(.playbook-card, .area-card) .card-edge-area { left: 1rem; color: var(--area); }
 .playbook-card .card-edge-time { right: 1rem; text-transform: none; letter-spacing: 0; }
 .playbook-card .card-edge-time::before { content: "◷ "; }
-.playbook-card .card-head { gap: .9rem; margin-bottom: .75rem; }
-.playbook-card .tk-area-icon { width: 3rem; height: 3rem; background-color: var(--area); }
+:is(.playbook-card, .area-card) .card-head { gap: .9rem; margin-bottom: .75rem; }
+:is(.playbook-card, .area-card) .tk-area-icon { width: 3rem; height: 3rem; background-color: var(--area); }
 .playbook-card .card-id { display: flex; flex-direction: column; min-width: 0; }
 .playbook-card .card-level { font-size: .85rem; color: var(--th-muted); text-transform: capitalize; }
 .playbook-card .card-desc {
@@ -229,11 +229,15 @@ html[data-theme="dark"] .area-tandem     { --area: #956ed2; }
 }
 .playbook-card .card-tags { display: flex; align-items: center; gap: .4rem; min-width: 0; }
 .playbook-card .tag-more { font-weight: 600; }
-.card-grid.playbook-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
-.card-grid.featured-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-@media (max-width: 1024px) { .card-grid.playbook-grid, .card-grid.featured-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 640px)  { .card-grid.playbook-grid, .card-grid.featured-grid { grid-template-columns: minmax(0, 1fr); } }
+/* Cards keep a landscape minimum width and the grid fits as many as the space
+   holds: three on a wide screen, two on a laptop, one on a phone, where the
+   minimum gives way to the full width. */
+.card-grid.playbook-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(28rem, 100%), 1fr)); gap: 1.25rem;
+}
 .playbook-card[hidden] { display: none; }
+/* The four area cards: two by two while there is room for both */
+.card-grid.area-grid { grid-template-columns: repeat(auto-fit, minmax(min(34rem, 100%), 1fr)); }
 .catalog .kicker {
   display: block; font: 700 0.72rem/1 "Poppins", sans-serif; letter-spacing: .08em;
   text-transform: uppercase; color: var(--th-accent); margin-bottom: .55rem;
@@ -343,8 +347,9 @@ body.home { background: var(--th-bg); }
 
 /* Cards, drawn as thinkube-control draws them (TkCard): a white surface, a
    thin border and a light shadow; a head row with the hexagon icon and the
-   title; the description; badges. The area shows as a badge in its colour. */
-.journeys { max-width: 1080px; margin: 4.5rem auto 5rem; padding: 0 2rem; }
+   title; the description. Playbook and area cards add their area above. */
+/* Wide enough for three playbook cards of their minimum width on a wide screen */
+.journeys { max-width: 1440px; margin: 4.5rem auto 5rem; padding: 0 2rem; }
 .section-h {
   font: 600 1.5rem/1.2 "Poppins", sans-serif; color: var(--th-heading); margin: 0 0 1.5rem;
 }
@@ -361,12 +366,6 @@ body.home { background: var(--th-bg); }
 .card-head { display: flex; align-items: center; gap: .6rem; margin: 0 0 .6rem; }
 .card-title { font: 600 1.12rem/1.3 "Poppins", sans-serif; color: var(--th-heading); margin: 0; }
 .card-desc { color: var(--th-muted); font-size: .9rem; line-height: 1.55; margin: 0 0 1rem; flex: 1; }
-.card-badges { display: flex; flex-wrap: wrap; gap: .35rem; }
-.badge {
-  display: inline-flex; align-items: center; font: 600 .72rem/1 "Poppins", sans-serif;
-  padding: .3rem .55rem; border: 1px solid var(--th-border); color: var(--th-text-2);
-}
-.badge-area { background: var(--area, var(--th-primary)); border-color: var(--area, var(--th-primary)); color: #fff; }
 
 /* ===== Cockpit: the code-window showcase =================================== */
 .cockpit { max-width: 1080px; margin: 4.5rem auto 1rem; padding: 0 2rem; }

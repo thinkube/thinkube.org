@@ -36,16 +36,8 @@ You check that `zebra-rules-qwen35-4b`, the model from xref:playbooks/fine-tune-
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | —
-| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | `zebra-rules-qwen35-4b`, served by vLLM
-| tkspark | arm64 | GB10, 121.7 GB unified | the notebook that called it
-|===
-
-The model is 8.7 GB of weights in BF16, the size of its base, `unsloth/Qwen3.5-4B`. It fits one RTX 3090 or the DGX Spark.
+* *GPU:* one NVIDIA GPU with room for 8.7 GB of weights in BF16, the size of its base `unsloth/Qwen3.5-4B`, and the context.
+* *Architecture:* amd64 or arm64.
 
 === Prerequisites
 

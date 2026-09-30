@@ -36,14 +36,8 @@ You build the environment `data-tools`, which is `agent-dev` plus `polars`, and 
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | —
-| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | the notebook run
-| tkspark | arm64 | GB10, 121.7 GB unified | —
-|===
+* *GPU:* a GPU node of each architecture in the cluster: the environment is built there as a Kubernetes Job, and copied to the other GPU nodes.
+* *Architecture:* amd64 or arm64.
 
 === Prerequisites
 

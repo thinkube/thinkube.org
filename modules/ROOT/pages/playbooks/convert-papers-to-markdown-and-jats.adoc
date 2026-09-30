@@ -60,16 +60,8 @@ You load Granite-Docling on an RTX 3090, deploy the app as `docling`, convert an
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | —
-| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | Granite-Docling, served by vLLM
-| tkspark | arm64 | GB10, 121.7 GB unified | the conversion steps
-|===
-
-The conversion steps need no GPU and run on any node; the app's image is built for amd64 and arm64. Granite-Docling's weights take 0.49 GiB.
+* *GPU:* not needed for the conversion steps. Granite-Docling is served behind the LLM Gateway on a GPU node; its weights take 0.49 GiB.
+* *Architecture:* amd64 or arm64: the app's image is built for both, so it runs on any node.
 
 === Prerequisites
 

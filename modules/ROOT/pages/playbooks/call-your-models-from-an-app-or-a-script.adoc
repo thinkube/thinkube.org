@@ -39,16 +39,8 @@ You create an API token, call a loaded model with the `openai` client and with t
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | the notebook server that ran the calls
-| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | `Qwen/Qwen3.5-4B`, served by vLLM with a 16k context
-| tkspark | arm64 | GB10, 121.7 GB unified | —
-|===
-
-The calls run anywhere that reaches `llm.<your domain>`: a notebook, Thinkube IDE, an app on the cluster, or a computer on your tailnet.
+* *GPU:* not needed where the calls run: a notebook, Thinkube IDE, an app on the cluster, or a computer on your tailnet that reaches `llm.<your domain>`. The model is served behind the LLM Gateway on a GPU node.
+* *Architecture:* amd64 or arm64.
 
 === Prerequisites
 

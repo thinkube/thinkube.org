@@ -37,16 +37,8 @@ You list the optional components, install Weaviate, check that it answers, and u
 
 === Supported hardware
 
-[cols="1,1,1,2",options="header"]
-|===
-| Node | Architecture | GPU | On the reference run
-
-| tkamd1 | amd64 | none | —
-| tkamd2 | amd64 | 2 × RTX 3090, 24 GB each | —
-| tkspark | arm64 | GB10, 121.7 GB unified | —
-|===
-
-Weaviate runs on any node. Components that serve models, such as vLLM, place their pods on GPU nodes when a model is loaded.
+* *GPU:* not needed. Components that serve models, such as vLLM, place their pods on GPU nodes when a model is loaded.
+* *Architecture:* amd64 or arm64.
 
 === Prerequisites
 
