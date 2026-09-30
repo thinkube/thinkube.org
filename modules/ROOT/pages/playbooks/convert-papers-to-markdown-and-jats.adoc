@@ -68,7 +68,7 @@ You load Granite-Docling on an RTX 3090, deploy the app as `docling`, convert an
 *Platform*
 
 * Thinkube running, with Thinkube IDE open. Ask Claude: _"what's running?"_
-* A thinkube-control API token stored as `THINKUBE_API_TOKEN` on the Secrets page, for the Granite-Docling pipeline. Ask Claude: _"is THINKUBE_API_TOKEN on the Secrets page?"_ If not, create a token under *API Tokens* in thinkube-control and add it on *Secrets*. Without it, the app offers only the standard pipeline.
+* A Thinkube Control API token stored as `THINKUBE_API_TOKEN` on the Secrets page, for the Granite-Docling pipeline. Ask Claude: _"is THINKUBE_API_TOKEN on the Secrets page?"_ If not, create a token under *API Tokens* in Thinkube Control and add it on *Secrets*. Without it, the app offers only the standard pipeline.
 
 *Components*
 

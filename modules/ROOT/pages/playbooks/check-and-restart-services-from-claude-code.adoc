@@ -13,9 +13,9 @@
 
 === Basic idea
 
-thinkube-control knows every service on the platform: the core services, the optional components you installed, and the apps you deployed. Claude reads and changes them through the same operations the dashboard uses.
+Thinkube Control knows every service on the platform: the core services, the optional components you installed, and the apps you deployed. Claude reads and changes them through the same operations the dashboard uses.
 
-* *Health, on a schedule.* Every 2 minutes thinkube-control checks each enabled service's health address, and each of its other addresses. The latest result is on the service's card and in its details.
+* *Health, on a schedule.* Every 2 minutes Thinkube Control checks each enabled service's health address, and each of its other addresses. The latest result is on the service's card and in its details.
 * *Restart.* A rolling restart of the service's pods: a new pod starts, then the old one stops.
 * *Turn off and on.* An optional component or an app can be scaled to zero and back. Core services stay on.
 
@@ -68,7 +68,7 @@ Ask Claude:
 
 Claude calls `list_services_minimal`.
 
-Or by hand: in thinkube-control open *All Services*.
+Or by hand: in Thinkube Control open *All Services*.
 
 Expected output, from the reference run, shortened:
 

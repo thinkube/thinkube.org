@@ -15,7 +15,7 @@
 
 A fine-tune becomes a model you can call in two steps. Once it is served, nothing about calling it is special.
 
-* *Registered.* The merged weights are a version in Thinkube Experiments, linked to the run that trained them, and thinkube-control has a completed registration for the model. Registering puts the weights in your storage.
+* *Registered.* The merged weights are a version in Thinkube Experiments, linked to the run that trained them, and Thinkube Control has a completed registration for the model. Registering puts the weights in your storage.
 * *In the catalogue.* A catalogue entry tells the gateway how to serve the weights: the backend, the reasoning format, whether it calls tools. With both, the model is `deployable`.
 * *Served.* A load puts it on a GPU, and it answers at `llm.<your domain>` by its name, through the same API as every other model.
 
@@ -131,7 +131,7 @@ Ask Claude:
 
 Claude calls `load_llm_model` and follows `get_llm_model_status` until the state is `available`.
 
-Or by hand: in thinkube-control open *LLM Gateway*, choose *Load* on the model, pick the node and choose *Load Model*.
+Or by hand: in Thinkube Control open *LLM Gateway*, choose *Load* on the model, pick the node and choose *Load Model*.
 
 Expected output, from the recorded run:
 

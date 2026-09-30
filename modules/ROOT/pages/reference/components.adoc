@@ -7,7 +7,7 @@ _Every component, what provides it, and whether it stays running._
 Ask Claude: "install Qdrant and Langfuse". Core components are always present and never configured by you; optional ones install with their requirements and cost nothing while switched off. This page is the full list, with what each provides.
 
 Core components are always present. Optional components are installed from
-thinkube-control under *Optional Components*, and each carries a toggle that
+Thinkube Control under *Optional Components*, and each carries a toggle that
 scales it to zero — an installed component costs nothing until you use it.
 The LLM Gateway unloads models the same way.
 
@@ -15,7 +15,7 @@ The first column is the name the dashboard shows; the second is the component
 behind it.
 That is the name to search for when something goes wrong.
 
-image::cp-components.png[The Optional Components page of thinkube-control]
+image::cp-components.png[The Optional Components page of Thinkube Control]
 
 == Core
 
@@ -36,7 +36,7 @@ image::cp-components.png[The Optional Components page of thinkube-control]
 | Thinkube Experiments | MLflow | Runs, registered models, the model registry
 | GPU Operator | NVIDIA GPU Operator | Device access; four time-slice slots per GPU by default
 | Thinkube IDE | code-server | With Claude Code installed
-| Control panel | thinkube-control | The web UI and the MCP endpoint
+| Control panel | Thinkube Control | The web UI and the MCP endpoint
 | Cluster | kubeadm, Cilium | Unmodified upstream Kubernetes; Cilium as network and load balancer
 |===
 
@@ -50,7 +50,6 @@ image::cp-components.png[The Optional Components page of thinkube-control]
 | TensorRT-LLM | ai | — | NVIDIA-optimised inference backend
 | Ollama | ai | Harbor | Inference backend for quantised GGUF models
 | text-embeddings | ai | — | Embedding backend (TEI)
-| LiteLLM | ai | Harbor, Keycloak, PostgreSQL, SeaweedFS | OpenAI-compatible proxy across backends
 | Langflow | ai | Keycloak, PostgreSQL | Visual builder for LLM applications
 | Langfuse | ai | PostgreSQL, Keycloak, ClickHouse, Valkey | Tracing and observability for LLM applications
 | Chroma | ai | Harbor | Vector store

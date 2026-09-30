@@ -72,7 +72,7 @@ Ask Claude:
 
 Claude calls `deploy_template` with `https://github.com/thinkube/tkt-seaweedfs` and follows `get_deployment_status` until it reports `success`.
 
-Or by hand: in thinkube-control open *Templates*, choose *tkt-seaweedfs*, name it `files` and deploy.
+Or by hand: in Thinkube Control open *Templates*, choose *tkt-seaweedfs*, name it `files` and deploy.
 
 Expected output:
 

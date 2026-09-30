@@ -96,7 +96,7 @@ Ask Claude:
 
 Claude calls `load_llm_model` with `node: tkamd2`, `backend: vllm` and `max_context_length: 16384`, and follows `get_llm_model_status` until the state is `available`.
 
-Or by hand: in thinkube-control open *LLM Gateway* and choose *Load* on the model. In the dialog pick tkamd2 under *Target GPU Node* and 16K under *Context Length*, then choose *Load Model*. The dialog shows *Backend Type* for models the catalogue lists with more than one.
+Or by hand: in Thinkube Control open *LLM Gateway* and choose *Load* on the model. In the dialog pick tkamd2 under *Target GPU Node* and 16K under *Context Length*, then choose *Load Model*. The dialog shows *Backend Type* for models the catalogue lists with more than one.
 
 Expected output:
 

@@ -8,7 +8,7 @@ Open Thinkube IDE in your browser, start Claude Code, and say what you want: _"g
 
 == Four areas on one base
 
-[d2,alt="Thinkube Tandem and Thinkube Models both lead to Thinkube GitOps, and all three share Thinkube Kubernetes: thinkube-control, Thinkube Identity, Thinkube Registry, Thinkube Storage with JuiceFS on it, Thinkube Git with Argo, PostgreSQL and the GPUs"]
+[d2,alt="Thinkube Tandem and Thinkube Models both lead to Thinkube GitOps, and all three share Thinkube Kubernetes: Thinkube Control, Thinkube Identity, Thinkube Registry, Thinkube Storage with JuiceFS on it, Thinkube Git with Argo, PostgreSQL and the GPUs"]
 ....
 direction: down
 
@@ -62,9 +62,9 @@ The areas are one platform. A dataset a notebook writes is the file an app reads
 == How you work with it
 
 * *Thinkube IDE* is VS Code in the browser, with Claude Code installed and connected to the platform. This is where you say things.
-* *Claude Code reads freely and changes on request.* thinkube-control offers its operations to Claude through MCP. Reading state, what is running, what the GPUs hold, a build's log, is something Claude consults whenever it needs to. Changing state, a deploy, a load, an install, a restart, happens when you ask. The line between the two is drawn in the platform, not left to Claude's judgement.
+* *Claude Code reads freely and changes on request.* Thinkube Control offers its operations to Claude through MCP. Reading state, what is running, what the GPUs hold, a build's log, is something Claude consults whenever it needs to. Changing state, a deploy, a load, an install, a restart, happens when you ask. The line between the two is drawn in the platform, not left to Claude's judgement.
 * *`thinkube.yaml`* describes an app in a few dozen lines: its containers, routes and the services it uses. The platform generates the Kubernetes objects from it, so you deploy to Kubernetes without writing Kubernetes. xref:apps/index.adoc#_thinkube_yaml_your_app_without_the_kubernetes[Thinkube GitOps] shows one.
-* *thinkube-control* is the control panel: models, the LLM Gateway, templates, components, nodes, secrets, tokens. Everything Claude can do, you can click here, and the health of every service is on its card.
+* *Thinkube Control* is the control panel: models, the LLM Gateway, templates, components, nodes, secrets, tokens. Everything Claude can do, you can click here, and the health of every service is on its card.
 * *Thinkube Notebooks* is JupyterLab with two environments built for your hardware, `fine-tuning` and `agent-dev`, on the same filesystem as the IDE.
 * *The LLM Gateway* is one address for every served model, `llm.<your domain>`, speaking the OpenAI and Anthropic APIs.
 * *Optional components* arrive with one sentence: vector stores, tracing, search, messaging, caches, inference backends. xref:reference/components.adoc[The components catalog] lists them.

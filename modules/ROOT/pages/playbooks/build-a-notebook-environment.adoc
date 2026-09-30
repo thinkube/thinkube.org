@@ -70,7 +70,7 @@ Ask Claude:
 
 Claude calls `create_jupyter_venv` with `name: data-tools`, `packages: [polars]` and `parent_template: agent-dev`.
 
-Or by hand: in thinkube-control open *Jupyter Kernels*. Under *Create New Kernel* type `data-tools` as *Kernel Name*, pick *agent-dev* as *Base Template* and choose *Create*. Then under *Kernels* choose *Edit packages* on `data-tools` and add `polars`.
+Or by hand: in Thinkube Control open *Jupyter Kernels*. Under *Create New Kernel* type `data-tools` as *Kernel Name*, pick *agent-dev* as *Base Template* and choose *Create*. Then under *Kernels* choose *Edit packages* on `data-tools` and add `polars`.
 
 Expected output, from the reference run:
 

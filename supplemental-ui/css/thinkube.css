@@ -559,14 +559,14 @@ html[data-theme="dark"] .doc .openblock.screenshot-needed p:first-child { color:
 .doc .imageblock.mock-screenshot { margin: 1.4rem 0; }
 .doc .imageblock.mock-screenshot img { width: 100%; max-width: 620px; height: auto; display: block; }
 
-/* Prominent section headers in the left nav */
-.nav-menu .nav-item[data-depth="0"] > .nav-text,
-.nav-list .nav-item[data-depth="0"] > .nav-text {
+/* Prominent section headers in the left nav, plain or linked to a landing page */
+.nav-menu .nav-item[data-depth="0"] > :is(.nav-text, .nav-link),
+.nav-list .nav-item[data-depth="0"] > :is(.nav-text, .nav-link) {
   font-weight: 700; color: var(--th-primary); font-size: 1rem;
   text-transform: none; letter-spacing: .01em;
 }
-html[data-theme="dark"] .nav-menu .nav-item[data-depth="0"] > .nav-text,
-html[data-theme="dark"] .nav-list .nav-item[data-depth="0"] > .nav-text { color: var(--th-heading); }
+html[data-theme="dark"] .nav-menu .nav-item[data-depth="0"] > :is(.nav-text, .nav-link),
+html[data-theme="dark"] .nav-list .nav-item[data-depth="0"] > :is(.nav-text, .nav-link) { color: var(--th-heading); }
 
 /* Stable opaque review ref — a per-page / per-screen serial (SP-tgiy46).
    Auto-derived from the item, so adding/removing content never renumbers. */

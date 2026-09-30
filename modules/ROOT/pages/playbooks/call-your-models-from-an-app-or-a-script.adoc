@@ -17,7 +17,7 @@ Every model you load answers at one address, `https://llm.<your domain>`. The ga
 
 * *OpenAI API.* `/v1/chat/completions`, `/v1/embeddings` and `/v1/models`, for the `openai` client and everything built on it.
 * *Anthropic Messages API.* `/v1/messages`, for the `anthropic` client.
-* *One token.* A thinkube-control API token, which starts with `tk_`, is accepted as `Authorization: Bearer` and as `x-api-key`, so each client sends it the way it always does.
+* *One token.* A Thinkube Control API token, which starts with `tk_`, is accepted as `Authorization: Bearer` and as `x-api-key`, so each client sends it the way it always does.
 
 Changing the model is changing one string. The code stays the same.
 
@@ -87,7 +87,7 @@ and then `state: available`. xref:playbooks/load-a-model-on-the-node-and-context
 
 A script or an app outside the platform's own tools authenticates with an API token.
 
-In thinkube-control open *API Tokens*. Under *Create New Token* type a *Token Name*, leave *Expires in (days)* empty for a token with no expiry or give a number of days, and choose *Create Token*. Copy the token from *Token Created Successfully*.
+In Thinkube Control open *API Tokens*. Under *Create New Token* type a *Token Name*, leave *Expires in (days)* empty for a token with no expiry or give a number of days, and choose *Create Token*. Copy the token from *Token Created Successfully*.
 
 Keep the address and the token in two variables, the names notebook servers already have:
 
@@ -227,7 +227,7 @@ message: Model unloaded successfully
 | Symptom | Cause | Fix
 
 | `AuthenticationError: Error code: 401 - {'error': {'message': 'Invalid authentication token', 'type': 'authentication_error', 'code': 'invalid_token'}}`
-| The token is not a valid thinkube-control API token or Thinkube Identity token
+| The token is not a valid Thinkube Control API token or Thinkube Identity token
 | Copy the token again from *API Tokens*, or create a new one.
 
 | `NotFoundError: Error code: 404 - {'error': {'message': "Model 'Qwen/Qwen9-1B' not found", ...}}`

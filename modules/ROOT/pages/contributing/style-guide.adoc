@@ -39,7 +39,8 @@ Use these exactly:
 
 | Thinkube              | thinkube, ThinKube
 | Thinkube Kubernetes, Thinkube GitOps, Thinkube Models, Thinkube Tandem | the four areas of the platform; the base and the three on it. Not "thinkube k8s", not "the AI area"
-| thinkube-control      | Thinkube Control, the control panel app
+| Thinkube Control      | thinkube-control (except where it is typed or shown as an identifier: a URL, a namespace, a repository, a command), the control panel app
+| Thinkube Installer    | thinkube-installer (except as the package name or the command), the desktop installer
 | Thinkube IDE          | code-server, Code Server, VS Code
 | Thinkube Notebooks    | the lab name the JupyterHub theme still shows, JupyterHub, Jupyter, the notebook server
 | Thinkube Experiments  | MLflow, the tracking server
@@ -53,9 +54,9 @@ Use these exactly:
 | `thinkube.yaml`       | the manifest file, the config
 |===
 
-The branded names are the `display_name` each service registers for the dashboard. Argo Workflows, ArgoCD, GPU Operator, JuiceFS and PostgreSQL keep their own names. Name the implementation once where a reader might need to search for it, in a form that says what it is, "Thinkube IDE, VS Code in the browser", and use the implementation's name where the implementation is the point: error messages, logs, the components catalogue.
+The branded names are the `display_name` each service registers for the dashboard. A product's technical id, such as `thinkube-control`, appears only where the reader types it or sees it as an identifier, and then in code format. Argo Workflows, ArgoCD, GPU Operator, JuiceFS and PostgreSQL keep their own names. Name the implementation once where a reader might need to search for it, in a form that says what it is, "Thinkube IDE, VS Code in the browser", and use the implementation's name where the implementation is the point: error messages, logs, the components catalogue.
 
-The site has three menus. *Getting started* holds What Thinkube is and the install pages. *Playbooks* lists every task by area, Thinkube Kubernetes, Thinkube GitOps, Thinkube Models and Thinkube Tandem, and each area's page opens its group. *Reference* holds the lookup pages. No invented vocabulary for the site's own structure.
+The site has three menus. *Getting started* holds What Thinkube is and the install pages. *Playbooks* lists every task by area, Thinkube Kubernetes, Thinkube GitOps, Thinkube Models and Thinkube Tandem, and each area's page opens its group. *Reference and concepts* holds the lookup pages and the pages that explain how the parts work. No invented vocabulary for the site's own structure.
 
 == Headings
 

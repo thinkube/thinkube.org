@@ -195,7 +195,7 @@ Section 14 of the notebook calls `thinkube_models.register_finetuned_model` with
 * merges the adapter into the base weights and uploads the result to the training run's `model` folder;
 * registers it as a version of `zebra-rules-qwen35-4b` linked to that run;
 * writes the catalogue entry to `models.json` of your private `<your GitHub user>-metadata` repository on GitHub, with the notebook server's `GITHUB_TOKEN`;
-* records the registration in thinkube-control's database, with the notebook server's PostgreSQL credentials;
+* records the registration in Thinkube Control's database, with the notebook server's PostgreSQL credentials;
 * waits until the gateway lists the model.
 
 It refuses a catalogue entry that is missing a field, or that asks for another backend than vLLM or another format than BF16.

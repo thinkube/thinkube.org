@@ -1,6 +1,7 @@
 .Getting started
 * xref:start-here/what-is-thinkube.adoc[What Thinkube is]
 * xref:install:overview.adoc[Install Thinkube]
+** xref:install:get-the-installer.adoc[Get the installer]
 ** xref:install:node-setup.adoc[Prepare your machines]
 ** xref:install:overlay-network.adoc[Connect from anywhere]
 ** xref:install:cloudflare-token.adoc[Set up your domain]
@@ -33,23 +34,23 @@
 * xref:tandem:index.adoc[Thinkube Tandem]
 ** xref:tandem:build-your-first-change-with-tandem.adoc[Build your first application change with Tandem]
 ** xref:tandem:turn-what-the-reviewers-noticed-into-the-next-change.adoc[Build the improvements Tandem's reviewers suggest]
-** xref:tandem:defect-ledger.adoc[ODC: the defect ledger for work done with an AI]
 
-.xref:reference/index.adoc[Reference]
-* Your app
-** xref:reference/thinkube-yaml.adoc[thinkube.yaml]
-** xref:webapp-template:anatomy.adoc[What is in the web app template]
-** xref:webapp-template:variables.adoc[How configuration reaches your app]
-* Catalogues
-** xref:reference/templates.adoc[Templates catalog]
-** xref:reference/components.adoc[Components catalog]
+.xref:reference/index.adoc[Reference and concepts]
 * The platform
-** xref:control:index.adoc[thinkube-control]
+** xref:control:index.adoc[Thinkube Control]
 ** xref:control:llm-serving.adoc[LLM serving and models]
 ** xref:control:notebooks.adoc[Notebook execution over MCP]
 ** xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines]
+* Catalogues
+** xref:reference/templates.adoc[Templates catalog]
+** xref:reference/components.adoc[Components catalog]
+* Your apps
+** xref:reference/thinkube-yaml.adoc[thinkube.yaml]
+** xref:webapp-template:anatomy.adoc[What is in the web app template]
+** xref:webapp-template:variables.adoc[How configuration reaches your app]
 * Thinkube Tandem
 ** xref:tandem:words-on-the-page.adoc[The words on the page]
 ** xref:tandem:configuration.adoc[Configuration and settings]
 ** xref:tandem:store.adoc[The store]
+** xref:tandem:defect-ledger.adoc[ODC: the defect ledger for work done with an AI]
 ** xref:tandem:defects.adoc[The defect ledger, reference]

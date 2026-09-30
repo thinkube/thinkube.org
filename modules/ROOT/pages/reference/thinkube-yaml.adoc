@@ -8,7 +8,7 @@ You rarely write this file from scratch: a template comes with one, and Claude e
 
 xref:apps/index.adoc#_thinkube_yaml_your_app_without_the_kubernetes[Thinkube GitOps] explains what the file is for and what the platform generates from it. This page is the field-by-field lookup.
 
-`thinkube.yaml` sits at the root of a repository. thinkube-control reads it to build and deploy an application. Thinkube Tandem reads it to know where a repository's tests live, how one of them runs, how the repository is made live when the platform does not do it, and where its documentation lands. Both read the file where it is; nothing copies it.
+`thinkube.yaml` sits at the root of a repository. Thinkube Control reads it to build and deploy an application. Thinkube Tandem reads it to know where a repository's tests live, how one of them runs, how the repository is made live when the platform does not do it, and where its documentation lands. Both read the file where it is; nothing copies it.
 
 The example below is not hand-typed. It is included from the `thinkube.yaml` that deploys this documentation site, so it can never drift from a working manifest:
 
@@ -120,7 +120,7 @@ spec:
 | Field | Type | Description
 
 | `metadata.name` | string | The application name. Supports `{{ project_name }}`.
-| `metadata.version` | string | The application's version, `MAJOR.MINOR.PATCH`. An application generated from a template starts at the template's value; bump it when you release the application. thinkube-control shows it on the application's card.
+| `metadata.version` | string | The application's version, `MAJOR.MINOR.PATCH`. An application generated from a template starts at the template's value; bump it when you release the application. Thinkube Control shows it on the application's card.
 |===
 
 The template an application was generated from has its own version: the newest `vMAJOR.MINOR.PATCH` tag of the template repository. A deploy uses that tag, and Copier records it in the application's `.copier-answers.yml`.
@@ -295,7 +295,7 @@ Platform services the application needs. Each declared service injects variables
 
 == spec.dependencies
 
-Other deployed services this application needs. At deploy time thinkube-control resolves each to the running service's cluster URL and injects it as the named variable. If the dependency is not deployed, the deployment fails and says which one.
+Other deployed services this application needs. At deploy time Thinkube Control resolves each to the running service's cluster URL and injects it as the named variable. If the dependency is not deployed, the deployment fails and says which one.
 
 [cols="1,1,3"]
 |===
@@ -308,7 +308,7 @@ Other deployed services this application needs. At deploy time thinkube-control 
 
 == spec.env
 
-Variables you can set when you deploy. thinkube-control shows them with their descriptions; a variable with no default is required. They are injected into every container. A variable wired from `dependencies` wins over an entry here with the same name.
+Variables you can set when you deploy. Thinkube Control shows them with their descriptions; a variable with no default is required. They are injected into every container. A variable wired from `dependencies` wins over an entry here with the same name.
 
 [cols="1,1,3"]
 |===
@@ -481,7 +481,7 @@ spec:
 
 == What belongs elsewhere
 
-The file describes the application. Container-specific configuration belongs in the Containerfile, orchestration to thinkube-control, and cloud specifics to the future cloud bridge, so the file stays a static descriptor with no conditional logic, raw Kubernetes resources, deployment strategies or command overrides.
+The file describes the application. Container-specific configuration belongs in the Containerfile, orchestration to Thinkube Control, and cloud specifics to the future cloud bridge, so the file stays a static descriptor with no conditional logic, raw Kubernetes resources, deployment strategies or command overrides.
 
 == Version
 

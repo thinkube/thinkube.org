@@ -97,7 +97,7 @@ Ask Claude:
 
 Claude calls `submit_model_mirror` and follows `get_mirror_status`.
 
-Or by hand: in thinkube-control open *AI Models* and choose *Mirror* on the model.
+Or by hand: in Thinkube Control open *AI Models* and choose *Mirror* on the model.
 
 Expected output, from the reference run:
 
@@ -121,7 +121,7 @@ Ask Claude:
 
 Claude calls `load_llm_model` and follows `get_llm_model_status` until the state is `available`.
 
-Or by hand: in thinkube-control open *LLM Gateway*, choose *Load* on the model, pick the node in the dialog and choose *Load Model*.
+Or by hand: in Thinkube Control open *LLM Gateway*, choose *Load* on the model, pick the node in the dialog and choose *Load Model*.
 
 Expected output:
 

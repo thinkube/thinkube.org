@@ -69,14 +69,14 @@ Ask Claude:
 
 Claude calls `list_optional_components`.
 
-Or by hand: in thinkube-control open *Optional Components*.
+Or by hand: in Thinkube Control open *Optional Components*.
 
 Expected output, from the reference run, shortened:
 
 ----
 installed: Prometheus, Perses, OpenSearch, PgAdmin, Qdrant, Knative, Chroma, Valkey,
            ClickHouse, NATS, Langfuse, Ollama, Langflow, vLLM, TensorRT-LLM, Text Embeddings
-not installed: Weaviate, LiteLLM, Argilla, CVAT
+not installed: Weaviate, Argilla, CVAT
 Weaviate: requirements_met: true
 ----
 

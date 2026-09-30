@@ -70,7 +70,7 @@ Ask Claude:
 
 Claude calls `deploy_template` with `https://github.com/thinkube/tkt-knative-demo` and follows `get_deployment_status` until it reports `success`.
 
-Or by hand: in thinkube-control open *Templates*, choose *tkt-knative-demo*, name it `knative-demo` and deploy.
+Or by hand: in Thinkube Control open *Templates*, choose *tkt-knative-demo*, name it `knative-demo` and deploy.
 
 Expected output:
 
@@ -149,9 +149,9 @@ knative-demo-00002-deployment-6bb6bd7d8c-q7h2x   1/2   Running   3s
 knative-demo-00002-deployment-6bb6bd7d8c-wcjvb   1/2   Running   3s
 ----
 
-*Knative Services* in thinkube-control lists each service with how many copies are running; point at a card to see its range of copies, its requests per copy and its timeout:
+*Knative Services* in Thinkube Control lists each service with how many copies are running; point at a card to see its range of copies, its requests per copy and its timeout:
 
-image::cp-knative-services.png[The Knative Services page of thinkube-control, with one service active and one copy running]
+image::cp-knative-services.png[The Knative Services page of Thinkube Control, with one service active and one copy running]
 
 === Step 5. Watch it return to zero
 
