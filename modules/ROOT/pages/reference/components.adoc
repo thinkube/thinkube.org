@@ -64,5 +64,3 @@ The second is the component behind it, the name to search for when something goe
 | Perses | monitoring | Thinkube Identity, Prometheus | Dashboards
 |===
 
-Every optional component's needs resolve into the core. That is why
-installing one is a toggle rather than provisioning.
