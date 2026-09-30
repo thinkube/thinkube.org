@@ -28,6 +28,11 @@
         "name": {
           "type": "string",
           "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$|^\\{\\{\\s*project_name\\s*\\}\\}$"
+        },
+        "version": {
+          "type": "string",
+          "description": "The application's version, MAJOR.MINOR.PATCH. An application generated from a template starts at the template's value.",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
         }
       },
       "additionalProperties": false

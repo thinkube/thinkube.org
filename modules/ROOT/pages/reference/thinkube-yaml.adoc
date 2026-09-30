@@ -120,7 +120,10 @@ spec:
 | Field | Type | Description
 
 | `metadata.name` | string | The application name. Supports `{{ project_name }}`.
+| `metadata.version` | string | The application's version, `MAJOR.MINOR.PATCH`. An application generated from a template starts at the template's value; bump it when you release the application. thinkube-control shows it on the application's card.
 |===
+
+The template an application was generated from has its own version: the newest `vMAJOR.MINOR.PATCH` tag of the template repository. A deploy uses that tag, and Copier records it in the application's `.copier-answers.yml`.
 
 == spec.deployment
 
