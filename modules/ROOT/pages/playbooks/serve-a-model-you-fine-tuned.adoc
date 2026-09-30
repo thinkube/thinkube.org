@@ -7,7 +7,7 @@
 :page-risk: low
 :page-tags: Fine-tuning, LLM Gateway, vLLM, Model catalogue
 :page-order: 80
-:page-updated: 2026-09-16
+:page-updated: 2026-09-29
 
 == Overview
 
@@ -55,7 +55,7 @@ You check that `zebra-rules-qwen35-4b`, the model from xref:playbooks/fine-tune-
 * *Estimated time:* 30 min. The reference run is one run on the test cluster this page was checked on. On it, the load and the call through the gateway took about 5 minutes together.
 * *Risk level:* Low. A load that does not fit a node is refused before anything starts.
 * *Rollback:* Unload the model. The registered version stays.
-* *Last updated:* 2026-09-16. Measured on one load and one call.
+* *Last updated:* 2026-09-29. Measured on one load and one call.
 
 == Instructions
 

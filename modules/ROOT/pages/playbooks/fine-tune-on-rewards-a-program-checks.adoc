@@ -8,7 +8,7 @@
 :page-risk: medium
 :page-tags: GRPO, Unsloth, Thinkube Experiments, Notebooks
 :page-order: 70
-:page-updated: 2026-09-16
+:page-updated: 2026-09-29
 :page-aliases: playbooks/zebra-grpo.adoc, lifecycle/fine-tune.adoc
 
 == Overview
@@ -78,7 +78,7 @@ You run `zebra_grpo.ipynb` on a GPU: it measures the base model, trains it, meas
 The baseline is cached on disk by scale, so a second run at the same scale skips those 75 minutes.
 * *Risk level:* Medium. The run holds a GPU for hours, and a served model on the same node shares that memory when the CPU and GPU share memory.
 * *Rollback:* Delete the registered version in Thinkube Experiments. The base model is untouched.
-* *Last updated:* 2026-09-16. Measured on one full run on one GB10.
+* *Last updated:* 2026-09-29. Measured on one full run on one GB10.
 
 == Instructions
 
