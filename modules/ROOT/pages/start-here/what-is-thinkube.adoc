@@ -61,7 +61,7 @@ The areas are one platform. A dataset a notebook writes is the file an app reads
 
 == How you work with it
 
-* *Thinkube IDE* is VS Code in the browser, with Claude Code installed and connected to the platform. This is where you say things.
+* *Thinkube IDE* is VS Code in the browser, with Claude Code from Anthropic installed and connected to the platform. This is where you say things.
 * *Claude Code reads freely and changes on request.* Thinkube Control offers its operations to Claude through MCP. Reading state, what is running, what the GPUs hold, a build's log, is something Claude consults whenever it needs to. Changing state, a deploy, a load, an install, a restart, happens when you ask. The line between the two is drawn in the platform, not left to Claude's judgement.
 * *`thinkube.yaml`* describes an app in a few dozen lines: its containers, routes and the services it uses. The platform generates the Kubernetes objects from it, so you deploy to Kubernetes without writing Kubernetes. xref:apps/index.adoc#_thinkube_yaml_your_app_without_the_kubernetes[Thinkube GitOps] shows one.
 * *Thinkube Control* is the control panel: models, the LLM Gateway, templates, components, nodes, secrets, tokens. Everything Claude can do, you can click here, and the health of every service is on its card.
@@ -82,7 +82,7 @@ What you build is a git repository with real code, a Containerfile, tests and a 
 
 == Where it runs
 
-Ubuntu 24.04 on one to a few machines. Thinkube runs on a DGX Spark (GB10, arm64) and on x86-64 workstations with NVIDIA GPUs, and one cluster mixes both. The installer accepts any NVIDIA GPU from the Volta generation on, with driver 580 or newer. vLLM, TensorRT-LLM and Ollama are built for both architectures; the catalogue's TensorRT-LLM models are NVFP4, which needs a Blackwell GPU such as the DGX Spark's. The cluster moves with you: a new network or a new address is picked up on its own (xref:kubernetes/index.adoc#_how_it_works[How it works]). Thinkube is alpha software: a new version may need a fresh install, so install it on a machine you can reinstall. Claude Code is a paid service from Anthropic and part of the platform.
+Ubuntu 24.04 on one to a few machines. Thinkube runs on a DGX Spark (GB10, arm64) and on x86-64 workstations with NVIDIA GPUs, and one cluster mixes both. The installer accepts any NVIDIA GPU from the Volta generation on, with driver 580 or newer. vLLM, TensorRT-LLM and Ollama are built for both architectures; the catalogue's TensorRT-LLM models are NVFP4, which needs a Blackwell GPU such as the DGX Spark's. The cluster moves with you: a new network or a new address is picked up on its own (xref:kubernetes/index.adoc#_how_it_works[How it works]). Thinkube is alpha software: a new version may need a fresh install, so install it on a machine you can reinstall. Claude Code is not part of Thinkube: Thinkube installs it from Anthropic's official installer, and you sign in with your own Anthropic account, which is a paid service.
 
 == How these docs are written
 

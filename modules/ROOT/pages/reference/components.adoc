@@ -35,7 +35,7 @@ image::cp-components.png[The Optional Components page of Thinkube Control]
 | Thinkube Notebooks | JupyterHub | Notebooks and environments
 | Thinkube Experiments | MLflow | Runs, registered models, the model registry
 | GPU Operator | NVIDIA GPU Operator | Device access; four time-slice slots per GPU by default
-| Thinkube IDE | code-server | With Claude Code installed
+| Thinkube IDE | code-server | VS Code in the browser; Claude Code is installed from Anthropic and used with your own account
 | Control panel | Thinkube Control | The web UI and the MCP endpoint
 | Cluster | kubeadm, Cilium | Unmodified upstream Kubernetes; Cilium as network and load balancer
 |===
