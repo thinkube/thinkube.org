@@ -35,17 +35,21 @@
 ** xref:tandem:turn-what-the-reviewers-noticed-into-the-next-change.adoc[Build the improvements Tandem's reviewers suggest]
 ** xref:tandem:defect-ledger.adoc[ODC: the defect ledger for work done with an AI]
 
-.Reference
-* xref:reference/thinkube-yaml.adoc[thinkube.yaml]
-* xref:reference/templates.adoc[Templates catalog]
-* xref:reference/components.adoc[Components catalog]
-* xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines]
-* xref:control:index.adoc[thinkube-control]
-* xref:control:llm-serving.adoc[LLM serving and models]
-* xref:control:notebooks.adoc[Notebook execution over MCP]
-* xref:webapp-template:anatomy.adoc[What is in the web app template]
-* xref:webapp-template:variables.adoc[How configuration reaches your app]
-* xref:tandem:words-on-the-page.adoc[Tandem: the words on the page]
-* xref:tandem:configuration.adoc[Tandem: configuration and settings]
-* xref:tandem:store.adoc[Tandem: the store]
-* xref:tandem:defects.adoc[Tandem: the defect ledger]
+.xref:reference/index.adoc[Reference]
+* Your app
+** xref:reference/thinkube-yaml.adoc[thinkube.yaml]
+** xref:webapp-template:anatomy.adoc[What is in the web app template]
+** xref:webapp-template:variables.adoc[How configuration reaches your app]
+* Catalogues
+** xref:reference/templates.adoc[Templates catalog]
+** xref:reference/components.adoc[Components catalog]
+* The platform
+** xref:control:index.adoc[thinkube-control]
+** xref:control:llm-serving.adoc[LLM serving and models]
+** xref:control:notebooks.adoc[Notebook execution over MCP]
+** xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines]
+* Thinkube Tandem
+** xref:tandem:words-on-the-page.adoc[The words on the page]
+** xref:tandem:configuration.adoc[Configuration and settings]
+** xref:tandem:store.adoc[The store]
+** xref:tandem:defects.adoc[The defect ledger, reference]
