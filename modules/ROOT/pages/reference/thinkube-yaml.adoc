@@ -4,7 +4,7 @@
 _The one file that says what your application is: its containers and how each is built and tested, how it is deployed, and how its work is verified. Two shapes are covered here, an application and a Knative service. Specification v1.0._
 
 .TL;DR
-You rarely write this file from scratch: a template comes with one, and Claude edits it when you say "add a second container" or "expose port 8080 at /api". Read this page when you want to know what a line means. About twenty lines describe a whole application; the manifests under `k8s/` are generated from them.
+You rarely write this file from scratch: a template comes with one, and Claude edits it when you say "add a second container" or "expose port 8080 at /api". Read this page when you want to know what a line means. A few dozen lines describe a whole application; the manifests under `k8s/` are generated from them.
 
 xref:apps/index.adoc#_thinkube_yaml_your_app_without_the_kubernetes[Thinkube GitOps] explains what the file is for and what the platform generates from it. This page is the field-by-field lookup.
 
