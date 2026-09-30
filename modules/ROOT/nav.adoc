@@ -33,6 +33,7 @@
 * xref:tandem:index.adoc[Thinkube Tandem]
 ** xref:tandem:build-your-first-change-with-tandem.adoc[Build your first application change with Tandem]
 ** xref:tandem:turn-what-the-reviewers-noticed-into-the-next-change.adoc[Build the improvements Tandem's reviewers suggest]
+** xref:tandem:defect-ledger.adoc[ODC: the defect ledger for work done with an AI]
 
 .Reference
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]
@@ -48,8 +49,3 @@
 * xref:tandem:configuration.adoc[Tandem: configuration and settings]
 * xref:tandem:store.adoc[Tandem: the store]
 * xref:tandem:defects.adoc[Tandem: the defect ledger]
-
-.Contributing
-* xref:contributing/page-types.adoc[Page types]
-* xref:contributing/style-guide.adoc[Style guide]
-* xref:contributing/documentation-map.adoc[Documentation map]
