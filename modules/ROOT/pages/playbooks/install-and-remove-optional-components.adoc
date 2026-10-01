@@ -50,13 +50,6 @@ You list the optional components, install Weaviate, check that it answers, and u
 
 * None. Weaviate needs Thinkube Registry, which is a core service.
 
-=== Time & risk
-
-* *Estimated time:* 30 min. The reference run is one run on the test cluster this page was checked on. On it, the Weaviate install took 3 min 9 s and the uninstall 1 min 9 s.
-* *Risk level:* Low. The install adds a namespace of its own.
-* *Rollback:* Uninstall the component.
-* *Last updated:* 2026-09-17. Measured on one install and one uninstall.
-
 == Instructions
 
 === Step 1. List the components
@@ -150,6 +143,8 @@ message: No pods found
 The namespace `weaviate` and its data volume `weaviate-data-pvc`, 10 GiB, stayed.
 
 === Step 5. Next steps
+
+*To undo:* Uninstall the component.
 
 * xref:playbooks/check-and-restart-services-from-claude-code.adoc[Check and restart services from Claude Code]: health, restart, and turning a component off.
 * xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service]: an app that uses the Knative component.

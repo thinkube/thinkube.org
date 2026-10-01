@@ -4,7 +4,6 @@
 :page-tagline: A service that runs only while it is being called, like AWS Lambda, on your own machines
 :page-difficulty: beginner
 :page-time: 30 min
-:page-time-note: plus about 5 min to install Knative the first time
 :page-risk: low
 :page-tags: Serverless, Knative, Templates
 :page-order: 60
@@ -48,13 +47,6 @@ You deploy `knative-demo`, a serverless service, from a template. You call it wh
 *Components*
 
 * The optional component Knative. Ask Claude: _"is Knative installed?"_ If it is not, ask _"install Knative"_.
-
-=== Time & risk
-
-* *Estimated time:* 30 min. The deploy took 97 and 108 seconds on two runs, a pushed change was live 93 seconds after the push, and the calls take seconds.
-* *Risk level:* Low. The service is isolated in its own namespace, `knative-demo`, and changes nothing else.
-* *Rollback:* Deploy the template again with the same name to replace the service.
-* *Last updated:* 2026-09-16. Measured on two deploys, one scaling run and one pushed change.
 
 == Instructions
 
@@ -178,6 +170,8 @@ Ask Claude:
 Expected output: 93 seconds after the push, the call answers with `"message": "Hello from my cluster"` from a new revision (a new version of the service), `knative-demo-00003`.
 
 === Step 7. Next steps
+
+*To undo:* Delete the app in Thinkube Control.
 
 * xref:playbooks/store-and-fetch-files.adoc[Store and fetch files with the file gateway]: an always-on app with a REST API and an upload page.
 * xref:webapp-template:build-a-web-app.adoc[Build a web app from the template]: a full-stack app with a database and a login.

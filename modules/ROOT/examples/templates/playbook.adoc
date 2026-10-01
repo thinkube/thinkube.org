@@ -3,8 +3,7 @@
 :page-area: <kubernetes | gitops | models | tandem>
 :page-tagline: <One line, no period>
 :page-difficulty: <beginner | intermediate | advanced>
-:page-time: <30 min at least; longer when the measured run takes longer: "45–60 min", "2 h", "9 h 30 min">
-:page-time-note: <optional: what is added, such as a download, per size>
+:page-time: <30 min at least; longer when the task takes longer: "45–60 min", "2 h", "9 h 30 min">
 :page-risk: <low | medium | high>
 :page-tags: <Up to three, comma-separated>
 :page-order: <position within the area>
@@ -45,13 +44,6 @@
 
 * <Component.> Ask Claude: _"is <it> installed?"_
 
-=== Time & risk
-
-* *Estimated time:* <the page time, then the measured figures of the run and what was measured.>
-* *Risk level:* <Low | Medium | High>. <One reason.>
-* *Rollback:* <One concrete action.>
-* *Last updated:* <date>. <What changed, and how many runs.>
-
 == Instructions
 
 === Step 1. <Imperative title>
@@ -75,6 +67,8 @@ Expected output, from the reference run:
 ----
 
 === Step N. Next steps
+
+*To undo:* <One concrete action.>
 
 * xref:<playbook>[<Title>]: <what it adds.>
 

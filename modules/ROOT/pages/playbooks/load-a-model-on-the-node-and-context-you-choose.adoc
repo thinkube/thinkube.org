@@ -53,13 +53,6 @@ You load `Qwen/Qwen3-8B` on tkamd2 with a 16k context, see a second model on the
 
 * The optional component vLLM. Ask Claude: _"is vLLM installed?"_ If it is not, ask _"install vLLM"_.
 
-=== Time & risk
-
-* *Estimated time:* 30 min. The reference run is one run on the test cluster this page was checked on. On it, the vLLM engine was ready 4 min 33 s after the load request, 3 min 39 s of it reading the weights, and the model was `available` about a minute later. The refused loads and the unload answered at once.
-* *Risk level:* Low. A load that does not fit, or that asks for a node whose engine serves another model, is refused before anything starts.
-* *Rollback:* Unload the model. The weights stay in your storage for the next load.
-* *Last updated:* 2026-09-16. Measured on one load and one unload.
-
 == Instructions
 
 === Step 1. Read the load options
@@ -164,6 +157,8 @@ message: Model unloaded successfully
 On the reference run the vLLM engine on tkamd2 was removed at once, since it served no other model.
 
 === Step 5. Next steps
+
+*To undo:* Unload the model. The weights stay in your storage for the next load.
 
 * xref:playbooks/serve-your-first-model.adoc[Serve your first model]: call a loaded model from a notebook.
 * xref:control:llm-serving.adoc[LLM serving and models]: sizing, speculative decoding and routing.

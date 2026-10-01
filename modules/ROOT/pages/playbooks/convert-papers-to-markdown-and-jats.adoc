@@ -4,7 +4,6 @@
 :page-tagline: Turn PDF papers into structured text with Docling, on CPU in a pipeline step or with a vision model on your GPU
 :page-difficulty: intermediate
 :page-time: 30 min
-:page-time-note: plus 82 s the first time a standard conversion downloads Docling's models
 :page-risk: low
 :page-tags: Docling, Argo Workflows, LLM Gateway
 :page-order: 80
@@ -73,13 +72,6 @@ You load Granite-Docling on an RTX 3090, deploy the app as `docling`, convert an
 *Components*
 
 * vLLM. Ask Claude: _"is vLLM installed?"_ If it is not, ask _"install vLLM"_.
-
-=== Time & risk
-
-* *Estimated time:* 30 min. Mirror and load about 2 min. Deploy about 5 min; a 15-page paper converts in 1–2 min on CPU, 15 s on GPU.
-* *Risk level:* Low. The app is isolated in its own namespace, `docling`. The model load uses one vLLM deployment on tkamd2: the node serves no other vLLM model while Granite-Docling is loaded.
-* *Rollback:* Unload the model with _"unload ibm-granite/granite-docling-258M"_, and delete the app in Thinkube Control.
-* *Last updated:* 2026-09-17. Measured on one mirror, one load, three deploys and four conversions.
 
 == Instructions
 
@@ -259,6 +251,8 @@ The Granite-Docling output is valid too, with the same abstract sections and 23 
 The front matter, the part before the abstract, is kept as text in `<notes notes-type="front-matter">`. Docling did not find a title on this paper's first page, so the title is missing.
 
 === Step 7. Next steps
+
+*To undo:* Unload the model with _"unload ibm-granite/granite-docling-258M"_, and delete the app in Thinkube Control.
 
 * xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers]: index the Markdown in a vector store and ask questions with sources.
 * xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app]: the workflows service on its own.

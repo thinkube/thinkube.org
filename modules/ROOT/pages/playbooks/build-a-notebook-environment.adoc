@@ -49,13 +49,6 @@ You build the environment `data-tools`, which is `agent-dev` plus `polars`, and 
 
 * None beyond the base platform.
 
-=== Time & risk
-
-* *Estimated time:* 30 min. The reference run is one run on the test cluster this page was checked on. On it, the build took 7 min 14 s for both architectures, and the notebook run, starting its own server, 49 s.
-* *Risk level:* Low. The build writes only the new environment; the built-in environments stay as they are.
-* *Rollback:* Delete the environment under *Jupyter Kernels*.
-* *Last updated:* 2026-09-17. Measured on one build and one run.
-
 == Instructions
 
 === Step 1. Create the environment
@@ -142,6 +135,8 @@ created_at: 00:15:11   finished_at: 00:16:00
 To use the kernel in a server you already have running, stop and start that server: _"restart my notebook server on tkamd1"_.
 
 === Step 4. Next steps
+
+*To undo:* Delete the environment under *Jupyter Kernels*.
 
 * xref:playbooks/run-notebooks-from-claude.adoc[Run notebooks from Claude, watched or unattended]: watch a run in a Thinkube IDE tab.
 * xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script]: the clients every environment carries.

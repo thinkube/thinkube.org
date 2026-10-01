@@ -4,7 +4,6 @@
 :page-tagline: Train a 4B model with GRPO against a solver that grades every answer, with no labelled data, and register the result beside its run
 :page-difficulty: advanced
 :page-time: 9 h 30 min
-:page-time-note: at full scale on one GB10; the demo scale runs every stage on fewer puzzles
 :page-risk: medium
 :page-tags: GRPO, Unsloth, Thinkube Experiments, Notebooks
 :page-order: 70
@@ -58,27 +57,6 @@ You run `zebra_grpo.ipynb` on a GPU: it measures the base model, trains it, meas
 *Components*
 
 * The optional component vLLM, for the notebook's last section. Ask Claude: _"is vLLM installed?"_ If it is not, ask _"install vLLM"_.
-
-=== Time & risk
-
-* *Estimated time:* 9 h 30 min at full scale, measured on one GB10:
-+
-[cols="3,1",options="header"]
-|===
-| Stage | Time
-| load the base model from the mirror | about 1 min
-| generate 2,200 puzzles | about 3 min
-| baseline evaluation, 2 × 200 puzzles | about 75 min
-| GRPO training, 250 steps | 6 h 54 min
-| evaluation after training, 2 × 200 puzzles | about 31 min
-| merge, upload 8.7 GB, register | about 41 min
-| load on vLLM and call the gateway | about 5 min
-|===
-+
-The baseline is cached on disk by scale, so a second run at the same scale skips those 75 minutes.
-* *Risk level:* Medium. The run holds a GPU for hours, and a served model on the same node shares that memory when the CPU and GPU share memory.
-* *Rollback:* Delete the registered version in Thinkube Experiments. The base model is untouched.
-* *Last updated:* 2026-09-29. Measured on one full run on one GB10.
 
 == Instructions
 
@@ -224,6 +202,8 @@ message: Model unloaded successfully
 ----
 
 === Step 8. Next steps
+
+*To undo:* Delete the registered version in Thinkube Experiments. The base model is untouched.
 
 * xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned]: load the registered model and call it from your code.
 * xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: the node and the context for the load.

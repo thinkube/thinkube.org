@@ -55,16 +55,6 @@ You run the three research-assistant notebooks in order: `01` checks the models,
 
 * Qdrant and Langfuse. Ask Claude: _"are Qdrant and Langfuse installed?"_ If not, ask _"install Qdrant and Langfuse"_; the install brings their requirements, ClickHouse and Valkey.
 
-=== Time & risk
-
-* *Estimated time:* 30 min. On the reference run:
-** `01`: 94 s as an unattended run, including its own server's start.
-** `02`: 75 s, to fetch, embed and index 146 papers and answer three questions.
-** `03`: 4 min 1 s, of which the debate was 230.5 s.
-* *Risk level:* Low. `02` deletes and recreates its own Qdrant collection, `rl_reasoning_papers`; nothing else is changed.
-* *Rollback:* In a notebook, `QdrantClient(url=os.environ["QDRANT_URL"]).delete_collection("rl_reasoning_papers")`.
-* *Last updated:* 2026-09-17. Measured on one run of each notebook.
-
 == Instructions
 
 === Step 1. Check the models are served
@@ -210,6 +200,8 @@ kernel_shut_down: true
 The models stay loaded for other work. Unload the ones you loaded for this playbook with _"unload <model>"_.
 
 === Step 6. Next steps
+
+*To undo:* In a notebook, `QdrantClient(url=os.environ["QDRANT_URL"]).delete_collection("rl_reasoning_papers")`.
 
 * xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks]: train with rewards a program checks, the GRPO side of the debate.
 * xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script]: the same gateway from your own code.

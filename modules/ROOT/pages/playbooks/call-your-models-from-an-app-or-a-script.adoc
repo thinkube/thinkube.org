@@ -54,13 +54,6 @@ You create an API token, call a loaded model with the `openai` client and with t
 
 * The optional component vLLM. Ask Claude: _"is vLLM installed?"_ If it is not, ask _"install vLLM"_.
 
-=== Time & risk
-
-* *Estimated time:* 30 min. The reference run is one run on the test cluster this page was checked on. On it, the vLLM engine was ready 2 min 3 s after the load request, and the model was `available` about a minute later. The first call answered in 1.4 s, and the unload answered at once.
-* *Risk level:* Low. The calls only read from the model.
-* *Rollback:* Unload the model, and delete the token under *API Tokens* when you no longer use it.
-* *Last updated:* 2026-09-16. Measured on one load, one set of calls and one unload.
-
 == Instructions
 
 === Step 1. Load a model
@@ -213,6 +206,8 @@ message: Model unloaded successfully
 ----
 
 === Step 7. Next steps
+
+*To undo:* Unload the model, and delete the token under *API Tokens* when you no longer use it.
 
 * xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: serve the model your app needs where it fits.
 * xref:webapp-template:variables.adoc[How configuration reaches your app]: give a deployed app the token as a secret.

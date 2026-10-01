@@ -49,13 +49,6 @@ You list the services, read the health and pods of two of them, restart the `doc
 
 * Qdrant, for Step 2. Ask Claude: _"is Qdrant installed?"_ Any installed service works the same way.
 
-=== Time & risk
-
-* *Estimated time:* 30 min. On the reference run the restarted pod was running 2 s after the request, and the app answered again 3 s after it was turned back on.
-* *Risk level:* Low. The restart and the toggle act only on the service you name. While an app is turned off, its address answers `503`.
-* *Rollback:* Turn the service on again.
-* *Last updated:* 2026-09-17. Measured on one restart and one toggle.
-
 == Instructions
 
 === Step 1. List the services
@@ -166,6 +159,8 @@ pod docs-docs-6545b67686-jpdvz on tkspark: Pending
 The site answered `200` again at 00:14:09.
 
 === Step 5. Next steps
+
+*To undo:* Turn the service on again.
 
 * xref:webapp-template:change-your-app.adoc[Change your app and ship it]: redeploy an app after a change.
 * xref:playbooks/serve-your-first-model.adoc[Serve your first model]: GPU status and model loads.

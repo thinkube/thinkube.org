@@ -14,7 +14,7 @@ Copy the skeleton for the type and fill it in order. A playbook is one task, run
 
 | `playbook`
 | One task with a result, for a reader who wants to do it.
-| The card attributes; Overview with Basic idea, What you'll accomplish, What to know before starting, Supported hardware, Prerequisites, Time & risk; Instructions as numbered steps ending with Next steps; Troubleshooting as a Symptom, Cause, Fix table. `lib/playbook-check.js` fails the build on a playbook that lacks any of them.
+| The card attributes; Overview with Basic idea, What you'll accomplish, What to know before starting, Supported hardware, Prerequisites; Instructions as numbered steps ending with Next steps, which opens with one *To undo* line; Troubleshooting as a Symptom, Cause, Fix table. `lib/playbook-check.js` fails the build on a playbook that lacks any of them.
 
 | `concept`
 | What Thinkube is, and the page of each area.

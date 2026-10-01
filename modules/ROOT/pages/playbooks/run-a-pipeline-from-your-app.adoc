@@ -52,13 +52,6 @@ You add `workflows` to an app from the web app template, submit a two-step pipel
 
 * None.
 
-=== Time & risk
-
-* *Estimated time:* 30 min. Declaring the service is a commit and a push, which rebuilds and redeploys the app: the web app template's build and deploy took 3–4 min on five runs. The two-step pipeline finished 21 seconds after it was submitted.
-* *Risk level:* Low. Everything the service creates is in the app's own namespace.
-* *Rollback:* Remove `workflows` from `services` in `thinkube.yaml`, commit and push.
-* *Last updated:* 2026-09-16. Measured on one pipeline run.
-
 == Instructions
 
 === Step 1. Declare the service
@@ -268,6 +261,8 @@ wf-check-secret-gkbzc     Succeeded
 ----
 
 === Step 6. Next steps
+
+*To undo:* Remove `workflows` from `services` in `thinkube.yaml`, commit and push.
 
 * xref:webapp-template:change-your-app.adoc[Change your app and ship it]: build the pipeline into the app's backend.
 * xref:reference/thinkube-yaml.adoc[thinkube.yaml]: every service an app can declare.

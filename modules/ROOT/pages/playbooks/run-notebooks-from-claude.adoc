@@ -50,13 +50,6 @@ You create a two-cell notebook, run it while you watch it in a Thinkube IDE tab,
 
 * None beyond the base platform.
 
-=== Time & risk
-
-* *Estimated time:* 30 min. The reference run is one run on the test cluster this page was checked on. On it, the watched run took 30 s. The unattended run took 69 s from the request to its end: 30 s of cells, and the rest starting its server and kernel.
-* *Risk level:* Low. The unattended run uses a server of its own, and the watched run uses only the notebook's kernel.
-* *Rollback:* Delete the notebook file.
-* *Last updated:* 2026-09-16. Measured on one watched run and one unattended run.
-
 == Instructions
 
 === Step 1. Create a notebook
@@ -183,6 +176,8 @@ created_at: 23:43:21   finished_at: 23:44:30
 The server `job-651a370f` stopped when the run ended, and no other servers were listed.
 
 === Step 6. Next steps
+
+*To undo:* Delete the notebook file.
 
 * xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script]: call a served model from a notebook cell.
 * xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks]: a long run on a GPU, a good fit for an unattended run.

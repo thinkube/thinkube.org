@@ -51,13 +51,6 @@ You deploy the file gateway as `files`, store a file through the API and through
 
 * None.
 
-=== Time & risk
-
-* *Estimated time:* 30 min. The deploy took 155 seconds on one run; each call takes under a second.
-* *Risk level:* Low. The app is isolated in its own namespace, `files`, and writes only to the buckets it creates.
-* *Rollback:* Deploy the template again with the same name to replace the app. Stored files stay in Thinkube Storage.
-* *Last updated:* 2026-09-16. Measured on one deploy.
-
 == Instructions
 
 === Step 1. Deploy the template
@@ -156,6 +149,8 @@ Choose *Browse*, type the tenant `docs` and press *Search*. Each file has a down
 image::files-browse.png[The Browse Files page of the file gateway listing contract.pdf in tenant-docs, with download and delete buttons]
 
 === Step 6. Next steps
+
+*To undo:* Delete the app in Thinkube Control.
 
 * xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service]: a service that runs only while it is being called.
 * xref:webapp-template:build-a-web-app.adoc[Build a web app from the template]: a full-stack app with a database and a login.

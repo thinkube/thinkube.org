@@ -17,7 +17,7 @@ The four other repositories' pages follow this guide; their maintainers are the 
 * *Positive polarity.* Say what a thing does and what you get. A heading never starts with "Not". A condition is stated where the reader needs it, in the step or section it affects, or as a Troubleshooting row, phrased as what makes it work.
 * *Say it once.* xref:start-here/what-is-thinkube.adoc[What Thinkube is] and the four area pages own the ideas. Every other page links to the owner in one sentence and never restates it.
 * *Clarity over coverage.* Explain a few things well; Claude sees the whole API and can be asked for the rest. No page lists an API in full.
-* *Time: 30 minutes at least.* A playbook's time is what a reader should set aside: 30 minutes, or longer when its measured run takes longer. The measured figures go under *Time & risk*, from the records of the run: deployments, mirror jobs, notebook runs, model loads. Several runs give a range, one run gives "about", and the record ids go in the commit message. A figure that depends on many variables is left out.
+* *Time: 30 minutes at least.* A playbook's time is what a reader should set aside: 30 minutes, or longer when the task takes longer. It is one figure on the card, with no note. Measured figures of a run go in the commit message, not on the page.
 * *A process that fails is not documented.* If a documented path fails on the reference cluster, the page waits. The defect is fixed, the path is rerun, then the page is written.
 
 == Voice

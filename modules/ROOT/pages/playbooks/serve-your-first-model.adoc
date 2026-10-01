@@ -4,7 +4,6 @@
 :page-tagline: Load an open model on your own GPU and call it from a notebook, as you would call a cloud API
 :page-difficulty: beginner
 :page-time: 30 min
-:page-time-note: plus the download the first time, 7 min 40 s for this 9 GB model
 :page-risk: low
 :page-tags: LLM Gateway, vLLM, Notebooks
 :page-order: 10
@@ -54,13 +53,6 @@ You load `Qwen/Qwen3.5-4B` on a GPU node, call it from a notebook, and unload it
 *Components*
 
 * The optional component vLLM. Ask Claude: _"is vLLM installed?"_ If it is not, ask _"install vLLM"_.
-
-=== Time & risk
-
-* *Estimated time:* 30 min. The reference run is one run on the test cluster this page was checked on. On it, the engine was ready 108 seconds after the load request, the call answered in seconds, and the unload took under 5 seconds.
-* *Risk level:* Low. A load on a node whose engine already serves a model is refused; the running model is not touched.
-* *Rollback:* Unload the model. The weights stay in your storage for the next load.
-* *Last updated:* 2026-09-16. Measured on one load, one call, one unload and one download.
 
 == Instructions
 
@@ -184,6 +176,8 @@ message: Model unloaded successfully
 The vLLM engine on tkamd2 stopped at once, and the node's free memory returned to 45.5 GB.
 
 === Step 6. Next steps
+
+*To undo:* Unload the model. The weights stay in your storage for the next load.
 
 * xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: choose the node, the backend and the context length for each load.
 * xref:playbooks/build-a-notebook-environment.adoc[Build a notebook environment]: the environments and how to build your own.
