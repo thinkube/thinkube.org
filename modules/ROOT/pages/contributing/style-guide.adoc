@@ -8,11 +8,13 @@ A playbook opens with what you get and is written from a run on the reference cl
 
 == The shape
 
+The four other repositories' pages follow this guide; their maintainers are the ones who change them.
+
 * *The sentence first.* A playbook's steps and a concept page's opening carry the sentence the reader says to Claude Code in Thinkube IDE, what Claude calls, and what they have afterwards. Every sentence is run on the reference cluster exactly as written before it is published.
 * *One shape per type.* xref:contributing/page-types.adoc[Page types] fixes it. Follow it.
 * *Why, then how.* Each step opens with one sentence on why it exists, then the sentence to Claude, then the click path, then the expected output as it came back.
 * *The present only.* A page says how the platform works now. What an earlier design did, what was tried, and what changed belong in commit messages.
-* *Positive polarity.* Say what a thing does and what you get. A heading never starts with "Not". A condition is a Troubleshooting row or a Good to know line, phrased as what makes it work.
+* *Positive polarity.* Say what a thing does and what you get. A heading never starts with "Not". A condition is stated where the reader needs it, in the step or section it affects, or as a Troubleshooting row, phrased as what makes it work.
 * *Say it once.* xref:start-here/what-is-thinkube.adoc[What Thinkube is] and the four area pages own the ideas. Every other page links to the owner in one sentence and never restates it.
 * *Clarity over coverage.* Explain a few things well; Claude sees the whole API and can be asked for the rest. No page lists an API in full.
 * *Time: 30 minutes at least.* A playbook's time is what a reader should set aside: 30 minutes, or longer when its measured run takes longer. The measured figures go under *Time & risk*, from the records of the run: deployments, mirror jobs, notebook runs, model loads. Several runs give a range, one run gives "about", and the record ids go in the commit message. A figure that depends on many variables is left out.
@@ -70,7 +72,3 @@ Every factual sentence is checked against the source that makes it true, and the
 == Admonitions
 
 Rare. A NOTE is an aside the reader can skip. An IMPORTANT is something they must get right or the task fails. A WARNING is an action that can lose data. Anything else is prose.
-
-== Good to know
-
-The four other repositories' pages follow this guide; their maintainers are the ones who change them.

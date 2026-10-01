@@ -22,16 +22,18 @@ Copy the skeleton for the type and fill it in order. A playbook is one task, run
 
 | `reference`
 | Exact lookup material: fields, operations, catalogues.
-| One section per thing, tables preferred; *Good to know* for the conditions that make it work.
+| One section per thing, tables preferred; a condition that makes a thing work is stated in that thing's section.
 |===
 
 Three rules apply to every type:
 
 * *One type per page.* A page that explains an area and walks through a task is two pages that link to each other.
-* *Positive polarity.* Say what a thing does and what you get. A heading never starts with "Not". A condition is a row in Troubleshooting or a line under Good to know, phrased as what makes it work.
+* *Positive polarity.* Say what a thing does and what you get. A heading never starts with "Not". A condition is stated where the reader needs it, in the step or section it affects, or as a Troubleshooting row, phrased as what makes it work.
 * *Say it once.* Each idea has one owner: xref:start-here/what-is-thinkube.adoc[What Thinkube is] or the page of its area. Every other page links to it in one sentence.
 
 == Skeletons
+
+Pages of the other four repositories (install, control, tandem, webapp-template) follow the same shapes; their skeletons are these.
 
 === playbook
 
@@ -53,7 +55,3 @@ include::example$templates/concept.adoc[]
 ----
 include::example$templates/reference.adoc[]
 ----
-
-== Good to know
-
-Pages of the other four repositories (install, control, tandem, webapp-template) follow the same shapes; their skeletons are these.

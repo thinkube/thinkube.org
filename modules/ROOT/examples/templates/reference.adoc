@@ -14,7 +14,3 @@ _<One sentence: what this page is the reference for, and its scope.>_
 
 | `field` | string | <Exact meaning, one line.>
 |===
-
-== Good to know
-
-* <One line each: the condition that makes it work, and where the rest is.>

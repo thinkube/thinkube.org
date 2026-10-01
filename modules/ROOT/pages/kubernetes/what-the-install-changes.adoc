@@ -40,7 +40,7 @@ The installer runs on one machine and changes the other machines over SSH. It le
 | The network scan finds a server when its SSH banner is Ubuntu's. Hardware detection must report CPUs, memory and disk.
 
 | Control plane
-| Exactly one. At least 16 CPU cores and 64 GB of memory. The installer offers only machines this size for the role. The Kubernetes install stops on a smaller machine, and on a system other than Ubuntu 24.04. With a DGX Spark and other machines, choose another machine, so the Spark's shared memory stays for AI work.
+| Exactly one. At least 16 CPU cores and 64 GB of memory. The installer offers only machines this size for the role. The Kubernetes install stops on a smaller machine, and on a system other than Ubuntu 24.04. With a DGX Spark and other machines, choose another machine, so the Spark's shared memory stays for AI work. A worker of any size joins the cluster.
 
 | GPU node
 | NVIDIA driver 580 or newer. A GPU older than Volta is reported as unsupported.
@@ -69,6 +69,8 @@ Nothing checks for a clean machine. An existing Docker Engine, containerd or Pyt
 | GPU node without a working driver
 | `ubuntu-drivers-common` and the NVIDIA driver `ubuntu-drivers` recommends. Not on a DGX Spark, whose driver comes with its OS.
 |===
+
+The GitHub CLI (`gh`) and the Argo CLI (`argo`) are installed for amd64 only.
 
 Two apt repositories are added on the control plane and the workers, Docker's and Kubernetes', with their keys.
 
@@ -230,8 +232,3 @@ The optional Prometheus component adds 9100 for node metrics on every node.
 | Ollama and its models
 | Not touched.
 |===
-
-== Good to know
-
-* A worker of any size joins the cluster.
-* The GitHub CLI and the Argo CLI are installed for amd64 only.

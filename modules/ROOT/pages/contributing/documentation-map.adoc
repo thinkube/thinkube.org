@@ -41,6 +41,4 @@ The site is one Antora component assembled from five repositories. A page about 
 . Run the playbook on the reference cluster as written. Check every fact against source and name the file in the commit.
 . Build with `npx --no-install antora --fetch antora-playbook.yml`; the build must print no warnings.
 
-== Good to know
-
 Screen captures are taken with `tools/capture.mjs` in `thinkube.org`. The installer's own screens run in a desktop application and are captured by hand.
