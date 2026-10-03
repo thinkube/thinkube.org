@@ -11,6 +11,9 @@ site:
   url: /
 
 content:
+  # Pages that live beside their code are read from the branch the release
+  # installs from (release-ref). The web app template has no release branch:
+  # its release tags are cut from main, so its pages are read from main.
   sources:
     - url: .
       branches: HEAD
@@ -19,16 +22,16 @@ content:
     # repo that performs the install, and Antora aggregates it here at build
     # time. The installer repo is public, so the cluster build fetches it too.
     - url: https://github.com/thinkube/thinkube-installer.git
-      branches: main
+      branches: release-ref
       start_path: docs
     # docs-with-code: thinkube-control's docs live in its own repo,
     # beside the control-plane code they describe, and aggregate here at build time.
     - url: https://github.com/thinkube/thinkube-control.git
-      branches: main
+      branches: release-ref
       start_path: docs
     # docs-with-code: Tandem's user docs live beside the extension code.
     - url: https://github.com/thinkube/thinkube-tandem.git
-      branches: main
+      branches: release-ref
       start_path: docs
     # docs-with-code: the web app template teaches the template round trip, and
     # its pages live in the template they describe so they stay true to it.
