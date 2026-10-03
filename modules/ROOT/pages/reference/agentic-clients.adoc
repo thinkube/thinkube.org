@@ -30,7 +30,7 @@ Open a terminal in Thinkube IDE and run `opencode` or `pi`, or open the Pi Agent
 | `claude` in a terminal, or the Claude Code panel. It signs in to your Anthropic account.
 |===
 
-Each version is fixed in the Thinkube IDE image, and no client updates itself. The image build checks the license of every package the clients depend on and stops on a GPL or AGPL license. The list it checked is `/opt/agent-clients/licenses.tsv` in Thinkube IDE.
+Each version is fixed in the Thinkube IDE image, and no client updates itself. The packages the clients depend on are listed in `/opt/agent-clients/package-lock.json` in Thinkube IDE; none is under GPL or AGPL.
 
 == Models
 
