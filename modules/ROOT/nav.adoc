@@ -42,6 +42,7 @@
 ** xref:control:llm-serving.adoc[LLM serving and models]
 ** xref:control:notebooks.adoc[Notebook execution over MCP]
 ** xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines]
+** xref:reference/agentic-clients.adoc[Agentic clients in Thinkube IDE]
 * Catalogues
 ** xref:reference/templates.adoc[Templates catalog]
 ** xref:reference/components.adoc[Components catalog]
