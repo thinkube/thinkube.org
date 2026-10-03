@@ -42,14 +42,14 @@ opencode and Pi use the LLM Gateway at `https://llm.<your domain>/v1` and name m
 
 | `thinkube-fast` (the default)
 | Qwen 3.6 35B-A3B, NVFP4 (`nvidia/Qwen3.6-35B-A3B-NVFP4`)
-| 32,768 tokens
+| 262,144 tokens
 
 | `thinkube-deep`
 | Qwen 3.8 27B, NVFP4 (`nvidia/Qwen3.8-27B-NVFP4`)
 | 32,768 tokens
 |===
 
-Context is what the clients are set up for: load each model with a 32,768-token context, the largest Thinkube Control offers by default. A model answers once it is loaded. Ask Claude: "load nvidia/Qwen3.6-35B-A3B-NVFP4 with a 32768 token context", or load it on the *Models* page of Thinkube Control. The clients sign in to the gateway with the Thinkube Control API token that Thinkube IDE carries as `THINKUBE_API_TOKEN`.
+Context is what the clients are set up for, so load each model with the context in the table. A model answers once it is loaded. Ask Claude: "load nvidia/Qwen3.6-35B-A3B-NVFP4 with a 262144 token context", or load it on the *Models* page of Thinkube Control. The clients sign in to the gateway with the Thinkube Control API token that Thinkube IDE carries as `THINKUBE_API_TOKEN`.
 
 == MCP servers
 
