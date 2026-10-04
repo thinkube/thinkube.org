@@ -31,7 +31,7 @@ content:
       start_path: docs
     # docs-with-code: Tandem's user docs live beside the extension code.
     - url: https://github.com/thinkube/thinkube-tandem.git
-      branches: release-ref
+      branches: release-0.1
       start_path: docs
     # docs-with-code: the web app template teaches the template round trip, and
     # its pages live in the template they describe so they stay true to it.
