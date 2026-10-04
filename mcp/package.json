@@ -1,0 +1,12 @@
+{
+  "name": "thinkube-docs-mcp",
+  "version": "0.1.0",
+  "description": "Context7-style MCP server exposing the Thinkube docs to Claude, reusing Antora's Lunr index.",
+  "type": "module",
+  "private": true,
+  "bin": { "thinkube-docs-mcp": "./server.mjs" },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "lunr": "2.3.9"
+  }
+}

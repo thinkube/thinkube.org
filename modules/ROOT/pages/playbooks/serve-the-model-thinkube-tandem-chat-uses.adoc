@@ -1,0 +1,121 @@
+= Serve the model Thinkube Tandem Chat uses
+:page-type: playbook
+:page-area: tandem
+:page-tagline: Mirror and load the model behind the gateway alias thinkube-fast, then ask your first question in a Thinkube Tandem Chat
+:page-difficulty: beginner
+:page-time: 2 h
+:page-risk: low
+:page-tags: Thinkube Tandem Chat, LLM Gateway, vLLM
+:page-order: 5
+:page-updated: 2026-10-03
+
+== Overview
+
+=== Basic idea
+
+Thinkube Tandem Chat runs Pi or opencode on a model your cluster serves. The agents name it only by a gateway alias, `thinkube-fast`, and the LLM Gateway answers that alias as `nvidia/Qwen3.6-35B-A3B-NVFP4`. Until that model is loaded, a Tandem Chat has nothing to answer with.
+
+* *One alias, one model.* `thinkube-fast` is a Qwen 3.6 model of 35B parameters, 3B of them active per token, quantized to NVFP4. The agents never name the model itself, so a later change of model changes no agent setting.
+* *The whole context.* The agents are set up for a 262,144 token context, so the model is loaded with it. On the DGX Spark, vLLM has room for 934,356 tokens of KV cache with this model, so the whole context fits.
+* *By hand first.* Tandem Chat cannot load the model it runs on, so Steps 1 to 3 are done in Thinkube Control and a terminal. Step 4 is the first question to the agent.
+
+=== What you'll accomplish
+
+`thinkube-fast` answers at your gateway, and a Thinkube Tandem Chat answers a question about your platform with it.
+
+=== What to know before starting
+
+*Required*
+
+* xref:playbooks/serve-your-first-model.adoc[Serve your first model]: the mirror, load and unload cycle.
+
+*Optional*
+
+* xref:reference/agentic-clients.adoc[Agentic clients in Thinkube IDE]: what Pi, opencode and Thinkube Tandem Chat are set up with.
+
+=== Supported hardware
+
+* *GPU:* a Blackwell GPU, such as the DGX Spark's GB10. The weights are NVFP4, about 18 GB. This playbook was run on the DGX Spark only.
+* *Architecture:* the arm64 DGX Spark, as run here.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE and Thinkube Control open.
+
+*Components*
+
+* The optional component vLLM. In Thinkube Control open *Optional Components*; if vLLM is not installed, choose *Install* on it.
+
+== Instructions
+
+=== Step 1. Mirror the model
+
+The weights are copied once into your storage, and every later load reads them from there.
+
+In Thinkube Control open *AI Models* and choose *Mirror* on *Qwen 3.6 35B-A3B NVFP4 (Blackwell)*. The model shows as mirrored when the copy ends.
+
+The mirror took 1 hour 40 minutes on the reference run.
+
+=== Step 2. Load it with its whole context
+
+The load starts a vLLM engine on the node and reserves the memory for the context.
+
+In Thinkube Control open *LLM Gateway* and choose *Load* on the model. In the dialog pick your Blackwell node under *Target GPU Node* (tkspark on the reference cluster) and the largest value under *Context Length*, then choose *Load Model*.
+
+On the reference run the model became *available* on `vllm-tkspark`.
+
+=== Step 3. Call the alias at the gateway
+
+This is the call the agents make: the alias, not the model's name. In a terminal of Thinkube IDE:
+
+[source,bash]
+----
+curl -s https://llm.<your domain>/v1/chat/completions \
+  -H "Authorization: Bearer $THINKUBE_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "thinkube-fast", "messages": [{"role": "user", "content": "Say hello in five words."}]}'
+----
+
+Expected output, from the reference run:
+
+----
+model: nvidia/Qwen3.6-35B-A3B-NVFP4
+content: Hello, how are you today?
+----
+
+=== Step 4. Ask a Thinkube Tandem Chat
+
+The chat uses the alias of Step 3 and the Thinkube Control tools.
+
+In the chat panel of Thinkube IDE, open the menu beside *+* and choose *New Tandem (powered by Pi) Session*. Then ask:
+
+----
+› How many services does Thinkube Control report? Use list_services_minimal.
+----
+
+Expected output, from the reference run:
+
+----
+Thinkube Control reports 18 services, all enabled.
+----
+
+=== Step 5. Next steps
+
+*To undo:* Unload the model in *LLM Gateway*. The weights stay in your storage for the next load, and Thinkube Tandem Chat has no model until then.
+
+* xref:reference/agentic-clients.adoc[Agentic clients in Thinkube IDE]: the confirmation before a change, edits you can undo, and the other agent, opencode.
+* xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: what a node holds, and what happens when it is busy.
+
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| The chat panel and its *New Tandem* entries are gone
+| *Disable AI Features* was chosen on the built-in GitHub Copilot extension, which sets `chat.disableAIFeatures` and hides every chat
+| In *Extensions*, search `@builtin copilot`, choose *Enable AI Features* on GitHub Copilot, and reload the page.
+|===

@@ -1,0 +1,41 @@
+= Thinkube Models
+:page-type: concept
+:page-layout: area
+:page-area: models
+:page-aliases: lifecycle/notebooks.adoc, lifecycle/example-notebooks.adoc, concepts/models.adoc, concepts/improving-a-model.adoc, concepts/building-with-models.adoc
+
+Open models on your own GPUs: get one, serve it at one address, work with it in notebooks, fine-tune it, and serve the result the same way.
+
+Ask your agent: _"get Qwen/Qwen3-8B and load it on the spark"_. The model is mirrored once into your storage and served at `llm.<your domain>` through the OpenAI or Anthropic API. Write your app or your notebook against that address. When the prompt is not enough, fine-tune the model in a notebook, register the result, and load it at the same address.
+
+[d2,alt="A model is mirrored from Hugging Face into Thinkube Storage and served at the LLM Gateway; apps and notebooks call the gateway; a notebook fine-tunes the model, registers the result in Thinkube Experiments, and the result is served at the same gateway"]
+....
+direction: down
+hf: "Hugging Face"
+mirror: "Thinkube Storage\nthe weights, once"
+gateway: "LLM Gateway\nllm.<your domain>"
+callers: "your apps\nand notebooks"
+notebook: "Thinkube Notebooks\nfine-tune"
+experiments: "Thinkube Experiments\nthe run and\nthe registered model"
+hf -> mirror: "mirror"
+mirror -> gateway: "load"
+callers -> gateway: "call"
+mirror -> notebook: "base model"
+notebook -> experiments: "register"
+experiments -> gateway: "load"
+....
+
+== How it works
+
+* *A model is a file of weights.* Its size is counted in parameters. Its context window, counted in tokens, is how much text it can read at one time. Quantization stores the weights in fewer bits: BF16 is the full model, FP8, FP4 and Q4 are smaller copies that fit a smaller GPU. At 16 bits a model needs about two gigabytes of GPU memory per billion parameters, plus room for the context; at 4 bits, a quarter of that. The catalogue carries each model's size, quantization and context, and the platform says what fits your GPU before you download anything.
+* *Mirrored once, served at one address.* The weights are downloaded once from Hugging Face into Thinkube Storage. A load starts a serving engine on the node you choose, with the context length you choose, and registers the model with the LLM Gateway. The engines are optional components: vLLM, TensorRT-LLM, Ollama for quantized GGUF models, and text-embeddings for embedding models. A vLLM, TensorRT-LLM or text-embeddings engine serves one model per node; Ollama's holds several.
+* *Notebooks on the same filesystem as the IDE.* Thinkube Notebooks is JupyterLab at `notebooks.<your domain>`. Two environments come with the platform: `fine-tuning` with the training libraries, and `agent-dev` with LangChain, AG2, CrewAI and LangGraph. Both are built per architecture. Both include `tk_llm`, a Python helper already set up for your gateway. An environment of your own starts from one of them. The agent opens, runs and reads notebooks through Thinkube Control, in your server or in a server of its own that stops when the run ends.
+* *The example notebooks.* The first server start copies them into `notebooks/examples/`: `research-assistant/` with four notebooks that check the platform, load the models, index papers and run a debate, and `zebra-grpo/` with the fine-tuning notebook. Each start also puts a fresh copy in `templates/examples/`, for you to take when you want it.
+* *Improving a model.* Fine-tuning trains an existing model a little further on your examples. A LoRA adapter (a small add-on file trained beside the model) is a few hundred megabytes and trains on one GPU in hours. When a program can check an answer, the program replaces the examples: the model tries, the checker scores, and the model learns from the score. Distillation lets a large model teach a small one. Thinkube Experiments records every run and the model it produced, and a registered model is served exactly like a mirrored one.
+* *Building with models.* An embedding model turns text into vectors, and a vector store finds the nearest ones: search by meaning. Retrieval puts the documents found into the prompt, so the model answers from your documents and cites them. Tool calling lets a model ask for a function to be run. An agent repeats that in a loop, and the catalogue marks the models that can do it. Langfuse traces every call, with its prompts, its documents, its tools and its latency, and those traces are the record you fine-tune from next.
+
+== Reference
+
+* xref:control:llm-serving.adoc[LLM serving and models]: model states, load options, sizing, routing and authentication at the gateway.
+* xref:control:notebooks.adoc[Notebook execution over MCP]: every notebook operation and what it answers.
+* xref:reference/components.adoc[Components catalog]: the inference backends, vector stores and tracing.

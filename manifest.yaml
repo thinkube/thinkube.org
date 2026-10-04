@@ -1,0 +1,14 @@
+# Copyright Alejandro Martínez Corriá and the Thinkube contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: thinkube.io/v1
+kind: TemplateManifest
+metadata:
+  name: thinkube-docs
+  title: "Thinkube Documentation"
+  description: Official documentation site for the Thinkube platform, built with Antora and AsciiDoc.
+  version: 0.1.0
+  author: Thinkube
+  tags: ["documentation", "antora", "asciidoc"]
+
+parameters: []

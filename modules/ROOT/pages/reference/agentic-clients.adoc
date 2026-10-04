@@ -1,0 +1,151 @@
+= Agentic clients in Thinkube IDE
+:page-type: reference
+
+_The three agentic clients Thinkube IDE carries, Thinkube Tandem Chat that brings two of them into the chat panel, the models and MCP servers they are set up with, what they keep inside the cluster, and how to add a Claude API key._
+
+.TL;DR
+In the chat panel of Thinkube IDE, open the menu beside *+* and choose *New Tandem (powered by Pi) Session*, or run `pi` or `opencode` in a terminal. Ask: "which Thinkube services are running?". The client calls the `list_services_minimal` tool of Thinkube Control and answers from it, with a model served by the LLM Gateway. Nothing leaves the cluster. The agent is installed beside them and works with your Anthropic account. Read this page to see what each client is set up with, or to add a Claude API key.
+
+// TODO(default-client): which client Thinkube IDE recommends by default is decided by a benchmark of the three on Thinkube tasks; this page names it once the benchmark has run.
+
+== The clients
+
+[cols="1,1,1,3",options="header"]
+|===
+| Client | Version | License | How you open it
+
+| opencode
+| 1.18.34
+| MIT
+| `opencode` in a terminal, the *opencode* terminal profile, the task *opencode - New Session*, or *New Tandem (powered by opencode) Session* in the chat panel.
+
+| Pi
+| 1.0.0
+| MIT
+| `pi` in a terminal, the *pi* terminal profile, the task *Pi - New Session*, or *New Tandem (powered by Pi) Session* in the chat panel.
+
+| Claude Code
+| 2.1.288
+| Anthropic's terms
+| `claude` in a terminal, or the Claude Code panel. It signs in to your Anthropic account.
+|===
+
+Each version is fixed in the Thinkube IDE image, and no client updates itself. The packages the clients depend on are listed in `/opt/agent-clients/package-lock.json` in Thinkube IDE; none is under GPL or AGPL. Pi also loads two extensions of its own package: `permission-gate`, which asks before `rm -rf`, `sudo` and `chmod`/`chown 777` in a shell command, and `subagent`, which hands a task to a separate Pi with the `scout`, `planner`, `reviewer` or `worker` instructions. A subagent runs on the model of the Pi that starts it.
+
+== Thinkube Tandem Chat
+
+Thinkube Tandem Chat is a Thinkube IDE extension that runs Pi or opencode as a chat of VS Code's chat panel, with the same configuration as in a terminal. It needs no GitHub account.
+
+* *A chat is a session.* Each chat keeps its agent session: the next message continues it, also after a reload, and the chat lists in *Sessions*.
+* *Questions in the chat.* A confirmation or a permission request of the agent is asked in the chat, with its choices.
+* *Edits you can undo.* A file Pi changes shows as a change with *Keep* and *Undo*. Pi waits before each edit until VS Code has recorded the file.
+
+== Models
+
+opencode and Pi use the LLM Gateway at `https://llm.<your domain>/v1` and name models only by its aliases. The gateway answers each alias as the model behind it.
+
+[cols="1,2,1",options="header"]
+|===
+| Alias | Model | Context
+
+| `thinkube-fast` (the default)
+| Qwen 3.6 35B-A3B, NVFP4 (`nvidia/Qwen3.6-35B-A3B-NVFP4`)
+| 262,144 tokens
+
+| `thinkube-deep`
+| Qwen 3.8 27B, NVFP4 (`nvidia/Qwen3.8-27B-NVFP4`)
+| 32,768 tokens
+|===
+
+Context is what the clients are set up for, so load each model with the context in the table. A model answers once it is loaded. Ask your agent: "load nvidia/Qwen3.6-35B-A3B-NVFP4 with a 262144 token context", or load it on the *Models* page of Thinkube Control. The clients sign in to the gateway with the Thinkube Control API token that Thinkube IDE carries as `THINKUBE_API_TOKEN`.
+
+== MCP servers
+
+Every client is connected to the same servers.
+
+[cols="1,3",options="header"]
+|===
+| Server | What it offers
+
+| `thinkube-control` | Thinkube Control: services, apps, templates, models, images, secrets and notebooks
+| `tk-package-version` | The latest versions of npm, PyPI, Go and Cargo packages and container images
+| `playwright` | A headless browser to open and test web apps
+|===
+
+== Tools that change the platform
+
+A tool that only reads, such as `list_services_minimal` or `get_llm_models`, runs at once. Every other tool of these servers, such as `delete_model`, `uninstall_optional_component`, `toggle_service` or `restart_service`, asks you first.
+
+[cols="1,3",options="header"]
+|===
+| Client | How it asks
+
+| opencode
+| Its permission prompt, before the call, in the terminal or in the chat. `opencode run` answers no to every prompt.
+
+| Pi
+| A confirmation with the tool's arguments, in the terminal or in the chat. `pi -p` and `pi --mode json` have nobody to ask, and the call is refused.
+
+| Claude Code
+| Its own permission settings. Thinkube IDE allows every tool of `thinkube-control` and `tk-package-version` without asking.
+|===
+
+== What stays in the cluster
+
+The clients send your prompts and files to the LLM Gateway only. Each other connection they could make is switched off.
+
+[cols="1,2,2",options="header"]
+|===
+| Client | Connection | Switched off by
+
+| opencode | Update check | `"autoupdate": false`, `OPENCODE_DISABLE_AUTOUPDATE`
+| opencode | Model catalog download from opencode.ai | `OPENCODE_DISABLE_MODELS_FETCH`
+| opencode | Session sharing on opencode.ai | `"share": "disabled"`
+| opencode | Language server downloads | `OPENCODE_DISABLE_LSP_DOWNLOAD`
+| opencode | Built-in sign-in plugins for hosted providers | `OPENCODE_DISABLE_DEFAULT_PLUGINS`
+| opencode | Hosted providers | `"enabled_providers": ["thinkube", "anthropic"]`; Anthropic needs your API key
+| opencode | Plugin package download at start | The package is in the image and linked into `~/.config/opencode`
+| Pi | Install report to pi.dev | `PI_TELEMETRY=0`, `"enableInstallTelemetry": false`
+| Pi | Version check and model catalog refresh from pi.dev | `PI_OFFLINE=1`
+| Claude Code | Telemetry and error reports | `DISABLE_TELEMETRY`, `DISABLE_ERROR_REPORTING`
+| Claude Code | Self-update | `DISABLE_AUTOUPDATER`
+|===
+
+Claude Code sends your prompts to Anthropic: it is the client for work with Claude.
+
+== Instructions
+
+Each client reads the platform's operating instructions from one global `AGENTS.md`: the git, infrastructure, comment, CI/CD and operations rules, among others.
+
+[cols="1,2",options="header"]
+|===
+| Client | File
+
+| opencode | `~/.config/opencode/AGENTS.md`
+| Pi | `~/.pi/agent/AGENTS.md`
+| Claude Code | `~/.claude/AGENTS.md`, imported by `~/.claude/CLAUDE.md`
+|===
+
+Thinkube writes these files each time it configures Thinkube IDE. Put your own instructions in a project's `AGENTS.md`, which every client reads too.
+
+== Add a Claude API key
+
+opencode and Pi use Claude with an Anthropic API key, created in the Anthropic Console.
+
+[cols="1,3",options="header"]
+|===
+| Client | Steps
+
+| opencode
+| Run `/connect`, choose *Anthropic*, then *Manually enter API Key*, and paste the key. Choose a Claude model with `/models`.
+
+| Pi
+| Run `/login`, choose *Anthropic*, then the API key option, and paste the key. Choose a Claude model with `/model`.
+|===
+
+Both clients also read the key from `ANTHROPIC_API_KEY` when it is set in the terminal they start in.
+
+== Limits
+
+* Thinkube Tandem Chat tracks Pi's edits only; opencode's edits show no *Keep* and *Undo*.
+* An edit to an existing file outside the workspace folders shows no change, because VS Code does not watch that file.

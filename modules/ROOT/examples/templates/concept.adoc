@@ -1,0 +1,22 @@
+= <The area, or What Thinkube is>
+:page-type: concept
+:page-layout: area
+:page-area: <kubernetes | gitops | models | tandem>
+
+<One or two sentences: what the area is and what you get.>
+
+Ask your agent: _"<the sentence>"_. <What happens, in two sentences.>
+
+[d2,alt="<what the diagram shows>"]
+....
+direction: down
+<…>
+....
+
+== How it works
+
+* *<Bold lead.>* <One idea, said once, in three sentences at most.>
+
+== Reference
+
+* xref:<page>[<Page>]: <what it holds.>

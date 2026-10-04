@@ -1,0 +1,23 @@
+# Copyright Alejandro Martínez Corriá and the Thinkube contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+metadata:
+  # The application's version; the generated app starts at it.
+  version: "0.1.0"
+
+spec:
+  deployment:
+    type: app
+
+  containers:
+    - name: docs
+      build: .
+      port: 8080
+      size: small
+      health: /
+
+  routes:
+    - path: /
+      to: docs

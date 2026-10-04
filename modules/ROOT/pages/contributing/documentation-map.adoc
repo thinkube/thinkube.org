@@ -1,0 +1,44 @@
+= Documentation map
+:page-type: reference
+
+_Every page of the site, where its source lives, and the type it is written as. The one place that says where things live._
+
+.TL;DR
+The site is one Antora component assembled from five repositories. A page about a product stays in that product's repository, beside the code; the site's own pages are in `thinkube.org`. The sidebar in `modules/ROOT/nav.adoc` of `thinkube.org` lists every page once, in this order.
+
+== Sources
+
+[cols="1,2,2",options="header"]
+|===
+| Module | Repository and start path | Pages
+
+| ROOT | `thinkube/thinkube.org`, `.` | What Thinkube is, the area pages of Thinkube Kubernetes, Thinkube GitOps and Thinkube Models, their playbooks, the reference pages and Contributing
+| `install` | `thinkube/thinkube-installer`, `docs` | The seven Install pages
+| `control` | `thinkube/thinkube-control`, `docs` | Thinkube Control, LLM serving and models, Notebook execution over MCP
+| `tandem` | `thinkube/thinkube-tandem`, `docs` | Thinkube Tandem, its two playbooks and four reference pages
+| `webapp-template` | `thinkube/tkt-webapp-react-fastapi`, `template-docs` | Four playbooks and two reference pages of the web app template
+|===
+
+== The menus and their pages
+
+* *Getting started.* xref:start-here/what-is-thinkube.adoc[What Thinkube is]; the four area pages, xref:kubernetes/index.adoc[Thinkube Kubernetes], xref:apps/index.adoc[Thinkube GitOps], xref:lifecycle/index.adoc[Thinkube Models], xref:tandem:index.adoc[Thinkube Tandem]; xref:install:overview.adoc[Install Thinkube] and its six pages.
+* *Playbooks*, by area. Thinkube Kubernetes: xref:playbooks/check-and-restart-services-from-your-agent.adoc[Check and restart services from your agent], xref:playbooks/install-and-remove-optional-components.adoc[Install and remove optional components]. Thinkube GitOps: xref:webapp-template:build-a-web-app.adoc[Build a web app from the template], xref:webapp-template:change-your-app.adoc[Change your app and ship it], xref:webapp-template:configure-your-app.adoc[Pass configuration to your app], xref:webapp-template:publish-your-app-as-a-template.adoc[Publish your app as a template], xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app], xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service], xref:playbooks/store-and-fetch-files.adoc[Store and fetch files with the file gateway]. Thinkube Models: xref:playbooks/serve-your-first-model.adoc[Serve your first model], xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose], xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script], xref:playbooks/build-a-notebook-environment.adoc[Build a notebook environment], xref:playbooks/run-notebooks-from-your-agent.adoc[Run notebooks from your agent, watched or unattended], xref:playbooks/build-a-research-assistant-over-your-papers.adoc[Build a research assistant over your papers], xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks], xref:playbooks/serve-a-model-you-fine-tuned.adoc[Serve a model you fine-tuned]. Thinkube Tandem: xref:tandem:build-your-first-change-with-tandem.adoc[Build your first application change with Tandem], xref:tandem:turn-what-the-reviewers-noticed-into-the-next-change.adoc[Build the improvements Tandem's reviewers suggest].
+* *Reference.* xref:reference/thinkube-yaml.adoc[thinkube.yaml], xref:reference/templates.adoc[Templates catalog], xref:reference/components.adoc[Components catalog], xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines], xref:control:index.adoc[Thinkube Control], xref:control:llm-serving.adoc[LLM serving and models], xref:control:notebooks.adoc[Notebook execution over MCP], xref:webapp-template:anatomy.adoc[What is in the web app template], xref:webapp-template:variables.adoc[How configuration reaches your app], xref:tandem:words-on-the-page.adoc[The words on the page], xref:tandem:configuration.adoc[Configuration and settings], xref:tandem:store.adoc[The store], xref:tandem:defects.adoc[The defect ledger, reference].
+* *Contributing.* xref:contributing/page-types.adoc[Page types], xref:contributing/style-guide.adoc[Style guide], this page.
+
+== Kept off the site, on purpose
+
+* The services behind the branded names, Gitea, Harbor, ArgoCD, MLflow, Keycloak, JuiceFS, SeaweedFS, PostgreSQL, DevPI, Argo Workflows, and the optional components get no pages about their own interfaces. They appear as mechanism on xref:start-here/what-is-thinkube.adoc[What Thinkube is] and the area pages, and as entries in the xref:reference/components.adoc[components catalog].
+* The platform's own uses of `thinkube.yaml`, components and repositories the platform does not deploy, are platform development and are documented for maintainers outside the site.
+* A playbook is published only from a run that completed end to end on the reference cluster.
+* The full list of MCP operations is what the agent reads at `/mcp`; the site names the ones a playbook calls.
+
+== Adding a page
+
+. Decide the type and copy its skeleton from xref:contributing/page-types.adoc[Page types].
+. Put it in the repository of the product it describes; only the site's own pages go in `thinkube.org`.
+. Add it to `modules/ROOT/nav.adoc` in `thinkube.org`, once, under its section.
+. Run the playbook on the reference cluster as written. Check every fact against source and name the file in the commit.
+. Build with `npx --no-install antora --fetch antora-playbook.yml`; the build must print no warnings.
+
+Screen captures are taken with `tools/capture.mjs` in `thinkube.org`. The installer's own screens run in a desktop application and are captured by hand.

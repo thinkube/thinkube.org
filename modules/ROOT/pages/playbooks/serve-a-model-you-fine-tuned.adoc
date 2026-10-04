@@ -1,0 +1,209 @@
+= Serve a model you fine-tuned
+:page-type: playbook
+:page-area: models
+:page-tagline: Give a registered fine-tune a catalogue entry, load it on a GPU and call it through the gateway like any other model
+:page-difficulty: intermediate
+:page-time: 30 min
+:page-risk: low
+:page-tags: Fine-tuning, LLM Gateway, vLLM, Model catalogue
+:page-order: 80
+:page-updated: 2026-09-29
+
+== Overview
+
+=== Basic idea
+
+Making a fine-tune callable takes three steps. Once served, you call it like any other model.
+
+* *Registered.* The merged weights are a version in Thinkube Experiments, linked to the run that trained them. Registering puts the weights in your storage.
+* *In the catalogue.* A catalogue entry tells the gateway how to serve the weights: the backend, the reasoning format, whether it calls tools. With both, the model is `deployable`.
+* *Served.* A load puts it on a GPU, and it answers at `llm.<your domain>` by its name, through the same API as every other model.
+
+=== What you'll accomplish
+
+You check that `zebra-rules-qwen35-4b`, the model from xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks], has its catalogue entry, load it on vLLM, have it translate a puzzle's clues through the gateway for the solver to finish, and unload it.
+
+=== What to know before starting
+
+*Required*
+
+* xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks]: the run that registers the model.
+* xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script]: the gateway and its token.
+
+*Optional*
+
+* xref:control:llm-serving.adoc[LLM serving and models]: model states, sizing and routing.
+
+=== Supported hardware
+
+* *GPU:* one NVIDIA GPU with room for 8.7 GB of weights in BF16, the size of its base `unsloth/Qwen3.5-4B`, and the context.
+* *Architecture:* amd64 or arm64.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Ask your agent: _"what's running?"_
+* The fine-tuned model is registered (section 14 of the notebook has run). Ask your agent: _"is zebra-rules-qwen35-4b deployable?"_
+
+*Components*
+
+* The optional component vLLM. Ask your agent: _"is vLLM installed?"_ If it is not, ask _"install vLLM"_.
+
+== Instructions
+
+=== Step 1. Check the catalogue entry
+
+The platform reads the catalogue from two `models.json` files: the platform's, in `thinkube/thinkube-metadata`, and yours, in the private repository `<your GitHub user>/<your GitHub user>-metadata`. When both files have an entry with the same `id`, yours is used. The notebook's section 14 writes the entry for `zebra-rules-qwen35-4b` in yours.
+
+Ask your agent:
+
+----
+› show the catalogue entry for zebra-rules-qwen35-4b
+----
+
+Expected output, from the reference run:
+
+----
+id: zebra-rules-qwen35-4b
+name: Zebra Rules (Qwen3.5-4B fine-tune)
+server_type: [vllm]
+quantization: BF16
+reasoning_format: qwen3
+tool_use: false
+is_finetuned: true
+----
+
+=== Step 2. Make a fine-tune of your own loadable
+
+A model you train under another name is published with the same call as section 14 of the zebra-grpo notebook, with your own catalogue entry and the Thinkube Experiments run of your training:
+
+[source,python]
+----
+import thinkube_models as tkm
+tkm.register_finetuned_model(model, tokenizer, CATALOG_ENTRY, run_id)
+----
+
+It merges the adapter, stores the model, registers the model version, and adds the entry to `models.json` in your `-metadata` repository. Then it waits until the gateway lists the model. The platform reads the catalogue again within 5 minutes.
+
+The entry needs every field, the vLLM backend and the BF16 format. The call stops on an entry that asks for anything else.
+
+The zebra model's entry is a good start:
+
+[source,json]
+----
+{
+  "id": "zebra-rules-qwen35-4b",
+  "name": "Zebra Rules (Qwen3.5-4B fine-tune)",
+  "params_b": 4.7,
+  "active_params_b": null,
+  "quantization": "BF16",
+  "context_length": 262144,
+  "description": "Qwen3.5-4B GRPO-tuned to translate zebra-puzzle clues into formal rules. Produced by the zebra-grpo example notebook.",
+  "server_type": ["vllm"],
+  "task": "text-generation",
+  "reasoning_format": "qwen3",
+  "tool_use": false,
+  "stop_tokens": [],
+  "license": "apache-2.0",
+  "gated": false,
+  "serving_name": "zebra-rules-qwen35-4b",
+  "is_finetuned": true
+}
+----
+
+The `id` is the name the model was registered under in Thinkube Experiments. Take `params_b`, `context_length` and `reasoning_format` from the base model's entry.
+
+=== Step 3. Load it
+
+Ask your agent:
+
+----
+› load zebra-rules-qwen35-4b on tkamd2
+----
+
+Replace tkamd2 with one of your nodes.
+
+Or by hand: in Thinkube Control open *LLM Gateway*, choose *Load* on the model, pick the node and choose *Load Model*.
+
+Expected output, from the reference run:
+
+----
+state: loading
+backend_id: vllm-tkamd2
+----
+
+and then:
+
+----
+state: available
+backend_id: vllm-tkamd2
+----
+
+=== Step 4. Call it and let the solver finish
+
+The model writes the rules; the solver in your code deduces the grid. This is the shape the fine-tune was trained for.
+
+In the zebra-grpo notebook, after its puzzles and solver are defined:
+
+[source,python]
+----
+from tk_llm import get_openai_client
+
+client = get_openai_client()
+pz = eval_puzzles[1]
+reply = client.chat.completions.create(
+    model="zebra-rules-qwen35-4b",
+    messages=[{"role": "user", "content": translation_prompt(pz)}],
+    extra_body={"chat_template_kwargs": {"enable_thinking": False}},
+)
+rules = parse_rules(reply.choices[0].message.content) or []
+grid, n_valid, n_invalid = solve_rules(rules, pz) if rules else (None, 0, 0)
+print(f"Gateway translation: {len(rules)} rules, valid={n_valid}, acc={grade_grid(grid, pz):.2f}")
+----
+
+Expected output, from the reference run:
+
+----
+Gateway translation: 15 rules, valid=15, acc=1.00
+----
+
+Fifteen clues, fifteen valid rules, and every cell of the grid right, on a puzzle the model never trained on.
+
+=== Step 5. Unload it
+
+Ask your agent:
+
+----
+› unload zebra-rules-qwen35-4b
+----
+
+Or by hand: in *LLM Gateway*, choose *Unload* on the model.
+
+Expected output:
+
+----
+state: deployable
+message: Model unloaded successfully
+----
+
+The next load reads the model from your storage.
+
+=== Step 6. Next steps
+
+*To undo:* Unload the model. The registered version stays.
+
+* xref:playbooks/call-your-models-from-an-app-or-a-script.adoc[Call your models from an app or a script]: call the fine-tune from an app.
+* xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: choose the node and the context.
+* xref:playbooks/fine-tune-on-rewards-a-program-checks.adoc[Fine-tune a model on rewards a program checks]: train the next version.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| The load answers `Model 'zebra-rules-qwen35-4b' not found`
+| The model is registered in Thinkube Experiments, and its catalogue entry or its registration record is missing
+| Run section 14 of the notebook again, as in Step 2. It reuses the merged weights in staging, registers a new version and writes both records.
+|===

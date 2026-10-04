@@ -1,0 +1,16 @@
+= <The thing being looked up>
+:page-type: reference
+
+_<One sentence: what this page is the reference for, and its scope.>_
+
+.TL;DR
+<How the agent reads or uses this: the sentence that makes the lookup unnecessary most days, and when to read the page anyway.>
+
+== <Section per thing, exact>
+
+[cols="1,1,3",options="header"]
+|===
+| Name | Type | What it is
+
+| `field` | string | <Exact meaning, one line.>
+|===

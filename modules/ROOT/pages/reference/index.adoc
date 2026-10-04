@@ -1,0 +1,35 @@
+= Reference and concepts
+:page-type: reference
+
+_Exact lookup material and how things work: the platform, the catalogues, the file that describes your apps, and Thinkube Tandem._
+
+.TL;DR
+Most days you work through the agent. Come here for the exact meaning of a field, a component, an operation or a word on the screen, and for how the parts behind it work.
+
+== The platform
+
+* xref:control:index.adoc[Thinkube Control]: the control panel's pages, and the operations the agent calls.
+* xref:control:llm-serving.adoc[LLM serving and models]: model states, loading, sizing, routing, and calling the models.
+* xref:control:notebooks.adoc[Notebook execution over MCP]: starting notebook servers and running notebooks from the agent.
+* xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines]: every package, setting and file the installer puts on each machine.
+
+== Catalogues
+
+* xref:reference/templates.adoc[Templates catalog]: every template, what it deploys, and what it needs.
+* xref:reference/components.adoc[Components catalog]: every component, what provides it, and whether it stays running.
+
+== Your apps
+
+Every app on Thinkube is described by `thinkube.yaml`, one short file at the root of its repository. It says only what you know about your app: its containers, how each is built, the port it listens on, where requests go, and the services it needs, such as a database. At deploy time the platform generates everything Kubernetes needs from it. xref:apps/index.adoc#_thinkube_yaml_your_app_without_the_kubernetes[Thinkube GitOps] explains what it replaces.
+
+* xref:reference/thinkube-yaml.adoc[thinkube.yaml]: every field, with examples.
+* xref:webapp-template:anatomy.adoc[What is in the web app template]: what each file of the template is for.
+* xref:webapp-template:variables.adoc[How configuration reaches your app]: the environment variables your app receives at deploy, and where each comes from.
+
+== Thinkube Tandem
+
+* xref:tandem:words-on-the-page.adoc[The words on the page]: every line, button and state word on Tandem's pages.
+* xref:tandem:configuration.adoc[Configuration and settings]: Tandem's commands and settings in Thinkube IDE.
+* xref:tandem:store.adoc[The store]: what Tandem records about your work, and where it is kept.
+* xref:tandem:defect-ledger.adoc[ODC (Orthogonal Defect Classification): the defect ledger for work done with an AI]: what Tandem records about its runs to improve the process, and why.
+* xref:tandem:defects.adoc[The defect ledger, reference]: the fields of a defect row.

@@ -1,0 +1,162 @@
+= Install and remove optional components
+:page-type: playbook
+:page-area: kubernetes
+:page-tagline: Add a database, a vector store or an inference backend to the platform when you need it, and take it out again
+:page-difficulty: beginner
+:page-time: 30 min
+:page-risk: low
+:page-tags: Optional components, Weaviate, MCP
+:page-order: 50
+:page-updated: 2026-09-17
+
+== Overview
+
+=== Basic idea
+
+The platform installs its core services once. Everything else is an optional component you add when a project needs it: vector stores, databases, observability, inference backends.
+
+* *Installed on request.* An install sets up the component's pods, storage and address.
+* *Requirements first.* Each component names what it needs. The list says whether those are there. An install runs only when they are.
+* *One at a time.* Installs run one at a time; the agent follows each to the end.
+* *Removed with its data kept.* An uninstall removes the pods, the addresses and the configuration. The data volume stays.
+
+=== What you'll accomplish
+
+You list the optional components, install Weaviate, check that it answers, and uninstall it.
+
+=== What to know before starting
+
+*Required*
+
+* Asking your agent in Thinkube IDE to do things on the platform.
+
+*Optional*
+
+* xref:reference/components.adoc[Components catalog]: every component and what it needs.
+* xref:playbooks/check-and-restart-services-from-your-agent.adoc[Check and restart services from your agent]: turning an installed component off and on.
+
+=== Supported hardware
+
+* *GPU:* not needed. Components that serve models, such as vLLM, place their pods on GPU nodes when a model is loaded.
+* *Architecture:* amd64 or arm64.
+
+=== Prerequisites
+
+*Platform*
+
+* Thinkube running, with Thinkube IDE open. Ask your agent: _"what's running?"_
+
+*Components*
+
+* None. Weaviate needs Thinkube Registry, which is a core service.
+
+== Instructions
+
+=== Step 1. List the components
+
+Ask your agent:
+
+----
+› which optional components are installed, and which could I add?
+----
+
+Or by hand: in Thinkube Control open *Optional Components*.
+
+Expected output, from the reference run, shortened:
+
+----
+installed: Prometheus, Perses, OpenSearch, PgAdmin, Qdrant, Knative, Chroma, Valkey,
+           ClickHouse, NATS, Langfuse, Ollama, Langflow, vLLM, TensorRT-LLM, Text Embeddings
+not installed: Weaviate, Argilla, CVAT
+Weaviate: requirements_met: true
+----
+
+=== Step 2. Install one
+
+Ask your agent:
+
+----
+› install Weaviate
+----
+
+Or by hand: on *Optional Components*, choose *Install* on the component.
+
+Expected output, from the reference run:
+
+----
+deployment_id: ca152774-dbb7-44df-83db-f2442d119537
+status: queued
+message: Installation of Weaviate queued at position 1; poll get_deployment_status with the deployment id
+----
+
+The status names the step in progress, such as `Create PersistentVolumeClaim for Weaviate data` or `Wait for Weaviate StatefulSet to be ready`, and at the end:
+
+----
+status: success
+output: Component weaviate installed successfully
+started_at: 00:17:07   completed_at: 00:20:15
+----
+
+=== Step 3. Check that it answers
+
+Ask your agent:
+
+----
+› is Weaviate running?
+----
+
+Expected output, from the reference run:
+
+----
+status: running
+message: All 1 pods running
+----
+
+On the reference run `https://weaviate.<your domain>/v1/.well-known/ready` answered `200`.
+
+=== Step 4. Remove it
+
+Ask your agent:
+
+----
+› uninstall Weaviate
+----
+
+Or by hand: on *Optional Components*, choose *Uninstall* on the component.
+
+Expected output, from the reference run:
+
+----
+status: success
+output: Component weaviate uninstalled successfully
+started_at: 00:21:59   completed_at: 00:23:08
+----
+
+and then Weaviate's status is:
+
+----
+installed: false
+status: not_installed
+message: No pods found
+----
+
+The namespace `weaviate` and its data volume `weaviate-data-pvc`, 10 GiB, stayed.
+
+=== Step 5. Next steps
+
+*To undo:* Uninstall the component.
+
+* xref:playbooks/check-and-restart-services-from-your-agent.adoc[Check and restart services from your agent]: health, restart, and turning a component off.
+* xref:playbooks/deploy-a-service-that-scales-to-zero.adoc[Deploy a serverless service]: an app that uses the Knative component.
+* xref:reference/components.adoc[Components catalog]: what each component provides.
+
+== Troubleshooting
+
+[cols="1,1,2",options="header"]
+|===
+| Symptom | Cause | Fix
+
+| The uninstall answers `400` with `Component 'weaviate' is not installed`
+| The component was already removed, or never installed
+| Ask your agent _"which optional components are installed?"_ and uninstall one from that list.
+|===

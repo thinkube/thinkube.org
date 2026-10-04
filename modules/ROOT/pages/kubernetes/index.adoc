@@ -1,0 +1,49 @@
+= Thinkube Kubernetes
+:page-type: concept
+:page-layout: area
+:page-area: kubernetes
+:page-aliases: kubernetes/networking.adoc, how-it-works/gpu-multiarch.adoc, kubernetes/keeping-it-running.adoc
+
+The base of the platform: unmodified upstream Kubernetes on your machines, with identity, storage, registry, database, certificates and GPUs installed and connected before you open the first page, and Thinkube Control to drive it all from the agent.
+
+Ask your agent: _"what's running?"_ The agent lists every service of the base and everything you added: Thinkube Identity, Thinkube Storage and JuiceFS, Thinkube Registry, Thinkube Git, Argo Workflows and ArgoCD, PostgreSQL, the GPU Operator, Thinkube IDE, Thinkube Notebooks, Thinkube Experiments, Thinkube Packages, your optional components and your apps.
+
+[d2,alt="Thinkube GitOps, Thinkube Models and Thinkube Tandem use Thinkube Kubernetes, which provides Thinkube Control, Thinkube Identity, the gateway with one certificate, Thinkube Storage for objects with JuiceFS as a filesystem on it, Thinkube Registry for container images, PostgreSQL, Thinkube Git, Argo and the GPU Operator"]
+....
+direction: down
+
+areas: "Thinkube GitOps · Thinkube Models · Thinkube Tandem"
+
+base: "Thinkube Kubernetes" {
+  grid-columns: 3
+  grid-gap: 16
+  control: "Thinkube Control\nrun from a coding agent" {width: 210; height: 76}
+  identity: "Thinkube Identity\none sign-on" {width: 210; height: 76}
+  gateway: "Gateway\none certificate" {width: 210; height: 76}
+  storage: "Thinkube Storage\nobject storage" {width: 210; height: 76}
+  juicefs: "JuiceFS\na filesystem on it" {width: 210; height: 76}
+  registry: "Thinkube Registry\ncontainer images" {width: 210; height: 76}
+  data: "PostgreSQL\na database per app" {width: 210; height: 76}
+  git: "Thinkube Git, Argo\nrepositories, builds, deploys" {width: 210; height: 76}
+  gpus: "GPU Operator\nGPUs as slots" {width: 210; height: 76}
+}
+
+areas -> base: "share"
+....
+
+== How it works
+
+* *One sign-on.* Thinkube Identity, powered by Keycloak, is the login of every service, every dashboard and every app you deploy. You sign in once.
+* *One filesystem, one registry.* Thinkube Storage is S3-compatible object storage, and JuiceFS puts a shared filesystem on it: the IDE workspace, the notebooks, the datasets and the model weights are one place. Thinkube Registry, powered by Harbor, holds your app images, the model servers and the notebook images.
+* *Every service at `<name>.<your domain>`, from any device on your tailnet (your private Tailscale network).* Every machine and the cluster's gateway join your tailnet, and your domain resolves on that network only. The cluster's DNS answers every name under your domain with the gateway's address, so a new app needs no DNS record. The gateway holds one wildcard certificate from Let's Encrypt, a certificate that renews itself, and routes each name to its service. The services are reachable on your tailnet only.
+* *A machine that moves keeps working.* When a machine gets a new network address, for example from a new router, the cluster keeps working within a minute.
+* *GPUs as slots, memory as a budget.* The GPU Operator shares each GPU as four slots, so a served model, a fine-tune and an embedding server run on one card. A vLLM, TensorRT-LLM or text-embeddings model takes one slot; Ollama holds several models in one. The platform counts memory per node: on a card, the card's memory; on a DGX Spark, where GPU memory is host memory, a budget of 96 GB (112 GB on a node dedicated to AI) that keeps the machine responsive. A load starts only when it fits.
+* *amd64 and arm64 in one cluster.* Apps run on both amd64 and arm64 machines in one cluster. Images and notebook environments are built for each architecture, and each pod runs on a machine that can run it.
+* *Every operation is a sentence.* Thinkube Control exposes the same operations to its pages and to the agent. The agent reads state freely and changes it when you ask; xref:start-here/what-is-thinkube.adoc#_how_you_work_with_it[What Thinkube is] says where the line is drawn.
+
+== Reference
+
+* xref:install:overview.adoc[Install Thinkube]: what you need, and the order to install in.
+* xref:kubernetes/what-the-install-changes.adoc[What the install changes on your machines]: every package, file, firewall rule and setting, per machine.
+* xref:control:index.adoc[Thinkube Control]: the control panel's pages and the operations behind them.
+* xref:reference/components.adoc[Components catalog]: every core and optional component.

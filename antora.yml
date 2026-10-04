@@ -1,0 +1,9 @@
+# Copyright Alejandro Martínez Corriá and the Thinkube contributors
+# SPDX-License-Identifier: Apache-2.0
+
+name: thinkube-docs
+title: Thinkube
+version: ~
+start_page: index.adoc
+nav:
+  - modules/ROOT/nav.adoc

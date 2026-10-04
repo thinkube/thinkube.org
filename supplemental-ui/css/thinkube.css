@@ -1,0 +1,603 @@
+/*
+ * Copyright Alejandro Martínez Corriá and the Thinkube contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* Thinkube brand over the default Antora UI: Poppins + Noto Sans Mono, sharp
+   corners, the DGX Spark stamp. Colour values are those of thinkube-style
+   (styles.css), written here as hex because the site does not build with it:
+   the logo teal #006680 as primary and brand mark in the light theme, warm
+   text and surfaces; deep teal surfaces with cream headings and marks in the
+   dark theme. */
+
+:root {
+  --th-primary: #006680;        /* --primary, --tk-teal-700 */
+  --th-primary-light: #22829f;  /* --tk-teal-600, hover */
+  --th-accent: #006680;         /* --brand-secondary-text */
+  --th-on-primary: #ffffff;     /* --primary-foreground */
+  --th-link: var(--th-primary);
+  --th-heading: #25211b;        /* --heading */
+  --th-text: #25211b;           /* --foreground */
+  --th-text-2: #37322c;         /* --secondary-foreground */
+  --th-muted: #68625b;          /* --muted-foreground */
+  --th-bg: #fdfaf3;             /* --background */
+  --th-surface: #ffffff;        /* --card */
+  --th-surface-muted: #f0ece4;  /* --secondary */
+  --th-border: #d1cdc7;         /* --border */
+  --th-navbar: var(--th-primary);
+  --th-code-dark: #002935;      /* --tk-teal-950 */
+  --th-shadow: 0, 102, 128;     /* the primary, as rgb for rgba() */
+
+  /* Default-UI variable overrides (names from antora-ui-default) */
+  --navbar-background: var(--th-navbar);
+  --navbar-foreground: #ffffff;
+  --color-primary: var(--th-primary);
+  --link-color: var(--th-link);
+  --link-mouse-color: var(--th-primary-light);
+  --body-font-family: "Poppins", system-ui, -apple-system, sans-serif;
+  --monospace-font-family: "Noto Sans Mono", ui-monospace, monospace;
+}
+
+body {
+  font-family: "Poppins", system-ui, -apple-system, sans-serif;
+  background: var(--th-bg);
+  color: var(--th-text);
+}
+
+code, pre, kbd, .colist > table code {
+  font-family: "Noto Sans Mono", ui-monospace, monospace;
+}
+
+/* Brand the navbar regardless of the bundle's exact variable names */
+.navbar {
+  background: var(--th-navbar);
+}
+.navbar a,
+.navbar .navbar-item,
+.navbar .navbar-link {
+  color: #ffffff;
+}
+
+/* Logo in the navbar brand */
+.navbar-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.navbar-logo img {
+  height: 1.6rem;
+  width: auto;
+  /* the logo is a single dark-teal mark; render it white so it reads on the teal navbar */
+  filter: brightness(0) invert(1);
+}
+
+/* Area-switching lives in the top navbar (Get started / Reference), so hide the
+   default UI's bottom component selector — it silently swapped the whole sidebar. */
+.nav-panel-explore { display: none; }
+
+/* Links in the Thinkube teal; headings in the heading colour, as in thinkube-style */
+.doc a, .toc a:hover, .nav-menu a:hover {
+  color: var(--th-link);
+}
+.doc h1, .doc h2, .doc h3, .doc h4, .doc h5, .doc h6 {
+  color: var(--th-heading);
+  font-family: "Poppins", system-ui, sans-serif;
+}
+
+/* Brand mark for inline emphasis markers */
+.doc .colist > table > tbody > tr > td:first-of-type i {
+  color: var(--th-accent);
+}
+
+/* Sharp corners, like the Thinkube apps */
+*, *::before, *::after { border-radius: 0 !important; }
+
+/* DGX Spark stamp — fixed, rotated, rough-edged (no JS; static markup) */
+#dgx-stamp {
+  position: fixed;
+  top: auto;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 50;
+  padding: 12px 24px;
+  border: 4px solid var(--th-accent);
+  color: var(--th-accent);
+  font: 600 16px/1.2 "Poppins", sans-serif;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+  transform: rotate(-12deg) scale(0.85);
+  opacity: 0.92;
+  pointer-events: none;
+  background: transparent;
+  filter: url(#rough-edges);
+}
+#dgx-stamp strong {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 5px;
+  margin-top: 2px;
+}
+
+body.home { position: relative; }
+body.home #dgx-stamp { position: absolute; top: 7.5rem; bottom: auto; right: 3rem; }
+@media (max-width: 1240px) {
+  body.home #dgx-stamp { display: none; }
+}
+@media (max-width: 1024px) {
+  #dgx-stamp { display: none; }
+}
+
+/* ---- Page types and areas --------------------------------------------------
+   Every page declares :page-type:; article.hbs adds `doc--<type>`. A playbook
+   also declares :page-area:, which adds `area-<area>` and sets --area, the one
+   colour its kicker, card rule and tab are drawn in. The four are chart roles
+   of thinkube-style (--chart-3, --chart-7, --chart-1, --chart-6), each with
+   its dark-theme value, so they keep their contrast on both backgrounds. */
+.area-kubernetes { --area: #366bd3; }
+.area-gitops     { --area: #2e9848; }
+.area-models     { --area: #008ca0; }
+.area-tandem     { --area: #7a4aba; }
+html[data-theme="dark"] .area-kubernetes { --area: #4e82e5; }
+html[data-theme="dark"] .area-gitops     { --area: #44aa5a; }
+html[data-theme="dark"] .area-models     { --area: #13a5b2; }
+html[data-theme="dark"] .area-tandem     { --area: #956ed2; }
+
+.page-type-badge {
+  display: inline-block;
+  font: 700 0.7rem/1 "Poppins", sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.75rem;
+  margin-bottom: 1.25rem;
+  color: var(--th-on-primary);
+  background: var(--th-primary);
+}
+.doc--concept, .doc--reference {
+  padding-top: 1.25rem;
+  border-top: 3px solid var(--th-primary);
+}
+.doc--concept .playbook-kicker, .doc--reference .playbook-kicker { color: var(--th-primary); }
+.doc--concept > h1.page, .doc--reference > h1.page { margin-top: 0; }
+.area-page .doc { padding-top: 1.25rem; border-top: 3px solid var(--area); }
+.area-page .doc > h1.page { margin-top: 0; }
+.area-catalog { margin-top: 2.5rem; }
+.area-catalog > h2 { color: var(--th-heading); }
+
+/* Playbook page header: kicker, title, tagline, one line of facts, tags */
+.doc--playbook { padding-top: 1.25rem; border-top: 3px solid var(--area); }
+.playbook-head { margin-bottom: 1.75rem; }
+.playbook-kicker {
+  font: 700 .74rem/1 "Poppins", sans-serif; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--area); margin: 0 0 .6rem;
+}
+.doc--playbook h1.page { margin-top: 0; }
+.playbook-tagline { font-size: 1.12rem; line-height: 1.5; color: var(--th-text-2); margin: .4rem 0 1.1rem; max-width: 46rem; }
+.playbook-facts {
+  display: flex; flex-wrap: wrap; gap: .5rem 0; margin: 0 0 .9rem; padding: .7rem 0;
+  border-top: 1px solid var(--th-border); border-bottom: 1px solid var(--th-border); font-size: .88rem;
+}
+.playbook-facts > div { display: flex; gap: .4rem; padding-right: 1.1rem; margin-right: 1.1rem; border-right: 1px solid var(--th-border); }
+.playbook-facts > div:last-child { border-right: 0; margin-right: 0; padding-right: 0; }
+.playbook-facts dt { color: var(--th-muted); margin: 0; }
+.playbook-facts dd { margin: 0; color: var(--th-text); font-weight: 600; }
+.playbook-facts dd.cap { text-transform: capitalize; }
+.playbook-facts dd .facts-note { font-weight: 400; text-transform: none; color: var(--th-muted); }
+.playbook-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; }
+.tag { font-size: .76rem; line-height: 1; padding: .32rem .55rem; background: var(--th-surface-muted); color: var(--th-text-2); }
+
+/* Playbook tabs: head-meta.hbs turns the three sections into tabs */
+.playbook-tabs { display: flex; gap: .25rem; margin: 1.5rem 0 0; border-bottom: 1px solid var(--th-border); }
+.playbook-tab {
+  font: 600 .95rem/1 "Poppins", sans-serif; padding: .85rem 1.1rem; cursor: pointer;
+  background: transparent; border: none; border-bottom: 2px solid transparent;
+  margin-bottom: -1px; color: var(--th-muted); transition: color .12s ease;
+}
+.playbook-tab:hover { color: var(--th-primary); }
+.playbook-tab[aria-selected="true"] { color: var(--area); border-bottom-color: var(--area); }
+.doc--playbook.has-tabs .sect1[hidden] { display: none; }
+.doc--playbook.has-tabs .sect1 > h2 { position: absolute; left: -9999px; }
+
+/* Playbook and area cards, in the style of thinkube-control's cards: no
+   badges. The area is the left bar and the icon colour, and is written into
+   the top border line; a playbook card has its time at the other end, its
+   level as the line under the title, and its date in the bottom border line. */
+.playbook-card, .area-card { position: relative; border-left: 4px solid var(--area); padding: 1.35rem 1.25rem 1rem; }
+.playbook-card:hover, .area-card:hover { border-left-color: var(--area); }
+:is(.playbook-card, .area-card) .card-edge {
+  position: absolute; top: -.55rem; padding: 0 .4rem;
+  font: 600 .68rem/1.1rem "Poppins", sans-serif; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--th-muted);
+  /* The page above the border line, the card below it */
+  background: linear-gradient(to bottom, var(--th-bg) 50%, var(--th-surface) 50%);
+}
+:is(.playbook-card, .area-card) .card-edge-area { left: 1rem; color: var(--area); }
+.playbook-card .card-edge-time { right: 1rem; text-transform: none; letter-spacing: 0; }
+.playbook-card .card-edge-time::before { content: "◷ "; }
+:is(.playbook-card, .area-card) .card-head { gap: .9rem; margin-bottom: .75rem; }
+:is(.playbook-card, .area-card) .tk-area-icon { width: 3rem; height: 3rem; background-color: var(--area); }
+.playbook-card .card-id { display: flex; flex-direction: column; min-width: 0; }
+.playbook-card .card-level { font-size: .85rem; color: var(--th-muted); text-transform: capitalize; }
+.playbook-card .card-desc {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  flex: 0 0 auto; margin-bottom: .4rem;
+}
+.playbook-card .card-edge-updated {
+  top: auto; bottom: -.55rem; right: 1rem; text-transform: none; letter-spacing: 0;
+  /* The card above the border line, the page below it */
+  background: linear-gradient(to bottom, var(--th-surface) 50%, var(--th-bg) 50%);
+}
+/* Cards keep a landscape minimum width and the grid fits as many as the space
+   holds: three on a wide screen, two on a laptop, one on a phone, where the
+   minimum gives way to the full width. */
+.card-grid.playbook-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(28rem, 100%), 1fr)); gap: 1.25rem;
+}
+.playbook-card[hidden] { display: none; }
+/* The four area cards: two by two while there is room for both */
+.card-grid.area-grid { grid-template-columns: repeat(auto-fit, minmax(min(34rem, 100%), 1fr)); }
+.catalog .kicker {
+  display: block; font: 700 0.72rem/1 "Poppins", sans-serif; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--th-accent); margin-bottom: .55rem;
+}
+
+/* Area filter: quiet chips with the area's dot; the active one takes its colour */
+.area-filter { display: flex; flex-wrap: wrap; gap: .5rem; margin: -0.5rem 0 1.5rem; }
+.filter-chip {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font: 600 .82rem/1 "Poppins", sans-serif; padding: .6rem .9rem; cursor: pointer;
+  background: var(--th-surface); color: var(--th-text-2); border: 1px solid var(--th-border); transition: background .12s ease, color .12s ease;
+}
+.filter-chip[class*="area-"]::before { content: ""; width: .55rem; height: .55rem; background: var(--area); border-radius: 50% !important; }
+.filter-chip:hover { border-color: var(--area, var(--th-primary)); }
+.filter-chip.is-active { background: var(--area, var(--th-primary)); border-color: var(--area, var(--th-primary)); color: #fff; }
+.filter-chip.is-active::before { background: rgba(255,255,255,.85); }
+
+/* Area pages list their playbooks after their text */
+.area-catalog { margin-top: 2.5rem; }
+
+/* ===== Hexagon icons ======================================================
+   The thinkube-style icons, copied by tools/sync-icons.sh. Each file is one
+   colour and is drawn through a CSS mask, so it takes the brand mark colour:
+   teal in the light theme, cream in the dark. */
+.tk-icon {
+  display: inline-block; flex: none; width: 1.25rem; height: 1.25rem;
+  background-color: var(--th-accent);
+  -webkit-mask: no-repeat center / contain; mask: no-repeat center / contain;
+}
+.area-kubernetes .tk-area-icon { -webkit-mask-image: url(../img/icons/lucide/container.svg); mask-image: url(../img/icons/lucide/container.svg); }
+.area-gitops .tk-area-icon     { -webkit-mask-image: url(../img/icons/tk_devops.svg); mask-image: url(../img/icons/tk_devops.svg); }
+.area-models .tk-area-icon     { -webkit-mask-image: url(../img/icons/tk_ai.svg); mask-image: url(../img/icons/tk_ai.svg); }
+.area-tandem .tk-area-icon     { -webkit-mask-image: url(../img/icons/tk_code.svg); mask-image: url(../img/icons/tk_code.svg); }
+/* The area's icon before the kicker of a playbook or area page, as on its card */
+.playbook-kicker { display: flex; align-items: center; gap: .5rem; }
+.tk-kicker-icon { width: 3rem; height: 3rem; background-color: var(--area); }
+/* A playbook step's number, set by head-meta.hbs */
+.tk-step-icon { width: 1.6rem; height: 1.6rem; margin-right: .6rem; vertical-align: -.35em; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* ===== Landing page (home layout) ========================================== */
+body.home { background: var(--th-bg); }
+/* The "Runs on DGX Spark" stamp shows on the landing too — it's core identity
+   (it was previously hidden here). Same fixed bottom-right corner as doc pages,
+   a touch more present since it matters on the landing. */
+
+.hero {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 5rem 2rem 1rem;
+  text-align: center;
+}
+.hero-eyebrow {
+  font: 600 0.8rem/1 "Poppins", sans-serif;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--th-primary-light); margin: 0 0 1rem;
+}
+.hero-title {
+  font-family: "Poppins", sans-serif; font-weight: 700;
+  font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.1;
+  color: var(--th-heading); margin: 0 0 1.25rem;
+}
+.hero-title .accent { color: var(--th-accent); }
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.2rem); line-height: 1.6;
+  color: var(--th-text-2); max-width: 700px; margin: 0 auto 2rem;
+}
+.hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-block; padding: 0.8rem 1.7rem;
+  font: 600 1rem/1 "Poppins", sans-serif; text-decoration: none;
+  border: 2px solid transparent; transition: transform .08s ease, box-shadow .15s ease;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-primary { background: var(--th-primary); color: var(--th-on-primary); }
+.btn-primary:hover { box-shadow: 0 8px 22px rgba(var(--th-shadow),.28); }
+.btn-ghost { background: transparent; color: var(--th-primary); border-color: var(--th-primary); }
+
+/* The AI loop */
+.loop {
+  list-style: none; display: flex; justify-content: center; align-items: stretch;
+  flex-wrap: wrap; gap: 0; margin: 3.5rem auto 0; padding: 0; max-width: 860px;
+}
+.loop-node {
+  position: relative; flex: 1 1 0; min-width: 150px; padding: 1.5rem 1rem;
+  border: 2px solid var(--th-primary); background: var(--th-surface); text-align: center;
+}
+.loop-node + .loop-node { border-left: none; }
+.loop-node:not(:last-child)::after {
+  content: "→"; position: absolute; right: -0.62em; top: 50%; transform: translateY(-50%);
+  color: var(--th-accent); font: 700 1.5rem/1 sans-serif; z-index: 2;
+  background: var(--th-surface); padding: 0 .08em;
+}
+.loop-num { width: 2.2rem; height: 2.2rem; margin-bottom: .6rem; }
+.loop-node:nth-child(1) .loop-num { -webkit-mask-image: url(../img/icons/chars/number-1.svg); mask-image: url(../img/icons/chars/number-1.svg); }
+.loop-node:nth-child(2) .loop-num { -webkit-mask-image: url(../img/icons/chars/number-2.svg); mask-image: url(../img/icons/chars/number-2.svg); }
+.loop-node:nth-child(3) .loop-num { -webkit-mask-image: url(../img/icons/chars/number-3.svg); mask-image: url(../img/icons/chars/number-3.svg); }
+.loop-node:nth-child(4) .loop-num { -webkit-mask-image: url(../img/icons/chars/number-4.svg); mask-image: url(../img/icons/chars/number-4.svg); }
+.loop-label { display: block; font-weight: 600; color: var(--th-primary); }
+
+/* Cards, drawn as thinkube-control draws them (TkCard): a white surface, a
+   thin border and a light shadow; a head row with the hexagon icon and the
+   title; the description. Playbook and area cards add their area above. */
+/* Wide enough for three playbook cards of their minimum width on a wide screen */
+.journeys { max-width: 1440px; margin: 4.5rem auto 5rem; padding: 0 2rem; }
+.section-h {
+  font: 600 1.5rem/1.2 "Poppins", sans-serif; color: var(--th-heading); margin: 0 0 1.5rem;
+}
+.card-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); gap: 1.25rem;
+}
+.card {
+  display: flex; flex-direction: column; padding: 1.5rem; text-decoration: none;
+  background: var(--th-surface); border: 1px solid var(--th-border);
+  box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px -1px rgba(0,0,0,.1);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.card:hover { border-color: var(--th-primary); box-shadow: 0 4px 12px rgba(var(--th-shadow),.14); }
+.card-head { display: flex; align-items: center; gap: .6rem; margin: 0 0 .6rem; }
+.card-title { font: 600 1.12rem/1.3 "Poppins", sans-serif; color: var(--th-heading); margin: 0; }
+.card-desc { color: var(--th-muted); font-size: .9rem; line-height: 1.55; margin: 0 0 1rem; flex: 1; }
+
+/* ===== Cockpit: the code-window showcase =================================== */
+.cockpit { max-width: 1080px; margin: 4.5rem auto 1rem; padding: 0 2rem; }
+.cockpit-copy { max-width: 760px; margin: 0 auto 1.7rem; text-align: center; }
+.cockpit .kicker {
+  font: 700 0.72rem/1 "Poppins", sans-serif; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--th-accent);
+}
+.cockpit .section-h { margin: .55rem 0 .8rem; }
+.cockpit-lead { color: var(--th-text-2); line-height: 1.62; font-size: 1.02rem; margin: 0 auto; }
+.cockpit-lead strong { color: var(--th-primary); }
+.codewin {
+  background: var(--th-code-dark); overflow: hidden;
+  border: 1px solid rgba(255,255,255,.07);
+  box-shadow: 0 26px 60px rgba(0,41,53,.34), 0 6px 16px rgba(0,41,53,.24);
+}
+.codewin-bar {
+  display: flex; align-items: center; gap: .65rem;
+  padding: .62rem .9rem; background: rgba(255,255,255,.035);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.codewin-dots { display: inline-flex; gap: .42rem; }
+.codewin-dots i { width: .72rem; height: .72rem; border-radius: 50%; display: block; }
+.codewin-dots i:nth-child(1) { background: #d9636e; }
+.codewin-dots i:nth-child(2) { background: #d7a94f; }
+.codewin-dots i:nth-child(3) { background: #54bd8a; }
+.codewin-title {
+  font: 600 .74rem/1 "Poppins", sans-serif; letter-spacing: .03em;
+  color: rgba(220,240,240,.5);
+}
+.codewin-body {
+  margin: 0; padding: 1.15rem 1.35rem; overflow-x: auto; background: transparent;
+  font-family: "Noto Sans Mono", ui-monospace, monospace;
+  font-size: .9rem; line-height: 1.8; color: #bfe0e0; white-space: pre;
+}
+.codewin-body code { background: transparent; color: inherit; padding: 0; border: 0; }
+.codewin .copy-btn { display: none; } /* it's a showcase, not a copyable block */
+.c-prompt { color: #ede4d6; font-weight: 700; }
+.c-user   { color: #eaf6f6; }
+.c-claude { color: #38c4d8; font-weight: 700; }
+.c-ok     { color: #5fd6a2; font-weight: 700; }
+.c-tool   { color: #82d3df; font-weight: 600; }
+.c-paren  { color: #6f9099; }
+.c-dim    { color: #6c8990; }
+.c-link   { color: #ede4d6; text-decoration: underline; text-underline-offset: 2px; }
+
+@media (max-width: 600px) {
+  .codewin-body { font-size: .78rem; }
+}
+
+@media (max-width: 600px) {
+  .loop-node + .loop-node { border-left: 2px solid var(--th-primary); }
+  .loop-node:not(:last-child)::after {
+    content: "↓"; right: auto; left: 50%; top: auto; bottom: -0.7em; transform: translateX(-50%);
+  }
+}
+
+/* ===== Reusable cards on content pages: [.cards] on a ulist ================= */
+.doc .ulist.cards > ul {
+  list-style: none; margin: 1.5rem 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.1rem;
+}
+.doc .ulist.cards > ul > li {
+  margin: 0; padding: 1.5rem; background: var(--th-surface); border: 1px solid var(--th-border);
+  box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px -1px rgba(0,0,0,.1);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.doc .ulist.cards > ul > li:hover { border-color: var(--th-primary); box-shadow: 0 4px 12px rgba(var(--th-shadow),.14); }
+.doc .ulist.cards > ul > li > p { margin: 0; }
+.doc .ulist.cards > ul > li > p:first-child a {
+  font: 600 1.12rem/1.3 "Poppins", sans-serif; color: var(--th-heading); text-decoration: none;
+}
+.doc .ulist.cards > ul > li > p:first-child a:hover { color: var(--th-primary-light); }
+.doc .ulist.cards > ul > li > p:not(:first-child) {
+  margin-top: .5rem; color: var(--th-muted); font-size: .92rem; line-height: 1.55;
+}
+
+/* ===== Code copy button =================================================== */
+/* The button lives in a gutter on the block's wrapper, outside the element
+   that scrolls, so long lines pass under the gutter and never under the
+   button. The wrapper carries the block's background and inset edge; the
+   scrolling element inside it carries neither, so the two read as one box. */
+.doc .listingblock > .content {
+  position: relative; padding-right: 4.2rem;
+  background: var(--th-surface-muted); box-shadow: inset 0 0 1.75px var(--th-border);
+}
+.doc .listingblock > .content > pre, .doc .listingblock > .content > pre.highlight > code { box-shadow: none; }
+html[data-theme="dark"] .doc .listingblock > .content { background: var(--th-code-dark); box-shadow: none; }
+.copy-btn {
+  position: absolute; top: .4rem; right: .4rem; z-index: 3;
+  font: 600 .68rem/1 "Poppins", sans-serif; letter-spacing: .04em; text-transform: uppercase;
+  background: var(--th-primary); color: var(--th-on-primary); border: none; padding: .35rem .6rem;
+  cursor: pointer; opacity: .55; transition: opacity .12s ease;
+}
+.doc .listingblock:hover .copy-btn, .doc pre:hover .copy-btn, .copy-btn:focus { opacity: 1; }
+
+/* ===== Theme toggle ======================================================= */
+.theme-toggle {
+  display: inline-flex; align-items: center; background: transparent; border: none;
+  cursor: pointer; color: #fff; padding: 0 .6rem; opacity: .9;
+}
+.theme-toggle:hover { opacity: 1; }
+.theme-toggle svg { display: block; }
+.theme-toggle .icon-sun { display: none; }
+html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+html[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+
+/* ===== Dark mode ========================================================== */
+/* thinkube-style's dark palette: deep teal surfaces, white text, cream
+   headings and marks, a light teal for links so they stand apart from text. */
+html[data-theme="dark"] {
+  --th-primary: #ede4d6;        /* --primary: the icon cream */
+  --th-on-primary: #002933;     /* --primary-foreground */
+  --th-bg: #004051;
+  --th-surface: #003240;
+  --th-surface-muted: #005a6e;
+  --th-border: #40647d;
+  --th-text: #ffffff;
+  --th-text-2: #ffffff;
+  --th-muted: #d7e0e2;
+  --th-heading: #ede4d6;
+  --th-accent: #ede4d6;
+  --th-link: #a1ccdd;           /* --tk-teal-300 */
+  --th-primary-light: #c3e0ec;  /* --tk-teal-200, hover */
+  --th-navbar: #003240;
+}
+html[data-theme="dark"] body { background: var(--th-bg); color: var(--th-text); }
+
+html[data-theme="dark"] .doc { color: var(--th-text); }
+html[data-theme="dark"] .doc h1, html[data-theme="dark"] .doc h2,
+html[data-theme="dark"] .doc h3, html[data-theme="dark"] .doc h4,
+html[data-theme="dark"] .doc h5, html[data-theme="dark"] .doc h6 { color: var(--th-heading); }
+html[data-theme="dark"] .doc a { color: var(--th-link); }
+
+/* left nav, right toc, breadcrumb toolbar, version selector */
+html[data-theme="dark"] .nav-container, html[data-theme="dark"] .nav,
+html[data-theme="dark"] .toc, html[data-theme="dark"] .toolbar,
+html[data-theme="dark"] .nav-panel-explore, html[data-theme="dark"] .page-versions .versions {
+  background: var(--th-surface); color: var(--th-text);
+}
+html[data-theme="dark"] .nav a, html[data-theme="dark"] .toc a,
+html[data-theme="dark"] .toolbar a, html[data-theme="dark"] .crumbs a { color: var(--th-muted); }
+html[data-theme="dark"] .nav a:hover, html[data-theme="dark"] .toc a:hover,
+html[data-theme="dark"] .toolbar a:hover { color: var(--th-primary-light); }
+html[data-theme="dark"] .toolbar { border-color: var(--th-border); }
+
+/* surfaces: cards, code, tables, footer */
+html[data-theme="dark"] .ulist.cards > ul > li, html[data-theme="dark"] .card,
+html[data-theme="dark"] .loop-node {
+  background: var(--th-surface); border-color: var(--th-border);
+}
+html[data-theme="dark"] .ulist.cards > ul > li > p:not(:first-child),
+html[data-theme="dark"] .card-desc, html[data-theme="dark"] .hero-sub,
+html[data-theme="dark"] .cockpit-lead { color: var(--th-muted); }
+html[data-theme="dark"] .cockpit-lead strong { color: var(--th-heading); }
+html[data-theme="dark"] .filter-chip { background: var(--th-surface); color: var(--th-text); border-color: var(--th-border); }
+html[data-theme="dark"] .filter-chip.is-active { background: var(--area, var(--th-primary-light)); color: var(--th-code-dark); border-color: var(--area, var(--th-primary-light)); }
+html[data-theme="dark"] .filter-chip.is-active::before { background: rgba(0,41,51,.7); }
+html[data-theme="dark"] .tag { background: var(--th-surface-muted); color: var(--th-text); }
+html[data-theme="dark"] .playbook-tagline { color: var(--th-muted); }
+html[data-theme="dark"] .playbook-facts { border-color: var(--th-border); }
+html[data-theme="dark"] .playbook-facts > div { border-color: var(--th-border); }
+html[data-theme="dark"] .playbook-facts dt { color: var(--th-muted); }
+html[data-theme="dark"] .playbook-facts dd { color: var(--th-text); }
+html[data-theme="dark"] .playbook-tabs { border-bottom-color: var(--th-border); }
+html[data-theme="dark"] .playbook-tab { color: var(--th-muted); }
+html[data-theme="dark"] .playbook-tab[aria-selected="true"] { color: var(--area); }
+html[data-theme="dark"] .doc pre, html[data-theme="dark"] .listingblock pre,
+html[data-theme="dark"] .doc :not(pre) > code { background: var(--th-code-dark); color: #e6eef0; }
+/* The default UI paints these light, and its selectors outrank the dark rule above. */
+html[data-theme="dark"] .doc .listingblock pre:not(.highlight),
+html[data-theme="dark"] .doc .literalblock pre,
+html[data-theme="dark"] .doc pre.highlight > code { background: var(--th-code-dark); color: #e6eef0; }
+html[data-theme="dark"] .toc .toc-menu a.is-active { color: var(--th-text); border-left-color: var(--th-primary-light); }
+html[data-theme="dark"] .sidebar.toc .toc-menu a:focus { background: var(--th-surface); }
+html[data-theme="dark"] .toc .toc-menu h3 { color: var(--th-text); }
+html[data-theme="dark"] table, html[data-theme="dark"] th, html[data-theme="dark"] td {
+  border-color: var(--th-border);
+}
+html[data-theme="dark"] th { background: var(--th-surface); }
+html[data-theme="dark"] .doc .admonitionblock td.content { color: var(--th-text); }
+html[data-theme="dark"] .footer { background: var(--th-code-dark); color: var(--th-muted); }
+html[data-theme="dark"] hr { border-color: var(--th-border); }
+
+/* Last-updated stamp (replaces the edit-this-page link) */
+.last-updated { margin-left: auto; padding-right: 1rem; color: var(--th-muted); font-size: .8rem; }
+html[data-theme="dark"] .last-updated { color: var(--th-muted); }
+
+/* ===== "Screenshot needed" placeholder (TEP-tghabr / SP-tgiy46) ============ */
+.doc .openblock.screenshot-needed > .content {
+  border: 2px dashed var(--th-accent);
+  background: repeating-linear-gradient(135deg, rgba(var(--th-shadow),.05) 0 12px, rgba(var(--th-shadow),.10) 12px 24px);
+  padding: 1rem 1.2rem; margin: 1.3rem 0; color: var(--th-muted);
+}
+.doc .openblock.screenshot-needed .title,
+.doc .openblock.screenshot-needed p:first-child { font-weight: 600; color: var(--th-primary); }
+.doc .openblock.screenshot-needed p { margin: .25rem 0; font-size: .92rem; }
+html[data-theme="dark"] .doc .openblock.screenshot-needed > .content { color: var(--th-muted); }
+html[data-theme="dark"] .doc .openblock.screenshot-needed .title,
+html[data-theme="dark"] .doc .openblock.screenshot-needed p:first-child { color: var(--th-accent); }
+
+/* Mock screenshot images (stand-ins until the real captures land) */
+.doc .imageblock.mock-screenshot { margin: 1.4rem 0; }
+.doc .imageblock.mock-screenshot img { width: 100%; max-width: 620px; height: auto; display: block; }
+
+/* Prominent section headers in the left nav, plain or linked to a landing page */
+.nav-menu .nav-item[data-depth="0"] > :is(.nav-text, .nav-link),
+.nav-list .nav-item[data-depth="0"] > :is(.nav-text, .nav-link) {
+  font-weight: 700; color: var(--th-primary); font-size: 1rem;
+  text-transform: none; letter-spacing: .01em;
+}
+html[data-theme="dark"] .nav-menu .nav-item[data-depth="0"] > :is(.nav-text, .nav-link),
+html[data-theme="dark"] .nav-list .nav-item[data-depth="0"] > :is(.nav-text, .nav-link) { color: var(--th-heading); }
+
+/* Stable opaque review ref — a per-page / per-screen serial (SP-tgiy46).
+   Auto-derived from the item, so adding/removing content never renumbers. */
+
+/* ===== Captures: click to see at full size ================================ */
+.doc .imageblock img { cursor: zoom-in; }
+.tk-lightbox {
+  position: fixed; inset: 0; z-index: 1000; padding: 2rem;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(10, 20, 24, .92); cursor: zoom-out;
+}
+.tk-lightbox img { max-width: 100%; max-height: 100%; width: auto; height: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, .5); }
+
+/* ===== Home page without the menu bar ===================================
+   The home page carries the full logo at the top of the hero; search, the
+   theme switch and GitHub sit in the top right corner. */
+.home-corner {
+  position: absolute; top: calc(env(safe-area-inset-top, 0px) + 1rem); right: 1.5rem;
+  display: flex; align-items: center; gap: 1rem; z-index: 2;
+}
+.home-corner a, .home-corner .theme-toggle { color: var(--th-text); }
+.home-corner #search-input { width: 14rem; max-width: 40vw; }
+.hero-logo {
+  display: block; margin: 0 auto 1.5rem;
+  width: 9rem; height: calc(9rem * 422.8 / 446.54);
+  -webkit-mask-image: url(../img/icons/tk_full_logo.svg); mask-image: url(../img/icons/tk_full_logo.svg);
+}

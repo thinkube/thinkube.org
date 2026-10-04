@@ -1,0 +1,161 @@
+---
+import {
+  Rocket,
+  Globe,
+  Cpu,
+  Server,
+  Workflow,
+  Clock,
+  Signal,
+  ArrowRight
+} from '@lucide/astro';
+
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+  icon: string;
+  time: string;
+  level: string;
+  tools: string;
+}
+
+const { title, description, href, icon, time, level, tools } = Astro.props;
+
+const fullHref = href.startsWith('/') ? `${import.meta.env.BASE_URL}${href.slice(1)}` : href;
+
+const iconMap: Record<string, any> = {
+  rocket: Rocket,
+  globe: Globe,
+  cpu: Cpu,
+  server: Server,
+  workflow: Workflow,
+};
+
+const IconComponent = iconMap[icon] || Rocket;
+---
+
+<a href={fullHref} class="playbook-card">
+  <div class="card-header">
+    <div class="icon-wrapper">
+      <IconComponent size={28} />
+    </div>
+    <div class="meta">
+      <span class="meta-item"><Clock size={14} /> {time}</span>
+      <span class="meta-item"><Signal size={14} /> {level}</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <h3>{title}</h3>
+    <p class="description">{description}</p>
+    <p class="tools">{tools}</p>
+  </div>
+  <div class="card-footer">
+    <span>Start playbook</span>
+    <ArrowRight size={16} />
+  </div>
+</a>
+
+<style>
+  .playbook-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--sl-color-bg-nav);
+    border: 1px solid var(--sl-color-hairline);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .playbook-card:hover {
+    border-color: var(--sl-color-accent);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.25rem 1.25rem 0;
+  }
+
+  .icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-accent);
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-end;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--sl-color-gray-3);
+    white-space: nowrap;
+  }
+
+  .card-body {
+    flex: 1;
+    padding: 1rem 1.25rem;
+  }
+
+  .card-body h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+
+  .description {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    color: var(--sl-color-gray-2);
+    line-height: 1.5;
+  }
+
+  .tools {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--sl-color-gray-3);
+    line-height: 1.4;
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    border-top: 1px solid var(--sl-color-hairline);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--sl-color-accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .playbook-card:hover .card-footer {
+    opacity: 1;
+  }
+
+  :root[data-theme="light"] .card-body h3 {
+    color: #1a1a1a;
+  }
+
+  :root[data-theme="light"] .description {
+    color: #4a4a4a;
+  }
+
+  :root[data-theme="light"] .tools {
+    color: #6a6a6a;
+  }
+</style>

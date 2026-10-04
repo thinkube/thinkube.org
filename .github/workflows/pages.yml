@@ -1,0 +1,71 @@
+# Copyright Alejandro Martínez Corriá and the Thinkube contributors
+# SPDX-License-Identifier: Apache-2.0
+
+name: Deploy to GitHub Pages
+
+# ── MANUAL-ONLY until announce ────────────────────────────────────────────────
+# The product is not yet announced, so this workflow NEVER runs automatically.
+# It builds + publishes only when triggered by hand (Actions tab → Run workflow).
+#
+# ANNOUNCE-TIME SWITCH: to auto-publish on every push to main, uncomment the
+# three `push:` lines below. That single change is the only switch needed.
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # lib/d2-block.js renders the [d2] diagram blocks with the d2 binary.
+      - name: Install d2
+        run: |
+          curl --retry 5 --retry-delay 5 --retry-all-errors -fsSL \
+            https://github.com/terrastruct/d2/releases/download/v0.9.0/d2-v0.9.0-linux-amd64.tar.gz \
+            -o /tmp/d2.tar.gz
+          tar -xzf /tmp/d2.tar.gz -C /tmp
+          sudo install -m 0755 /tmp/d2-v0.9.0/bin/d2 /usr/local/bin/d2
+          d2 --version
+
+      # GitHub Pages serves this repo at its custom domain, https://thinkube.org,
+      # so the site is built for the root of that address.
+      - name: Build Antora site (https://thinkube.org)
+        run: npx antora --fetch --stacktrace --url https://thinkube.org --attribute page-updated="$(date -u +%Y-%m-%d)" antora-playbook.yml
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./build/site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

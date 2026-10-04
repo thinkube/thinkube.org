@@ -1,0 +1,75 @@
+= Style guide
+:page-type: reference
+
+_How the pages sound, what they are called, and the shape every one of them has._
+
+.TL;DR
+A playbook opens with what you get and is written from a run on the reference cluster. A concept page says how an area works, each idea once. Say what a thing does, never what it is not. Check every fact against the source file you name in the commit.
+
+== The shape
+
+The four other repositories' pages follow this guide; their maintainers are the ones who change them.
+
+* *The sentence first.* A playbook's steps and a concept page's opening carry the sentence the reader says to the agent in Thinkube IDE, what the agent calls, and what they have afterwards. Every sentence is run on the reference cluster exactly as written before it is published.
+* *One shape per type.* xref:contributing/page-types.adoc[Page types] fixes it. Follow it.
+* *Why, then how.* Each step opens with one sentence on why it exists, then the sentence to the agent, then the click path, then the expected output as it came back.
+* *The present only.* A page says how the platform works now. What an earlier design did, what was tried, and what changed belong in commit messages.
+* *Positive polarity.* Say what a thing does and what you get. A heading never starts with "Not". A condition is stated where the reader needs it, in the step or section it affects, or as a Troubleshooting row, phrased as what makes it work.
+* *Say it once.* xref:start-here/what-is-thinkube.adoc[What Thinkube is] and the four area pages own the ideas. Every other page links to the owner in one sentence and never restates it.
+* *Clarity over coverage.* Explain a few things well; the agent sees the whole API and can be asked for the rest. No page lists an API in full.
+* *Time: 30 minutes at least.* A playbook's time is what a reader should set aside: 30 minutes, or longer when the task takes longer. It is one figure on the card, with no note. Measured figures of a run go in the commit message, not on the page.
+* *A process that fails is not documented.* If a documented path fails on the reference cluster, the page waits. The defect is fixed, the path is rerun, then the page is written.
+
+== Voice
+
+* Second person, present tense. "You deploy a template", not "the user will deploy".
+* Short sentences, common words, one point per sentence. No throat-clearing, no idioms that do not translate.
+* Describe rather than characterise. No "powerful", "seamless", "simple". Let the capability speak.
+* The reader is capable, not expert. Explain the platform's own terms once, in Concepts; do not explain general computing on every page.
+* No claim that the Kubernetes underneath passed any test programme or carries any mark. Say "unmodified upstream Kubernetes, installed with kubeadm".
+* The maturity of Thinkube, alpha or experimental, belongs in the release announcement, not in these pages.
+* Thinkube Tandem is collaboration: you and a coding agent work together, the agent does the work and you decide. It is never described as autonomous. Its parts are the Tandem tools, Thinkube Tandem Chat and Thinkube Tandem Workshop; Claude Code used on its own is Claude Code, not Tandem.
+* The comparison of Claude Code and Thinkube Tandem Chat is stated once, on xref:start-here/what-is-thinkube.adoc[What Thinkube is]. Nowhere else.
+* Nothing about where a page's source lives. That is a maintainer fact and belongs to xref:contributing/documentation-map.adoc[the documentation map] only.
+
+== Names
+
+Use these exactly:
+
+[cols="1,2",options="header"]
+|===
+| Write it | Not
+
+| Thinkube              | thinkube, ThinKube
+| Thinkube Kubernetes, Thinkube GitOps, Thinkube Models, Thinkube Tandem | the four areas of the platform; the base and the three on it. Not "thinkube k8s", not "the AI area"
+| Thinkube Control      | thinkube-control (except where it is typed or shown as an identifier: a URL, a namespace, a repository, a command), the control panel app
+| Thinkube Installer    | thinkube-installer (except as the package name or the command), the desktop installer
+| Thinkube IDE          | code-server, Code Server, VS Code
+| Thinkube Notebooks    | the lab name the JupyterHub theme still shows, JupyterHub, Jupyter, the notebook server
+| Thinkube Experiments  | MLflow, the tracking server
+| Thinkube Registry     | Harbor, the registry
+| Thinkube Git          | Gitea
+| Thinkube Storage      | SeaweedFS, S3
+| Thinkube Identity     | Keycloak, SSO
+| Thinkube Packages     | DevPI, the package index
+| LLM Gateway           | the gateway, the inference endpoint
+| your agent, the agent | Claude, the assistant (Claude Code only where the product itself is meant)
+| `thinkube.yaml`       | the manifest file, the config
+|===
+
+The branded names are the `display_name` each service registers for the dashboard. A product's technical id, such as `thinkube-control`, appears only where the reader types it or sees it as an identifier, and then in code format. Argo Workflows, ArgoCD, GPU Operator, JuiceFS and PostgreSQL keep their own names. Name the implementation once where a reader might need to search for it, in a form that says what it is, "Thinkube IDE, VS Code in the browser", and use the implementation's name where the implementation is the point: error messages, logs, the components catalogue.
+
+The site has three menus. *Getting started* holds What Thinkube is and the install pages. *Playbooks* lists every task by area, Thinkube Kubernetes, Thinkube GitOps, Thinkube Models and Thinkube Tandem, and each area's page opens its group. *Reference and concepts* holds the lookup pages and the pages that explain how the parts work. No invented vocabulary for the site's own structure.
+
+== Headings
+
+* Sentence case: "Set up your domain", not "Set Up Your Domain".
+* A heading names what the section achieves or what it is. A playbook's three top sections are the exception: Overview, Instructions, Troubleshooting.
+
+== Facts
+
+Every factual sentence is checked against the source that makes it true, and the commit message names that file. A number that cannot be checked is not written. A behaviour that was observed on the reference cluster is written as observed, in the tool's own words when it is a message.
+
+== Admonitions
+
+Rare. A NOTE is an aside the reader can skip. An IMPORTANT is something they must get right or the task fails. A WARNING is an action that can lose data. Anything else is prose.

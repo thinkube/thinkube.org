@@ -1,0 +1,57 @@
+= Page types
+:page-type: reference
+
+_Every page is one of three types, and every page of a type has the same shape. The type is declared with `:page-type:` under the title._
+
+.TL;DR
+Copy the skeleton for the type and fill it in order. A playbook is one task, run end to end on the reference cluster. A concept page says how an area works, each idea once. A reference page is exact lookup material.
+
+== The three types
+
+[cols="1,2,3",options="header"]
+|===
+| Type | Use it for | Shape
+
+| `playbook`
+| One task with a result, for a reader who wants to do it.
+| The card attributes; Overview with Basic idea, What you'll accomplish, What to know before starting, Supported hardware, Prerequisites; Instructions as numbered steps ending with Next steps, which opens with one *To undo* line; Troubleshooting as a Symptom, Cause, Fix table. `lib/playbook-check.js` fails the build on a playbook that lacks any of them.
+
+| `concept`
+| What Thinkube is, and the page of each area.
+| A lead of one or two sentences; the sentence to the agent and what it does; one diagram; *How it works* as bullets with a bold lead, each idea once; the area's playbooks as cards (`:page-layout: area`); *Reference* links.
+
+| `reference`
+| Exact lookup material: fields, operations, catalogues.
+| One section per thing, tables preferred; a condition that makes a thing work is stated in that thing's section.
+|===
+
+Three rules apply to every type:
+
+* *One type per page.* A page that explains an area and walks through a task is two pages that link to each other.
+* *Positive polarity.* Say what a thing does and what you get. A heading never starts with "Not". A condition is stated where the reader needs it, in the step or section it affects, or as a Troubleshooting row, phrased as what makes it work.
+* *Say it once.* Each idea has one owner: xref:start-here/what-is-thinkube.adoc[What Thinkube is] or the page of its area. Every other page links to it in one sentence.
+
+== Skeletons
+
+Pages of the other four repositories (install, control, tandem, webapp-template) follow the same shapes; their skeletons are these.
+
+=== playbook
+
+[source,asciidoc]
+----
+include::example$templates/playbook.adoc[]
+----
+
+=== concept
+
+[source,asciidoc]
+----
+include::example$templates/concept.adoc[]
+----
+
+=== reference
+
+[source,asciidoc]
+----
+include::example$templates/reference.adoc[]
+----

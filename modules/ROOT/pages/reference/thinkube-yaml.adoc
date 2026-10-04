@@ -1,0 +1,492 @@
+= thinkube.yaml
+:page-type: reference
+
+_The one file that says what your application is: its containers and how each is built and tested, how it is deployed, and how its work is verified. Two shapes are covered here, an application and a Knative service. Specification v1.0._
+
+.TL;DR
+You rarely write this file from scratch: a template comes with one, and the agent edits it when you say "add a second container" or "expose port 8080 at /api". Read this page when you want to know what a line means. A few dozen lines describe a whole application; the manifests under `k8s/` are generated from them.
+
+xref:apps/index.adoc#_thinkube_yaml_your_app_without_the_kubernetes[Thinkube GitOps] explains what the file is for and what the platform generates from it. This page is the field-by-field lookup.
+
+`thinkube.yaml` sits at the root of a repository. Thinkube Control reads it to build and deploy an application. xref:tandem:index.adoc[Thinkube Tandem] reads it to know where a repository's tests live, how one of them runs, how the repository is made live when the platform does not do it, and where its documentation lands. Both read the file in place.
+
+The example below is the file that deploys this documentation site:
+
+[source,yaml]
+----
+include::example$thinkube.yaml[]
+----
+
+The machine-readable schema is link:{attachmentsdir}/thinkube-yaml-v1.0.schema.json[thinkube-yaml-v1.0.schema.json].
+
+== Principles
+
+* *A static descriptor.* It has no conditionals and two substitutions only: `{{ project_name }}` and `{{ domain_name }}`.
+* *Open standards.* What you build is standard: a git repository with ordinary code, a Containerfile and OCI container images. Your work is portable and not tied to Thinkube. The platform services it uses (a PostgreSQL database, S3-compatible storage, OpenID Connect sign-in, an OCI image registry) have close, highly compatible equivalents at the main cloud providers.
+* *Written without Kubernetes knowledge.* You name containers, ports, routes and services. The platform derives the rest.
+* *One to many containers.* Always-on applications, scale-to-zero Knative services, and platform components with a fixed name.
+* *Declared, never guessed.* What only you can know about a repository is written here. Facts the platform can find out by running a command are not written here.
+
+== Schema
+
+[source,yaml]
+----
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+metadata:
+  name: string              # Application name
+
+spec:
+  deployment:               # Deployment type and scaling (optional)
+    type: string            # "app" (default), "knative", "component", or "none"
+    name: string            # Component only: fixed deployment name
+    replicas: number        # Initial replica count (default 1; 0 for gateway-managed components)
+    gateway_managed: boolean  # An external controller creates the pods (default false)
+    minScale: number        # Knative: minimum pods (default 0)
+    maxScale: number        # Knative: maximum pods (default 5)
+    containerConcurrency: number  # Knative: concurrent requests per pod (default 0 = unlimited)
+    timeoutSeconds: number  # Knative: request timeout in seconds (default 300)
+
+  containers:               # The containers the platform builds and runs
+    - name: string          # Container identifier
+      build: string         # Build context path
+      port: number          # Container port (optional)
+      size: string          # small / medium / large / xlarge (optional)
+      health: string        # Health endpoint path (required when a port is exposed)
+      schedule: string      # Cron expression for scheduled tasks (optional)
+      mounts:               # Storage mounts (optional)
+        - string            # "storage-name:/mount/path"
+      gpu:                  # GPU requirements (optional)
+        count: number
+        memory: string
+      capabilities:         # Special capabilities (optional)
+        - string            # e.g. "large-uploads"
+      publicEnv:            # Variables this container may show the browser (optional)
+        - string            # A variable name, e.g. "APP_TITLE"
+      test:                 # Tests, run before the build in CI (optional)
+        enabled: boolean    # default false
+        command: string     # The whole suite (required when enabled)
+        image: string       # Test image override (optional)
+        one: string         # How one test file runs; <file> is substituted (optional)
+      migrations:           # Database migrations (optional)
+        tool: string        # alembic, django, flyway, liquibase, prisma, sequelize, gorm, custom
+        auto: boolean       # Run on startup (default true)
+
+  parts:                    # Only for a repository with no containers: its trees, one toolchain each
+    - name: string
+      root: string          # Path relative to the repository root
+      test:                 # As containers[].test
+        enabled: boolean
+        command: string
+        image: string
+        one: string
+
+  deploy:                   # How this repository is made live when the platform does not do it
+    run: string | list      # The command, or several in order (optional)
+    in: string              # The directory it runs in, when it lives in another repository (optional)
+    at: string              # Where the result can be seen (optional)
+
+  verify:                   # For declarative work: how its own tool says the work holds
+    still: string | list    # Commands that change nothing
+    apply: string           # The command that does the work
+    ask: string             # What reports whether anything is left to do
+    settled: string         # What that report must say, e.g. "changed=0"
+
+  docs:                     # Where documentation lands (optional)
+    root: string            # Default "docs"
+
+  routes:                   # HTTP routing (optional)
+    - path: string
+      to: string            # A container name
+
+  services:                 # Platform services (optional)
+    - string                # "database", "cache", "storage", "queue", "workflows", or "type:name"
+
+  dependencies:             # Other deployed services this one needs (optional)
+    - name: string
+      type: string          # A template type or service class
+      env: string           # The variable that receives the resolved URL
+
+  env:                      # Variables you can set at deploy time (optional)
+    - name: string
+      description: string
+      default: string
+----
+
+== metadata
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `metadata.name` | string | The application name. Supports `{{ project_name }}`.
+| `metadata.version` | string | The application's version, `MAJOR.MINOR.PATCH`. An application generated from a template starts at the template's value; bump it when you release the application. Thinkube Control shows it on the application's card.
+|===
+
+The template an application was generated from has its own version: the newest `vMAJOR.MINOR.PATCH` tag of the template repository. A deploy uses that tag, and Copier records it in the application's `.copier-answers.yml`.
+
+== spec.deployment
+
+Optional. Defaults to `type: app`.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `type` | string | `app`: an always-on Deployment, Service and HTTPRoute, named by you at deploy time. `knative`: a Knative Service that scales to zero. `component`: the same resources as `app` with a fixed name from `deployment.name`, for platform infrastructure that goes through the pipeline. `none`: the platform does not deploy this repository; see `spec.deploy`.
+| `name` | string | Component only, and required there. Lowercase alphanumeric with hyphens. It becomes the namespace, the service name, the domain prefix, the Thinkube Git repository name and the ArgoCD application name.
+| `replicas` | number | Initial replica count, default `1`. `0` for components whose pods an external controller creates at runtime, such as the LLM Gateway placing inference pods per GPU. Forbidden for `knative`.
+| `gateway_managed` | boolean | Default `false`. An external controller creates this component's pods at runtime. Its resting state is zero replicas, so the platform reports it as idle rather than scaled down, and keeps it listed as enabled.
+| `minScale` | number | Knative only. Default `0`.
+| `maxScale` | number | Knative only. Default `5`.
+| `containerConcurrency` | number | Knative only. Default `0`, unlimited. `1` for CPU-heavy work, one request per pod.
+| `timeoutSeconds` | number | Knative only. Default `300`. At most `900`.
+|===
+
+=== Knative portability
+
+Knative services are meant to be portable to cloud serverless platforms. When `type: knative`, the schema enforces: a single container; no `gpu`, `mounts`, `migrations`, `schedule` or `capabilities`; no `storage` or `workflows` service; `timeoutSeconds` at most 900. Work that needs any of these uses `app` or `component`.
+
+== spec.containers
+
+At least one container, unless `deployment.type` is `none`.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `name` | string | Unique identifier, used in routes. For example `backend`, `frontend`, `worker`.
+| `build` | string | Build context relative to the repository root: `.`, `./backend`.
+| `port` | number | The port the container listens on, 1 to 65535. Optional for workers and jobs.
+| `size` | string | `small` 256Mi and 100m CPU, `medium` 512Mi and 500m, `large` 1Gi and 1000m, `xlarge` 80Gi and 4000m for unified-memory systems. Default `small`.
+| `health` | string | Health endpoint path, required when a port is exposed. Standard value `/health`. See the health endpoints specification.
+| `schedule` | string | A cron expression. The container runs as a job and has no persistent pods.
+| `mounts` | list | `storage-name:/mount/path`. The storage must be declared under `services`.
+| `gpu` | object | `count` and `memory` are both required. The platform allocates that many GPUs with at least that memory each, preferring the smallest GPU that fits.
+| `capabilities` | list | `large-uploads` configures the gateway for uploads up to 1GB.
+| `publicEnv` | list | Names of variables this container may show the browser. See below.
+| `test` | object | See below.
+| `migrations` | object | `tool` is one of `alembic`, `django`, `flyway`, `liquibase`, `prisma`, `sequelize`, `gorm`, `custom`. `auto`, default `true`, runs them on startup.
+|===
+
+=== containers[].test
+
+Tests run in CI before the container is built, in the named image. The build and the deployment run only when the tests pass. Results are reported to Thinkube Control.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `enabled` | boolean | Default `false`.
+| `command` | string | Runs the whole suite. Required when enabled.
+| `image` | string | The image the tests run in. Optional; the platform chooses a base image for the container's language.
+| `one` | string | Runs a single test file. `<file>` is replaced by the file's path relative to the container's `build` directory. Optional. Thinkube Tandem uses it to run one test file at a time while it builds a change. When `one` is absent, Tandem works out the command from the repository's own tests and keeps the command it has shown to work.
+|===
+
+Keep the test environment in one place. The application templates give each container a `run_tests.sh` that runs the whole suite without arguments and one file with a file argument, so `command` is `./run_tests.sh` and `one` is `./run_tests.sh <file>`, and the settings a test needs are set in the script, never repeated in this file.
+
+=== containers[].publicEnv
+
+Names of variables this container may show the browser.
+
+A container reads its variables from its environment. A browser application cannot: it is a bundle built before the deployment exists, and by the time it runs it is a file served by a web server. `publicEnv` lets a variable reach the page. The platform sets `PUBLIC_ENV_VARS` in the container to the names listed here, and the image's entrypoint writes those variables, and only those, where the page can read them.
+
+[source,yaml]
+----
+containers:
+  - name: frontend
+    build: ./frontend
+    port: 80
+    health: /health
+    publicEnv:
+      - APP_TITLE
+      - API_BASE_URL
+----
+
+Any variable the container has can be named: one the platform sets such as `APP_TITLE`, one declared in `spec.env`, one wired from `dependencies`, or a parameter answered at deploy time. The list holds names, never values. Values reach the container from the deployment, so a template carries the list and never the answers.
+
+The list is an allow-list, and an absent list means nothing is published. This matters: every container receives the whole environment, including `POSTGRES_PASSWORD`, `KEYCLOAK_CLIENT_SECRET` and `ADMIN_PASSWORD`. A container that wrote its environment to the page would serve those to every visitor. Name a variable here only when it is safe for anyone who opens the application to read it, and treat a secret in this list as a disclosed secret.
+
+== spec.parts
+
+Only for a repository with `deployment.type: none`. Each part is a tree with its own toolchain: where its files are, and how its tests run there. A repository with containers does not declare parts; its containers are its parts.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `name` | string | The part's identifier.
+| `root` | string | Path relative to the repository root.
+| `test` | object | As `containers[].test`.
+|===
+
+== spec.deploy
+
+How the repository is made live when the platform does not do it. An application usually omits this block: the platform deploys it from `containers`. It may still carry `at` on its own, to say where the result can be seen.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `run` | string or list | The command that makes it live, or several to run in order, stopping at the first that fails. Optional: no `run` means the merge itself made it live.
+| `in` | string | The directory to run it in, when the command lives in another repository. Optional.
+| `at` | string | Where the result can be seen, a URL. Optional. Thinkube Tandem opens it to look at what was delivered.
+|===
+
+== spec.verify
+
+For repositories whose work is declarative, such as playbooks. For playbooks, the check is that a second run changes nothing.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `still` | string or list | Commands that change nothing: lint, syntax check, a dry run with a diff. One or several. Run before anything is merged.
+| `apply` | string | The command that does the work. It is the deployment, and runs only after a person approves it.
+| `ask` | string | The command that reports whether anything is left to do, run after `apply`.
+| `settled` | string | What that report must say for the work to be settled, for example `changed=0`. A second run that still changes something is a defect.
+|===
+
+== spec.docs
+
+Where documentation lands. Every delivery documents what it changed. When the work changes no documentation page, Thinkube Tandem adds one to what the change must deliver.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `root` | string | Default `docs`. Markdown pages under this directory. When the directory holds an `antora.yml`, the site is Antora and pages land as `.adoc` under its ROOT module, listed in its `nav.adoc`.
+|===
+
+== spec.routes
+
+HTTP routes, implemented as Gateway API HTTPRoute resources with the platform's wildcard certificates.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `path` | string | A path prefix: `/`, `/api`.
+| `to` | string | The container that serves it.
+|===
+
+== spec.services
+
+Platform services the application needs. Each declared service injects variables into every container.
+
+[cols="1,3"]
+|===
+| Service | Variables injected into every container
+
+| `database` | `DATABASE_URL`
+| `cache` | `CACHE_URL`
+| `storage` | `STORAGE_<NAME>_URL`
+| `queue` | `QUEUE_URL`
+| `workflows` | `WORKFLOWS_NAMESPACE`, `WORKFLOWS_SERVER_URL`, `WORKFLOWS_SERVICE_ACCOUNT`, `WORKFLOWS_UI_URL`, and one `CONTAINER_IMAGE_<NAME>` for each container in this file
+|===
+
+`database`, `cache`, `storage` and `queue` take an optional `type:name` suffix for a named instance, such as `storage:uploads`. `workflows` does not: an application has one.
+
+`workflows` is refused for `deployment.type: knative`. See <<Knative portability>>.
+
+=== Workflows
+
+`workflows` gives the application its own access to Argo Workflows, in its own namespace. The platform creates a ServiceAccount `<app>-workflows` that every pod runs as, a Role allowing it to manage workflows in that namespace, and a default artifact repository in Thinkube Storage under the prefix `<app>/`. Steps run in the application's own images, named by `CONTAINER_IMAGE_<NAME>`, and count against the namespace's ResourceQuota. See xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app].
+
+== spec.dependencies
+
+Other deployed services this application needs. At deploy time Thinkube Control resolves each to the running service's cluster URL and injects it as the named variable. If the dependency is not deployed, the deployment fails and says which one.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `name` | string | The name shown in the interface and in errors.
+| `type` | string | The template type or service class to look for: `texplitter`, `text-embeddings`, `ollama`, `seaweedfs`.
+| `env` | string | The variable that receives the URL: `TEXPLITTER_URL`.
+|===
+
+== spec.env
+
+Variables you can set when you deploy. Thinkube Control shows them with their descriptions; a variable with no default is required. They are injected into every container. A variable wired from `dependencies` wins over an entry here with the same name.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `name` | string | Uppercase with underscores.
+| `description` | string | Shown in the deployment interface.
+| `default` | string | Optional.
+|===
+
+A variable declared here reaches the containers. To let a browser application read one, name it in that container's `publicEnv`.
+
+== Examples
+
+=== A minimal application
+
+[source,yaml]
+----
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+metadata:
+  name: "{{ project_name }}"
+
+spec:
+  containers:
+    - name: app
+      build: .
+      port: 3000
+      health: /health
+----
+
+=== A web application with a database and tests
+
+[source,yaml]
+----
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+metadata:
+  name: "{{ project_name }}"
+
+spec:
+  containers:
+    - name: backend
+      build: ./backend
+      port: 8000
+      health: /health
+      test:
+        enabled: true
+        command: "pytest --cov=app"
+        one: "pytest <file>"
+      migrations:
+        tool: alembic
+        auto: true
+
+    - name: frontend
+      build: ./frontend
+      port: 80
+      health: /health
+      publicEnv:
+        - APP_TITLE
+      test:
+        enabled: true
+        command: "npx vitest run"
+        one: "npx vitest run <file>"
+
+  routes:
+    - path: /api
+      to: backend
+    - path: /
+      to: frontend
+
+  services:
+    - database
+----
+
+=== A Knative processing service
+
+[source,yaml]
+----
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+metadata:
+  name: "{{ project_name }}"
+
+spec:
+  deployment:
+    type: knative
+    minScale: 0
+    maxScale: 3
+    containerConcurrency: 1
+    timeoutSeconds: 600
+
+  containers:
+    - name: aligner
+      build: .
+      port: 8080
+      size: medium
+      health: /health
+
+  dependencies:
+    - name: texplitter
+      type: texplitter
+      env: TEXPLITTER_URL
+    - name: ollama
+      type: ollama
+      env: OLLAMA_URL
+
+  env:
+    - name: OLLAMA_MODEL
+      description: "LLM model for alignment validation"
+      default: "qwen3.5-ner:notk"
+
+  routes:
+    - path: /
+      to: aligner
+----
+
+=== A web application with a pipeline
+
+The verification application of xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app]: the web app template with `workflows` added to its services.
+
+[source,yaml]
+----
+apiVersion: thinkube.io/v1
+kind: ThinkubeDeployment
+
+spec:
+  deployment:
+    type: app
+
+  containers:
+    - name: backend
+      build: ./backend
+      port: 8000
+      size: medium
+      health: /health
+      test:
+        enabled: true
+        image: "python-base:3.12-slim"
+        command: "./run_tests.sh"
+        one: "./run_tests.sh <file>"
+      migrations:
+        tool: alembic
+        auto: true
+
+    - name: frontend
+      build: ./frontend
+      port: 80
+      size: small
+      health: /health
+      publicEnv:
+        - APP_TITLE
+      test:
+        enabled: true
+        # node-base carries git, which npm needs to install thinkube-style
+        image: "node-base:22-alpine"
+        command: "./run_tests.sh"
+        one: "./run_tests.sh <file>"
+
+  routes:
+    - path: /api
+      to: backend
+    - path: /
+      to: frontend
+
+  services:
+    - database
+    - workflows
+----
+
+== What belongs elsewhere
+
+The file describes the application. Container-specific configuration belongs in the Containerfile, and orchestration to Thinkube Control, so the file stays a static descriptor with no conditional logic, raw Kubernetes resources, deployment strategies or command overrides.
+
+== Version
+
+Specification v1.0.
+
+== Scope
+
+This page covers applications and Knative services. The same file also describes the platform's own components and repositories the platform does not deploy; those uses belong to platform development.

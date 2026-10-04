@@ -1,0 +1,17 @@
+{
+  "name": "thinkube-docs",
+  "description": "Official documentation site for the Thinkube platform, built with Antora and AsciiDoc.",
+  "author": "Alejandro Martínez Corriá",
+  "license": "Apache-2.0",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "antora --fetch --stacktrace antora-playbook.yml",
+    "serve": "npx --yes http-server build/site -p 4321 -c-1"
+  },
+  "devDependencies": {
+    "@antora/cli": "^3.1.0",
+    "@antora/lunr-extension": "^1.0.0-alpha.13",
+    "@antora/site-generator": "^3.1.0"
+  }
+}
