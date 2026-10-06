@@ -25,8 +25,8 @@ The site is a template. It is deployed from the Templates page of thinkube-contr
 
 ## Deploys
 
-- **Cluster (thinkube template):** the `Containerfile` builds the Antora site and serves it on nginx :8080 at base `/`. This is the primary deploy.
-- **GitHub Pages:** `.github/workflows/pages.yml` builds at base `/thinkube.org/` but is **manual-only** (`workflow_dispatch`). The product is not yet announced, so nothing publishes automatically. To publish on every push to `main` at announce time, flip the single documented switch in that workflow: uncomment the `push` trigger.
+- **GitHub Pages, https://thinkube.org:** `.github/workflows/pages.yml` builds at base `/thinkube.org/` and publishes. It is **manual-only** (`workflow_dispatch`): nothing publishes on a push; run the workflow from `main` after pushing. To publish on every push to `main`, uncomment the `push` trigger in that workflow.
+- **Cluster (thinkube template):** the `Containerfile` builds the Antora site and serves it on nginx :8080 at base `/`, as the application `docs`, on a cluster where the template has been deployed.
 
 ## Project structure
 

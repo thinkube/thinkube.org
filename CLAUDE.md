@@ -33,7 +33,7 @@ Containerfile            # builds the site and serves it on nginx :8080 inside t
 
 ## Build
 
-The pipeline is the build: the deploy (see Deploy) builds the site with the Containerfile, which runs `antora --fetch antora-playbook.yml`. The site is not built or served in the IDE (see the CI/CD policy); a change is checked on the deployed pages, or in the build log when the build fails.
+The deploys are the build (see Deploy): the Pages workflow and the Containerfile both run `antora --fetch antora-playbook.yml`. The site is not built or served in the IDE (see the CI/CD policy); a change is checked on the deployed pages, or in the build log when the build fails.
 
 Diagrams are `[d2,alt="…"]` literal blocks in the page. `lib/d2-block.js` runs the `d2` binary (v0.9.0, ELK layout) on each one and embeds the SVG; the Containerfile and the Pages workflow install `d2`. A missing binary or a diagram d2 rejects stops the build with d2's own message. The Tandem docs carry the same extension in `docs/lib/d2-block.js`; a change to one is made to both.
 
@@ -45,11 +45,28 @@ The build must print no warnings. `--fetch` pulls the other four repositories fr
 pytest tests/          # needs pytest, pyyaml and jsonschema
 ```
 
+Thinkube IDE has no pytest. thinkube-control's backend pod has pytest, pyyaml and jsonschema and mounts the IDE's home, so the tests run there from this checkout:
+
+```bash
+POD=$(kubectl get pods -n thinkube-control -o name | grep backend | head -1 | cut -d/ -f2)
+kubectl exec -n thinkube-control $POD -- sh -c "cd /home/thinkube/thinkube-platform/docs/thinkube.org && PYTHONDONTWRITEBYTECODE=1 python -m pytest -q -p no:cacheprovider tests/"
+```
+
 `tests/test_thinkube_yaml_schema.py` validates every example printed under `== Examples` on `reference/thinkube-yaml.adoc` against the schema attached beside it, `modules/ROOT/attachments/thinkube-yaml-v1.0.schema.json`. A change to the page or the schema that is not made in the other fails there.
 
 ## Deploy
 
-The site is deployed inside the cluster as the application `docs` and read by thinkube-control's documentation search. A deploy builds from the newest release tag `vMAJOR.MINOR.PATCH`, not from the newest commit. After pushing, tag the commit with the next patch version and push the tag, then redeploy with the MCP tool `redeploy_template` (`template_url: https://github.com/thinkube/thinkube.org`, `template_name: docs`), wait for the build, and check the served pages at `https://docs.<domain>/thinkube-docs/`.
+Two deploys exist. Neither runs on a push.
+
+- **The public site, https://thinkube.org, is GitHub Pages.** `.github/workflows/pages.yml` builds and publishes it, and runs only by hand (`workflow_dispatch`). After pushing, run it from `main` and wait for the run:
+
+  ```bash
+  gh workflow run pages.yml -R thinkube/thinkube.org --ref main
+  gh run list -R thinkube/thinkube.org -w pages.yml -L 1
+  ```
+
+  Then check the page at `https://thinkube.org/thinkube-docs/`.
+- **The cluster application `docs`** is this repository deployed as a template; thinkube-control's documentation search reads it. It exists only on a cluster where someone deployed it: the MCP tool `search_thinkube_docs` answers `docs_not_deployed` where it does not, and `redeploy_template` would then create the application instead of updating it, so it is not the way to publish a change. Where the application exists, a change reaches it by tagging the commit with the next `vMAJOR.MINOR.PATCH`, pushing the tag, and running `redeploy_template` (`template_url: https://github.com/thinkube/thinkube.org`, `template_name: docs`); a deploy builds from the newest tag within the platform's `MAJOR.MINOR`, not from the newest commit.
 
 ## Writing rules
 

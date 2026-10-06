@@ -3,12 +3,13 @@
 
 name: Deploy to GitHub Pages
 
-# ── MANUAL-ONLY until announce ────────────────────────────────────────────────
-# The product is not yet announced, so this workflow NEVER runs automatically.
-# It builds + publishes only when triggered by hand (Actions tab → Run workflow).
+# ── MANUAL-ONLY ───────────────────────────────────────────────────────────────
+# This workflow never runs on a push. It builds + publishes only when triggered
+# by hand: Actions tab → Run workflow, or
+#   gh workflow run pages.yml -R thinkube/thinkube.org --ref main
 #
-# ANNOUNCE-TIME SWITCH: to auto-publish on every push to main, uncomment the
-# three `push:` lines below. That single change is the only switch needed.
+# To auto-publish on every push to main, uncomment the three `push:` lines
+# below. That single change is the only switch needed.
 on:
   workflow_dispatch:
   # push:
