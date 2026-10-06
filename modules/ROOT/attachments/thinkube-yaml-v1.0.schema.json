@@ -204,6 +204,15 @@
             "xlarge"
           ]
         },
+        "buildSize": {
+          "type": "string",
+          "enum": [
+            "small",
+            "medium",
+            "large",
+            "xlarge"
+          ]
+        },
         "health": {
           "type": "string",
           "pattern": "^/"

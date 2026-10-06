@@ -52,6 +52,7 @@ spec:
       build: string         # Build context path
       port: number          # Container port (optional)
       size: string          # small / medium / large / xlarge (optional)
+      buildSize: string     # Memory for the build: small / medium / large / xlarge (optional)
       health: string        # Health endpoint path (required when a port is exposed)
       schedule: string      # Cron expression for scheduled tasks (optional)
       mounts:               # Storage mounts (optional)
@@ -159,6 +160,7 @@ At least one container, unless `deployment.type` is `none`.
 | `build` | string | Build context relative to the repository root: `.`, `./backend`.
 | `port` | number | The port the container listens on, 1 to 65535. Optional for workers and jobs.
 | `size` | string | `small` 256Mi and 100m CPU, `medium` 512Mi and 500m, `large` 1Gi and 1000m, `xlarge` 80Gi and 4000m for unified-memory systems. Default `small`.
+| `buildSize` | string | The memory the container's build pod gets: `small` 4Gi, `medium` 8Gi, `large` 16Gi, `xlarge` 32Gi. Default `small`. Separate from `size`, because a build can need far more than the container runs in: a frontend served in 512Mi can need 8Gi to bundle.
 | `health` | string | Health endpoint path, required when a port is exposed. Standard value `/health`. See the health endpoints specification.
 | `schedule` | string | A cron expression. The container runs as a job and has no persistent pods.
 | `mounts` | list | `storage-name:/mount/path`. The storage must be declared under `services`.

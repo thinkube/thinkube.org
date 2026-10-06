@@ -41,8 +41,10 @@ def load_schema():
 def page_examples():
     """Every example under the page's "== Examples" section."""
     text = PAGE.read_text()
-    start = text.index("\n== Examples\n")
-    end = text.index("\n== What the file does not say\n", start)
+    heading = "\n== Examples\n"
+    start = text.index(heading)
+    # The section ends at the next level-2 heading, whatever it is called.
+    end = re.compile(r"^== ", re.MULTILINE).search(text, start + len(heading)).start()
     section = text[start:end]
     found = [(m.group("title"), m.group("body")) for m in EXAMPLE.finditer(section)]
     assert found, "no examples found under == Examples"
