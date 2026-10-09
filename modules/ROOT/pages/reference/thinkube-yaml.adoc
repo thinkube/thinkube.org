@@ -304,9 +304,27 @@ Other deployed services this application needs. At deploy time Thinkube Control 
 | Field | Type | Description
 
 | `name` | string | The name shown in the interface and in errors.
-| `type` | string | The template type or service class to look for: `texplitter`, `text-embeddings`, `ollama`, `seaweedfs`.
-| `env` | string | The variable that receives the URL: `TEXPLITTER_URL`.
+| `type` | string | The service to look for, by name. Common types: `llm-proxy` (the LLM Gateway, OpenAI API), `texplitter`, `text-embeddings`, `ollama`, `seaweedfs`.
+| `env` | string | The variable that receives the URL: `LLM_GATEWAY_URL`, `TEXPLITTER_URL`.
 |===
+
+A type is matched against the services running on the cluster, in this order:
+
+. a Knative service whose name or namespace contains the type; its address is used;
+. a Service whose name and namespace both contain the type;
+. a Service whose name contains the type.
+
+The URL is `http://<service>.<namespace>.svc.cluster.local:<first port>`. A Knative service that matches but is not ready yet, or a Service that matches but exposes no port, fails the deployment with a message naming it.
+
+For example, an application that calls models through the LLM Gateway declares:
+
+[source,yaml]
+----
+dependencies:
+  - name: llm-gateway
+    type: llm-proxy
+    env: LLM_GATEWAY_URL
+----
 
 == spec.env
 
