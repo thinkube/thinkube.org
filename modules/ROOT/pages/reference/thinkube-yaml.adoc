@@ -37,8 +37,6 @@ metadata:
   name: string              # Application name
 
 spec:
-  architectures: [string]   # amd64 / arm64: build and run on these only (optional; not for knative)
-
   deployment:               # Deployment type and scaling (optional)
     type: string            # "app" (default), "knative", "component", or "none"
     name: string            # Component only: fixed deployment name
@@ -148,23 +146,7 @@ Optional. Defaults to `type: app`.
 
 === Knative portability
 
-Knative services are meant to be portable to cloud serverless platforms. When `type: knative`, the schema enforces: a single container; no `gpu`, `mounts`, `migrations`, `schedule` or `capabilities`; no `storage` or `workflows` service; no `spec.architectures`; `timeoutSeconds` at most 900. Work that needs any of these uses `app` or `component`.
-
-== spec.architectures
-
-Optional. The architectures the images are built for and the pods run on, from `amd64` and `arm64`. Without it, the images are built for every architecture of the cluster's nodes, so they run on any node.
-
-Declare it when the software runs on some architectures only, for instance an upstream that publishes its packages for `amd64` alone:
-
-[source,yaml]
-----
-spec:
-  architectures: [amd64]
-----
-
-* The images are built for the declared architectures the cluster has. A declaration the cluster cannot run, such as `[amd64]` on a cluster of `arm64` nodes only, stops the deploy with an error.
-* The pods are kept to nodes of those architectures by node affinity.
-* Not for `type: knative`: Knative here does not allow choosing nodes.
+Knative services are meant to be portable to cloud serverless platforms. When `type: knative`, the schema enforces: a single container; no `gpu`, `mounts`, `migrations`, `schedule` or `capabilities`; no `storage` or `workflows` service; `timeoutSeconds` at most 900. Work that needs any of these uses `app` or `component`.
 
 == spec.containers
 

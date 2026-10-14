@@ -64,39 +64,3 @@ The second is the component behind it, the name to search for when something goe
 | Perses | monitoring | Thinkube Identity, Prometheus | Dashboards
 |===
 
-
-== Your own components
-
-A component of your own appears on the same page, beside the platform's, when your private repository `<your GitHub user>/<your GitHub user>-metadata` has an `optional_components.json`. Thinkube Control reads it at `main` and again within 5 minutes of a change.
-
-[source,json]
-----
-{
-  "components": {
-    "translator": {
-      "display_name": "Translator",
-      "description": "Machine translation service",
-      "category": "ai",
-      "icon": "/icons/tk_ai.svg",
-      "requirements": [],
-      "architectures": ["amd64"],
-      "namespace": "translator",
-      "template": {
-        "url": "https://github.com/<you>/tkt-translator",
-        "fixed_name": "translator"
-      }
-    }
-  }
-}
-----
-
-A component of your own installs from a template, as vLLM does: Thinkube Control copies the template, builds it and deploys it under its fixed name.
-
-* `template.url` is required. A component of your own cannot run a playbook; only the platform's components do.
-* The template's `thinkube.yaml` declares `deployment.type: component` and `deployment.name`, the same as `template.fixed_name`.
-* `namespace` is the fixed name (or the component's name when there is no `fixed_name`): the component is deployed there.
-* The name cannot be one of the platform's components.
-* `architectures` refuses the install on a cluster without nodes of those architectures. When the image runs on some architectures only, the template's `thinkube.yaml` declares the same in `spec.architectures` (see xref:reference/thinkube-yaml.adoc#_spec_architectures[spec.architectures]), which keeps the build and the pods there.
-* `display_name`, `description`, `category`, `requirements` and `namespace` are required.
-
-An entry that breaks one of these rules makes the whole catalogue unavailable, with the entry named in the error, until it is fixed.

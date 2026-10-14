@@ -50,19 +50,6 @@
         "deployment": {
           "$ref": "#/definitions/deployment"
         },
-        "architectures": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "enum": [
-              "amd64",
-              "arm64"
-            ]
-          },
-          "description": "The architectures the images are built for and the pods run on, when the software cannot run on every architecture of the cluster. Default: every architecture of the cluster's nodes. Not for knative."
-        },
         "containers": {
           "type": "array",
           "minItems": 1,
@@ -566,11 +553,6 @@
                   "pattern": "^(database|cache|queue)(:[a-z0-9-]+)?$"
                 }
               }
-            },
-            "not": {
-              "required": [
-                "architectures"
-              ]
             }
           }
         }
