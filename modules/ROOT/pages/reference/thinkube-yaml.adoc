@@ -86,9 +86,6 @@ spec:
     run: string | list      # The command, or several in order (optional)
     in: string              # The directory it runs in, when it lives in another repository (optional)
     at: string              # Where the result can be seen (optional)
-    live:                   # Checks run against the deployed service at `at` (optional)
-      home: string          # The directory the live checks are kept in
-      one: string           # The command that runs one live check; <file> is its path
 
   verify:                   # For declarative work: how its own tool says the work holds
     still: string | list    # Commands that change nothing
@@ -236,32 +233,7 @@ How the repository is made live when the platform does not do it. An application
 | `run` | string or list | The command that makes it live, or several to run in order, stopping at the first that fails. Optional: no `run` means the merge itself made it live.
 | `in` | string | The directory to run it in, when the command lives in another repository. Optional.
 | `at` | string | Where the result can be seen, a URL. Optional. Thinkube Tandem opens it to look at what was delivered.
-| `live` | object | The repository's live checks. Optional; when present it needs `at`. See below.
 |===
-
-=== spec.deploy.live
-
-Some promises only the running service can answer, for example _the storage service returns the document's XLIFF for a key_. A live check proves such a promise. It is a test that calls the deployed service at `at` through its public API. Thinkube Tandem writes these checks into `home` and runs them after the work is live, never in the unit tests and never in the image build.
-
-[cols="1,1,3"]
-|===
-| Field | Type | Description
-
-| `home` | string | Required. The directory the live checks are kept in, relative to the repository root. It must not be the root, and it must not be inside a directory the unit tests run from, because the unit tests run without the network.
-| `one` | string | Required. The command that runs one live check. `<file>` is replaced with the check's path, relative to the repository root. Example: `python3 -m pytest -q -p no:cacheprovider <file>`.
-|===
-
-A live check runs in the delivered tree with three variables: `TANDEM_LIVE_URL` (the value of `at`), `THINKUBE_CONTROL_URL` and `THINKUBE_API_TOKEN`. It creates the data it needs through the services' public APIs under unique names, removes that data afterwards, and never imports the repository's code. Exit 0 means the promise holds.
-
-[source,yaml]
-----
-deploy:
-  run: ./scripts/deploy.sh
-  at: https://storage.example.com
-  live:
-    home: live
-    one: "python3 -m pytest -q -p no:cacheprovider <file>"
-----
 
 == spec.verify
 
