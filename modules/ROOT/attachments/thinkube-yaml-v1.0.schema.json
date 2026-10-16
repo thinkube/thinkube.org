@@ -435,7 +435,27 @@
           "type": "string",
           "format": "uri",
           "description": "Where the result can be seen."
+        },
+        "live": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["home", "one"],
+          "description": "Checks run against the deployed service at \"at\", after the work is live; never in the unit tests or the image build.",
+          "properties": {
+            "home": {
+              "type": "string",
+              "description": "The directory the live checks are kept in, relative to the repository root; not the root, and not inside a directory the unit tests run from."
+            },
+            "one": {
+              "type": "string",
+              "pattern": "<file>",
+              "description": "The command that runs one live check; <file> is its path relative to the repository root."
+            }
+          }
         }
+      },
+      "dependencies": {
+        "live": ["at"]
       }
     },
     "verify": {
