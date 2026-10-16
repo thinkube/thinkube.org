@@ -69,6 +69,7 @@ spec:
         command: string     # The whole suite (required when enabled)
         image: string       # Test image override (optional)
         one: string         # How one test file runs; <file> is substituted (optional)
+        size: string        # Memory and CPU for the tests: small / medium / large / xlarge (optional)
       migrations:           # Database migrations (optional)
         tool: string        # alembic, django, flyway, liquibase, prisma, sequelize, gorm, custom
         auto: boolean       # Run on startup (default true)
@@ -183,6 +184,18 @@ Tests run in CI before the container is built, in the named image. The build and
 | `command` | string | Runs the whole suite. Required when enabled.
 | `image` | string | The image the tests run in. Optional; the platform chooses a base image for the container's language.
 | `one` | string | Runs a single test file. `<file>` is replaced by the file's path relative to the container's `build` directory. Optional. Thinkube Tandem uses it to run one test file at a time while it builds a change. When `one` is absent, Tandem works out the command from the repository's own tests and keeps the command it has shown to work.
+| `size` | string | The memory and CPU the test pod gets: `small` 1Gi and 1 CPU, `medium` 4Gi and 2 CPUs, `large` 8Gi and 4 CPUs, `xlarge` 16Gi and 8 CPUs. Default `small`. A suite that loads the whole application and runs thousands of tests needs more than one that checks a single service.
+|===
+
+The tests run on a copy of the container's `build` directory. The pod also has:
+
+[cols="1,3"]
+|===
+| Variable | What it holds
+
+| `TEST_DATABASE_NAME` | The database the tests own, `test_<app>`, created by the deploy when tests are enabled.
+| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | The credentials for the platform's PostgreSQL.
+| `SOURCE_ROOT` | The whole checkout, to read only. A test that checks the repository itself, such as its documentation or another part, reads it here.
 |===
 
 Keep the test environment in one place. The application templates give each container a `run_tests.sh` that runs the whole suite without arguments and one file with a file argument, so `command` is `./run_tests.sh` and `one` is `./run_tests.sh <file>`, and the settings a test needs are set in the script, never repeated in this file.

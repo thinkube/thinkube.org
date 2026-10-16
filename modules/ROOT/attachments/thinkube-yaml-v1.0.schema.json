@@ -290,6 +290,12 @@
         "one": {
           "type": "string",
           "description": "How one test file runs; <file> is substituted with the path relative to the build directory."
+        },
+        "size": {
+          "type": "string",
+          "enum": ["small", "medium", "large", "xlarge"],
+          "default": "small",
+          "description": "The memory and CPU the test pod gets."
         }
       },
       "additionalProperties": false,
