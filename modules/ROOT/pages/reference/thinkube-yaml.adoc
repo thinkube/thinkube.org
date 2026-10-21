@@ -56,6 +56,7 @@ spec:
     api_path: string        # The OpenAI API root (default "/v1")
     gpu_compute_capabilities:  # The GPUs the server runs on (optional; default any)
       - string              # A CUDA compute capability, e.g. "12.1"
+    anthropic_messages: boolean  # The server answers the Anthropic Messages API (default false)
 
   containers:               # The containers the platform builds and runs
     - name: string          # Container identifier
@@ -175,6 +176,7 @@ Optional. It makes the component a backend type of the LLM Gateway. The gateway 
 | `tier` | string | Required. `performance` or `flexible`. A request that asks for a tier with the `X-LLM-Tier` header is sent to a backend of that tier.
 | `api_path` | string | Default `/v1`, where the OpenAI API specification places its routes. The gateway probes `<api_path>/models` and the container's `health` path.
 | `gpu_compute_capabilities` | list | Optional. The CUDA compute capabilities the server runs on, written `major.minor`, such as `12.1` for a DGX Spark. The gateway loads models only on nodes whose GPUs have one of them. Without it, the server runs on any GPU.
+| `anthropic_messages` | boolean | Default `false`. The server answers the Anthropic Messages API at `<api_path>/messages`. The gateway then forwards Anthropic requests to it with only the model name changed. Otherwise it translates them to OpenAI chat completions.
 |===
 
 == spec.containers

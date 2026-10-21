@@ -229,6 +229,11 @@
             "type": "string",
             "pattern": "^\\d+\\.\\d+$"
           }
+        },
+        "anthropic_messages": {
+          "type": "boolean",
+          "default": false,
+          "description": "The server answers the Anthropic Messages API at <api_path>/messages; the gateway forwards Anthropic requests to it instead of translating them."
         }
       },
       "additionalProperties": false
