@@ -50,6 +50,9 @@
         "deployment": {
           "$ref": "#/definitions/deployment"
         },
+        "llm_backend": {
+          "$ref": "#/definitions/llmBackend"
+        },
         "containers": {
           "type": "array",
           "minItems": 1,
@@ -176,6 +179,65 @@
       },
       "additionalProperties": false
     },
+    "llmBackend": {
+      "type": "object",
+      "description": "This component is a backend type of the LLM Gateway. Requires deployment.type component and deployment.gateway_managed true.",
+      "required": [
+        "type",
+        "display_name",
+        "container",
+        "driver",
+        "tier"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "description": "The backend type that models name in server_type."
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "container": {
+          "type": "string",
+          "description": "The container that serves the models; it declares a port."
+        },
+        "driver": {
+          "type": "string",
+          "enum": [
+            "per-model-pod",
+            "ollama"
+          ]
+        },
+        "tier": {
+          "type": "string",
+          "enum": [
+            "performance",
+            "flexible"
+          ]
+        },
+        "api_path": {
+          "type": "string",
+          "default": "/v1",
+          "description": "The OpenAI API root."
+        },
+        "gpu_compute_capabilities": {
+          "type": "array",
+          "description": "The CUDA compute capabilities the server runs on; without it, any GPU.",
+          "items": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+$"
+          }
+        },
+        "anthropic_messages": {
+          "type": "boolean",
+          "default": false,
+          "description": "The server answers the Anthropic Messages API at <api_path>/messages; the gateway forwards Anthropic requests to it instead of translating them."
+        }
+      },
+      "additionalProperties": false
+    },
     "container": {
       "type": "object",
       "required": [
@@ -216,6 +278,17 @@
         "health": {
           "type": "string",
           "pattern": "^/"
+        },
+        "startupSeconds": {
+          "type": "integer",
+          "minimum": 10,
+          "default": 600,
+          "description": "GPU containers: the seconds the container may take to answer its health path when it starts."
+        },
+        "nodeCache": {
+          "type": "string",
+          "pattern": "^/.+",
+          "description": "GPU containers: a folder on the node's local disk at this path, kept across restarts; also in NODE_CACHE_DIR."
         },
         "schedule": {
           "type": "string"
@@ -290,6 +363,12 @@
         "one": {
           "type": "string",
           "description": "How one test file runs; <file> is substituted with the path relative to the build directory."
+        },
+        "size": {
+          "type": "string",
+          "enum": ["small", "medium", "large", "xlarge"],
+          "default": "small",
+          "description": "The memory and CPU the test pod gets."
         }
       },
       "additionalProperties": false,

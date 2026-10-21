@@ -3,7 +3,7 @@
   "description": "Official documentation site for the Thinkube platform, built with Antora and AsciiDoc.",
   "author": "Alejandro Martínez Corriá",
   "license": "Apache-2.0",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "build": "antora --fetch --stacktrace antora-playbook.yml",

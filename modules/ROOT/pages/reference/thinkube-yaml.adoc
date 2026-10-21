@@ -47,6 +47,17 @@ spec:
     containerConcurrency: number  # Knative: concurrent requests per pod (default 0 = unlimited)
     timeoutSeconds: number  # Knative: request timeout in seconds (default 300)
 
+  llm_backend:              # This component is a backend of the LLM Gateway (optional)
+    type: string            # The backend type models name in server_type, e.g. "vllm"
+    display_name: string    # The name the platform shows, e.g. "vLLM"
+    container: string       # The container that serves the models
+    driver: string          # "per-model-pod" or "ollama"
+    tier: string            # "performance" or "flexible"
+    api_path: string        # The OpenAI API root (default "/v1")
+    gpu_compute_capabilities:  # The GPUs the server runs on (optional; default any)
+      - string              # A CUDA compute capability, e.g. "12.1"
+    anthropic_messages: boolean  # The server answers the Anthropic Messages API (default false)
+
   containers:               # The containers the platform builds and runs
     - name: string          # Container identifier
       build: string         # Build context path
@@ -54,6 +65,8 @@ spec:
       size: string          # small / medium / large / xlarge (optional)
       buildSize: string     # Memory for the build: small / medium / large / xlarge (optional)
       health: string        # Health endpoint path (required when a port is exposed)
+      startupSeconds: number  # GPU containers: time to answer health at start (default 600)
+      nodeCache: string     # GPU containers: a folder on the node's local disk at this path (optional)
       schedule: string      # Cron expression for scheduled tasks (optional)
       mounts:               # Storage mounts (optional)
         - string            # "storage-name:/mount/path"
@@ -69,6 +82,7 @@ spec:
         command: string     # The whole suite (required when enabled)
         image: string       # Test image override (optional)
         one: string         # How one test file runs; <file> is substituted (optional)
+        size: string        # Memory and CPU for the tests: small / medium / large / xlarge (optional)
       migrations:           # Database migrations (optional)
         tool: string        # alembic, django, flyway, liquibase, prisma, sequelize, gorm, custom
         auto: boolean       # Run on startup (default true)
@@ -148,6 +162,24 @@ Optional. Defaults to `type: app`.
 
 Knative services are meant to be portable to cloud serverless platforms. When `type: knative`, the schema enforces: a single container; no `gpu`, `mounts`, `migrations`, `schedule` or `capabilities`; no `storage` or `workflows` service; `timeoutSeconds` at most 900. Work that needs any of these uses `app` or `component`.
 
+== spec.llm_backend
+
+Optional. It makes the component a backend type of the LLM Gateway. The gateway reads it from the component's service ConfigMap, so a new inference server is added with a template and no change to Thinkube Control. It requires `deployment.type: component` and `deployment.gateway_managed: true`.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `type` | string | Required. Lowercase alphanumeric with hyphens. The name that models list in their `server_type` in the model catalog.
+| `display_name` | string | Required. The name Thinkube Control shows for this backend.
+| `container` | string | Required. The container that serves the models. It must declare a `port`. Its Deployment, `<name>-<container>`, rests at zero replicas; the gateway copies it for each model it loads, on the node the user chooses.
+| `driver` | string | Required. `per-model-pod`: one pod serves one model, and the gateway passes the model and its settings as environment variables (`MODEL_ID`, `MAX_CONTEXT_LENGTH` and others). `ollama`: one pod per node serves many models through the Ollama API.
+| `tier` | string | Required. `performance` or `flexible`. A request that asks for a tier with the `X-LLM-Tier` header is sent to a backend of that tier.
+| `api_path` | string | Default `/v1`, where the OpenAI API specification places its routes. The gateway probes `<api_path>/models` and the container's `health` path.
+| `gpu_compute_capabilities` | list | Optional. The CUDA compute capabilities the server runs on, written `major.minor`, such as `12.1` for a DGX Spark. The gateway loads models only on nodes whose GPUs have one of them. Without it, the server runs on any GPU.
+| `anthropic_messages` | boolean | Default `false`. The server answers the Anthropic Messages API at `<api_path>/messages`. The gateway then forwards Anthropic requests to it with only the model name changed. Otherwise it translates them to OpenAI chat completions.
+|===
+
 == spec.containers
 
 At least one container, unless `deployment.type` is `none`.
@@ -160,8 +192,10 @@ At least one container, unless `deployment.type` is `none`.
 | `build` | string | Build context relative to the repository root: `.`, `./backend`.
 | `port` | number | The port the container listens on, 1 to 65535. Optional for workers and jobs.
 | `size` | string | `small` 256Mi and 100m CPU, `medium` 512Mi and 500m, `large` 1Gi and 1000m, `xlarge` 80Gi and 4000m for unified-memory systems. Default `small`.
-| `buildSize` | string | The memory the container's build pod gets: `small` 4Gi, `medium` 8Gi, `large` 16Gi, `xlarge` 32Gi. Default `small`. Separate from `size`, because a build can need far more than the container runs in: a frontend served in 512Mi can need 8Gi to bundle.
+| `buildSize` | string | The memory the container's build pod gets: `small` 4Gi, `medium` 8Gi, `large` 16Gi, `xlarge` 32Gi. Default `small`. Separate from `size`, because a build can need far more than the container runs in: a frontend served in 512Mi can need 8Gi to bundle. While training mode is on, builds also run on its node, one at a time; an `xlarge` build is refused there, with an error, when no other node of its architecture can take it.
 | `health` | string | Health endpoint path, required when a port is exposed. Standard value `/health`. See the health endpoints specification.
+| `startupSeconds` | number | GPU containers with a `health` path only. The seconds the container may take to answer its health path when it starts, before it is restarted. Default `600`. An inference server that loads a large model before it opens its port needs more.
+| `nodeCache` | string | GPU containers only. An absolute path where the container gets a folder on the local disk of the node it runs on, kept across restarts and shared by the component's pods on that node. Every user in the container may write to it. Its path is also in `NODE_CACHE_DIR`. For local copies of large files the server reads at random while it serves, such as a model package on Thinkube Storage. The folder is not backed up and is not cleaned by the platform.
 | `schedule` | string | A cron expression. The container runs as a job and has no persistent pods.
 | `mounts` | list | `storage-name:/mount/path`. The storage must be declared under `services`.
 | `gpu` | object | `count` and `memory` are both required. The platform allocates that many GPUs with at least that memory each, preferring the smallest GPU that fits.
@@ -183,6 +217,18 @@ Tests run in CI before the container is built, in the named image. The build and
 | `command` | string | Runs the whole suite. Required when enabled.
 | `image` | string | The image the tests run in. Optional; the platform chooses a base image for the container's language.
 | `one` | string | Runs a single test file. `<file>` is replaced by the file's path relative to the container's `build` directory. Optional. Thinkube Tandem uses it to run one test file at a time while it builds a change. When `one` is absent, Tandem works out the command from the repository's own tests and keeps the command it has shown to work.
+| `size` | string | The memory and CPU the test pod gets: `small` 1Gi and 1 CPU, `medium` 4Gi and 2 CPUs, `large` 8Gi and 4 CPUs, `xlarge` 16Gi and 8 CPUs. Default `small`. A suite that loads the whole application and runs thousands of tests needs more than one that checks a single service.
+|===
+
+The tests run on a copy of the container's `build` directory. The pod also has:
+
+[cols="1,3"]
+|===
+| Variable | What it holds
+
+| `TEST_DATABASE_NAME` | The database the tests own, `test_<app>`, created by the deploy when tests are enabled.
+| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | The credentials for the platform's PostgreSQL.
+| `SOURCE_ROOT` | The whole checkout, to read only. A test that checks the repository itself, such as its documentation or another part, reads it here.
 |===
 
 Keep the test environment in one place. The application templates give each container a `run_tests.sh` that runs the whole suite without arguments and one file with a file argument, so `command` is `./run_tests.sh` and `one` is `./run_tests.sh <file>`, and the settings a test needs are set in the script, never repeated in this file.
@@ -304,9 +350,27 @@ Other deployed services this application needs. At deploy time Thinkube Control 
 | Field | Type | Description
 
 | `name` | string | The name shown in the interface and in errors.
-| `type` | string | The template type or service class to look for: `texplitter`, `text-embeddings`, `ollama`, `seaweedfs`.
-| `env` | string | The variable that receives the URL: `TEXPLITTER_URL`.
+| `type` | string | The service to look for, by name. Common types: `llm-proxy` (the LLM Gateway, OpenAI API), `texplitter`, `text-embeddings`, `ollama`, `seaweedfs`.
+| `env` | string | The variable that receives the URL: `LLM_GATEWAY_URL`, `TEXPLITTER_URL`.
 |===
+
+A type is matched against the services running on the cluster, in this order:
+
+. a Knative service whose name or namespace contains the type; its address is used;
+. a Service whose name and namespace both contain the type;
+. a Service whose name contains the type.
+
+The URL is `http://<service>.<namespace>.svc.cluster.local:<first port>`. A Knative service that matches but is not ready yet, or a Service that matches but exposes no port, fails the deployment with a message naming it.
+
+For example, an application that calls models through the LLM Gateway declares:
+
+[source,yaml]
+----
+dependencies:
+  - name: llm-gateway
+    type: llm-proxy
+    env: LLM_GATEWAY_URL
+----
 
 == spec.env
 
