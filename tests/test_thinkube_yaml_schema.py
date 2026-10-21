@@ -287,6 +287,38 @@ def test_gateway_managed_must_be_a_boolean():
     assert errors_for(component(gateway_managed="yes"))
 
 
+LLM_BACKEND = {
+    "type": "vllm",
+    "display_name": "vLLM",
+    "container": "server",
+    "driver": "per-model-pod",
+    "tier": "performance",
+}
+
+
+def with_llm_backend(**fields):
+    document = component(replicas=0, gateway_managed=True)
+    document["spec"]["llm_backend"] = {**LLM_BACKEND, **fields}
+    return document
+
+
+def test_a_component_may_declare_an_llm_backend():
+    """thinkube-control reads it to serve models on the component."""
+    found = errors_for(with_llm_backend(api_path="/v1"))
+    assert not found, "; ".join(e.message for e in found)
+
+
+@pytest.mark.parametrize("field,value", [("driver", "shared"), ("tier", "fast"), ("type", "vLLM")])
+def test_an_llm_backend_field_outside_its_values_is_refused(field, value):
+    assert errors_for(with_llm_backend(**{field: value}))
+
+
+def test_an_llm_backend_without_its_driver_is_refused():
+    document = with_llm_backend()
+    del document["spec"]["llm_backend"]["driver"]
+    assert errors_for(document)
+
+
 # --- the page and the schema say the same thing ------------------------------
 
 

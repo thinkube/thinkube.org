@@ -47,6 +47,14 @@ spec:
     containerConcurrency: number  # Knative: concurrent requests per pod (default 0 = unlimited)
     timeoutSeconds: number  # Knative: request timeout in seconds (default 300)
 
+  llm_backend:              # This component is a backend of the LLM Gateway (optional)
+    type: string            # The backend type models name in server_type, e.g. "vllm"
+    display_name: string    # The name the platform shows, e.g. "vLLM"
+    container: string       # The container that serves the models
+    driver: string          # "per-model-pod" or "ollama"
+    tier: string            # "performance" or "flexible"
+    api_path: string        # The OpenAI API root (default "/v1")
+
   containers:               # The containers the platform builds and runs
     - name: string          # Container identifier
       build: string         # Build context path
@@ -148,6 +156,22 @@ Optional. Defaults to `type: app`.
 === Knative portability
 
 Knative services are meant to be portable to cloud serverless platforms. When `type: knative`, the schema enforces: a single container; no `gpu`, `mounts`, `migrations`, `schedule` or `capabilities`; no `storage` or `workflows` service; `timeoutSeconds` at most 900. Work that needs any of these uses `app` or `component`.
+
+== spec.llm_backend
+
+Optional. It makes the component a backend type of the LLM Gateway. The gateway reads it from the component's service ConfigMap, so a new inference server is added with a template and no change to Thinkube Control. It requires `deployment.type: component` and `deployment.gateway_managed: true`.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `type` | string | Required. Lowercase alphanumeric with hyphens. The name that models list in their `server_type` in the model catalog.
+| `display_name` | string | Required. The name Thinkube Control shows for this backend.
+| `container` | string | Required. The container that serves the models. It must declare a `port`. Its Deployment, `<name>-<container>`, rests at zero replicas; the gateway copies it for each model it loads, on the node the user chooses.
+| `driver` | string | Required. `per-model-pod`: one pod serves one model, and the gateway passes the model and its settings as environment variables (`MODEL_ID`, `MAX_CONTEXT_LENGTH` and others). `ollama`: one pod per node serves many models through the Ollama API.
+| `tier` | string | Required. `performance` or `flexible`. A request that asks for a tier with the `X-LLM-Tier` header is sent to a backend of that tier.
+| `api_path` | string | Default `/v1`, where the OpenAI API specification places its routes. The gateway probes `<api_path>/models` and the container's `health` path.
+|===
 
 == spec.containers
 
