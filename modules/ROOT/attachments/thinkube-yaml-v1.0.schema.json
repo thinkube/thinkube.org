@@ -285,6 +285,11 @@
           "default": 600,
           "description": "GPU containers: the seconds the container may take to answer its health path when it starts."
         },
+        "nodeCache": {
+          "type": "string",
+          "pattern": "^/.+",
+          "description": "GPU containers: a folder on the node's local disk at this path, kept across restarts; also in NODE_CACHE_DIR."
+        },
         "schedule": {
           "type": "string"
         },

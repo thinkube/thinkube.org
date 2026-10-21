@@ -66,6 +66,7 @@ spec:
       buildSize: string     # Memory for the build: small / medium / large / xlarge (optional)
       health: string        # Health endpoint path (required when a port is exposed)
       startupSeconds: number  # GPU containers: time to answer health at start (default 600)
+      nodeCache: string     # GPU containers: a folder on the node's local disk at this path (optional)
       schedule: string      # Cron expression for scheduled tasks (optional)
       mounts:               # Storage mounts (optional)
         - string            # "storage-name:/mount/path"
@@ -194,6 +195,7 @@ At least one container, unless `deployment.type` is `none`.
 | `buildSize` | string | The memory the container's build pod gets: `small` 4Gi, `medium` 8Gi, `large` 16Gi, `xlarge` 32Gi. Default `small`. Separate from `size`, because a build can need far more than the container runs in: a frontend served in 512Mi can need 8Gi to bundle. While training mode is on, builds also run on its node, one at a time; an `xlarge` build is refused there, with an error, when no other node of its architecture can take it.
 | `health` | string | Health endpoint path, required when a port is exposed. Standard value `/health`. See the health endpoints specification.
 | `startupSeconds` | number | GPU containers with a `health` path only. The seconds the container may take to answer its health path when it starts, before it is restarted. Default `600`. An inference server that loads a large model before it opens its port needs more.
+| `nodeCache` | string | GPU containers only. An absolute path where the container gets a folder on the local disk of the node it runs on, kept across restarts and shared by the component's pods on that node. Every user in the container may write to it. Its path is also in `NODE_CACHE_DIR`. For local copies of large files the server reads at random while it serves, such as a model package on Thinkube Storage. The folder is not backed up and is not cleaned by the platform.
 | `schedule` | string | A cron expression. The container runs as a job and has no persistent pods.
 | `mounts` | list | `storage-name:/mount/path`. The storage must be declared under `services`.
 | `gpu` | object | `count` and `memory` are both required. The platform allocates that many GPUs with at least that memory each, preferring the smallest GPU that fits.
