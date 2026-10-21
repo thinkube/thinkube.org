@@ -13,10 +13,10 @@
 
 === Basic idea
 
-Thinkube Tandem Chat runs Pi or opencode on a model your cluster serves. The agents name it only by a gateway alias, `thinkube-fast`, and the LLM Gateway answers that alias as `nvidia/Qwen3.6-35B-A3B-NVFP4`. Until that model is loaded, a Tandem Chat has nothing to answer with.
+Thinkube Tandem Chat runs Pi on a model your cluster serves. A new chat starts with the model catalog's agent default, the gateway alias `thinkube-fast`, which the LLM Gateway answers as `nvidia/Qwen3.6-35B-A3B-NVFP4`. Until that model is loaded, a call to it answers with what to load.
 
-* *One alias, one model.* `thinkube-fast` is a Qwen 3.6 model of 35B parameters, 3B of them active per token, quantized to NVFP4. The agents never name the model itself, so a later change of model changes no agent setting.
-* *The whole context.* The agents are set up for a 262,144 token context, so the model is loaded with it. On the DGX Spark, vLLM has room for 934,356 tokens of KV cache with this model, so the whole context fits.
+* *One alias, one model.* `thinkube-fast` is a Qwen 3.6 model of 35B parameters, 3B of them active per token, quantized to NVFP4. Pi names it by the alias, so pointing the alias at another model in the catalog changes no agent setting.
+* *The whole context.* Pi uses the context the model is served with, so the model is loaded with its whole 262,144 token context. On the DGX Spark, vLLM has room for 934,356 tokens of KV cache with this model, so the whole context fits.
 * *By hand first.* Tandem Chat cannot load the model it runs on, so Steps 1 to 3 are done in Thinkube Control and a terminal. Step 4 is the first question to the agent.
 
 === What you'll accomplish
@@ -31,7 +31,7 @@ Thinkube Tandem Chat runs Pi or opencode on a model your cluster serves. The age
 
 *Optional*
 
-* xref:reference/agentic-clients.adoc[Agentic clients in Thinkube IDE]: what Pi, opencode and Thinkube Tandem Chat are set up with.
+* xref:reference/agentic-clients.adoc[Agentic clients in Thinkube IDE]: what Pi and Thinkube Tandem Chat are set up with.
 
 === Supported hardware
 
@@ -105,7 +105,7 @@ Thinkube Control reports 18 services, all enabled.
 
 *To undo:* Unload the model in *LLM Gateway*. The weights stay in your storage for the next load, and Thinkube Tandem Chat has no model until then.
 
-* xref:reference/agentic-clients.adoc[Agentic clients in Thinkube IDE]: the confirmation before a change, edits you can undo, and the other agent, opencode.
+* xref:reference/agentic-clients.adoc[Agentic clients in Thinkube IDE]: the confirmation before a change, edits you can undo, and the other models a chat can pick.
 * xref:playbooks/load-a-model-on-the-node-and-context-you-choose.adoc[Load a model on the node and context you choose]: what a node holds, and what happens when it is busy.
 
 
