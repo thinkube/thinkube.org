@@ -38,7 +38,7 @@ metadata:
 
 spec:
   deployment:               # Deployment type and scaling (optional)
-    type: string            # "app" (default), "knative", "component", or "none"
+    type: string            # "app" (default), "knative", "component", "extension", or "none"
     name: string            # Component only: fixed deployment name
     replicas: number        # Initial replica count (default 1; 0 for gateway-managed components)
     gateway_managed: boolean  # An external controller creates the pods (default false)
@@ -46,6 +46,20 @@ spec:
     maxScale: number        # Knative: maximum pods (default 5)
     containerConcurrency: number  # Knative: concurrent requests per pod (default 0 = unlimited)
     timeoutSeconds: number  # Knative: request timeout in seconds (default 300)
+
+  extension:                # Extension only: how Thinkube Control shows it
+    title: string           # The name in Control's navigation
+    description: string     # One line about it (optional)
+    icon: string            # A lucide icon name (optional)
+    platform: string        # The platform MAJOR.MINOR it is built for, e.g. "0.1"
+    depends: [string]       # Other extensions it needs (optional)
+    ui:
+      module: string        # An ES module that exports mount(element, host)
+      css: string           # Its stylesheet, in the module's folder (optional)
+    nav:                    # At least one entry in Control's navigation
+      - label: string
+        path: string        # A path of the extension, starting with /
+        icon: string        # A lucide icon name (optional)
 
   llm_backend:              # This component is a backend of the LLM Gateway (optional)
     type: string            # The backend type models name in server_type, e.g. "vllm"
@@ -148,7 +162,7 @@ Optional. Defaults to `type: app`.
 |===
 | Field | Type | Description
 
-| `type` | string | `app`: an always-on Deployment, Service and HTTPRoute, named by you at deploy time. `knative`: a Knative Service that scales to zero. `component`: the same resources as `app` with a fixed name from `deployment.name`, for platform infrastructure that goes through the pipeline. `none`: the platform does not deploy this repository; see `spec.deploy`.
+| `type` | string | `app`: an always-on Deployment, Service and HTTPRoute, named by you at deploy time. `knative`: a Knative Service that scales to zero. `component`: the same resources as `app` with a fixed name from `deployment.name`, for platform infrastructure that goes through the pipeline. `extension`: a part of Thinkube Control, deployed in Control's namespace and shown inside Control; see `spec.extension`. `none`: the platform does not deploy this repository; see `spec.deploy`.
 | `name` | string | Component only, and required there. Lowercase alphanumeric with hyphens. It becomes the namespace, the service name, the domain prefix, the Thinkube Git repository name and the ArgoCD application name.
 | `replicas` | number | Initial replica count, default `1`. `0` for components whose pods an external controller creates at runtime, such as the LLM Gateway placing inference pods per GPU. Forbidden for `knative`.
 | `gateway_managed` | boolean | Default `false`. An external controller creates this component's pods at runtime. Its resting state is zero replicas, so the platform reports it as idle rather than scaled down, and keeps it listed as enabled.
@@ -161,6 +175,30 @@ Optional. Defaults to `type: app`.
 === Knative portability
 
 Knative services are meant to be portable to cloud serverless platforms. When `type: knative`, the schema enforces: a single container; no `gpu`, `mounts`, `migrations`, `schedule` or `capabilities`; no `storage` or `workflows` service; `timeoutSeconds` at most 900. Work that needs any of these uses `app` or `component`.
+
+== spec.extension
+
+Required when `deployment.type` is `extension`, and only then. An extension is a part of Thinkube Control that is built and deployed on its own: a redeploy of it does not touch Control or the other extensions.
+
+It runs in the `thinkube-control` namespace. Its Services are named `<app>-<container>`, so they do not meet Control's own, and its objects carry the label `app.kubernetes.io/name: <app>`, by which a delete removes them. A few names are reserved for Control's objects and cannot name an extension. The `workflows` service is refused, because that namespace has no Argo Workflows of its own.
+
+Control reads this block from the app's `thinkube.yaml` on its Gitea `main`. It lists the extension in its navigation and draws its pages inside its own layout: it loads `ui.module` through `/api/v1/x/<app>/ui/` and calls the module's `mount(element, host)`. The host gives the module Control's address (`basename`, `path()`, `listen()`, `navigate()`) and `request()`, which sends a call through `/api/v1/x/<app>/api/` to the extension's `/api/v1/` with the user's session. An extension built for another platform version, or one whose `depends` are not all installed, is listed with the problem and its pages are not loaded.
+
+The web app template renders this block when it is deployed with the variable `extension: true`.
+
+[cols="1,1,3"]
+|===
+| Field | Type | Description
+
+| `title` | string | The name in Control's navigation.
+| `description` | string | Optional. One line about the extension.
+| `icon` | string | Optional. A https://lucide.dev/icons[lucide] icon name.
+| `platform` | string | The platform `MAJOR.MINOR` the extension is built for, for example `"0.1"`.
+| `depends` | list of string | Optional. The names of other extensions it needs.
+| `ui.module` | string | A path of the extension's site, starting with `/`: an ES module that exports `mount(element, host)` and returns the function that removes what it drew. Control serves the files of this module's folder.
+| `ui.css` | string | Optional. Its stylesheet, in the same folder as the module.
+| `nav` | list | At least one entry: `label`, `path` (a path of the extension, starting with `/`) and an optional lucide `icon`.
+|===
 
 == spec.llm_backend
 

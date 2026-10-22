@@ -50,6 +50,9 @@
         "deployment": {
           "$ref": "#/definitions/deployment"
         },
+        "extension": {
+          "$ref": "#/definitions/extension"
+        },
         "llm_backend": {
           "$ref": "#/definitions/llmBackend"
         },
@@ -135,10 +138,11 @@
             "app",
             "knative",
             "component",
+            "extension",
             "none"
           ],
           "default": "app",
-          "description": " \"none\": the platform does not deploy this repository; see spec.deploy."
+          "description": " \"extension\": a part of Thinkube Control, in Control's namespace; see spec.extension. \"none\": the platform does not deploy this repository; see spec.deploy."
         },
         "name": {
           "type": "string",
@@ -175,6 +179,87 @@
           "minimum": 1,
           "maximum": 900,
           "default": 300
+        }
+      },
+      "additionalProperties": false
+    },
+    "extension": {
+      "type": "object",
+      "description": "A part of Thinkube Control: Control lists it in its navigation and draws its pages inside its own layout.",
+      "required": [
+        "title",
+        "platform",
+        "ui",
+        "nav"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string",
+          "description": "A lucide icon name"
+        },
+        "platform": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+$",
+          "description": "The platform MAJOR.MINOR the extension is built for"
+        },
+        "depends": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "description": "Other extensions it needs"
+        },
+        "ui": {
+          "type": "object",
+          "required": [
+            "module"
+          ],
+          "properties": {
+            "module": {
+              "type": "string",
+              "pattern": "^/",
+              "description": "An ES module that exports mount(element, host)"
+            },
+            "css": {
+              "type": "string",
+              "pattern": "^/",
+              "description": "Its stylesheet, in the module's folder"
+            }
+          },
+          "additionalProperties": false
+        },
+        "nav": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "label",
+              "path"
+            ],
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/"
+              },
+              "icon": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
         }
       },
       "additionalProperties": false
@@ -366,7 +451,12 @@
         },
         "size": {
           "type": "string",
-          "enum": ["small", "medium", "large", "xlarge"],
+          "enum": [
+            "small",
+            "medium",
+            "large",
+            "xlarge"
+          ],
           "default": "small",
           "description": "The memory and CPU the test pod gets."
         }
@@ -710,6 +800,50 @@
                   "required": [
                     "replicas"
                   ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "spec"
+        ],
+        "properties": {
+          "spec": {
+            "required": [
+              "deployment"
+            ],
+            "properties": {
+              "deployment": {
+                "properties": {
+                  "type": {
+                    "const": "extension"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "spec": {
+            "required": [
+              "extension"
+            ],
+            "properties": {
+              "services": {
+                "description": "An extension runs in Control's namespace, which has no Argo Workflows of its own: \"workflows\" is refused here.",
+                "items": {
+                  "type": "string",
+                  "pattern": "^(database|cache|storage|queue)(:[a-z0-9-]+)?$"
                 }
               }
             }
