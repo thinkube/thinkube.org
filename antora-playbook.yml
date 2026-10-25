@@ -40,6 +40,11 @@ content:
       # Not "docs": Copier hands an app everything in the template, and a
       # generated app was inheriting these pages as if they described it.
       start_path: template-docs
+    # docs-with-code: llebre's pages live beside the training engine they
+    # describe; its header on the site is its own (see partials/header-content.hbs).
+    - url: https://github.com/thinkube/llebre.git
+      branches: main
+      start_path: docs
 
 ui:
   bundle:

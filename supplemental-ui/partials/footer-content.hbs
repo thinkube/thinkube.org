@@ -1,6 +1,12 @@
+{{#if (eq page.component.name "llebre")}}
+<footer class="footer footer-llebre">
+  <p class="footer-text">© Alejandro Martínez Corriá and the Thinkube contributors. Apache-2.0. llebre is the training engine of <a href="{{{or site.url siteRootPath}}}">Thinkube</a>.</p>
+</footer>
+{{else}}
 <footer class="footer">
   <p class="footer-text">© Alejandro Martínez Corriá and the Thinkube contributors. Apache-2.0.</p>
 </footer>
+{{/if}}
 
 {{! Thinkube "Runs on DGX Spark" stamp + its rough-edges SVG filter }}
 <div id="dgx-stamp" aria-hidden="true">Runs on<br><strong>DGX Spark</strong></div>
