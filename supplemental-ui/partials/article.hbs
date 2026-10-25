@@ -1,5 +1,11 @@
 <article class="doc{{#with page.attributes.type}} doc--{{this}}{{/with}}{{#with page.attributes.area}} area-{{this}}{{/with}}">
-{{#if (eq page.attributes.type 'playbook')}}
+{{#if (eq page.component.name "llebre")}}
+{{! a guest component's pages: a kicker by page type, no Thinkube area or card facts }}
+<p class="playbook-kicker">{{#if (eq page.attributes.type 'reference')}}Reference{{else if (eq page.attributes.type 'playbook')}}Get started{{else}}Guide{{/if}}</p>
+{{#with page.title}}
+<h1 class="page">{{{this}}}</h1>
+{{/with}}
+{{else if (eq page.attributes.type 'playbook')}}
 <header class="playbook-head">
   <p class="playbook-kicker"><span class="tk-icon tk-area-icon tk-kicker-icon" aria-hidden="true"></span>{{area-name page.attributes.area}}</p>
 {{#with page.title}}
