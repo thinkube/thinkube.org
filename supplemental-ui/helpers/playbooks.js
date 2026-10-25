@@ -16,12 +16,17 @@
 // build when one is missing or invalid, so this helper reads them as they are.
 
 const AREA_ORDER = ['kubernetes', 'gitops', 'models', 'tandem']
+// A guest component (another product's docs under its own header, such as
+// llebre) keeps its playbooks out of the Thinkube catalog; lib/playbook-check.js
+// lists the same names.
+const GUEST_COMPONENTS = ['llebre']
 
 module.exports = (options) => {
   const { data: { root }, hash } = options
   const pages = root.contentCatalog
     .findBy({ family: 'page' })
     .filter((page) => page.asciidoc && page.asciidoc.attributes['page-type'] === 'playbook')
+    .filter((page) => !GUEST_COMPONENTS.includes(page.src.component))
     .map((page) => {
       const a = page.asciidoc.attributes
       return {
