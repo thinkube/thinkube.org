@@ -121,6 +121,7 @@ In every container:
 | `WORKFLOWS_SERVER_URL` | `http://argo-workflows-server.argo.svc.cluster.local:2746`
 | `WORKFLOWS_SERVICE_ACCOUNT` | `<app>-workflows`
 | `WORKFLOWS_UI_URL` | `https://argo.<your domain>/workflows/<namespace>`
+| `WORKFLOWS_ARTIFACT_REPOSITORY` | `artifact-repositories`, the ConfigMap of the repository above. The namespace uses it when a workflow names none; an extension's workflow must name its own (see xref:reference/thinkube-yaml.adoc#_workflows[Workflows]).
 | `CONTAINER_IMAGE_<NAME>` | One per container in `thinkube.yaml`, such as `CONTAINER_IMAGE_BACKEND`: the image that container's deployment runs, `registry.<your domain>/thinkube/<app>-<container>:<build tag>`. The value follows the deployed build, so a rollback of the app also rolls back its steps.
 |===
 

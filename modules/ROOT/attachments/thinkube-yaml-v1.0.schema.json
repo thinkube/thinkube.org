@@ -840,10 +840,10 @@
             ],
             "properties": {
               "services": {
-                "description": "An extension runs in Control's namespace, which has no Argo Workflows of its own: \"workflows\" is refused here.",
+                "description": "An extension runs in Control's namespace. \"workflows\" gives it an account, a role and an artifact repository named after the extension.",
                 "items": {
                   "type": "string",
-                  "pattern": "^(database|cache|storage|queue)(:[a-z0-9-]+)?$"
+                  "pattern": "^((database|cache|storage|queue)(:[a-z0-9-]+)?|workflows)$"
                 }
               }
             }

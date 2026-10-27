@@ -110,6 +110,29 @@ def test_knative_refuses_workflows():
     assert errors_for(document), "knative must refuse the workflows service"
 
 
+EXTENSION_BLOCK = {
+    "title": "Datasets",
+    "platform": "0.1",
+    "ui": {"module": "/extension/index.js"},
+    "nav": [{"label": "Datasets", "path": "/"}],
+}
+
+
+def extension_with(services):
+    document = app_with(services, deployment={"type": "extension"})
+    document["spec"]["extension"] = EXTENSION_BLOCK
+    return document
+
+
+def test_an_extension_may_declare_workflows():
+    found = errors_for(extension_with(["database", "workflows"]))
+    assert not found, "; ".join(e.message for e in found)
+
+
+def test_an_extensions_workflows_takes_no_name_suffix():
+    assert errors_for(extension_with(["workflows:runs"]))
+
+
 def test_knative_refuses_storage():
     document = app_with(["storage"], deployment={"type": "knative"})
     assert errors_for(document), "knative must refuse the storage service"

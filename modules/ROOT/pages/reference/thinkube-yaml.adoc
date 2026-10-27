@@ -180,7 +180,7 @@ Knative services are meant to be portable to cloud serverless platforms. When `t
 
 Required when `deployment.type` is `extension`, and only then. An extension is a part of Thinkube Control that is built and deployed on its own: a redeploy of it does not touch Control or the other extensions.
 
-It runs in the `thinkube-control` namespace. Its Services are named `<app>-<container>`, so they do not meet Control's own, and its objects carry the label `app.kubernetes.io/name: <app>`, by which a delete removes them. A few names are reserved for Control's objects and cannot name an extension. The `workflows` service is refused, because that namespace has no Argo Workflows of its own.
+It runs in the `thinkube-control` namespace. Its Services are named `<app>-<container>`, so they do not meet Control's own, and its objects carry the label `app.kubernetes.io/name: <app>`, by which a delete removes them. A few names are reserved for Control's objects and cannot name an extension. An extension may declare the `workflows` service; see <<Workflows>>.
 
 Control reads this block from the app's `thinkube.yaml` on its Gitea `main`. It lists the extension in its navigation and draws its pages inside its own layout: it loads `ui.module` through `/api/v1/x/<app>/ui/` and calls the module's `mount(element, host)`. The host gives the module Control's address (`basename`, `path()`, `listen()`, `navigate()`) and `request()`, which sends a call through `/api/v1/x/<app>/api/` to the extension's `/api/v1/` with the user's session. An extension built for another platform version, or one whose `depends` are not all installed, is listed with the problem and its pages are not loaded.
 
@@ -368,7 +368,7 @@ Platform services the application needs. Each declared service injects variables
 | `cache` | `CACHE_URL`
 | `storage` | `STORAGE_<NAME>_URL`
 | `queue` | `QUEUE_URL`
-| `workflows` | `WORKFLOWS_NAMESPACE`, `WORKFLOWS_SERVER_URL`, `WORKFLOWS_SERVICE_ACCOUNT`, `WORKFLOWS_UI_URL`, and one `CONTAINER_IMAGE_<NAME>` for each container in this file
+| `workflows` | `WORKFLOWS_NAMESPACE`, `WORKFLOWS_SERVER_URL`, `WORKFLOWS_SERVICE_ACCOUNT`, `WORKFLOWS_UI_URL`, `WORKFLOWS_ARTIFACT_REPOSITORY`, and one `CONTAINER_IMAGE_<NAME>` for each container in this file
 |===
 
 `database`, `cache`, `storage` and `queue` take an optional `type:name` suffix for a named instance, such as `storage:uploads`. `workflows` does not: an application has one.
@@ -378,6 +378,10 @@ Platform services the application needs. Each declared service injects variables
 === Workflows
 
 `workflows` gives the application its own access to Argo Workflows, in its own namespace. The platform creates a ServiceAccount `<app>-workflows` that every pod runs as, a Role allowing it to manage workflows in that namespace, and a default artifact repository in Thinkube Storage under the prefix `<app>/`. Steps run in the application's own images, named by `CONTAINER_IMAGE_<NAME>`, and count against the namespace's ResourceQuota. See xref:playbooks/run-a-pipeline-from-your-app.adoc[Run a pipeline from your app].
+
+`WORKFLOWS_ARTIFACT_REPOSITORY` names the ConfigMap of that artifact repository. A workflow that sets `spec.artifactRepositoryRef.configMap` to it runs the same in an application and in an extension.
+
+An extension (`deployment.type: extension`) submits its workflows into Thinkube Control's namespace, `thinkube-control`, which several extensions share. Its objects carry its name: the ServiceAccount, Role and RoleBinding `<app>-workflows`, the ConfigMap `<app>-artifact-repositories` and the Secret `<app>-artifacts-s3`. Its Role creates, reads, lists and deletes workflows, reports step results, and reads pods and their logs; it does not reach workflow templates or cron workflows. Its artifacts go to the bucket `argo-artifacts` under the prefix `<app>/`, as an application's do. That namespace has no default artifact repository, so each workflow of an extension names `WORKFLOWS_ARTIFACT_REPOSITORY` in `spec.artifactRepositoryRef.configMap`; one that names none has no artifact repository. Workflow pods count against the namespace's ResourceQuota and take its LimitRange defaults when a step sets no resources. Nothing keeps them off GPU nodes; a step that needs no GPU sets a `nodeSelector` or an affinity itself.
 
 == spec.dependencies
 
