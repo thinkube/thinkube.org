@@ -17,9 +17,9 @@
 
 const AREA_ORDER = ['kubernetes', 'gitops', 'models', 'tandem']
 // A guest component (another product's docs under its own header, such as
-// llebre) keeps its playbooks out of the Thinkube catalog; lib/playbook-check.js
+// meepsquared) keeps its playbooks out of the Thinkube catalog; lib/playbook-check.js
 // lists the same names.
-const GUEST_COMPONENTS = ['llebre']
+const GUEST_COMPONENTS = ['meepsquared']
 
 module.exports = (options) => {
   const { data: { root }, hash } = options

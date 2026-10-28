@@ -602,21 +602,21 @@ html[data-theme="dark"] .nav-list .nav-item[data-depth="0"] > :is(.nav-text, .na
   -webkit-mask-image: url(../img/icons/tk_full_logo.svg); mask-image: url(../img/icons/tk_full_logo.svg);
 }
 
-/* llebre's pages (the llebre component) carry llebre's header: the cream
+/* Meep²'s pages (the meepsquared component) carry Meep²'s header: the cream
    wordmark as it is, no white filter, and a small Thinkube mark on the way back. */
-.header-llebre .navbar-logo img {
+.header-meepsquared .navbar-logo img {
   height: 2rem;
   filter: none;
 }
-.header-llebre .navbar-item-thinkube {
+.header-meepsquared .navbar-item-thinkube {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   opacity: 0.85;
 }
-.header-llebre .navbar-item-thinkube img {
+.header-meepsquared .navbar-item-thinkube img {
   height: 1.1rem;
   width: auto;
   filter: brightness(0) invert(1);
 }
-.footer-llebre a { color: inherit; text-decoration: underline; }
+.footer-meepsquared a { color: inherit; text-decoration: underline; }
