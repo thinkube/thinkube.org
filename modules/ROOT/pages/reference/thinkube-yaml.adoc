@@ -89,6 +89,12 @@ spec:
         memory: string
       capabilities:         # Special capabilities (optional)
         - string            # e.g. "large-uploads"
+      access:               # Extension only: Kubernetes rules for this container's pod (optional)
+        - apiGroups: [string]
+          resources: [string]
+          verbs: [string]
+      filesystems:          # Extension only: shared file systems mounted at /storage/<name> (optional)
+        - string            # "thinkube-shared" or "mlflow"
       publicEnv:            # Variables this container may show the browser (optional)
         - string            # A variable name, e.g. "APP_TITLE"
       test:                 # Tests, run before the build in CI (optional)
@@ -180,9 +186,9 @@ Knative services are meant to be portable to cloud serverless platforms. When `t
 
 Required when `deployment.type` is `extension`, and only then. An extension is a part of Thinkube Control that is built and deployed on its own: a redeploy of it does not touch Control or the other extensions.
 
-It runs in the `thinkube-control` namespace. Its Services are named `<app>-<container>`, so they do not meet Control's own, and its objects carry the label `app.kubernetes.io/name: <app>`, by which a delete removes them. A few names are reserved for Control's objects and cannot name an extension. An extension may declare the `workflows` service; see <<Workflows>>.
+It runs in the `thinkube-control` namespace. Its Services are named `<app>-<container>`, so they do not meet Control's own, and its objects carry the label `app.kubernetes.io/name: <app>`, by which a delete removes them. A few names are reserved for Control's objects and cannot name an extension. What an extension needs from the cluster beyond its own objects, a container declares: `access` and `filesystems` under <<spec.containers>>; a delete of the extension removes what they made. An extension may declare the `workflows` service; see <<Workflows>>.
 
-Control reads this block from the app's `thinkube.yaml` on its Gitea `main`. It lists the extension in its navigation and draws its pages inside its own layout: it loads `ui.module` through `/api/v1/x/<app>/ui/` and calls the module's `mount(element, host)`. The host gives the module Control's address (`basename`, `path()`, `listen()`, `navigate()`) and `request()`, which sends a call through `/api/v1/x/<app>/api/` to the extension's `/api/v1/` with the user's session. An extension built for another platform version, or one whose `depends` are not all installed, is listed with the problem and its pages are not loaded.
+Control reads this block from the app's `thinkube.yaml` on its Gitea `main`. It lists the extension in its navigation and draws its pages inside its own layout: it loads `ui.module` through `/api/v1/x/<app>/ui/` and calls the module's `mount(element, host)`. The host gives the module Control's address (`basename`, `path()`, `listen()`, `navigate()`) and `request()`, which sends a call through `/api/v1/x/<app>/api/` to the extension's `/api/v1/` with the user's session. An extension's backend calls another extension's backend directly, at its Service `<app>-<container>` in Control's namespace, with the user's token. An extension built for another platform version, or one whose `depends` are not all installed, is listed with the problem and its pages are not loaded.
 
 The web app template renders this block when it is deployed with the variable `extension: true`.
 
@@ -238,6 +244,8 @@ At least one container, unless `deployment.type` is `none`.
 | `mounts` | list | `storage-name:/mount/path`. The storage must be declared under `services`.
 | `gpu` | object | `count` and `memory` are both required. The platform allocates that many GPUs with at least that memory each, preferring the smallest GPU that fits.
 | `capabilities` | list | `large-uploads` configures the gateway for uploads up to 1GB.
+| `access` | list | Extension only. The Kubernetes rules this container's pod gets in every namespace: each entry has `apiGroups`, `resources` and `verbs`, and may have `resourceNames`. `*` is refused; name each group, resource and verb. The pod runs as the account `<app>-<container>`, bound to the cluster role `thinkube-extension-<app>-<container>`.
+| `filesystems` | list | Extension only. The shared file systems mounted at their root, each at `/storage/<name>`: `thinkube-shared`, `mlflow`. A write or delete there reaches every folder of the file system. Not with `volume` or `gpu`.
 | `publicEnv` | list | Names of variables this container may show the browser. See below.
 | `test` | object | See below.
 | `migrations` | object | `tool` is one of `alembic`, `django`, `flyway`, `liquibase`, `prisma`, `sequelize`, `gorm`, `custom`. `auto`, default `true`, runs them on startup.

@@ -397,6 +397,72 @@
             ]
           }
         },
+        "access": {
+          "description": "Extension only. The Kubernetes rules this container's pod gets in every namespace. Each rule names its API groups, resources and verbs; \"*\" is refused.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "apiGroups",
+              "resources",
+              "verbs"
+            ],
+            "properties": {
+              "apiGroups": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "not": {
+                    "const": "*"
+                  }
+                }
+              },
+              "resources": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "not": {
+                    "const": "*"
+                  }
+                }
+              },
+              "verbs": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "not": {
+                    "const": "*"
+                  }
+                }
+              },
+              "resourceNames": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        },
+        "filesystems": {
+          "description": "Extension only. The shared file systems mounted at their root, at /storage/<name>. Not with volume or gpu.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "thinkube-shared",
+              "mlflow"
+            ]
+          }
+        },
         "publicEnv": {
           "description": "Names of variables this container may show the browser. An allow-list; absent means nothing is published.",
           "type": "array",
