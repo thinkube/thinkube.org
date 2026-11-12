@@ -192,6 +192,8 @@ Control reads this block from the app's `thinkube.yaml` on its Gitea `main`. It 
 
 The web app template renders this block when it is deployed with the variable `extension: true`.
 
+The extensions that belong to the platform (Datasets, Forge, Storage) are not made from a template. Each one's source is a folder of the Thinkube Control repository, `extensions/<name>`, and Control deploys it from that folder: its tool `deploy_extensions` deploys the ones named, or all of them. A deploy from a folder is a deploy request with `template_path`: it copies that folder of the repository as it is, with no template variables, and removes from the app the files the folder no longer has. The app has the folder's name.
+
 [cols="1,1,3"]
 |===
 | Field | Type | Description
