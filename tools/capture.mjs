@@ -49,7 +49,7 @@ const targets = [
   { name: 'control-templates', url: `https://control.${D}/templates` },
   { name: 'control-optional-components', url: `https://control.${D}/optional-components` },
   { name: 'control-nodes', url: `https://control.${D}/nodes` },
-  { name: 'control-harbor-images', url: `https://control.${D}/harbor-images` },
+  { name: 'control-harbor-images', url: `https://control.${D}/x/control-images/` },
   { name: 'control-jupyter-kernels', url: `https://control.${D}/jupyter-kernels` },
   { name: 'control-jupyterhub-config', url: `https://control.${D}/jupyterhub-config` },
   { name: 'control-secrets', url: `https://control.${D}/secrets` },
