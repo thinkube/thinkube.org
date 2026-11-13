@@ -260,6 +260,38 @@
             },
             "additionalProperties": false
           }
+        },
+        "indicator": {
+          "type": "object",
+          "description": "A count in Control's top bar, shown while it is above zero",
+          "required": [
+            "api",
+            "path",
+            "icon",
+            "title"
+          ],
+          "properties": {
+            "api": {
+              "type": "string",
+              "pattern": "^/",
+              "description": "A GET of the extension's /api/v1 that answers {\"count\": n}"
+            },
+            "path": {
+              "type": "string",
+              "pattern": "^/",
+              "description": "The extension's page a click opens"
+            },
+            "icon": {
+              "type": "string",
+              "description": "A lucide icon name"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The text shown on hover"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -451,7 +483,7 @@
           }
         },
         "filesystems": {
-          "description": "Extension only. The shared file systems mounted at their root, at /storage/<name>. Not with volume or gpu.",
+          "description": "Extension only. The shared file systems mounted at their root, at /storage/<name>: thinkube-shared, mlflow, or dockerfiles, the folder ~/dockerfiles of Thinkube IDE, which keeps the pod on the control plane node. Not with volume or gpu.",
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
@@ -459,8 +491,81 @@
             "type": "string",
             "enum": [
               "thinkube-shared",
-              "mlflow"
+              "mlflow",
+              "dockerfiles"
             ]
+          }
+        },
+        "environment": {
+          "description": "Variables of this container alone, each with a value or read from a Secret or ConfigMap of the app's namespace",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Z0-9_]*$"
+              },
+              "value": {
+                "type": "string"
+              },
+              "valueFrom": {
+                "type": "object",
+                "properties": {
+                  "secretKeyRef": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "key"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "key": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "configMapKeyRef": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "key"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "key": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false,
+                "minProperties": 1,
+                "maxProperties": 1
+              }
+            },
+            "oneOf": [
+              {
+                "required": [
+                  "value"
+                ]
+              },
+              {
+                "required": [
+                  "valueFrom"
+                ]
+              }
+            ],
+            "additionalProperties": false
           }
         },
         "publicEnv": {

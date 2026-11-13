@@ -60,6 +60,11 @@ spec:
       - label: string
         path: string        # A path of the extension, starting with /
         icon: string        # A lucide icon name (optional)
+    indicator:              # A count in Control's top bar (optional)
+      api: string           # A GET of the extension's /api/v1 that answers {"count": n}
+      path: string          # The extension's page a click opens
+      icon: string          # A lucide icon name
+      title: string         # The text shown on hover
 
   llm_backend:              # This component is a backend of the LLM Gateway (optional)
     type: string            # The backend type models name in server_type, e.g. "vllm"
@@ -94,7 +99,14 @@ spec:
           resources: [string]
           verbs: [string]
       filesystems:          # Extension only: shared file systems mounted at /storage/<name> (optional)
-        - string            # "thinkube-shared" or "mlflow"
+        - string            # "thinkube-shared", "mlflow" or "dockerfiles"
+      environment:          # Variables of this container alone (optional)
+        - name: string
+          value: string     # Or valueFrom, below
+          valueFrom:
+            secretKeyRef:   # Or configMapKeyRef: a key of the app's namespace
+              name: string
+              key: string
       publicEnv:            # Variables this container may show the browser (optional)
         - string            # A variable name, e.g. "APP_TITLE"
       test:                 # Tests, run before the build in CI (optional)
@@ -192,7 +204,7 @@ Control reads this block from the app's `thinkube.yaml` on its Gitea `main`. It 
 
 The web app template renders this block when it is deployed with the variable `extension: true`.
 
-The extensions that belong to the platform (Datasets, Forge, Storage) are not made from a template. Each one's source is a folder of the Thinkube Control repository, `extensions/<name>`, and Control deploys it from that folder: its tool `deploy_extensions` deploys the ones named, or all of them. A deploy from a folder is a deploy request with `template_path`: it copies that folder of the repository as it is, with no template variables, and removes from the app the files the folder no longer has. The app has the folder's name.
+The extensions that belong to the platform (Datasets, Forge, Storage, Images, Models) are not made from a template. Each one's source is a folder of the Thinkube Control repository, `extensions/<name>`, and Control deploys it from that folder: its tool `deploy_extensions` deploys the ones named, or all of them. A deploy from a folder is a deploy request with `template_path`: it copies that folder of the repository as it is, with no template variables, and removes from the app the files the folder no longer has. The app has the folder's name. `deploy_extensions` also gives an extension two settings of Control, when its <<spec.env>> declares them: `THINKUBE_BRANCH`, the branch of the platform the cluster follows, and `GITHUB_USERNAME`, the account whose metadata repository holds the user's catalogues.
 
 [cols="1,1,3"]
 |===
@@ -206,6 +218,7 @@ The extensions that belong to the platform (Datasets, Forge, Storage) are not ma
 | `ui.module` | string | A path of the extension's site, starting with `/`: an ES module that exports `mount(element, host)` and returns the function that removes what it drew. Control serves the files of this module's folder.
 | `ui.css` | string | Optional. Its stylesheet, in the same folder as the module.
 | `nav` | list | At least one entry: `label`, `path` (a path of the extension, starting with `/`) and an optional lucide `icon`.
+| `indicator` | mapping | Optional. A count in Control's top bar. Control calls `api`, a path of the extension's `/api/v1`, every 10 seconds with the user's session; it answers `{"count": n}`. While the count is above zero, the top bar shows the lucide `icon` with the count and `title` on hover, and a click opens the extension's page `path`.
 |===
 
 == spec.llm_backend
@@ -247,7 +260,8 @@ At least one container, unless `deployment.type` is `none`.
 | `gpu` | object | `count` and `memory` are both required. The platform allocates that many GPUs with at least that memory each, preferring the smallest GPU that fits.
 | `capabilities` | list | `large-uploads` configures the gateway for uploads up to 1GB.
 | `access` | list | Extension only. The Kubernetes rules this container's pod gets in every namespace: each entry has `apiGroups`, `resources` and `verbs`, and may have `resourceNames`. `*` is refused; name each group, resource and verb. The pod runs as the account `<app>-<container>`, bound to the cluster role `thinkube-extension-<app>-<container>`.
-| `filesystems` | list | Extension only. The shared file systems mounted at their root, each at `/storage/<name>`: `thinkube-shared`, `mlflow`. A write or delete there reaches every folder of the file system. Not with `volume` or `gpu`.
+| `filesystems` | list | Extension only. The shared file systems mounted at their root, each at `/storage/<name>`: `thinkube-shared`, `mlflow`. A write or delete there reaches every folder of the file system. `dockerfiles` is the folder `~/dockerfiles` of Thinkube IDE; it keeps the pod on the control plane node. Not with `volume` or `gpu`.
+| `environment` | list | Variables of this container alone. Each has a `name` and either a `value` or a `valueFrom` with `secretKeyRef` or `configMapKeyRef` (`name`, `key`) of a Secret or ConfigMap in the app's namespace. For a value every container shares, use <<spec.env>>; for a secret from the Secrets page, `secrets:` in `manifest.yaml`.
 | `publicEnv` | list | Names of variables this container may show the browser. See below.
 | `test` | object | See below.
 | `migrations` | object | `tool` is one of `alembic`, `django`, `flyway`, `liquibase`, `prisma`, `sequelize`, `gorm`, `custom`. `auto`, default `true`, runs them on startup.
