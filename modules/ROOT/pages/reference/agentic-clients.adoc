@@ -71,7 +71,7 @@ Every client is connected to the same servers.
 
 == Tools that change the platform
 
-A tool that only reads, such as `list_services_minimal` or `get_llm_models`, runs at once. Every other tool of these servers, such as `delete_model`, `uninstall_optional_component`, `toggle_service` or `restart_service`, asks you first.
+A tool that only reads, such as `list_services_minimal` or `llm_list_models`, runs at once. Every other tool of these servers, such as `delete_model`, `uninstall_optional_component`, `toggle_service` or `restart_service`, asks you first.
 
 [cols="1,3",options="header"]
 |===
