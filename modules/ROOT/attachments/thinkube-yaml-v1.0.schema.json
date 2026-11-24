@@ -685,6 +685,10 @@
         },
         "to": {
           "type": "string"
+        },
+        "host": {
+          "type": "string",
+          "description": "An extension's platform address, served at <host>.<domain> instead of the application's own: llm for control-llm"
         }
       },
       "additionalProperties": false

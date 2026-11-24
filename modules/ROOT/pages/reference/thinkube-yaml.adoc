@@ -378,6 +378,7 @@ HTTP routes, implemented as Gateway API HTTPRoute resources with the platform's 
 
 | `path` | string | A path prefix: `/`, `/api`.
 | `to` | string | The container that serves it.
+| `host` | string | Optional, for an extension only: the route is served at the platform address `<host>.<domain>` instead of the application's own, by an HTTPRoute of its own. Only the extension that owns the address may take it: `llm` (the LLM gateway's OpenAI and Anthropic API) belongs to `control-llm`.
 |===
 
 == spec.services
